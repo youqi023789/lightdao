@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){try{var t=localStorage.getItem("ld_theme")||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="/theme.css">
+<title>子代币与金库多签 — LightDAO</title>
+<meta name="description" content="查看 LightDAO 子代币(SPVP 收益凭证)发行与持有,及金库多签签署人与待执行交易。">
+<style>:root{--bg:#05060a;--bg2:#0a0c12;--ink:#eef1f6;--mut:#9aa3b2;--line:rgba(255,255,255,.08);--acc:#7c8cff;--ok:#3ddc84;--warn:#ffb454}
+body{background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,"Segoe UI",Roboto,"PingFang SC",sans-serif;margin:0}
+.w{max-width:960px;margin:0 auto;padding:20px 22px 60px}
+h1{font-size:28px;margin:10px 0 6px}h2{font-size:19px;margin:28px 0 10px}
+p,li,td{color:var(--mut)}a{color:var(--acc);text-decoration:none}
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:12px}
+td,th{border:1px solid var(--line);padding:9px 12px;text-align:left}th{color:var(--ink);background:var(--bg2)}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:16px}
+.bar{display:flex;gap:12px;flex-wrap:wrap;font-size:14px;margin:10px 0}
+.bar a{border:1px solid var(--line);border-radius:10px;padding:8px 14px}
+input{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--ink);width:100%;max-width:460px;font-family:ui-monospace,monospace;font-size:13px}
+.pill{display:inline-block;border-radius:999px;padding:3px 12px;font-size:12.5px;background:rgba(127,127,160,.15);color:var(--mut)}
+</style>
+</head>
+<body>
+<div class="bar" style="max-width:960px;margin:0 auto;padding:12px 22px">
+<a href="#" onclick="history.back();return false">← 返回上一页</a>
+<a href="/">⌂ 返回首页</a>
+<a href="/governance.html">治理</a>
+<a href="/explorer.html">浏览器</a>
+<a href="/search.html">⌕ 搜索</a>
+<button id="themeT" aria-label="toggle theme" style="margin-left:auto;background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer;color:inherit">◐</button>
+</div>
+<div class="w">
+<h1>子代币与金库多签 <span style="color:var(--mut);font-size:15px">Sub-tokens & Treasury Multisig</span></h1>
+<p>子代币 = SPV 收益分配请求权凭证(白皮书 §5.9):由<b style="color:var(--ink)">治理投资提案</b>通过后经 subtoken_factory 发行;利润 40% 分配给子代币持有者。金库由多签(treasury_multisig)锁定,仅有效决议可释放。</p>
+
+<h2>已发行子代币</h2>
+<div class="card"><table id="stt"><thead><tr><th>符号</th><th>总量</th><th>状态</th></tr></thead><tbody><tr><td colspan="3">加载中…</td></tr></tbody></table>
+<p style="margin-top:12px;font-size:13.5px">尚无子代币=尚无投资发行。第一笔子代币将在首笔治理投资提案通过后铸造。</p></div>
+
+<h2>我的子代币持有</h2>
+<div class="card">
+<input id="addr" placeholder="输入你的 wasm1… 地址(或带 ?addr= 打开)">
+<table id="bal"><thead><tr><th>符号</th><th>我的余额</th></tr></thead><tbody><tr><td colspan="2">输入地址后查询</td></tr></tbody></table>
+</div>
+
+<h2>金库多签签署人</h2>
+<div class="card"><table id="sgt"><thead><tr><th>#</th><th>签署人地址</th></tr></thead><tbody><tr><td colspan="2">加载中…</td></tr></tbody></table>
+<p style="margin-top:12px;font-size:13.5px">多签阈值与待执行交易见下;仅达阈值的决议可释放金库。</p></div>
+
+<h2>待执行多签交易</h2>
+<div class="card"><table id="txt"><thead><tr><th>id</th><th>状态</th><th>已签</th></tr></thead><tbody><tr><td colspan="3">加载中…</td></tr></tbody></table></div>
+
+<div class="bar"><a href="/governance.html">发起投资提案 →</a><a href="/whitepaper.html">白皮书 §5.9 →</a><a href="/nodes.html">节点与验证者 →</a></div>
+</div>
+<script>
+document.getElementById("themeT").onclick=function(){var c=document.documentElement.getAttribute("data-theme");var n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n);try{localStorage.setItem("ld_theme",n);}catch(e){}this.textContent=n==="light"?"◑":"◐";};
+const SUB="wasm1uykr2f24sdj9f4la0wv78gvjuyqqnqk9r8jggcqd9ha9vxjrrkksum5x0g";
+const TRE="wasm192u2pm80ndmh608mmvhrzhje0sjaq0txr5md77lr70ucy0j3lfys8l633u";
+const f=n=>(Number(n)/1e6).toLocaleString(undefined,{maximumFractionDigits:2});
+let cw=null;
+(async()=>{
+  const m=await import("https://cdn.jsdelivr.net/npm/@cosmjs/cosmwasm-stargate@0.32.4/+esm").catch(()=>null);
+  if(!m){document.querySelectorAll("tbody").forEach(t=>t.innerHTML='<tr><td colspan="3">cosmjs 加载失败</td></tr>');return;}
+  cw=await m.CosmWasmClient.connect(location.origin+"/rpc/");
+  // sub tokens
+  let list=[]; try{ list=await cw.queryContractSmart(SUB,{all_sub_tokens:{}}); }catch(e){}
+  const stb=document.querySelector("#stt tbody"); stb.innerHTML="";
+  if(!list||!list.length){ stb.innerHTML='<tr><td colspan="3"><span class="pill">暂无子代币</span></td></tr>'; }
+  else list.forEach(s=>{ const tr=document.createElement("tr"); tr.innerHTML="<td>"+(s.symbol||s)+"</td><td>"+f(s.total||s.amount||0)+"</td><td>"+(s.liquidated?"已清算":"活跃")+"</td>"; stb.appendChild(tr); });
+  window.__sublist=list||[];
+  // signers
+  let sg=[]; try{ sg=await cw.queryContractSmart(TRE,{signers:{}}); }catch(e){}
+  const sgb=document.querySelector("#sgt tbody"); sgb.innerHTML="";
+  (sg||[]).forEach((a,i)=>{ const tr=document.createElement("tr"); tr.innerHTML="<td>"+(i+1)+"</td><td style='font-family:ui-monospace,monospace;font-size:12px'>"+a+"</td>"; sgb.appendChild(tr); });
+  if(!sg||!sg.length) sgb.innerHTML='<tr><td colspan="2">无</td></tr>';
+  // pending txs: iterate ids
+  const txb=document.querySelector("#txt tbody"); txb.innerHTML=""; let any=false;
+  for(let id=0; id<20; id++){
+    let t=null; try{ t=await cw.queryContractSmart(TRE,{tx:{id:id}}); }catch(e){ break; }
+    if(!t) break; any=true;
+    const tr=document.createElement("tr"); tr.innerHTML="<td>"+id+"</td><td>"+(t.executed?"已执行":"待签")+"</td><td>"+(t.signs||t.approvals||"?")+"</td>"; txb.appendChild(tr);
+  }
+  if(!any) txb.innerHTML='<tr><td colspan="3"><span class="pill">暂无待执行交易</span></td></tr>';
+  // balances on input
+  const q=async()=>{ const a=document.getElementById("addr").value.trim(); const tb=document.querySelector("#bal tbody"); tb.innerHTML="";
+    if(!a.startsWith("wasm1")){ tb.innerHTML='<tr><td colspan="2">地址无效</td></tr>'; return; }
+    if(!window.__sublist||!window.__sublist.length){ tb.innerHTML='<tr><td colspan="2"><span class="pill">暂无子代币可查</span></td></tr>'; return; }
+    for(const s of window.__sublist){ const sym=s.symbol||s; let b="0"; try{ b=await cw.queryContractSmart(SUB,{balance_of:{symbol:sym,address:a}}); }catch(e){}
+      const tr=document.createElement("tr"); tr.innerHTML="<td>"+sym+"</td><td>"+f(b)+"</td>"; tb.appendChild(tr); }
+  };
+  document.getElementById("addr").onchange=q;
+  const qa=new URLSearchParams(location.search).get("addr"); if(qa){ document.getElementById("addr").value=qa; q(); }
+})();
+</script>
+</body>
+</html>

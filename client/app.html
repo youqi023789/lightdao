@@ -99,6 +99,7 @@ header{position:sticky;top:0;z-index:6;background:rgba(7,11,24,.78);backdrop-fil
     <a href="/" aria-label="home" style="color:inherit;text-decoration:none;padding:7px 10px;border:1px solid var(--line);border-radius:10px">⌂</a>
 <a href="/search.html" aria-label="search" style="color:inherit;text-decoration:none;padding:7px 10px;border:1px solid var(--line);border-radius:10px">⌕</a>
 <button id="themeT" aria-label="toggle theme" style="background:var(--surf,rgba(255,255,255,.06));border:1px solid var(--line);border-radius:10px;padding:7px 11px;cursor:pointer;color:inherit;font-size:15px">◐</button>
+<a href="/invest.html" style="color:var(--mut);text-decoration:none;padding:7px 10px;border:1px solid var(--line);border-radius:10px;font-size:13px">子代币</a>
 <a href="/nodes.html" style="color:var(--mut);text-decoration:none;padding:7px 10px;border:1px solid var(--line);border-radius:10px;font-size:13px">节点</a>
 <select class="lang" id="lang" aria-label="language"></select>
   </header>
@@ -141,6 +142,7 @@ header{position:sticky;top:0;z-index:6;background:rgba(7,11,24,.78);backdrop-fil
   <section id="sec-main" class="hide">
     <div class="card hero">
       <div class="spin" id="spin"><b id="spinTx">—</b></div>
+      <span class="pill" id="pwaBadge" style="display:none">📲 PWA 已安装 · 在线 +10%</span>
       <div class="pill"><span class="live" id="liveDot"></span><span id="statusTx" data-i="idle">未运行</span></div>
       <div class="big" id="estReward">0.0</div>
       <div class="mini" data-i="estLabel">今日预计奖励 (LIGHT)</div>
@@ -182,6 +184,7 @@ header{position:sticky;top:0;z-index:6;background:rgba(7,11,24,.78);backdrop-fil
       </div>
     </div>
     <div class="card"><div class="seclabel">我的贡献历史 / My contribution history</div><table style="width:100%;font-size:12.5px;border-collapse:collapse"><thead><tr><th style="text-align:left;color:var(--mut)">日</th><th style="text-align:left;color:var(--mut)">带宽kbps</th><th style="text-align:left;color:var(--mut)">在线s</th><th style="text-align:left;color:var(--mut)">验证</th><th style="text-align:left;color:var(--mut)">稳定%</th><th style="text-align:left;color:var(--mut)">定稿</th></tr></thead><tbody id="myHist"><tr><td colspan="6" class="mini">加载中…</td></tr></tbody></table></div>
+<div class="card"><div class="seclabel">我的安全与邀请 / My security & referrals</div><div id="mySec" class="mini" style="line-height:1.9">加载中…</div></div>
 <footer><span data-i="footer"></span> · <a class="lnk" href="https://lightdao.net" target="_blank">lightdao.net</a></footer>
   </section>
 </div>
@@ -308,8 +311,9 @@ $("btnPkSocial").onclick=async()=>{
 $("btnClaim").onclick=async()=>{ if(!window.LD){toast(t("walletFail"));return;} await window.LD.claim(); };
 $("btnExportSeed").onclick=async()=>{ if(!window.LDPasskey){toast(t("walletFail"));return;} try{ let m; try{ m=await window.LDPasskey.unlock(); }catch(e1){ const pin=prompt(t("pkPinPrompt")); m=await window.LDPasskey.unlock(pin); } alert("⚠ 你的助记词(唯一离线备份)。请抄写在纸上,切勿截图或发送给任何人:\n\n"+m); }catch(e){ toast(t("pkFail")+(e.message||e)); } };
 $("btnSocialMain").onclick=async()=>{ if(!window.LDPasskey||!window.LDPasskey.hasWallet()){toast(t("pkSocialFirst"));return;} try{ let pin=null; const rec=JSON.parse(localStorage.getItem("ld_passkey_v1")||"null"); if(rec&&rec.kdf==="pin"){pin=prompt(t("pkPinPrompt"));} let shares; try{ shares=await window.LDPasskey.setupSocialRecovery(pin,3,5); }catch(e1){ pin=prompt(t("pkPinPrompt")); shares=await window.LDPasskey.setupSocialRecovery(pin,3,5); } alert(t("pkSocialHint")+"\n\n"+shares.map((s,i)=>(i+1)+". "+s).join("\n")); }catch(e){ toast(t("pkFail")+(e.message||e)); } };
+async function loadMySec(){ const el=$("mySec"); if(!el||!myAddr)return; try{ const r=await fetch(CFG.gw+"/v1/me?addr="+myAddr).then(x=>x.json()); const ds=Object.values(r.days||{}); const act=ds.filter(d=>d.active).length; const ref=ds.reduce((a,d)=>a+(d.referred||0),0); const flag=ds.some(d=>d.flagged); const fp=(ds.find(d=>d.fp)||{}).fp||"—"; el.innerHTML="活跃天数: <b>"+act+"</b> · 我的邀请: <b>"+ref+"</b> 人<br>设备指纹: <span class=\"mono\">"+fp+"…</span> · 反女巫状态: "+(flag?'<span style="color:var(--err)">同指纹多钱包,已去重</span>':'<span style="color:var(--ok)">正常</span>')+"<br>我的上级邀请人: "+((ds.find(d=>d.referrer)||{}).referrer||"无(创世/直连)"); }catch(e){ el.textContent="加载失败"; } }
 async function loadMyHistory(){ const tb=$("myHist"); if(!tb||!myAddr)return; tb.innerHTML=""; try{ const h=await fetch(CFG.gw+"/v1/health").then(r=>r.json()); for(let d=h.current_day; d>h.current_day-7 && d>0; d--){ const day=await fetch(CFG.gw+"/v1/day?day="+d).then(r=>r.json()).catch(()=>null); const m=day&&day.miners?day.miners[myAddr]:null; const tr=document.createElement("tr"); if(m){ tr.innerHTML="<td>"+d+"</td><td>"+m.bandwidth+"</td><td>"+m.session+"</td><td>"+m.verification+"</td><td>"+m.stability+"</td><td>"+(day.finalized?"✓":"…")+"</td>"; } else { tr.innerHTML="<td>"+d+"</td><td colspan=\"5\" class=\"mini\">无贡献</td>"; } tb.appendChild(tr);} }catch(e){ tb.innerHTML='<tr><td colspan="6" class="mini">加载失败</td></tr>'; } }
-async function enter(seed){ const s=seed||localStorage.getItem("ld_seed")||sessionStorage.getItem("ld_session"); if(s && window.LD && await window.LD.connect(s)){ sessionStorage.setItem("ld_session",s); $("addr").textContent=myAddr=window.LD.addr; $("sec-wallet").classList.add("hide"); $("sec-main").classList.remove("hide"); if($("inviteLink"))$("inviteLink").value=location.origin+"/?ref="+myAddr; window.LD.refresh(); loadMyHistory(); if(localStorage.getItem("ld_mining")==="1"){ setTimeout(startMining,400); } } }
+async function enter(seed){ const s=seed||localStorage.getItem("ld_seed")||sessionStorage.getItem("ld_session"); if(s && window.LD && await window.LD.connect(s)){ sessionStorage.setItem("ld_session",s); $("addr").textContent=myAddr=window.LD.addr; $("sec-wallet").classList.add("hide"); $("sec-main").classList.remove("hide"); if($("inviteLink"))$("inviteLink").value=location.origin+"/?ref="+myAddr; window.LD.refresh(); loadMyHistory(); loadMySec(); if(localStorage.getItem("ld_mining")==="1"){ setTimeout(startMining,400); } } }
 // 邀请裂变:读 ?ref= 存 ld_ref;复制邀请链接
 (function(){ const q=new URLSearchParams(location.search).get("ref"); if(q&&q.startsWith("wasm1")) localStorage.setItem("ld_ref",q); })();
 document.addEventListener("DOMContentLoaded",()=>{ const b=$("btnCopyInvite"); if(b) b.onclick=()=>{ const el=$("inviteLink"); if(!el)return; if(navigator.clipboard)navigator.clipboard.writeText(el.value); else {el.removeAttribute("readonly");el.select();document.execCommand("copy");el.setAttribute("readonly","");} toast("✓ "+t("copy")); }; });
@@ -363,6 +367,7 @@ window.LD = null;
 if(window.__ldReady)window.__ldReady();
 })();
 document.getElementById("themeT").onclick=function(){var c=document.documentElement.getAttribute("data-theme");var n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n);try{localStorage.setItem("ld_theme",n);}catch(e){}this.textContent=n==="light"?"◑":"◐";};
+(function(){ const b=$("pwaBadge"); if(!b)return; const stand=matchMedia("(display-mode: standalone)").matches||navigator.standalone; if(stand){ b.style.display=""; } else { window.addEventListener("beforeinstallprompt",function(e){ e.preventDefault(); b.style.display=""; b.textContent="📲 安装 PWA · 在线 +10%"; b.style.cursor="pointer"; b.onclick=function(){ e.prompt(); }; }); } })();
 </script>
 </body>
 </html>

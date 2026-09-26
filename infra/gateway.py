@@ -167,6 +167,28 @@ class H(BaseHTTPRequestHandler):
                 return self._send(404, {"error": "no proof"})
             return self._send(200, {"day": day, "miner": miner, "proof": d["proofs"][miner],
                                     "score": d["scores"][miner], "root": d["root"]})
+        if u.path == "/v1/me":
+            addr = (q.get("addr") or [""])[0]
+            out = {"addr": addr, "days": {}}
+            for fn in sorted(os.listdir(DATA)):
+                if not fn.startswith("day_") or not fn.endswith(".json"): continue
+                try: d = json.load(open(os.path.join(DATA, fn)))
+                except Exception: continue
+                dd = d.get("day"); m = (d.get("miners") or {}).get(addr)
+                rec = {"day": dd, "active": bool(m), "finalized": bool(d.get("finalized"))}
+                if m: rec["score"] = m
+                fps = d.get("fps") or {}
+                if addr in fps: rec["fp"] = fps[addr][:12]
+                # flagged if my score zeroed while sharing fp with another miner (dedupe)
+                if m and fps.get(addr):
+                    same = [a for a, f2 in fps.items() if f2 == fps[addr] and a != addr]
+                    rec["fp_shared_with"] = len(same)
+                    rec["flagged"] = bool(same) and all((m.get(k, 0) or 0) == 0 for k in ("bandwidth", "session", "verification"))
+                refs = d.get("referrals") or {}
+                rec["referred"] = sum(1 for k, v in refs.items() if (v or {}).get("referrer") == addr)
+                if addr in refs: rec["referrer"] = refs[addr].get("referrer")
+                out["days"][dd] = rec
+            return self._send(200, out)
         return self._send(404, {"error": "not found"})
     def do_POST(self):
         u = urlparse(self.path); n = int(self.headers.get("Content-Length", 0))
