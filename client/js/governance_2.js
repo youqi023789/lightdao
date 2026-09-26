@@ -4,10 +4,13 @@ const GOV="wasm14axmz74pppxqxs3qhxaaf2qzl6x53pvvzm7c6p52qrycwnyh8ktsfukapt";
 const LT="wasm13c9t6xmar22xclseua6xevw4t4cnrampy6y5ajdydhyv5k0znrcsth555z";
 const TM="wasm192u2pm80ndmh608mmvhrzhje0sjaq0txr5md77lr70ucy0j3lfys8l633u";
 const DENOM="ulight";
-function log(m,c){const e=$("log");e.innerHTML=(c?`<span class="${c}">`:"")+String(m).replace(/</g,"&lt;")+(c?"</span>":"");}
+function log(m,c){const e=$("log");if(!e)return;e.innerHTML=(c?`<span class="${c}">`:"")+String(m).replace(/</g,"&lt;")+(c?"</span>":"");e.scrollIntoView({block:"nearest"});}
 let client=null,addr=null;
-const CDN=["/js/vendor/"];
-async function loadCosmjs(){if(window.__c)return window.__c;for(const b of CDN){try{const[cs,ps,sg]=await Promise.all([import(b+"@cosmjs/cosmwasm-stargate@0.32.4"+(b==="https://esm.sh/"?"":"/+esm")),import(b+"@cosmjs/proto-signing@0.32.4"+(b==="https://esm.sh/"?"":"/+esm")),import(b+"@cosmjs/stargate@0.32.4"+(b==="https://esm.sh/"?"":"/+esm"))]);window.__c={cs,ps,sg};return window.__c;}catch(e){}}return null;}
+const VEN=p=>"/js/vendor/-cosmjs-"+p+"-0.32.4.js?v=2";
+const CDNU=p=>"https://cdn.jsdelivr.net/npm/@cosmjs/"+p+"@0.32.4/+esm";
+async function loadCosmjs(){if(window.__c)return window.__c;
+ for(const src of [VEN,CDNU]){ try{ const [cs,ps,sg]=await Promise.all([import(src("cosmwasm-stargate")),import(src("proto-signing")),import(src("stargate"))]); window.__c={cs,ps,sg}; return window.__c; }catch(e){} }
+ return null;}
 async function connect(mnem){
   const c=await loadCosmjs(); if(!c){log("cosmjs 加载失败(网络)","err");return false;}
   const{SigningCosmWasmClient}=c.cs,{DirectSecp256k1HdWallet}=c.ps,{GasPrice}=c.sg;
@@ -97,3 +100,19 @@ $("btnTreas").onclick=refreshTreas;
 $("btnRefresh").onclick=refreshProps;
 $("btnPk").onclick=async()=>{ if(!window.LDPasskey||!LDPasskey.hasWallet()){log("无 Passkey 钱包,先用主客户端创建","warn");return;} let m; try{m=await LDPasskey.unlock();}catch(e){const p=prompt("PIN:");m=await LDPasskey.unlock(p);} await connect(m); };
 $("btnMnem").onclick=()=>{const i=$("mnem");i.style.display=i.style.display==="none"?"":"none";if(i.style.display!=="none"){i.onchange=async()=>{if(i.value.trim())await connect(i.value.trim());};}};
+
+/* ---- shared-session SSO: reuse login from app (same origin) ---- */
+(async function ssAutoConnect(){
+  try{
+    var seed=null;
+    try{ seed=sessionStorage.getItem("ld_session"); }catch(e){}
+    if(!seed){ try{ seed=localStorage.getItem("ld_seed"); }catch(e){} }
+    if(!seed){ try{
+      var rec=JSON.parse(localStorage.getItem("ld_persist_v1")||"null");
+      if(rec){ var kb=localStorage.getItem("ld_devkey"); if(kb){ var key=await crypto.subtle.importKey("raw",Uint8Array.from(atob(kb),c=>c.charCodeAt(0)).buffer.slice(0),"AES-GCM",false,["decrypt"]);
+        var iv=Uint8Array.from(atob(rec.iv),c=>c.charCodeAt(0)); var ct=Uint8Array.from(atob(rec.ct),c=>c.charCodeAt(0));
+        var pt=await crypto.subtle.decrypt({iv:iv},key,ct.buffer.slice(0)); seed=new TextDecoder().decode(pt); } }
+    }catch(e){} }
+    if(seed){ var ok=await connect(seed); if(ok){ var el=$("addrLine"); if(el) el.textContent="已连接(沿用主客户端登录): "+addr; } }
+  }catch(e){}
+})();

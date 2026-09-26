@@ -9,7 +9,8 @@ const VEST_BEN=["wasm13c2cjh3fhkesj47tsc5a0vm6pdds39qpcmykhj","wasm16sm2nlg2sp9z
 
 const CDN=["/js/vendor/"];
 let client=null;
-async function load(){for(const b of CDN){try{const m=await import(b+"@cosmjs/cosmwasm-stargate@0.32.4"+(b==="https://esm.sh/"?"":"/+esm"));const s=await import(b+"@cosmjs/stargate@0.32.4"+(b==="https://esm.sh/"?"":"/+esm"));return {cw:m,st:s};}catch(e){}}return null;}
+async function load(){ const VEN=p=>"/js/vendor/-cosmjs-"+p+"-0.32.4.js?v=2"; const CDNU=p=>"https://cdn.jsdelivr.net/npm/@cosmjs/"+p+"@0.32.4/+esm";
+for(const src of [VEN,CDNU]){ try{ const m=await import(src("cosmwasm-stargate")); const st=await import(src("stargate")); return {cw:m,st:st}; }catch(e){} } return null; }
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=(n,d=6)=>(Number(n)/10**d).toLocaleString(undefined,{maximumFractionDigits:2});
 async function init(){
