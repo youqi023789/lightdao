@@ -67,6 +67,24 @@ textarea,input{width:100%;background:rgba(0,0,0,.25);border:1px solid var(--line
 footer{text-align:center;color:var(--mut);font-size:11.5px;margin-top:8px}
 .tabs{display:flex;gap:8px;margin-bottom:14px}.tabs button{flex:1;padding:10px;border-radius:11px;border:1px solid var(--line);background:var(--card);color:var(--mut);font-weight:600;cursor:pointer;font-size:13.5px}
 .tabs button.act{color:#fff;background:linear-gradient(135deg,rgba(91,140,255,.35),rgba(155,107,255,.35));border-color:rgba(155,107,255,.5)}
+
+/* ---- professional polish ---- */
+.wrap{max-width:600px}
+header{position:sticky;top:0;z-index:6;background:rgba(7,11,24,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:10px 0;margin-bottom:14px;border-bottom:1px solid rgba(255,255,255,.06)}
+.card{border-radius:20px;padding:20px;border-color:rgba(255,255,255,.08);box-shadow:0 12px 34px rgba(0,0,0,.28)}
+.hero{padding:32px 20px}
+.hero h1{font-size:26px}
+.hero p{font-size:14px}
+.big{font-size:46px}
+.btn{border-radius:15px;padding:16px;font-size:16.5px}
+.btn:hover{filter:brightness(1.07)}
+.btn.ghost{background:rgba(255,255,255,.045)}
+.btn.ghost:hover{background:rgba(255,255,255,.10)}
+.stat{border-radius:15px;padding:14px}
+.stat b{font-size:21px}
+.seclabel{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin:2px 0 8px}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.row .btn{font-size:14px;padding:13px}
 </style>
 </head>
 <body>
@@ -131,8 +149,11 @@ footer{text-align:center;color:var(--mut);font-size:11.5px;margin-top:8px}
       </div>
       <div style="height:12px"></div>
       <button class="btn ghost" id="btnClaim" data-i="claim">领取奖励</button>
-      <button class="btn ghost" id="btnExportSeed" style="margin-top:8px">导出助记词备份 / Export seed backup</button>
-      <button class="btn ghost" id="btnSocialMain" style="margin-top:8px">设置社交恢复(分片) / Social recovery</button>
+      <div class="seclabel">钱包安全 / Wallet security</div>
+      <div class="row">
+        <button class="btn ghost" id="btnExportSeed">导出助记词备份</button>
+        <button class="btn ghost" id="btnSocialMain">社交恢复(分片)</button>
+      </div>
       <a class="btn ghost" href="/governance.html" style="margin-top:8px;display:block;text-align:center;text-decoration:none">治理 · Governance(投票/提案/金库)</a>
     </div>
     <div class="card">
@@ -214,15 +235,18 @@ function updateUI(){
   $("estReward").textContent=(score/1e6*650).toLocaleString(undefined,{maximumFractionDigits:1});
   $("spinTx").textContent=stab+"%";
 }
-$("btnMine").onclick=async()=>{ mining=!mining; $("spin").classList.toggle("on",mining); $("liveDot").classList.toggle("on",mining);
-  $("btnMine").textContent=mining?t("stopMining"):t("startMining"); $("statusTx").textContent=mining?t("running"):t("idle");
-  if(mining){ if(window.LDRelay)window.LDRelay.start(myAddr); await measureBw(); heartbeat(); doTask(); timer=setInterval(async()=>{await measureBw(); if(Math.random()<.5)doTask(); heartbeat();},CFG.heartbeatSec*1000); } else { clearInterval(timer); if(window.LDRelay)window.LDRelay.stop(); } };
+function setMiningUI(on){ $("spin").classList.toggle("on",on); $("liveDot").classList.toggle("on",on);
+  $("btnMine").textContent=on?t("stopMining"):t("startMining"); $("statusTx").textContent=on?t("running"):t("idle"); }
+async function startMining(){ if(mining)return; mining=true; setMiningUI(true); localStorage.setItem("ld_mining","1");
+  if(window.LDRelay)window.LDRelay.start(myAddr); await measureBw(); heartbeat(); doTask(); timer=setInterval(async()=>{await measureBw(); if(Math.random()<.5)doTask(); heartbeat();},CFG.heartbeatSec*1000); }
+function stopMining(){ if(!mining)return; mining=false; setMiningUI(false); localStorage.removeItem("ld_mining"); clearInterval(timer); if(window.LDRelay)window.LDRelay.stop(); }
+$("btnMine").onclick=()=>{ mining?stopMining():startMining(); };
 // 标签切换(Passkey / 助记词 / 导入)
 function showTab(w){ ["Pk","New","Imp"].forEach(k=>{ const a=(k===w); const tb=$("tab"+k),pn=$("pane"+k); if(tb)tb.classList.toggle("act",a); if(pn)pn.classList.toggle("hide",!a); }); }
 $("tabPk").onclick=()=>showTab("Pk");
 $("tabNew").onclick=()=>showTab("New");
 $("tabImp").onclick=()=>showTab("Imp");
-$("btnLogout").onclick=()=>{localStorage.removeItem("ld_seed");location.reload();};
+$("btnLogout").onclick=()=>{stopMining();sessionStorage.removeItem("ld_session");localStorage.removeItem("ld_seed");localStorage.removeItem("ld_mining");location.reload();};
 // --- 助记词(回退) ---
 $("btnCreate").onclick=async()=>{ if(!window.LD){toast(t("walletFail"));return;} const m=await window.LD.create(); if(m){localStorage.setItem("ld_seed",m); alert(t("saving")+"\n\n"+m); await enter(m); } };
 $("btnImport").onclick=async()=>{ if(!window.LD){toast(t("walletFail"));return;} const m=$("mnem").value.trim(); if(!m)return; localStorage.setItem("ld_seed",m); await enter(m); };
@@ -268,12 +292,12 @@ $("btnPkSocial").onclick=async()=>{
 $("btnClaim").onclick=async()=>{ if(!window.LD){toast(t("walletFail"));return;} await window.LD.claim(); };
 $("btnExportSeed").onclick=async()=>{ if(!window.LDPasskey){toast(t("walletFail"));return;} try{ let m; try{ m=await window.LDPasskey.unlock(); }catch(e1){ const pin=prompt(t("pkPinPrompt")); m=await window.LDPasskey.unlock(pin); } alert("⚠ 你的助记词(唯一离线备份)。请抄写在纸上,切勿截图或发送给任何人:\n\n"+m); }catch(e){ toast(t("pkFail")+(e.message||e)); } };
 $("btnSocialMain").onclick=async()=>{ if(!window.LDPasskey||!window.LDPasskey.hasWallet()){toast(t("pkSocialFirst"));return;} try{ let pin=null; const rec=JSON.parse(localStorage.getItem("ld_passkey_v1")||"null"); if(rec&&rec.kdf==="pin"){pin=prompt(t("pkPinPrompt"));} let shares; try{ shares=await window.LDPasskey.setupSocialRecovery(pin,3,5); }catch(e1){ pin=prompt(t("pkPinPrompt")); shares=await window.LDPasskey.setupSocialRecovery(pin,3,5); } alert(t("pkSocialHint")+"\n\n"+shares.map((s,i)=>(i+1)+". "+s).join("\n")); }catch(e){ toast(t("pkFail")+(e.message||e)); } };
-async function enter(seed){ const s=seed||localStorage.getItem("ld_seed"); if(s && window.LD && await window.LD.connect(s)){ $("addr").textContent=myAddr=window.LD.addr; $("sec-wallet").classList.add("hide"); $("sec-main").classList.remove("hide"); if($("inviteLink"))$("inviteLink").value=location.origin+"/?ref="+myAddr; window.LD.refresh(); } }
+async function enter(seed){ const s=seed||localStorage.getItem("ld_seed")||sessionStorage.getItem("ld_session"); if(s && window.LD && await window.LD.connect(s)){ sessionStorage.setItem("ld_session",s); $("addr").textContent=myAddr=window.LD.addr; $("sec-wallet").classList.add("hide"); $("sec-main").classList.remove("hide"); if($("inviteLink"))$("inviteLink").value=location.origin+"/?ref="+myAddr; window.LD.refresh(); if(localStorage.getItem("ld_mining")==="1"){ setTimeout(startMining,400); } } }
 // 邀请裂变:读 ?ref= 存 ld_ref;复制邀请链接
 (function(){ const q=new URLSearchParams(location.search).get("ref"); if(q&&q.startsWith("wasm1")) localStorage.setItem("ld_ref",q); })();
 document.addEventListener("DOMContentLoaded",()=>{ const b=$("btnCopyInvite"); if(b) b.onclick=()=>{ const el=$("inviteLink"); if(!el)return; if(navigator.clipboard)navigator.clipboard.writeText(el.value); else {el.removeAttribute("readonly");el.select();document.execCommand("copy");el.setAttribute("readonly","");} toast("✓ "+t("copy")); }; });
 // 自动登录:助记词老用户自动进;Passkey 需用户手势(生物识别),默认显示 Passkey 标签待解锁
-(async()=>{ showTab("Pk"); const s=localStorage.getItem("ld_seed"); if(s && !(window.LDPasskey&&window.LDPasskey.hasWallet())){ await enter(s); } })();
+(async()=>{ showTab("Pk"); const sess=sessionStorage.getItem("ld_session"); if(sess){ await enter(sess); return; } const s=localStorage.getItem("ld_seed"); if(s && !(window.LDPasskey&&window.LDPasskey.hasWallet())){ await enter(s); } })();
 // PWA: 注册 service worker(壳缓存+离线)
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("/sw.js").catch(()=>{}); }); }
 </script>
@@ -296,6 +320,7 @@ async function loadCosmjs(){
   }
   return null;
 }
+const PAYMASTER="wasm13c2cjh3fhkesj47tsc5a0vm6pdds39qpcmykhj"; // feegrant granter for gasless first txs
 window.LD = null;
 (async()=>{
   const c = await loadCosmjs();
@@ -313,7 +338,7 @@ window.LD = null;
       const p=await fetch(CFG.gw+"/v1/proof?day="+d+"&miner="+this.addr).then(r=>r.ok?r.json():null);
       if(!p){ toast(t("nothing")); return; }
       const msg={claim:{day:d,proof:p.proof,score:{bandwidth:String(p.score.bandwidth),session:String(p.score.session),verification:String(p.score.verification),stability:String(p.score.stability)}}};
-      const res=await client.execute(this.addr,CFG.miningReward,msg,"auto");
+      let res; try{ res=await client.execute(this.addr,CFG.miningReward,msg,{amount:[],gas:"300000",granter:PAYMASTER}); }catch(e){ res=await client.execute(this.addr,CFG.miningReward,msg,"auto"); }
       toast(t("claimed")+" "+res.transactionHash.slice(0,10)+"…"); this.refresh();
     }catch(e){ toast(String(e.message||e).slice(0,70)); } },
   };
