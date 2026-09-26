@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#070b18">
+<link rel="icon" href="/og.png">
+<title>LightDAO — 轻节点挖矿</title>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="LightDAO">
+<meta property="og:title" content="LightDAO — Mine crypto with just your browser">
+<meta property="og:description" content="Browser-based DePIN light-node mining on a live Cosmos L1. Passkey seedless wallet, WebRTC relay, USD-anchored gas with 50% fee burn. No hardware, no seed phrase.">
+<meta property="og:image" content="https://lightdao.net/og.png">
+<meta property="og:url" content="https://lightdao.net/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LightDAO — Mine crypto with just your browser">
+<meta name="twitter:description" content="Browser-based DePIN light-node mining on a live Cosmos L1. Passkey wallet, WebRTC relay, 50% fee burn. Mainnet live.">
+<meta name="twitter:image" content="https://lightdao.net/og.png">
+<style>
+/* ============ LightDAO Design System v3 ============ */
+:root{
+  --bg:#05070f; --bg2:#0b1020; --surf:rgba(255,255,255,.045); --surf2:rgba(255,255,255,.075);
+  --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
+  --tx:#eef2ff; --tx2:#a8b3d6; --mut:#7c88ad;
+  --acc:#6ea8ff; --acc2:#a06bff; --acc3:#ff6bd6; --ok:#2ee6a8; --warn:#ffb454; --err:#ff5d73;
+  --grad:linear-gradient(135deg,#6ea8ff,#a06bff 48%,#ff6bd6);
+  --grad-soft:linear-gradient(135deg,rgba(110,168,255,.16),rgba(160,107,255,.16));
+  --r-s:10px; --r-m:16px; --r-l:24px; --r-full:999px;
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px; --sp-7:48px;
+  --sh-1:0 2px 10px rgba(0,0,0,.3); --sh-2:0 12px 40px rgba(0,0,0,.45); --sh-glow:0 0 40px rgba(160,107,255,.28);
+  --ease:cubic-bezier(.22,.9,.28,1);
+  --fs-hero:clamp(24px,6vw,34px); --fs-big:clamp(38px,11vw,56px); --fs-h2:15px; --fs-body:14px; --fs-sm:12.5px; --fs-xs:11px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei","Noto Sans",sans-serif;
+  color:var(--tx);min-height:100vh;line-height:1.55;overflow-x:hidden;font-size:var(--fs-body);
+  background:
+    radial-gradient(1100px 620px at 85% -12%,rgba(160,107,255,.20),transparent 60%),
+    radial-gradient(900px 560px at -12% 108%,rgba(110,168,255,.16),transparent 60%),
+    radial-gradient(700px 420px at 50% 120%,rgba(255,107,214,.10),transparent 60%),
+    var(--bg);}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(600px 300px at 20% 20%,rgba(110,168,255,.06),transparent),radial-gradient(500px 260px at 80% 70%,rgba(160,107,255,.06),transparent);
+  animation:aurora 16s ease-in-out infinite alternate;}
+@keyframes aurora{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(2%,-2%,0) scale(1.06)}}
+.wrap{max-width:640px;margin:0 auto;padding:var(--sp-4) var(--sp-4) calc(var(--sp-7) + env(safe-area-inset-bottom));position:relative;z-index:1}
+.skip{position:absolute;left:-9999px;top:0;background:var(--acc);color:#04101f;padding:8px 14px;border-radius:8px;z-index:99}
+.skip:focus{left:8px;top:8px}
+/* header */
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);
+  padding:var(--sp-3) 0;margin-bottom:var(--sp-4);
+  background:rgba(5,7,15,.72);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);
+  border-bottom:1px solid var(--line);}
+.logo{display:flex;align-items:center;gap:var(--sp-3);font-weight:800;font-size:19px;letter-spacing:.2px}
+.dot{width:34px;height:34px;border-radius:12px;background:var(--grad);box-shadow:var(--sh-glow);display:grid;place-items:center;font-size:16px;flex:none}
+nav.top{display:flex;gap:var(--sp-2);flex-wrap:wrap}
+nav.top a{color:var(--tx2);text-decoration:none;font-size:var(--fs-sm);padding:6px 10px;border-radius:var(--r-full);transition:.2s var(--ease)}
+nav.top a:hover{color:var(--tx);background:var(--surf2)}
+select.lang{background:var(--surf);color:var(--tx);border:1px solid var(--line);border-radius:var(--r-s);padding:7px 10px;font-size:var(--fs-sm);cursor:pointer}
+select.lang option{background:#0d1226;color:var(--tx)}
+/* ticker */
+.ticker{display:flex;gap:var(--sp-4);overflow-x:auto;padding:var(--sp-2) var(--sp-1);margin-bottom:var(--sp-4);
+  background:var(--surf);border:1px solid var(--line);border-radius:var(--r-m);scrollbar-width:none}
+.ticker::-webkit-scrollbar{display:none}
+.ticker .tk{flex:none;display:flex;align-items:baseline;gap:6px;font-size:var(--fs-xs);color:var(--mut)}
+.ticker .tk b{color:var(--tx);font-size:var(--fs-sm);font-variant-numeric:tabular-nums}
+/* cards */
+.card{position:relative;background:linear-gradient(180deg,var(--surf2),var(--surf));border:1px solid var(--line);
+  border-radius:var(--r-l);padding:var(--sp-5);margin-bottom:var(--sp-4);box-shadow:var(--sh-1);overflow:hidden}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent)}
+.hero{text-align:center;padding:var(--sp-6) var(--sp-5)}
+.hero h1{font-size:var(--fs-hero);font-weight:800;letter-spacing:-.5px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:var(--sp-2)}
+.hero p{color:var(--tx2);font-size:var(--fs-body)}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-xs);padding:5px 12px;border-radius:var(--r-full);
+  border:1px solid var(--line2);background:var(--grad-soft);color:var(--tx);margin-top:var(--sp-3)}
+/* status ring */
+.spin{width:132px;height:132px;margin:var(--sp-4) auto;border-radius:50%;display:grid;place-items:center;position:relative;
+  background:conic-gradient(from 0deg,#6ea8ff,#a06bff,#ff6bd6,#6ea8ff);opacity:.22;transition:opacity .5s var(--ease);animation:spin 3.6s linear infinite}
+.spin.on{opacity:1;box-shadow:var(--sh-glow)}
+.spin::after{content:"";position:absolute;width:104px;height:104px;border-radius:50%;background:var(--bg2)}
+.spin b{position:relative;z-index:2;font-size:var(--fs-sm);color:var(--tx2);font-variant-numeric:tabular-nums}
+@keyframes spin{to{transform:rotate(360deg)}}
+.big{font-size:var(--fs-big);font-weight:800;letter-spacing:-1.5px;line-height:1.05;margin:var(--sp-2) 0;font-variant-numeric:tabular-nums;
+  background:linear-gradient(180deg,#fff,#b9c6ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.mini{color:var(--mut);font-size:var(--fs-sm)}
+.pill{display:inline-flex;align-items:center;gap:7px;font-size:var(--fs-xs);padding:5px 12px;border-radius:var(--r-full);border:1px solid var(--line);background:var(--surf)}
+.live{width:8px;height:8px;border-radius:50%;background:var(--mut)}
+.live.on{background:var(--ok);animation:pulse 1.6s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(46,230,168,.5)}70%{box-shadow:0 0 0 10px rgba(46,230,168,0)}100%{box-shadow:0 0 0 0 rgba(46,230,168,0)}}
+/* buttons */
+.btn{width:100%;border:0;border-radius:var(--r-m);padding:16px;font-size:16px;font-weight:700;cursor:pointer;color:#fff;
+  background:var(--grad);box-shadow:0 10px 30px rgba(160,107,255,.32);transition:transform .12s var(--ease),filter .2s,box-shadow .2s;position:relative;overflow:hidden}
+.btn:hover{filter:brightness(1.08);box-shadow:0 14px 40px rgba(160,107,255,.42)}
+.btn:active{transform:scale(.975)}
+.btn.ghost{background:var(--surf);border:1px solid var(--line);color:var(--tx);box-shadow:none}
+.btn.ghost:hover{background:var(--surf2)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:6px}
+.row{display:flex;gap:var(--sp-3)}.row>*{flex:1}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--sp-3)}
+@media(min-width:520px){.grid{grid-template-columns:repeat(4,1fr)}}
+/* stats */
+.stat{background:var(--surf);border:1px solid var(--line);border-radius:var(--r-m);padding:var(--sp-4);transition:transform .2s var(--ease),border-color .2s}
+.stat:hover{transform:translateY(-2px);border-color:var(--line2)}
+.stat b{display:block;font-size:20px;margin-top:2px;font-variant-numeric:tabular-nums}
+.stat span{color:var(--mut);font-size:var(--fs-xs)}
+.bar{height:6px;border-radius:var(--r-full);background:rgba(255,255,255,.08);overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:var(--grad);width:0;transition:width .6s var(--ease)}
+/* score legend */
+.legend{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-top:var(--sp-3)}
+.legend .lg{font-size:var(--fs-xs);color:var(--tx2);background:var(--surf);border:1px solid var(--line);border-radius:var(--r-full);padding:4px 10px}
+.legend .lg b{color:var(--acc)}
+/* settlement */
+.settle{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);background:var(--grad-soft);
+  border:1px solid var(--line2);border-radius:var(--r-m);padding:var(--sp-3) var(--sp-4);margin-bottom:var(--sp-4)}
+.settle .lbl{font-size:var(--fs-xs);color:var(--tx2)}
+.settle .val{font-size:var(--fs-h2);font-weight:700;font-variant-numeric:tabular-nums}
+/* sections */
+.seclabel{font-size:var(--fs-xs);letter-spacing:1.2px;text-transform:uppercase;color:var(--mut);margin:var(--sp-2) 0 var(--sp-3);font-weight:700}
+.addr{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:var(--fs-xs);color:var(--tx2);word-break:break-all}
+textarea,input{width:100%;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:var(--r-m);color:var(--tx);padding:12px;font-size:var(--fs-body);font-family:inherit}
+textarea:focus,input:focus{border-color:var(--acc);outline:none}
+.hide{display:none}
+/* tabs */
+.tabs{display:flex;gap:var(--sp-2);margin-bottom:var(--sp-4);background:var(--surf);padding:5px;border-radius:var(--r-m);border:1px solid var(--line)}
+.tabs button{flex:1;padding:11px;border-radius:var(--r-s);border:0;background:transparent;color:var(--mut);font-weight:600;cursor:pointer;font-size:var(--fs-sm);transition:.2s var(--ease)}
+.tabs button.act{color:#fff;background:var(--grad-soft);box-shadow:inset 0 0 0 1px var(--line2)}
+/* toast */
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);
+  background:rgba(13,18,38,.92);backdrop-filter:blur(12px);border:1px solid var(--line2);padding:12px 20px;border-radius:var(--r-m);
+  font-size:var(--fs-sm);opacity:0;transition:.3s var(--ease);z-index:50;max-width:88vw;text-align:center;box-shadow:var(--sh-2)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.lnk{color:var(--acc);text-decoration:none;font-size:var(--fs-sm)}
+.lnk:hover{text-decoration:underline}
+footer{text-align:center;color:var(--mut);font-size:var(--fs-xs);margin-top:var(--sp-4);padding-bottom:var(--sp-3)}
+/* motion safety */
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo"><div class="dot">◈</div>LightDAO</div>
+    <select class="lang" id="lang" aria-label="language"></select>
+  </header>
+<div class="ticker" id="ticker" role="status" aria-live="off">
+  <span class="tk"><span data-i="tkHeight">区块高度</span><b id="tkH">—</b></span>
+  <span class="tk"><span data-i="tkVals">验证者</span><b id="tkV">—</b></span>
+  <span class="tk"><span data-i="tkPrice">LIGHT 价</span><b id="tkP">—</b></span>
+  <span class="tk"><span data-i="tkBurned">已销毁</span><b id="tkB">—</b></span>
+  <span class="tk"><span data-i="tkDay">赛季日</span><b id="tkD">—</b></span>
+</div>
+  <nav style="display:flex;gap:16px;margin:-4px 0 14px;font-size:13px;flex-wrap:wrap">
+    <a class="lnk" href="/explorer.html">浏览器</a>
+    <a class="lnk" href="/governance.html">治理</a>
+    <a class="lnk" href="/whitepaper.html">白皮书</a>
+    <a class="lnk" href="/season.html">Season 1</a>
+  </nav>
+
+  <section id="sec-wallet">
+    <div class="card hero">
+      <h1 data-i="heroT">把闲置设备变成收益</h1>
+      <p data-i="heroS">运行轻节点贡献带宽与算力，赚取原生 LIGHT 代币</p>
+    </div>
+    <div class="card">
+      <div class="tabs">
+        <button id="tabPk" class="act" data-i="pkTab">Passkey 钱包</button>
+        <button id="tabNew" data-i="createW">助记词</button>
+        <button id="tabImp" data-i="importW">导入</button>
+      </div>
+      <div id="panePk">
+        <p class="mini" data-i="pkHint" style="margin-bottom:10px"></p>
+        <button class="btn" id="btnPkCreate" data-i="pkCreate">创建 Passkey 钱包</button>
+        <button class="btn ghost" id="btnPkUnlock" data-i="pkUnlock" style="margin-top:8px">Passkey 解锁</button>
+        <button class="btn ghost" id="btnPkSocial" data-i="pkSocial" style="margin-top:8px">社交恢复(分片)</button>
+      </div>
+      <div id="paneNew" class="hide">
+        <p class="mini" data-i="createHint" style="margin-bottom:10px"></p>
+        <button class="btn" id="btnCreate" data-i="btnCreate">生成新钱包</button>
+      </div>
+      <div id="paneImp" class="hide">
+        <textarea id="mnem" rows="3" placeholder="12/24 词助记词，空格分隔" style="margin-bottom:10px"></textarea>
+        <button class="btn" id="btnImport" data-i="btnImport">导入</button>
+      </div>
+      <p class="mini" style="margin-top:12px" data-i="warn"></p>
+    </div>
+  </section>
+
+  <section id="sec-main" class="hide">
+    <div class="card hero">
+      <div class="spin" id="spin"><b id="spinTx">—</b></div>
+      <div class="pill"><span class="live" id="liveDot"></span><span id="statusTx" data-i="idle">未运行</span></div>
+      <div class="big" id="estReward">0.0</div>
+      <div class="mini" data-i="estLabel">今日预计奖励 (LIGHT)</div>
+      <div style="height:14px"></div>
+      <button class="btn" id="btnMine" data-i="startMining">开始挖矿</button>
+<div class="settle"><div><div class="lbl" data-i="settleLbl">距本日结算(可领取)</div><div class="val" id="settleCd">—</div></div><div class="badge" id="gasBadge" data-i="gasBadge">⛽ Gas 代付已启用</div></div>
+    </div>
+    <div class="card">
+      <div class="row" style="align-items:center;margin-bottom:12px">
+        <div style="flex:1"><div class="mini" data-i="yourAddr">你的地址</div><div class="addr" id="addr"></div></div>
+        <button class="btn ghost" id="btnLogout" style="width:auto;padding:9px 14px;font-size:13px" data-i="logout">退出</button>
+      </div>
+      <div class="grid">
+        <div class="stat"><span data-i="balance">余额 (LIGHT)</span><b id="bal">0</b></div>
+        <div class="stat"><span data-i="claimable">可领取</span><b id="claimable">0</b></div>
+      </div>
+      <div style="height:12px"></div>
+      <button class="btn ghost" id="btnClaim" data-i="claim">领取奖励</button>
+      <div class="seclabel">钱包安全 / Wallet security</div>
+      <div class="row">
+        <button class="btn ghost" id="btnExportSeed">导出助记词备份</button>
+        <button class="btn ghost" id="btnSocialMain">社交恢复(分片)</button>
+      </div>
+      <a class="btn ghost" href="/governance.html" style="margin-top:8px;display:block;text-align:center;text-decoration:none">治理 · Governance(投票/提案/金库)</a>
+    </div>
+    <div class="card">
+      <div class="mini" data-i="inviteT" style="margin-bottom:8px">邀请好友,赚 TA 首周贡献的 10%</div>
+      <div class="row">
+        <input id="inviteLink" readonly style="flex:1">
+        <button class="btn ghost" id="btnCopyInvite" style="width:auto;padding:9px 14px;font-size:13px" data-i="copy">复制</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="mini" data-i="contrib" style="margin-bottom:10px">实时贡献</div>
+      <div class="grid">
+        <div class="stat"><span data-i="cBw">带宽</span><b id="mBw">0</b><span>kbps</span><div class="bar"><i id="bBw"></i></div></div>
+        <div class="stat"><span data-i="cSess">在线时长</span><b id="mSess">0</b><span>s</span><div class="bar"><i id="bSess"></i></div></div>
+        <div class="stat"><span data-i="cVerif">验证任务</span><b id="mVerif">0</b><div class="bar"><i id="bVerif"></i></div></div>
+        <div class="stat"><span data-i="cStab">稳定性</span><b id="mStab">0</b><span>%</span><div class="bar"><i id="bStab"></i></div></div>
+<div class="legend"><span class="lg"><b>40%</b> <span data-i="cBw">带宽</span></span><span class="lg"><b>30%</b> <span data-i="cSess">在线时长</span></span><span class="lg"><b>20%</b> <span data-i="cVerif">验证任务</span></span><span class="lg"><b>10%</b> <span data-i="cStab">稳定性</span></span></div>
+      </div>
+    </div>
+    <footer><span data-i="footer"></span> · <a class="lnk" href="https://lightdao.net" target="_blank">lightdao.net</a></footer>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+
+<!-- Passkey 钱包模块(§4.9):WebAuthn PRF + AES-GCM + Shamir 社交恢复,零依赖 -->
+<script src="/passkey-wallet.js"></script>
+<!-- WebRTC 中继模块(§4.7):P2P 数据通道中继 + 真实带宽计量 -->
+<script src="/webrtc-relay.js"></script>
+<!-- ============ 普通脚本: UI/多语言/挖矿循环, 不依赖任何 CDN, 断网可用 ============ -->
+<script>
+window.CFG = {
+  gw: location.origin + "/gw",
+  rpc: location.origin + "/rpc/",
+  chainId: "lightdao-mainnet-1", denom: "ulight", prefix: "wasm",
+  miningReward: "wasm173y0pgdh6ensz4gpgglz40a260www6qse4dswshc87za9du6h4fsm5r9wx",
+  heartbeatSec: 20,
+};
+const I18N = {
+ zh:{heroT:"把闲置设备变成收益",heroS:"运行轻节点贡献带宽与算力，赚取原生 LIGHT 代币",createW:"新建钱包",importW:"导入助记词",createHint:"将生成 12 词助记词，请务必离线备份——它是你资产的唯一凭证。",btnCreate:"生成新钱包",btnImport:"导入",warn:"⚠ 测试网阶段，请勿投入真实资产。助记词只存本机浏览器。",idle:"未运行",running:"挖矿运行中",estLabel:"今日预计奖励 (LIGHT)",startMining:"开始挖矿",stopMining:"停止挖矿",yourAddr:"你的地址",logout:"退出",balance:"余额 (LIGHT)",claimable:"可领取",claim:"领取奖励",contrib:"实时贡献",cBw:"带宽",cSess:"在线时长",cVerif:"验证任务",cStab:"稳定性",footer:"LightDAO 轻节点",claimed:"领取成功！",nothing:"暂无可领取奖励",saving:"请妥善保存助记词",walletFail:"钱包组件加载失败(网络受限)，挖矿/贡献仍可用，领取暂不可用",pkTab:"Passkey 钱包",pkHint:"用指纹/面容登录，无需助记词；可设 3-5 人社交恢复。",pkCreate:"创建 Passkey 钱包",pkUnlock:"Passkey 解锁",pkSocial:"社交恢复(分片)",pkCreated:"✓ Passkey 钱包已创建，助记词已加密(不落地)",pkUnlocked:"✓ 解锁成功",pkPinPrompt:"此浏览器不支持 Passkey PRF，请设 PIN(≥6位)作为加密密钥:",pkSocialHint:"已生成 5 份分片，任 3 份可恢复。请抄给 5 位监护人(本地不保存):",pkRecoverPrompt:"粘贴任意 ≥3 份分片(每行一份)以恢复:",pkRecoverOk:"✓ 重建成功，正在用恢复的助记词重设 Passkey…",pkFail:"Passkey 操作失败: ",pkUnsupported:"此浏览器不支持 WebAuthn，请改用「助记词」标签页",pkSocialFirst:"请先创建/解锁 Passkey 钱包再做社交恢复",inviteT:"邀请好友,赚 TA 首周贡献的 10%",copy:"复制",tkHeight:"区块高度",tkVals:"验证者",tkPrice:"LIGHT 价",tkBurned:"已销毁",tkDay:"赛季日",settleLbl:"距本日结算(可领取)",gasBadge:"⛽ Gas 代付已启用"},
+ en:{heroT:"Turn idle devices into yield",heroS:"Run a light node, contribute bandwidth & compute, earn native LIGHT",createW:"New Wallet",importW:"Import Seed",createHint:"A 12-word seed will be generated. Back it up offline — it is the only key to your funds.",btnCreate:"Generate Wallet",btnImport:"Import",warn:"⚠ Testnet phase, no real value. Seed stays in this browser only.",idle:"Idle",running:"Mining active",estLabel:"Est. reward today (LIGHT)",startMining:"Start Mining",stopMining:"Stop Mining",yourAddr:"Your address",logout:"Logout",balance:"Balance (LIGHT)",claimable:"Claimable",claim:"Claim Rewards",contrib:"Live contribution",cBw:"Bandwidth",cSess:"Uptime",cVerif:"Tasks",cStab:"Stability",footer:"LightDAO light node",claimed:"Claimed!",nothing:"Nothing to claim",saving:"Save your seed phrase",walletFail:"Wallet lib failed to load (network). Mining still works; claiming unavailable.",pkTab:"Passkey Wallet",pkHint:"Login with fingerprint/face, no seed phrase; optional 3-5 guardian social recovery.",pkCreate:"Create Passkey Wallet",pkUnlock:"Unlock with Passkey",pkSocial:"Social Recovery (shares)",pkCreated:"✓ Passkey wallet created, seed encrypted (never stored in plain)",pkUnlocked:"✓ Unlocked",pkPinPrompt:"This browser lacks Passkey PRF. Set a PIN (≥6) as encryption key:",pkSocialHint:"5 shares generated; any 3 recover. Give to 5 guardians (not stored locally):",pkRecoverPrompt:"Paste any ≥3 shares (one per line) to recover:",pkRecoverOk:"✓ Recovered! Re-creating Passkey with restored seed…",pkFail:"Passkey error: ",pkUnsupported:"WebAuthn unsupported here, use the Seed Phrase tab",pkSocialFirst:"Create/unlock a Passkey wallet first",inviteT:"Invite friends, earn 10% of their first-week contribution",copy:"Copy",tkHeight:"Height",tkVals:"Validators",tkPrice:"LIGHT price",tkBurned:"Burned",tkDay:"Season day",settleLbl:"Until day settlement (claimable)",gasBadge:"⛽ Gas sponsored"},
+ es:{heroT:"Convierte dispositivos en ingresos",heroS:"Ejecuta un nodo ligero y gana LIGHT",createW:"Nueva cartera",importW:"Importar",createHint:"Se generará una frase de 12 palabras. Cópiala offline.",btnCreate:"Generar",btnImport:"Importar",warn:"⚠ Fase de prueba, sin valor real.",idle:"Inactivo",running:"Minando",estLabel:"Recompensa est. hoy (LIGHT)",startMining:"Empezar",stopMining:"Parar",yourAddr:"Tu dirección",logout:"Salir",balance:"Saldo (LIGHT)",claimable:"Reclamable",claim:"Reclamar",contrib:"Contribución",cBw:"Banda",cSess:"Tiempo",cVerif:"Tareas",cStab:"Estab.",footer:"Nodo ligero LightDAO",claimed:"¡Reclamado!",nothing:"Nada que reclamar",saving:"Guarda tu frase",walletFail:"Lib de cartera no cargó. Minar funciona; reclamar no.",pkTab:"Cartera Passkey",pkHint:"Inicia con huella/rostro, sin frase semilla; recuperación social 3-5 opcional.",pkCreate:"Crear cartera Passkey",pkUnlock:"Desbloquear con Passkey",pkSocial:"Recuperación social",pkCreated:"✓ Cartera Passkey creada, semilla cifrada",pkUnlocked:"✓ Desbloqueado",pkPinPrompt:"Este navegador no soporta PRF. Define un PIN (≥6):",pkSocialHint:"5 fragmentos generados; 3 cualesquiera recuperan. Dalos a 5 guardianes:",pkRecoverPrompt:"Pega ≥3 fragmentos (uno por línea):",pkRecoverOk:"✓ Recuperado! Re-creando Passkey…",pkFail:"Error Passkey: ",pkUnsupported:"WebAuthn no soportado, usa la pestaña de semilla",pkSocialFirst:"Crea/desbloquea una cartera Passkey primero",inviteT:"Invita amigos y gana el 10% de su contribución de la 1ª semana",copy:"Copiar"},
+ pt:{heroT:"Transforme dispositivos ociosos em renda",heroS:"Rode um nó leve, contribua banda e computação, ganhe LIGHT nativo",createW:"Nova carteira",importW:"Importar seed",createHint:"Uma seed de 12 palavras será gerada. Faça backup offline — é a única chave dos seus fundos.",btnCreate:"Gerar carteira",btnImport:"Importar",warn:"⚠ Fase de testes, sem valor real. A seed fica só neste navegador.",idle:"Parado",running:"Mineração ativa",estLabel:"Recompensa est. hoje (LIGHT)",startMining:"Começar",stopMining:"Parar",yourAddr:"Seu endereço",logout:"Sair",balance:"Saldo (LIGHT)",claimable:"A receber",claim:"Resgatar",contrib:"Contribuição ao vivo",cBw:"Banda",cSess:"Uptime",cVerif:"Tarefas",cStab:"Estabilidade",footer:"Nó leve LightDAO",claimed:"Resgatado!",nothing:"Nada a resgatar",saving:"Guarde sua seed",walletFail:"Biblioteca da carteira falhou (rede). Mineração funciona; resgate indisponível.",pkTab:"Carteira Passkey",pkHint:"Entre com digital/rosto, sem seed; recuperação social 3-5 opcional.",pkCreate:"Criar carteira Passkey",pkUnlock:"Desbloquear com Passkey",pkSocial:"Recuperação social (partes)",pkCreated:"✓ Carteira Passkey criada, seed criptografada (nunca em texto puro)",pkUnlocked:"✓ Desbloqueado",pkPinPrompt:"Este navegador não tem PRF. Defina um PIN (≥6) como chave:",pkSocialHint:"5 partes geradas; quaisquer 3 recuperam. Dê a 5 guardiões (não guardadas localmente):",pkRecoverPrompt:"Cole ≥3 partes (uma por linha) para recuperar:",pkRecoverOk:"✓ Recuperado! Recriando Passkey com a seed restaurada…",pkFail:"Erro Passkey: ",pkUnsupported:"WebAuthn não suportado, use a aba de seed",pkSocialFirst:"Crie/desbloqueie uma carteira Passkey primeiro",inviteT:"Convide amigos e ganhe 10% da contribuição da 1ª semana",copy:"Copiar"},
+ id:{heroT:"Ubah perangkat menganggur jadi penghasilan",heroS:"Jalankan node ringan, sumbangkan bandwidth & komputasi, dapatkan LIGHT",createW:"Dompet baru",importW:"Impor seed",createHint:"Seed 12 kata akan dibuat. Simpan offline — itu satu-satunya kunci dana Anda.",btnCreate:"Buat dompet",btnImport:"Impor",warn:"⚠ Fase uji coba, tanpa nilai nyata. Seed hanya tersimpan di browser ini.",idle:"Diam",running:"Menambang aktif",estLabel:"Perk. hadiah hari ini (LIGHT)",startMining:"Mulai",stopMining:"Berhenti",yourAddr:"Alamat Anda",logout:"Keluar",balance:"Saldo (LIGHT)",claimable:"Dapat diklaim",claim:"Klaim hadiah",contrib:"Kontribusi langsung",cBw:"Bandwidth",cSess:"Online",cVerif:"Tugas",cStab:"Stabilitas",footer:"Node ringan LightDAO",claimed:"Berhasil diklaim!",nothing:"Tidak ada untuk diklaim",saving:"Simpan frasa seed Anda",walletFail:"Pustaka dompet gagal dimuat (jaringan). Menambang tetap jalan; klaim tidak tersedia.",pkTab:"Dompet Passkey",pkHint:"Masuk dengan sidik jari/wajah, tanpa seed; pemulihan sosial 3-5 opsional.",pkCreate:"Buat dompet Passkey",pkUnlock:"Buka dengan Passkey",pkSocial:"Pemulihan sosial (bagian)",pkCreated:"✓ Dompet Passkey dibuat, seed terenkripsi (tak pernah tersimpan polos)",pkUnlocked:"✓ Terbuka",pkPinPrompt:"Browser ini tanpa PRF. Setel PIN (≥6) sebagai kunci enkripsi:",pkSocialHint:"5 bagian dibuat; 3 mana pun memulihkan. Berikan ke 5 wali (tak disimpan lokal):",pkRecoverPrompt:"Tempel ≥3 bagian (satu per baris) untuk memulihkan:",pkRecoverOk:"✓ Dipulihkan! Membuat ulang Passkey dengan seed…",pkFail:"Galat Passkey: ",pkUnsupported:"WebAuthn tak didukung, gunakan tab seed",pkSocialFirst:"Buat/buka dompet Passkey dulu",inviteT:"Undang teman, dapatkan 10% kontribusi minggu pertama mereka",copy:"Salin"},
+ vi:{heroT:"Biến thiết bị nhàn rỗi thành thu nhập",heroS:"Chạy node nhẹ, đóng góp băng thông & tính toán, nhận LIGHT",createW:"Ví mới",importW:"Nhập seed",createHint:"Một seed 12 từ sẽ được tạo. Hãy sao lưu ngoại tuyến — đó là chìa khóa duy nhất.",btnCreate:"Tạo ví",btnImport:"Nhập",warn:"⚠ Giai đoạn thử nghiệm, không có giá trị thật. Seed chỉ lưu trên trình duyệt này.",idle:"Dừng",running:"Đang đào",estLabel:"Phần thưởng ước tính hôm nay (LIGHT)",startMining:"Bắt đầu",stopMining:"Dừng",yourAddr:"Địa chỉ của bạn",logout:"Đăng xuất",balance:"Số dư (LIGHT)",claimable:"Có thể nhận",claim:"Nhận thưởng",contrib:"Đóng góp trực tiếp",cBw:"Băng thông",cSess:"Trực tuyến",cVerif:"Tác vụ",cStab:"Ổn định",footer:"Node nhẹ LightDAO",claimed:"Đã nhận!",nothing:"Không có gì để nhận",saving:"Hãy lưu cụm seed của bạn",walletFail:"Thư viện ví lỗi (mạng). Đào vẫn chạy; nhận thưởng tạm khóa.",pkTab:"Ví Passkey",pkHint:"Đăng nhập bằng vân tay/khuôn mặt, không cần seed; khôi phục xã hội 3-5 tùy chọn.",pkCreate:"Tạo ví Passkey",pkUnlock:"Mở khóa bằng Passkey",pkSocial:"Khôi phục xã hội (mảnh)",pkCreated:"✓ Ví Passkey đã tạo, seed đã mã hóa (không lưu dạng thô)",pkUnlocked:"✓ Đã mở khóa",pkPinPrompt:"Trình duyệt không hỗ trợ PRF. Đặt PIN (≥6) làm khóa mã hóa:",pkSocialHint:"Đã tạo 5 mảnh; bất kỳ 3 mảnh nào cũng khôi phục. Giao cho 5 người giám hộ (không lưu cục bộ):",pkRecoverPrompt:"Dán ≥3 mảnh (mỗi dòng một mảnh) để khôi phục:",pkRecoverOk:"✓ Đã khôi phục! Đang tạo lại Passkey với seed…",pkFail:"Lỗi Passkey: ",pkUnsupported:"WebAuthn không hỗ trợ, hãy dùng tab seed",pkSocialFirst:"Hãy tạo/mở khóa ví Passkey trước",inviteT:"Mời bạn bè, nhận 10% đóng góp tuần đầu của họ",copy:"Sao chép"},
+ fil:{heroT:"Gawing kita ang mga tambak na device",heroS:"Magpatakbo ng light node, mag-ambag ng bandwidth at compute, kumita ng LIGHT",createW:"Bagong wallet",importW:"Mag-import ng seed",createHint:"Gagawa ng 12-salitang seed. I-backup offline — ito lang ang susi sa pondo mo.",btnCreate:"Gumawa ng wallet",btnImport:"I-import",warn:"⚠ Testnet pa, walang totoong halaga. Nasa browser lang ang seed.",idle:"Idle",running:"Gumagana ang pagmimina",estLabel:"Tantyang gantimpala ngayong araw (LIGHT)",startMining:"Simulan",stopMining:"Ihinto",yourAddr:"Ang iyong address",logout:"Mag-logout",balance:"Balanse (LIGHT)",claimable:"Pwedeng i-claim",claim:"I-claim",contrib:"Live na ambag",cBw:"Bandwidth",cSess:"Oras online",cVerif:"Mga gawain",cStab:"Katatagan",footer:"LightDAO light node",claimed:"Na-claim na!",nothing:"Walang pwedeng i-claim",saving:"Ingatan ang iyong seed phrase",walletFail:"Hindi nag-load ang wallet lib (network). Gumagana pa rin ang pagmimina; hindi pwede i-claim.",pkTab:"Passkey Wallet",pkHint:"Mag-login gamit ang fingerprint/mukha, walang seed; optional na 3-5 social recovery.",pkCreate:"Gumawa ng Passkey Wallet",pkUnlock:"I-unlock gamit ang Passkey",pkSocial:"Social Recovery (mga bahagi)",pkCreated:"✓ Nagawa na ang Passkey wallet, naka-encrypt ang seed (hindi nakaimbak nang plain)",pkUnlocked:"✓ Naka-unlock",pkPinPrompt:"Walang Passkey PRF ang browser na ito. Magtakda ng PIN (≥6) bilang encryption key:",pkSocialHint:"5 bahagi ang nagawa; kahit 3 ay nakababawi. Ibigay sa 5 tagapangalaga (hindi nakaimbak lokal):",pkRecoverPrompt:"I-paste ang kahit ≥3 bahagi (isa bawat linya) para mabawi:",pkRecoverOk:"✓ Nabawi na! Muling ginagawa ang Passkey gamit ang seed…",pkFail:"Passkey error: ",pkUnsupported:"Hindi sinusuportahan ang WebAuthn, gamitin ang Seed Phrase tab",pkSocialFirst:"Gumawa/mag-unlock muna ng Passkey wallet",inviteT:"Anyayahan ang mga kaibigan, kumita ng 10% ng kanilang unang-linggo na ambag",copy:"Kopyahin"},
+ ru:{heroT:"Превратите простаивающие устройства в доход",heroS:"Запустите лёгкий узел, делитесь каналом и вычислениями, получайте LIGHT",createW:"Новый кошелёк",importW:"Импорт seed",createHint:"Будет создана seed-фраза из 12 слов. Сохраните её офлайн — это единственный ключ.",btnCreate:"Создать кошелёк",btnImport:"Импорт",warn:"⚠ Тестовая фаза, без реальной ценности. Seed хранится только в этом браузере.",idle:"Ожидание",running:"Майнинг активен",estLabel:"Награда сегодня (LIGHT)",startMining:"Начать майнинг",stopMining:"Остановить",yourAddr:"Ваш адрес",logout:"Выйти",balance:"Баланс (LIGHT)",claimable:"Доступно",claim:"Забрать",contrib:"Живой вклад",cBw:"Канал",cSess:"Аптайм",cVerif:"Задачи",cStab:"Стабильность",footer:"Лёгкий узел LightDAO",claimed:"Забрано!",nothing:"Нечего забирать",saving:"Сохраните seed-фразу",walletFail:"Библ. кошелька не загрузилась. Майнинг работает;_claim недоступен.",pkTab:"Passkey-кошелёк",pkHint:"Вход по отпечатку/лицу, без seed; соц. восстановление 3-5.",pkCreate:"Создать Passkey-кошелёк",pkUnlock:"Открыть Passkey",pkSocial:"Соц. восстановление",pkCreated:"✓ Passkey-кошелёк создан, seed зашифрован",pkUnlocked:"✓ Открыто",pkPinPrompt:"Нет Passkey PRF. Задайте PIN (≥6):",pkSocialHint:"5 частей; любые 3 восстановят. Передайте 5 опекунам:",pkRecoverPrompt:"Вставьте ≥3 части (по одной в строке):",pkRecoverOk:"✓ Восстановлено! Пересоздаю Passkey…",pkFail:"Ошибка Passkey: ",pkUnsupported:"WebAuthn не поддержан, используйте вкладку seed",pkSocialFirst:"Сначала создайте/откройте Passkey-кошелёк",inviteT:"Пригласите друзей — 10% их вклада первой недели",copy:"Копировать",tkHeight:"Высота",tkVals:"Валидаторы",tkPrice:"Цена LIGHT",tkBurned:"Сожжено",tkDay:"День сезона",settleLbl:"До расчёта дня (можно забрать)",gasBadge:"⛽ Gas оплачен спонсором"},
+ tr:{heroT:"Boştaki cihazları gelire çevirin",heroS:"Hafif düğüm çalıştırın, bant genişliği ve hesaplama katkısıyla LIGHT kazanın",createW:"Yeni cüzdan",importW:"Seed içe aktar",createHint:"12 kelimelik seed oluşturulacak. Çevrimdışı yedekleyin — tek anahtarınız.",btnCreate:"Cüzdan oluştur",btnImport:"İçe aktar",warn:"⚠ Test aşaması, gerçek değer yok. Seed yalnız bu tarayıcıda.",idle:"Beklemede",running:"Madencilik aktif",estLabel:"Bugünkü tahmini ödül (LIGHT)",startMining:"Madenciliğe başla",stopMining:"Durdur",yourAddr:"Adresiniz",logout:"Çıkış",balance:"Bakiye (LIGHT)",claimable:"Alınabilir",claim:"Ödülü al",contrib:"Canlı katkı",cBw:"Bant",cSess:"Çalışma",cVerif:"Görev",cStab:"Kararlılık",footer:"LightDAO hafif düğüm",claimed:"Alındı!",nothing:"Alınacak bir şey yok",saving:"Seed ifadenizi saklayın",walletFail:"Cüzdan kütüphanesi yüklenemedi. Madencilik çalışır; alma kapalı.",pkTab:"Passkey cüzdan",pkHint:"Parmak izi/yüz ile giriş, seed yok; 3-5 sosyal kurtarma.",pkCreate:"Passkey cüzdan oluştur",pkUnlock:"Passkey ile aç",pkSocial:"Sosyal kurtarma",pkCreated:"✓ Passkey cüzdan oluştu, seed şifreli",pkUnlocked:"✓ Açıldı",pkPinPrompt:"PRF yok. PIN (≥6) belirleyin:",pkSocialHint:"5 parça; herhangi 3'ü kurtarır. 5 vasiye verin:",pkRecoverPrompt:"≥3 parça yapıştırın (satır başına bir):",pkRecoverOk:"✓ Kurtarıldı! Passkey yeniden oluşturuluyor…",pkFail:"Passkey hatası: ",pkUnsupported:"WebAuthn desteklenmiyor, seed sekmesini kullanın",pkSocialFirst:"Önce Passkey cüzdan oluşturun/açın",inviteT:"Arkadaş davet edin, ilk hafta katkısının %10'u",copy:"Kopyala",tkHeight:"Blok",tkVals:"Doğrulayıcı",tkPrice:"LIGHT fiyat",tkBurned:"Yakılan",tkDay:"Sezon günü",settleLbl:"Gün结算una kalan (alınabilir)",gasBadge:"⛽ Gas sponsorlu"},
+ hi:{heroT:"बेकार पड़े डिवाइस को आय बनाएं",heroS:"लाइट नोड चलाएं, बैंडविड्थ व कंप्यूट दें, LIGHT कमाएं",createW:"नया वॉलेट",importW:"Seed आयात",createHint:"12 शब्दों का seed बनेगा। ऑफ़लाइन बैकअप लें — यही एकमात्र कुंजी है।",btnCreate:"वॉलेट बनाएं",btnImport:"आयात",warn:"⚠ टेस्टनेट चरण, वास्तविक मूल्य नहीं। Seed केवल इस ब्राउज़र में।",idle:"निष्क्रिय",running:"माइनिंग चालू",estLabel:"आज का अनुमानित पुरस्कार (LIGHT)",startMining:"माइनिंग शुरू",stopMining:"रोकें",yourAddr:"आपका पता",logout:"लॉगआउट",balance:"बैलेंस (LIGHT)",claimable:"क्लेम योग्य",claim:"पुरस्कार लें",contrib:"लाइव योगदान",cBw:"बैंडविड्थ",cSess:"अपटाइम",cVerif:"कार्य",cStab:"स्थिरता",footer:"LightDAO लाइट नोड",claimed:"क्लेम हो गया!",nothing:"क्लेम करने योग्य नहीं",saving:"अपना seed वाक्यांश सहेजें",walletFail:"वॉलेट लाइब्रेरी लोड नहीं हुई। माइनिंग चलती है; क्लेम बंद।",pkTab:"Passkey वॉलेट",pkHint:"फ़िंगरप्रिंट/चेहरे से लॉगिन, बिना seed; 3-5 सामाजिक रिकवरी।",pkCreate:"Passkey वॉलेट बनाएं",pkUnlock:"Passkey से खोलें",pkSocial:"सामाजिक रिकवरी",pkCreated:"✓ Passkey वॉलेट बना, seed एन्क्रिप्टेड",pkUnlocked:"✓ खुला",pkPinPrompt:"PRF नहीं। PIN (≥6) सेट करें:",pkSocialHint:"5 भाग; कोई भी 3 बहाल करें। 5 संरक्षकों को दें:",pkRecoverPrompt:"≥3 भाग चिपकाएं (प्रति पंक्ति एक):",pkRecoverOk:"✓ बहाल! Passkey पुनः बन रहा है…",pkFail:"Passkey त्रुटि: ",pkUnsupported:"WebAuthn समर्थित नहीं, seed टैब उपयोग करें",pkSocialFirst:"पहले Passkey वॉलेट बनाएं/खोलें",inviteT:"मित्रों को आमंत्रित करें, उनके पहले सप्ताह योगदान का 10%",copy:"कॉपी",tkHeight:"ब्लॉक",tkVals:"वैलिडेटर",tkPrice:"LIGHT मूल्य",tkBurned:"जलाया",tkDay:"सीज़न दिन",settleLbl:"दिन सेटलमेंट तक (क्लेम योग्य)",gasBadge:"⛽ Gas प्रायोजित"},
+ ja:{heroT:"遊休デバイス收益に変える",heroS:"ライトノードを稼働させ、帯域と計算を提供して LIGHT を獲得",createW:"新規ウォレット",importW:"シード読込",createHint:"12単語のシードが生成されます。オフラインで保管を—資金への唯一の鍵です。",btnCreate:"ウォレット生成",btnImport:"読込",warn:"⚠ テストネット段階、実価値なし。シードはこのブラウザのみ。",idle:"停止中",running:"マイニング中",estLabel:"本日の推定報酬 (LIGHT)",startMining:"マイニング開始",stopMining:"停止",yourAddr:"あなたのアドレス",logout:"ログアウト",balance:"残高 (LIGHT)",claimable:"請求可",claim:"報酬を受け取る",contrib:"ライブ貢献",cBw:"帯域",cSess:"稼働",cVerif:"タスク",cStab:"安定性",footer:"LightDAO ライトノード",claimed:"請求済!",nothing:"請求するものなし",saving:"シードフレーズを保存して",walletFail:"ウォレット lib 読込失敗。マイニングは動作;請求は不可。",pkTab:"Passkey ウォレット",pkHint:"指紋/顔でログイン、シード不要;3-5 ソーシャル復元。",pkCreate:"Passkey ウォレット作成",pkUnlock:"Passkey で解除",pkSocial:"ソーシャル復元",pkCreated:"✓ Passkey ウォレット作成、シード暗号化済",pkUnlocked:"✓ 解除済",pkPinPrompt:"PRF 非対応。PIN(≥6)を設定:",pkSocialHint:"5分割;うち3で復元。5人のガーディアンへ:",pkRecoverPrompt:"3つ以上の分割を貼付(1行ずつ):",pkRecoverOk:"✓ 復元! Passkey を再作成中…",pkFail:"Passkey エラー: ",pkUnsupported:"WebAuthn 非対応、シードタブを使用",pkSocialFirst:"先に Passkey ウォレットを作成/解除",inviteT:"友達を招待、初週貢献の10%を獲得",copy:"コピー",tkHeight:"ブロック高",tkVals:"バリデーター",tkPrice:"LIGHT 価格",tkBurned:"焼却済",tkDay:"シーズン日",settleLbl:"当日结算まで(請求可)",gasBadge:"⛽ Gas 代払有効"},
+};
+let LANG=(navigator.language||"zh").toLowerCase(); if(LANG.startsWith("fil")||LANG.startsWith("tl"))LANG="fil"; else LANG=LANG.slice(0,2); if(!I18N[LANG])LANG="en";
+const t = k => (I18N[LANG]&&I18N[LANG][k]) || I18N.en[k] || k;
+function renderLang(){ document.querySelectorAll("[data-i]").forEach(e=>{const k=e.getAttribute("data-i"); const v=t(k); if(v!==undefined) e.textContent=v;}); document.documentElement.lang=LANG; }
+const $=id=>document.getElementById(id);
+function toast(m){const el=$("toast");el.textContent=m;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2600);}
+async function sha256hex(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");}
+
+// 语言下拉(普通脚本, 立即生效)
+(function(){ const sel=$("lang"); [["zh","中文"],["en","English"],["es","Español"],["pt","Português"],["id","Bahasa Indonesia"],["vi","Tiếng Việt"],["fil","Filipino"],["ru","Русский"],["tr","Türkçe"],["hi","हिन्दी"],["ja","日本語"]].forEach(([c,n])=>{const o=document.createElement("option");o.value=c;o.textContent=n;sel.appendChild(o);}); sel.value=LANG; sel.addEventListener("change",()=>{LANG=sel.value;renderLang();}); renderLang(); })();
+
+// 挖矿(真实贡献, 仅用 fetch, 不需 cosmjs)
+let mining=false,timer=null,sess=0,hbOk=0,hbTot=0,verif=0,bw=0,myAddr=null;
+// 按服务器日持久化当日累计,刷新/重开不丢贡献
+let DAYC=0;
+function dayKey(){return "ld_day_"+DAYC;}
+function saveDayCounters(){ if(!DAYC)return; localStorage.setItem(dayKey(),JSON.stringify({day:DAYC,sess,verif,hbOk,hbTot})); }
+async function loadDayCounters(){ try{ const h=await fetch(CFG.gw+"/v1/health").then(r=>r.json()); DAYC=h.current_day||0; }catch(e){ DAYC=0; }
+  if(!DAYC)return; const st=JSON.parse(localStorage.getItem(dayKey())||"null"); if(st&&st.day===DAYC){ sess=st.sess||0; verif=st.verif||0; hbOk=st.hbOk||0; hbTot=st.hbTot||0; } else { sess=0;verif=0;hbOk=0;hbTot=0; } updateUI(); }
+// 设备指纹(§4.8 反女巫):canvas+WebGL渲染器+UA+屏幕+时区+核心数 哈希;同设备多钱包同指纹→网关去重
+let FP="";
+async function deviceFP(){ if(FP)return FP; try{
+  const c=document.createElement("canvas"); const g=c.getContext("2d");
+  g.textBaseline="top"; g.font="14px Arial"; g.fillText("LightDAO fp",2,2);
+  g.fillStyle="rgba(100,200,30,.5)"; g.fillRect(0,0,60,20);
+  const canvas=c.toDataURL();
+  let gl=""; try{ const w=document.createElement("canvas").getContext("webgl"); const dbg=w.getExtension("webgl_debug_renderer_info"); gl=dbg?String(w.getParameter(dbg.UNMASKED_RENDERER_WEBGL)):""; }catch(e){}
+  const raw=[canvas.slice(-80),gl,navigator.userAgent,screen.width+"x"+screen.height,screen.colorDepth,Intl.DateTimeFormat().resolvedOptions().timeZone,navigator.hardwareConcurrency||0,navigator.language].join("|");
+  const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(raw));
+  FP=[...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("").slice(0,32);
+}catch(e){ FP=""; } return FP; }
+async function measureBw(){ let probe=0; try{ const t0=performance.now(); const r=await fetch(CFG.gw+"/v1/probe?_="+Date.now()); const buf=await r.arrayBuffer(); const dt=(performance.now()-t0)/1000; probe=Math.min(Math.round(buf.byteLength*8/1000/Math.max(dt,.001)),100000);}catch(e){} const relay=(window.LDRelay&&window.LDRelay.isStarted())?window.LDRelay.getBandwidthKbps():0; bw=Math.min(Math.max(probe,relay),100000); }
+async function doTask(){ const pre=Math.random().toString(36).slice(2)+(myAddr||"x"); for(let n=0;n<300000;n++){ const h=await sha256hex(pre+n); if(h.startsWith("00")){verif++;break;} } }
+async function heartbeat(){ hbTot++; const body={miner:myAddr||"wasm1pending00000000000000000000000000000000000000000000000000000",bandwidth_kbps:bw,session_secs:sess,verification_tasks:verif,stability_pct:hbTot?Math.round(hbOk/hbTot*100):100}; const rf=localStorage.getItem("ld_ref"); if(rf)body.referrer=rf; body.fp=await deviceFP(); try{ const r=await fetch(CFG.gw+"/v1/heartbeat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}); if(r.ok)hbOk++; }catch(e){} sess+=CFG.heartbeatSec; updateUI(); saveDayCounters(); }
+function updateUI(){
+  $("mBw").textContent=bw; $("bBw").style.width=Math.min(bw/10000*100,100)+"%";
+  $("mSess").textContent=sess; $("bSess").style.width=Math.min(sess/3600*100,100)+"%";
+  $("mVerif").textContent=verif; $("bVerif").style.width=Math.min(verif/100*100,100)+"%";
+  const stab=hbTot?Math.round(hbOk/hbTot*100):100; $("mStab").textContent=stab; $("bStab").style.width=stab+"%";
+  const score=(Math.min(bw,10000)/10000*1e6*40 + Math.min(sess,3600)/3600*1e6*30 + Math.min(verif,100)/100*1e6*20 + stab/100*1e6*10)/100;
+  $("estReward").textContent=(score/1e6*650).toLocaleString(undefined,{maximumFractionDigits:1});
+  $("spinTx").textContent=stab+"%";
+}
+function setMiningUI(on){ $("spin").classList.toggle("on",on); $("liveDot").classList.toggle("on",on);
+  $("btnMine").textContent=on?t("stopMining"):t("startMining"); $("statusTx").textContent=on?t("running"):t("idle"); }
+async function startMining(){ if(mining)return; mining=true; setMiningUI(true); localStorage.setItem("ld_mining","1");
+  await loadDayCounters(); if(window.LDRelay)window.LDRelay.start(myAddr); await measureBw(); heartbeat(); doTask(); timer=setInterval(async()=>{await measureBw(); if(Math.random()<.5)doTask(); heartbeat();},CFG.heartbeatSec*1000); }
+function stopMining(){ if(!mining)return; mining=false; setMiningUI(false); localStorage.removeItem("ld_mining"); clearInterval(timer); if(window.LDRelay)window.LDRelay.stop(); }
+$("btnMine").onclick=()=>{ mining?stopMining():startMining(); };
+// 标签切换(Passkey / 助记词 / 导入)
+function showTab(w){ ["Pk","New","Imp"].forEach(k=>{ const a=(k===w); const tb=$("tab"+k),pn=$("pane"+k); if(tb)tb.classList.toggle("act",a); if(pn)pn.classList.toggle("hide",!a); }); }
+$("tabPk").onclick=()=>showTab("Pk");
+$("tabNew").onclick=()=>showTab("New");
+$("tabImp").onclick=()=>showTab("Imp");
+$("btnLogout").onclick=()=>{stopMining();sessionStorage.removeItem("ld_session");localStorage.removeItem("ld_seed");localStorage.removeItem("ld_mining");location.reload();};
+// --- 助记词(回退) ---
+$("btnCreate").onclick=async()=>{ if(!window.LD){toast(t("walletFail"));return;} const m=await window.LD.create(); if(m){localStorage.setItem("ld_seed",m); alert(t("saving")+"\n\n"+m); await enter(m); } };
+$("btnImport").onclick=async()=>{ if(!window.LD){toast(t("walletFail"));return;} const m=$("mnem").value.trim(); if(!m)return; localStorage.setItem("ld_seed",m); await enter(m); };
+// --- Passkey(§4.9 主推) ---
+const pkAvail=()=>window.LDPasskey&&window.LDPasskey.isAvailable();
+$("btnPkCreate").onclick=async()=>{
+  if(!window.LD){toast(t("walletFail"));return;}
+  if(!pkAvail()){toast(t("pkUnsupported"));showTab("New");return;}
+  if(window.LDPasskey&&window.LDPasskey.hasWallet()&&!confirm("将覆盖当前 Passkey 钱包。若尚未导出助记词备份,旧钱包将永久丢失。确认继续? / Overwrite current Passkey wallet? Export your seed backup first or it is lost forever."))return;
+  try{
+    const mnem=await window.LD.create();
+    let r=await window.LDPasskey.create(mnem,{userLabel:"lightdao-"+Date.now()});
+    if(r.needPin){ const pin=prompt(t("pkPinPrompt")); if(!pin||pin.length<6){toast(t("pkFail")+"PIN<6");return;} r=await window.LDPasskey.createWithPin(mnem,r.credId,r.partial.salt,pin); }
+    toast(t("pkCreated")); await enter(mnem);
+  }catch(e){ toast(t("pkFail")+(e.message||e)); }
+};
+$("btnPkUnlock").onclick=async()=>{
+  if(!pkAvail()){toast(t("pkUnsupported"));showTab("New");return;}
+  if(!window.LDPasskey.hasWallet()){toast(t("pkSocialFirst"));return;}
+  try{
+    let mnem; try{ mnem=await window.LDPasskey.unlock(); }catch(e){ const pin=prompt(t("pkPinPrompt")); mnem=await window.LDPasskey.unlock(pin); }
+    toast(t("pkUnlocked")); await enter(mnem);
+  }catch(e){ toast(t("pkFail")+(e.message||e)); }
+};
+$("btnPkSocial").onclick=async()=>{
+  if(!pkAvail()){toast(t("pkUnsupported"));return;}
+  if(window.LDPasskey.hasWallet()){
+    try{
+      let pin=null; const rec=JSON.parse(localStorage.getItem("ld_passkey_v1")||"null"); if(rec&&rec.kdf==="pin"){pin=prompt(t("pkPinPrompt"));}
+      const shares=await window.LDPasskey.setupSocialRecovery(pin,3,5);
+      alert(t("pkSocialHint")+"\n\n"+shares.map((s,i)=>(i+1)+". "+s).join("\n"));
+    }catch(e){ toast(t("pkFail")+(e.message||e)); }
+  } else {
+    const inp=prompt(t("pkRecoverPrompt")); if(!inp)return;
+    try{
+      const lines=inp.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+      const mnem=window.LDPasskey.recoverFromShares(lines);
+      await window.LDPasskey.create(mnem,{userLabel:"lightdao-recovered"});
+      toast(t("pkRecoverOk")); await enter(mnem);
+    }catch(e){ toast(t("pkFail")+(e.message||e)); }
+  }
+};
+$("btnClaim").onclick=async()=>{ if(!window.LD){toast(t("walletFail"));return;} await window.LD.claim(); };
+$("btnExportSeed").onclick=async()=>{ if(!window.LDPasskey){toast(t("walletFail"));return;} try{ let m; try{ m=await window.LDPasskey.unlock(); }catch(e1){ const pin=prompt(t("pkPinPrompt")); m=await window.LDPasskey.unlock(pin); } alert("⚠ 你的助记词(唯一离线备份)。请抄写在纸上,切勿截图或发送给任何人:\n\n"+m); }catch(e){ toast(t("pkFail")+(e.message||e)); } };
+$("btnSocialMain").onclick=async()=>{ if(!window.LDPasskey||!window.LDPasskey.hasWallet()){toast(t("pkSocialFirst"));return;} try{ let pin=null; const rec=JSON.parse(localStorage.getItem("ld_passkey_v1")||"null"); if(rec&&rec.kdf==="pin"){pin=prompt(t("pkPinPrompt"));} let shares; try{ shares=await window.LDPasskey.setupSocialRecovery(pin,3,5); }catch(e1){ pin=prompt(t("pkPinPrompt")); shares=await window.LDPasskey.setupSocialRecovery(pin,3,5); } alert(t("pkSocialHint")+"\n\n"+shares.map((s,i)=>(i+1)+". "+s).join("\n")); }catch(e){ toast(t("pkFail")+(e.message||e)); } };
+async function enter(seed){ const s=seed||localStorage.getItem("ld_seed")||sessionStorage.getItem("ld_session"); if(s && window.LD && await window.LD.connect(s)){ sessionStorage.setItem("ld_session",s); $("addr").textContent=myAddr=window.LD.addr; $("sec-wallet").classList.add("hide"); $("sec-main").classList.remove("hide"); if($("inviteLink"))$("inviteLink").value=location.origin+"/?ref="+myAddr; window.LD.refresh(); if(localStorage.getItem("ld_mining")==="1"){ setTimeout(startMining,400); } } }
+// 邀请裂变:读 ?ref= 存 ld_ref;复制邀请链接
+(function(){ const q=new URLSearchParams(location.search).get("ref"); if(q&&q.startsWith("wasm1")) localStorage.setItem("ld_ref",q); })();
+document.addEventListener("DOMContentLoaded",()=>{ const b=$("btnCopyInvite"); if(b) b.onclick=()=>{ const el=$("inviteLink"); if(!el)return; if(navigator.clipboard)navigator.clipboard.writeText(el.value); else {el.removeAttribute("readonly");el.select();document.execCommand("copy");el.setAttribute("readonly","");} toast("✓ "+t("copy")); }; });
+// 自动登录:助记词老用户自动进;Passkey 需用户手势(生物识别),默认显示 Passkey 标签待解锁
+function autoLogin(){ const sess=sessionStorage.getItem("ld_session"); if(sess){ enter(sess); return; } const s=localStorage.getItem("ld_seed"); if(s && !(window.LDPasskey&&window.LDPasskey.hasWallet())){ enter(s); } }
+window.__ldReady=autoLogin; showTab("Pk"); if(window.LD) autoLogin();
+// PWA: 注册 service worker(壳缓存+离线)
+if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("/sw.js").catch(()=>{}); }); }
+</script>
+
+<!-- ============ 模块: cosmjs 懒加载(仅钱包/领取需要), 失败优雅降级 ============ -->
+<script type="module">
+const CDN = ["https://cdn.jsdelivr.net/npm/","https://esm.sh/"];
+async function loadCosmjs(){
+  if(window.__c) return window.__c;
+  for(const base of CDN){
+    try{
+      const url = base==="https://esm.sh/" ? base : base;
+      const [cs, ps, sg] = await Promise.all([
+        import(base+"@cosmjs/cosmwasm-stargate@0.32.4"+(base==="https://esm.sh/"?"":"/+esm")),
+        import(base+"@cosmjs/proto-signing@0.32.4"+(base==="https://esm.sh/"?"":"/+esm")),
+        import(base+"@cosmjs/stargate@0.32.4"+(base==="https://esm.sh/"?"":"/+esm")),
+      ]);
+      window.__c={cs,ps,sg}; return window.__c;
+    }catch(e){}
+  }
+  return null;
+}
+const PAYMASTER="wasm13c2cjh3fhkesj47tsc5a0vm6pdds39qpcmykhj"; // feegrant granter for gasless first txs
+window.LD = null;
+(async()=>{
+  const c = await loadCosmjs();
+  if(!c){ return; } // 优雅降级: 挖矿仍可用, 钱包/领取提示不可用
+  const { SigningCosmWasmClient } = c.cs;
+  const { DirectSecp256k1HdWallet } = c.ps;
+  const { GasPrice } = c.sg;
+  let wallet=null, client=null;
+  window.LD = {
+    addr:null,
+    async create(){ const w=await DirectSecp256k1HdWallet.generate(12,{prefix:CFG.prefix}); this._w=w; return w.mnemonic; },
+    async connect(seed){ try{ wallet=await DirectSecp256k1HdWallet.fromMnemonic(seed,{prefix:CFG.prefix}); const [a]=await wallet.getAccounts(); this.addr=a.address; client=await SigningCosmWasmClient.connectWithSigner(CFG.rpc,wallet,{gasPrice:GasPrice.fromString("0.0025"+CFG.denom)}); return true; }catch(e){ return false; } },
+    async refresh(){ try{ const b=await client.getBalance(this.addr,CFG.denom); document.getElementById("bal").textContent=(Number(b.amount)/1e6).toLocaleString(undefined,{maximumFractionDigits:2}); }catch(e){} },
+    async claim(){ try{ const h=await (await fetch(CFG.gw+"/v1/health")).json(); const d=h.current_day-1;
+      const p=await fetch(CFG.gw+"/v1/proof?day="+d+"&miner="+this.addr).then(r=>r.ok?r.json():null);
+      if(!p){ toast(t("nothing")); return; }
+      const msg={claim:{day:d,proof:p.proof,score:{bandwidth:String(p.score.bandwidth),session:String(p.score.session),verification:String(p.score.verification),stability:String(p.score.stability)}}};
+      let res; try{ res=await client.execute(this.addr,CFG.miningReward,msg,{amount:[],gas:"300000",granter:PAYMASTER}); }catch(e){ res=await client.execute(this.addr,CFG.miningReward,msg,"auto"); }
+      toast(t("claimed")+" "+res.transactionHash.slice(0,10)+"…"); this.refresh();
+    }catch(e){ toast(String(e.message||e).slice(0,70)); } },
+  };
+if(window.__ldReady)window.__ldReady();
+})();
+</script>
+<script>
+
+/* ==== v3 additive: network ticker + settlement countdown (read-only, no logic change) ==== */
+(function(){
+  const $=id=>document.getElementById(id);
+  const fmtN=n=>(Number(n)/1e6).toLocaleString(undefined,{maximumFractionDigits:2});
+  let cli=null;
+  async function getCli(){ if(cli)return cli; if(!window.__c||!window.__c.sg)return null; cli=await window.__c.sg.StargateClient.connect(CFG.rpc); return cli; }
+  async function tick(){
+    try{
+      const h=await fetch(location.origin+"/gw/v1/health").then(r=>r.json()).catch(()=>null);
+      if(h&&$("tkD"))$("tkD").textContent=h.current_day;
+      const c=await getCli(); if(!c)return;
+      const height=await c.getHeight().catch(()=>null); if(height&&$("tkH"))$("tkH").textContent=height;
+      const vals=await c.getValidators().catch(()=>[]); if($("tkV"))$("tkV").textContent=vals.length;
+      const burn=await c.getBalance("wasm1aeaty43lrlt9rmkyxujkkfuddnsfye6az4htcu","ulight").catch(()=>({amount:"0"})); if($("tkB"))$("tkB").textContent=fmtN(burn.amount);
+      try{ const p=await c.queryContractSmart("wasm1f622csg2af6utlxvxgch2l9qf64ce3s4h5vseaph5ku8vzcgp6qqmsyace",{external_median:{}}); if($("tkP"))$("tkP").textContent="$"+fmtN(p); }catch(e){}
+    }catch(e){}
+  }
+  function cd(){ const el=$("settleCd"); if(!el)return; const now=new Date(); const nxt=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate(),0,5,0)); if(nxt<=now)nxt.setUTCDate(nxt.getUTCDate()+1); let s=Math.floor((nxt-now)/1000); const hh=String(Math.floor(s/3600)).padStart(2,"0"), mm=String(Math.floor(s%3600/60)).padStart(2,"0"), ss=String(s%60).padStart(2,"0"); el.textContent=hh+":"+mm+":"+ss; }
+  setInterval(cd,1000); cd();
+  const boot=()=>{ tick(); setInterval(tick,20000); };
+  if(window.__ldReady){ const prev=window.__ldReady; window.__ldReady=()=>{ prev(); setTimeout(boot,800); }; }
+  else { window.addEventListener("load",()=>setTimeout(boot,1500)); }
+})();
+</script>
+</body>
+</html>
