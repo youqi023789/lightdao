@@ -25,11 +25,12 @@ input,select,textarea{width:100%;background:rgba(0,0,0,.25);border:1px solid var
 .bar i{display:block;height:100%}.bar .y{background:var(--ok)}.bar .n{background:var(--err)}.bar .a{background:var(--mut)}
 .row{display:flex;gap:8px}.row>*{flex:1}
 </style>
-<script>(function(){try{var t=localStorage.getItem("ld_theme")||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<script src="/js/governance_1.js"></script>
 <link rel="stylesheet" href="/theme.css">
+<script src="/js/back.js"></script>
 </head>
 <body>
-<div style="max-width:1120px;margin:0 auto;padding:10px 22px;display:flex;gap:16px;font-size:14px"><a href="#" onclick="history.back();return false" style="color:var(--mut,#9aa3b2);text-decoration:none">← 返回上一页 / Back</a><a href="/" style="color:var(--mut,#9aa3b2);text-decoration:none">⌂ 返回首页 / Home</a><button id="themeT" aria-label="toggle theme" style="margin-left:auto;background:transparent;border:1px solid rgba(128,128,160,.3);border-radius:8px;padding:4px 10px;cursor:pointer;color:inherit">◐</button></div>
+<div style="max-width:1120px;margin:0 auto;padding:10px 22px;display:flex;gap:16px;font-size:14px"><a href="#" data-back="1" style="color:var(--mut,#9aa3b2);text-decoration:none">← 返回上一页 / Back</a><a href="/" style="color:var(--mut,#9aa3b2);text-decoration:none">⌂ 返回首页 / Home</a><button id="themeT" aria-label="toggle theme" style="margin-left:auto;background:transparent;border:1px solid rgba(128,128,160,.3);border-radius:8px;padding:4px 10px;cursor:pointer;color:inherit">◐</button></div>
 
 <div class="wrap">
 <h1>◈ LightDAO 治理 <span style="font-size:11px;color:var(--mut)">staging</span></h1>
@@ -82,106 +83,7 @@ input,select,textarea{width:100%;background:rgba(0,0,0,.25);border:1px solid var
 </div>
 
 <script src="/passkey-wallet.js"></script>
-<script>
-const $=id=>document.getElementById(id);
-const GOV="wasm14axmz74pppxqxs3qhxaaf2qzl6x53pvvzm7c6p52qrycwnyh8ktsfukapt";
-const LT="wasm13c9t6xmar22xclseua6xevw4t4cnrampy6y5ajdydhyv5k0znrcsth555z";
-const TM="wasm192u2pm80ndmh608mmvhrzhje0sjaq0txr5md77lr70ucy0j3lfys8l633u";
-const DENOM="ulight";
-function log(m,c){const e=$("log");e.innerHTML=(c?`<span class="${c}">`:"")+String(m).replace(/</g,"&lt;")+(c?"</span>":"");}
-let client=null,addr=null;
-const CDN=["https://cdn.jsdelivr.net/npm/","https://esm.sh/"];
-async function loadCosmjs(){if(window.__c)return window.__c;for(const b of CDN){try{const[cs,ps,sg]=await Promise.all([import(b+"@cosmjs/cosmwasm-stargate@0.32.4"+(b==="https://esm.sh/"?"":"/+esm")),import(b+"@cosmjs/proto-signing@0.32.4"+(b==="https://esm.sh/"?"":"/+esm")),import(b+"@cosmjs/stargate@0.32.4"+(b==="https://esm.sh/"?"":"/+esm"))]);window.__c={cs,ps,sg};return window.__c;}catch(e){}}return null;}
-async function connect(mnem){
-  const c=await loadCosmjs(); if(!c){log("cosmjs 加载失败(网络)","err");return false;}
-  const{SigningCosmWasmClient}=c.cs,{DirectSecp256k1HdWallet}=c.ps,{GasPrice}=c.sg;
-  try{
-    const w=await DirectSecp256k1HdWallet.fromMnemonic(mnem,{prefix:"wasm"});
-    const[a]=await w.getAccounts(); addr=a.address;
-    client=await SigningCosmWasmClient.connectWithSigner(location.origin+"/rpc/",w,{gasPrice:GasPrice.fromString("0.25"+DENOM)});
-    $("addrLine").textContent="已连接: "+addr;
-    await refreshBal(); await refreshProps(); await refreshTreas();
-    return true;
-  }catch(e){log("连接失败: "+e.message,"err");return false;}
-}
-async function refreshBal(){
-  try{
-    const b=await client.getBalance(addr,DENOM); $("bal").textContent=(Number(b.amount)/1e6).toLocaleString(undefined,{maximumFractionDigits:2});
-    const st=await client.queryContractSmart(GOV,{staked_balance:{address:addr}}); $("staked").textContent=(Number(st)/1e6).toLocaleString(undefined,{maximumFractionDigits:2});
-    const cfg=await client.queryContractSmart(GOV,{config:{}}); $("minStake").textContent=(Number(cfg.proposal_min_stake)/1e6).toLocaleString();
-  }catch(e){}
-}
-async function refreshProps(){
-  try{
-    const ps=await client.queryContractSmart(GOV,{active_proposals:{}});
-    const el=$("props"); el.innerHTML="";
-    if(!ps||!ps.length){el.innerHTML='<span class="mut">暂无进行中提案</span>';return;}
-    ps.forEach(p=>{
-      const tot=Number(p.yes_weight)+Number(p.no_weight)+Number(p.abstain_weight);
-      const yp=tot?Math.round(Number(p.yes_weight)/tot*100):0, np=tot?Math.round(Number(p.no_weight)/tot*100):0, ap=tot?100-yp-np:0;
-      const endLeft=Math.round((p.end-Date.now()/1000)/3600);
-      const d=document.createElement("div"); d.className="prop";
-      d.innerHTML=`<h3>#${p.id} ${esc(p.title)} <span class="mut">[${p.ptype}]</span></h3>
-        <div class="mut" style="font-size:12px">${esc(p.description).slice(0,120)}</div>
-        <div class="bar"><i class="y" style="width:${yp}%"></i><i class="n" style="width:${np}%"></i><i class="a" style="width:${ap}%"></i></div>
-        <div class="mut" style="font-size:11.5px">赞成 ${yp}%(${p.yes_addrs}人) · 反对 ${np}%(${p.no_addrs}人) · 弃权 ${ap}% · ${endLeft>0?endLeft+"h 后截止":"已截止"} ${p.executed?'· <span class="ok">已执行</span>':''}</div>
-        <button class="btn sm" data-v="yes" data-id="${p.id}">赞成</button><button class="btn ghost sm" data-v="no" data-id="${p.id}">反对</button><button class="btn ghost sm" data-v="abstain" data-id="${p.id}">弃权</button><button class="btn ghost sm" data-e="1" data-id="${p.id}">执行</button>`;
-      el.appendChild(d);
-    });
-    el.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>vote(b.dataset.id,b.dataset.v));
-    el.querySelectorAll("[data-e]").forEach(b=>b.onclick=()=>exec(b.dataset.id));
-  }catch(e){$("props").innerHTML='<span class="err">加载失败 '+e.message+'</span>';}
-}
-function esc(s){return String(s||"").replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));}
-async function vote(id,opt){
-  if(!client){log("先连接钱包","err");return;}
-  log("投票 #"+id+" "+opt+"…");
-  try{ const r=await client.execute(addr,GOV,{vote:{proposal_id:Number(id),option:opt,bet:"0"}},"auto"); log("✓ 已投票 "+r.transactionHash.slice(0,12),"ok"); await refreshProps(); }
-  catch(e){ log("投票失败: "+(e.message||e).slice(0,120),"err"); }
-}
-async function exec(id){
-  if(!client)return; log("执行 #"+id+"…");
-  try{ const r=await client.execute(addr,GOV,{execute_proposal:{proposal_id:Number(id)}},"auto"); log("✓ 已执行 "+r.transactionHash.slice(0,12),"ok"); await refreshProps(); }
-  catch(e){ log("执行失败(可能未通过): "+(e.message||e).slice(0,120),"err"); }
-}
-$("btnStake").onclick=async()=>{
-  if(!client){log("先连接钱包","err");return;}
-  const amt=Math.floor(Number($("stakeAmt").value||0)*1e6); if(amt<=0){log("输入数量","warn");return;}
-  log("授权 light_token → governance…");
-  try{
-    await client.execute(addr,LT,{increase_allowance:{spender:GOV,amount:String(amt)}},"auto");
-    log("质押…");
-    const r=await client.execute(addr,GOV,{stake:{amount:String(amt)}},"auto");
-    log("✓ 已质押 "+r.transactionHash.slice(0,12),"ok"); await refreshBal();
-  }catch(e){log("质押失败: "+(e.message||e).slice(0,140),"err");}
-};
-$("btnUnstake").onclick=async()=>{
-  if(!client)return; const amt=Math.floor(Number($("stakeAmt").value||0)*1e6); if(amt<=0){log("输入数量","warn");return;}
-  try{ const r=await client.execute(addr,GOV,{unstake:{amount:String(amt)}},"auto"); log("✓ 已赎回 "+r.transactionHash.slice(0,12),"ok"); await refreshBal(); }
-  catch(e){log("赎回失败: "+(e.message||e).slice(0,120),"err");}
-};
-$("btnPropose").onclick=async()=>{
-  if(!client){log("先连接钱包","err");return;}
-  const kind=$("pkind").value;
-  const msg={create_proposal:{ptype:$("ptype").value,title:$("ptitle").value,description:$("pdesc").value,
-    symbol:kind==="investment"?$("psym").value:null, investment_usd:kind==="investment"?String(Math.floor(Number($("pinv").value||0)*1e6)):null,
-    target:kind==="general"&&$("ptarget").value?$("ptarget").value:null,
-    call_msg:kind==="general"&&$("pcall").value?$("pcall").value:null,
-    migrate_code_id:kind==="general"&&$("pmig").value?Number($("pmig").value):null}};
-  log("提交提案…");
-  try{ const r=await client.execute(addr,GOV,msg,"auto"); log("✓ 提案已提交 "+r.transactionHash.slice(0,12),"ok"); await refreshProps(); }
-  catch(e){ log("提交失败(需质押≥门槛): "+(e.message||e).slice(0,140),"err"); }
-};
-$("pkind").onchange=()=>{const inv=$("pkind").value==="investment";$("kinv").style.display=inv?"":"none";$("kgen").style.display=inv?"none":"";};
-async function refreshTreas(){
-  try{ const b=await client.getBalance(TM,DENOM); const sg=await client.queryContractSmart(TM,{signers:{}}).catch(()=>null);
-    $("treasLine").textContent="金库余额: "+(Number(b.amount)/1e6).toLocaleString(undefined,{maximumFractionDigits:2})+" LIGHT"+(sg?" · 签名人: "+JSON.stringify(sg).slice(0,80):""); }catch(e){$("treasLine").textContent="查询失败";}
-}
-$("btnTreas").onclick=refreshTreas;
-$("btnRefresh").onclick=refreshProps;
-$("btnPk").onclick=async()=>{ if(!window.LDPasskey||!LDPasskey.hasWallet()){log("无 Passkey 钱包,先用主客户端创建","warn");return;} let m; try{m=await LDPasskey.unlock();}catch(e){const p=prompt("PIN:");m=await LDPasskey.unlock(p);} await connect(m); };
-$("btnMnem").onclick=()=>{const i=$("mnem");i.style.display=i.style.display==="none"?"":"none";if(i.style.display!=="none"){i.onchange=async()=>{if(i.value.trim())await connect(i.value.trim());};}};
-</script>
-<script>document.getElementById("themeT").onclick=function(){var c=document.documentElement.getAttribute("data-theme");var n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n);try{localStorage.setItem("ld_theme",n);}catch(e){}this.textContent=n==="light"?"◑":"◐";};</script>
+<script src="/js/governance_2.js"></script>
+<script src="/js/governance_3.js"></script>
 </body>
 </html>

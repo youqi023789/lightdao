@@ -7,35 +7,13 @@ body{background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,"Segoe UI
 .r{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-top:12px;background:var(--bg2)}
 .r a{color:var(--acc);text-decoration:none;font-weight:600}.r p{color:var(--mut);font-size:14px;margin:6px 0 0}
 .r .crumb{color:var(--mut);font-size:12px}mark{background:rgba(124,140,255,.3);color:inherit;border-radius:3px;padding:0 2px}</style>
-<script>(function(){try{var t=localStorage.getItem("ld_theme")||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
-<script>(function(){try{var t=localStorage.getItem("ld_theme")||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<script src="/js/search_1.js"></script>
+<script src="/js/search_2.js"></script>
 <link rel="stylesheet" href="/theme.css">
+<script src="/js/back.js"></script>
 </head><body><div class="w">
-<p><a href="/" style="color:var(--mut)">← 返回首页 / Home</a> · <a href="#" onclick="history.back();return false" style="color:var(--mut)">← 返回上一页 / Back</a> <button id="themeT" aria-label="toggle theme" style="margin-left:12px;background:transparent;border:1px solid rgba(128,128,160,.3);border-radius:8px;padding:4px 10px;cursor:pointer;color:inherit">◐</button></p>
+<p><a href="/" style="color:var(--mut)">← 返回首页 / Home</a> · <a href="#" data-back="1" style="color:var(--mut)">← 返回上一页 / Back</a> <button id="themeT" aria-label="toggle theme" style="margin-left:12px;background:transparent;border:1px solid rgba(128,128,160,.3);border-radius:8px;padding:4px 10px;cursor:pointer;color:inherit">◐</button></p>
 <h1 style="font-size:28px;margin:8px 0 18px">站内搜索 / Site search</h1>
 <input id="q" placeholder="搜索:挖矿 / 治理 / vesting / gas / Passkey …" autofocus>
 <div id="res"></div>
-<script>
-var IDX=null;
-fetch("/search-index.json").then(function(r){return r.json();}).then(function(j){IDX=j;}).catch(function(){});
-function esc(s){return s.replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
-function hl(s,q){var i=s.toLowerCase().indexOf(q.toLowerCase());if(i<0)return esc(s);return esc(s.slice(0,i))+"<mark>"+esc(s.slice(i,i+q.length))+"</mark>"+esc(s.slice(i+q.length));}
-function snip(s,q){var i=s.toLowerCase().indexOf(q.toLowerCase());var st=Math.max(0,i-60);return (st>0?"…":"")+s.slice(st,st+180)+(st+180<s.length?"…":"");}
-document.getElementById("q").oninput=function(){
-  var q=this.value.trim().toLowerCase();var res=document.getElementById("res");res.innerHTML="";
-  if(!IDX||q.length<1){return;}
-  var out=[];
-  IDX.forEach(function(pg){
-    pg.sections.forEach(function(sec){
-      var hay=(pg.title+" "+sec.text).toLowerCase();
-      if(hay.indexOf(q)>=0){out.push({url:pg.url+(sec.id?"#"+sec.id:""),title:pg.title,crumb:sec.head||"",text:sec.text,q:q});}
-    });
-  });
-  out.slice(0,20).forEach(function(o){
-    var d=document.createElement("div");d.className="r";
-    d.innerHTML='<a href="'+o.url+'">'+hl(o.title,o.q)+(o.crumb?" › "+hl(o.crumb,o.q):"")+'</a><div class="crumb">'+esc(o.url)+'</div><p>'+hl(snip(o.text,o.q),o.q)+"</p>";
-    res.appendChild(d);
-  });
-  if(!out.length)res.innerHTML='<p style="color:var(--mut)">无结果 / no results</p>';
-};
-</script></div><script>document.getElementById("themeT").onclick=function(){var c=document.documentElement.getAttribute("data-theme");var n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n);try{localStorage.setItem("ld_theme",n);}catch(e){}this.textContent=n==="light"?"◑":"◐";};</script></body></html>
+<script src="/js/search_3.js"></script></div><script src="/js/search_4.js"></script></body></html>

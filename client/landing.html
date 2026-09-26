@@ -93,6 +93,7 @@ canvas#net{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
 [data-theme="light"] canvas#net{opacity:.28}
 [data-theme="light"] .card,[data-theme="light"] .logo{box-shadow:0 8px 26px rgba(20,30,70,.08)}
 </style>
+<script src="/js/go.js"></script>
 </head>
 <body>
 <a class="skip" href="#vision">Skip to content</a>
@@ -106,7 +107,7 @@ canvas#net{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
 <div class="k" style="margin-bottom:6px" data-i="principle">浏览器即节点 · 全民可参与 · 利润按规则共享</div>
 <h1 class="h1" data-i="h1">一个浏览器,分享真实经济的利润。</h1>
 <p class="sub" data-i="sub">无需矿机、无需技术背景、无需合格投资者门槛:贡献网络资源赚取 LIGHT,并通过链上治理投票参与真实企业投资、按规则分享利润。</p>
-<div class="row"><button class="btn" onclick="location='/app.html'" data-i="ctaMine">开始挖矿</button><button class="btn ghost" onclick="location='/whitepaper.html'" data-i="ctaWp">读白皮书</button></div>
+<div class="row"><button class="btn" data-go="/app.html" data-i="ctaMine">开始挖矿</button><button class="btn ghost" data-go="/whitepaper.html" data-i="ctaWp">读白皮书</button></div>
 <div class="trust"><span><b>7</b> <span data-i="trV">验证者</span></span><span><b>10</b> <span data-i="trC">链上合约</span></span><span><b>50%</b> <span data-i="trB">手续费销毁</span></span><span><b>2.5B</b> <span data-i="trCap">硬顶</span></span></div>
 <div class="trust" style="margin-top:18px">
 <span><b id="sH">—</b> <span data-i="stH">区块高度</span></span>
@@ -195,9 +196,9 @@ canvas#net{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
 <div class="k" data-i="paK">参与 · GET INVOLVED</div>
 <h2 data-i="paH">选你的入口</h2>
 <div class="grid3">
-<div class="card"><h3 data-i="pa1t">个人 / 矿工</h3><p data-i="pa1b">打开网页,六十秒开始贡献并领取。</p><div class="row"><button class="btn" onclick="location='/app.html'" data-i="pa1c">开始挖矿</button></div></div>
-<div class="card"><h3 data-i="pa2t">开发者</h3><p data-i="pa2b">读源码、提 PR、拿 issue 赏金、接 SDK。</p><div class="row"><button class="btn ghost" onclick="location='https://github.com/youqi023789/lightdao'">GitHub</button></div></div>
-<div class="card"><h3 data-i="pa3t">社区 / 投资者</h3><p data-i="pa3b">加入治理、提案、大使计划,分享利润。</p><div class="row"><button class="btn ghost" onclick="location='/governance.html'" data-i="pa3c">进入治理</button></div></div>
+<div class="card"><h3 data-i="pa1t">个人 / 矿工</h3><p data-i="pa1b">打开网页,六十秒开始贡献并领取。</p><div class="row"><button class="btn" data-go="/app.html" data-i="pa1c">开始挖矿</button></div></div>
+<div class="card"><h3 data-i="pa2t">开发者</h3><p data-i="pa2b">读源码、提 PR、拿 issue 赏金、接 SDK。</p><div class="row"><button class="btn ghost" data-go="https://github.com/youqi023789/lightdao">GitHub</button></div></div>
+<div class="card"><h3 data-i="pa3t">社区 / 投资者</h3><p data-i="pa3b">加入治理、提案、大使计划,分享利润。</p><div class="row"><button class="btn ghost" data-go="/governance.html" data-i="pa3c">进入治理</button></div></div>
 </div></div></section>
 <section id="tok" style="background:var(--bg2)"><div class="wrap">
 <div class="k" data-i="tokK">代币经济 · TOKEN</div>
@@ -219,13 +220,13 @@ canvas#net{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
 <div class="k" data-i="stkK">验证与质押 · STAKING</div>
 <h2 data-i="stkH">保障网络,获得验证者收益</h2>
 <p class="lead" data-i="stkB">7 验证者(7 国)BFT 共识;手续费 30% 归验证者。未来经治理选举扩至 100 席并开放委托。当前可在浏览器查看验证者与质押。</p>
-<div class="row"><button class="btn ghost" onclick="location='/explorer.html'" data-i="stkC">查看验证者 →</button></div>
+<div class="row"><button class="btn ghost" data-go="/explorer.html" data-i="stkC">查看验证者 →</button></div>
 </div></section>
 <section id="gov" style="background:var(--bg2)"><div class="wrap">
 <div class="k" data-i="govK">治理 · GOVERNANCE</div>
 <h2 data-i="govH">规则由持有者写,不由公司写。</h2>
 <p class="lead" data-i="govB">金库、参数、升级——全部链上提案、链上投票。一瓦特一票,但每一票都可被审计。</p>
-<div class="row"><button class="btn ghost" onclick="location='/governance.html'" data-i="govC">进入治理 →</button></div>
+<div class="row"><button class="btn ghost" data-go="/governance.html" data-i="govC">进入治理 →</button></div>
 </div></section>
 
 <section id="scam"><div class="wrap">
@@ -250,7 +251,7 @@ canvas#net{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
 <div class="k" data-i="grK">生态资助 · GRANTS</div>
 <h2 data-i="grH">为生态建设者付钱</h2>
 <p class="lead" data-i="grB">生态基金(16%)资助工具/文档/翻译/集成/研究,以 LIGHT 结算(token-for-service),零现金门槛。提交治理提案即申请。</p>
-<div class="row"><button class="btn ghost" onclick="location='/governance.html'" data-i="grC">提交资助提案 →</button></div>
+<div class="row"><button class="btn ghost" data-go="/governance.html" data-i="grC">提交资助提案 →</button></div>
 </div></section>
 <section id="eco" style="background:var(--bg2)"><div class="wrap">
 <div class="k" data-i="ecoK">生态 · ECOSYSTEM</div>
@@ -332,7 +333,7 @@ canvas#net{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
 <section id="wp" style="background:var(--bg2)"><div class="wrap">
 <div class="k" data-i="wpK">白皮书 · WHITEPAPER</div>
 <h2 data-i="wpH">读原件,不读转述。</h2>
-<div class="row"><button class="btn ghost" onclick="location='/whitepaper.html'" data-i="wpC">白皮书 / 精简版 →</button></div>
+<div class="row"><button class="btn ghost" data-go="/whitepaper.html" data-i="wpC">白皮书 / 精简版 →</button></div>
 </div></section>
 
 <section id="news"><div class="wrap">

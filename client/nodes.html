@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<script>(function(){try{var t=localStorage.getItem("ld_theme")||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<script src="/js/nodes_1.js"></script>
 <link rel="stylesheet" href="/theme.css">
 <title>节点与验证者 — LightDAO</title>
 <meta name="description" content="LightDAO 节点体系:浏览器轻节点(免申请)、全节点(免许可)、验证者(质押+治理选举)。">
@@ -22,10 +22,11 @@ th{color:var(--ink);background:var(--bg2)}
 .bar a{border:1px solid var(--line);border-radius:10px;padding:8px 14px}
 code{background:rgba(127,127,160,.15);border-radius:6px;padding:2px 6px;font-size:13px}
 </style>
+<script src="/js/back.js"></script>
 </head>
 <body>
 <div class="bar" style="max-width:960px;margin:0 auto;padding:12px 22px">
-<a href="#" onclick="history.back();return false">← 返回上一页</a>
+<a href="#" data-back="1">← 返回上一页</a>
 <a href="/">⌂ 返回首页</a>
 <a href="/app.html">开始挖矿</a>
 <a href="/explorer.html">浏览器</a>
@@ -66,20 +67,6 @@ code{background:rgba(127,127,160,.15);border-radius:6px;padding:2px 6px;font-siz
 <h2>委托在线(协议层 · 路线图)</h2>
 <div class="card"><p>白皮书「移动端适配」:委托在线机制(委托者 70% / 中继节点 30%)属<b style="color:var(--ink)">协议层</b>能力,需网关 v2 计分支持,当前未开放;开放后本页提供委托入口。现阶段 PWA 安装用户获在线时长 10% 加成。</p></div>
 </div>
-<script>
-document.getElementById("themeT").onclick=function(){var c=document.documentElement.getAttribute("data-theme");var n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n);try{localStorage.setItem("ld_theme",n);}catch(e){}this.textContent=n==="light"?"◑":"◐";};
-(async()=>{
-  const f=n=>(Number(n)/1e6).toLocaleString(undefined,{maximumFractionDigits:0});
-  try{
-    const m=await import("https://cdn.jsdelivr.net/npm/@cosmjs/stargate@0.32.4/+esm");
-    const c=await m.StargateClient.connect(location.origin+"/rpc/");
-    const vs=await c.getValidators();
-    const tb=document.querySelector("#vt tbody"); tb.innerHTML="";
-    vs.forEach(v=>{const tr=document.createElement("tr");
-      tr.innerHTML="<td>"+(v.description?.moniker||"?")+"</td><td>"+(v.status==="BOND_STATUS_BONDED"?'<span class="pill ok">BONDED</span>':'<span class="pill no">'+v.status.replace("BOND_STATUS_","")+"</span>")+"</td><td>"+f(v.tokens)+"</td><td>"+(Number(v.commission?.commissionRates?.rate||0)*100).toFixed(0)+"%</td>";
-      tb.appendChild(tr);});
-  }catch(e){document.querySelector("#vt tbody").innerHTML='<tr><td colspan="4">加载失败:'+e.message+"</td></tr>";}
-})();
-</script>
+<script src="/js/nodes_2.js"></script>
 </body>
 </html>

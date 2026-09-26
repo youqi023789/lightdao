@@ -1,8 +1,9 @@
 <!DOCTYPE html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Privacy — LightDAO</title>
-<style>:root{--bg:#05060a;--bg2:#0a0c12;--ink:#eef1f6;--mut:#9aa3b2;--line:rgba(255,255,255,.08)}body{background:var(--bg);color:var(--ink);font:16px/1.7 -apple-system,"Segoe UI",Roboto,"PingFang SC",sans-serif;margin:0}.w{max-width:760px;margin:0 auto;padding:40px 22px}h1{font-size:30px}h2{font-size:20px;margin:26px 0 8px}p,li{color:var(--mut)}a{color:#7c8cff}</style><script>(function(){try{var t=localStorage.getItem("ld_theme")||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<style>:root{--bg:#05060a;--bg2:#0a0c12;--ink:#eef1f6;--mut:#9aa3b2;--line:rgba(255,255,255,.08)}body{background:var(--bg);color:var(--ink);font:16px/1.7 -apple-system,"Segoe UI",Roboto,"PingFang SC",sans-serif;margin:0}.w{max-width:760px;margin:0 auto;padding:40px 22px}h1{font-size:30px}h2{font-size:20px;margin:26px 0 8px}p,li{color:var(--mut)}a{color:#7c8cff}</style><script src="/js/privacy_1.js"></script>
 <link rel="stylesheet" href="/theme.css">
+<script src="/js/back.js"></script>
 </head><body>
-<div style="max-width:1120px;margin:0 auto;padding:10px 22px;display:flex;gap:16px;font-size:14px"><a href="#" onclick="history.back();return false" style="color:var(--mut,#9aa3b2);text-decoration:none">← 返回上一页 / Back</a><a href="/" style="color:var(--mut,#9aa3b2);text-decoration:none">⌂ 返回首页 / Home</a><button id="themeT" aria-label="toggle theme" style="margin-left:auto;background:transparent;border:1px solid rgba(128,128,160,.3);border-radius:8px;padding:4px 10px;cursor:pointer;color:inherit">◐</button></div>
+<div style="max-width:1120px;margin:0 auto;padding:10px 22px;display:flex;gap:16px;font-size:14px"><a href="#" data-back="1" style="color:var(--mut,#9aa3b2);text-decoration:none">← 返回上一页 / Back</a><a href="/" style="color:var(--mut,#9aa3b2);text-decoration:none">⌂ 返回首页 / Home</a><button id="themeT" aria-label="toggle theme" style="margin-left:auto;background:transparent;border:1px solid rgba(128,128,160,.3);border-radius:8px;padding:4px 10px;cursor:pointer;color:inherit">◐</button></div>
 <div class="w">
 <p><a href="/">← LightDAO</a></p><h1>Privacy Policy 隐私政策</h1>
 <p>LightDAO is a self-custodial, browser-native protocol. We minimize data by design.</p>
@@ -10,5 +11,5 @@
 <h2>What the network necessarily sees</h2><ul><li>Your wallet address and on-chain transactions (public by nature of a blockchain).</li><li>Mining contribution metrics you broadcast (bandwidth/uptime/verification/stability) and an anti-sybil device fingerprint hash + IP, used only to score contribution and prevent fraud.</li><li>Standard server access logs (IP, UA) for security and rate-limiting.</li></ul>
 <h2>Your controls</h2><ul><li>Stop mining any time; contribution broadcasting stops.</li><li>Clear browser storage to remove local wallet session & referral data.</li><li>Request log deletion: privacy@lightdao.net.</li></ul>
 <h2>Cookies / local storage</h2><p>We use localStorage/sessionStorage for wallet session, language, and referral attribution only. No cross-site cookies.</p>
-<p style="margin-top:24px">Effective 2026-09-26 · privacy@lightdao.net</p></div><script>document.getElementById("themeT").onclick=function(){var c=document.documentElement.getAttribute("data-theme");var n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n);try{localStorage.setItem("ld_theme",n);}catch(e){}this.textContent=n==="light"?"◑":"◐";};</script>
+<p style="margin-top:24px">Effective 2026-09-26 · privacy@lightdao.net</p></div><script src="/js/privacy_2.js"></script>
 </body></html>

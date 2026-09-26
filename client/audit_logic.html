@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<script>(function(){try{var t=localStorage.getItem("ld_theme")||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<script src="/js/audit_logic_1.js"></script>
 <link rel="stylesheet" href="/theme.css">
 <title>安全与逻辑审计 — LightDAO</title>
 <style>:root{--bg:#05060a;--bg2:#0a0c12;--ink:#eef1f6;--mut:#9aa3b2;--line:rgba(255,255,255,.08);--acc:#7c8cff;--ok:#3ddc84;--warn:#ffb454;--err:#ff5d73}
@@ -11,9 +11,10 @@ body{background:var(--bg);color:var(--ink);font:15.5px/1.7 -apple-system,"Segoe 
 p,li,td{color:var(--mut)}a{color:var(--acc)}table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:10px}
 td,th{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{color:var(--ink);background:var(--bg2)}
 .fix{color:var(--ok)}.open{color:var(--warn)}.ok{color:var(--ok)}.bar{display:flex;gap:12px;flex-wrap:wrap;font-size:14px;margin:10px 0}.bar a{border:1px solid var(--line);border-radius:10px;padding:8px 14px}</style>
+<script src="/js/back.js"></script>
 </head>
 <body>
-<div class="bar" style="max-width:900px;margin:0 auto;padding:12px 22px"><a href="#" onclick="history.back();return false">← 返回</a><a href="/">⌂ 首页</a><a href="/AUDIT.md">无障碍/性能审计</a><button id="themeT" style="margin-left:auto;background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer;color:inherit">◐</button></div>
+<div class="bar" style="max-width:900px;margin:0 auto;padding:12px 22px"><a href="#" data-back="1">← 返回</a><a href="/">⌂ 首页</a><a href="/AUDIT.md">无障碍/性能审计</a><button id="themeT" style="margin-left:auto;background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer;color:inherit">◐</button></div>
 <div class="w">
 <h1>安全与逻辑审计 <span style="color:var(--mut);font-size:14px">对照白皮书 V2.4 · 2026-09-27</span></h1>
 <p>范围:全站前端、网关、链上合约交互、奖励数学。方法:链上实测 + 网关数据比对 + 代码审查 + 爬虫链接审计。</p>
@@ -53,6 +54,6 @@ td,th{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-ali
 <p>27 端点全 200;死链 0;缺锚 0;占位 0;14 语言;per-locale OG;sitemap/robots/security.txt 齐备。详见 <a href="/AUDIT.md">无障碍与性能审计</a>。</p>
 <div class="bar"><a href="/whitepaper.html">白皮书</a><a href="/app.html">挖矿</a><a href="/invest.html">子代币/多签</a><a href="/nodes.html">节点</a></div>
 </div>
-<script>document.getElementById("themeT").onclick=function(){var c=document.documentElement.getAttribute("data-theme");var n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n);try{localStorage.setItem("ld_theme",n);}catch(e){}this.textContent=n==="light"?"◑":"◐";};</script>
+<script src="/js/audit_logic_2.js"></script>
 </body>
 </html>
