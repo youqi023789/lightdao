@@ -77,12 +77,13 @@ $("tabNew").onclick=()=>showTab("New");
 $("tabImp").onclick=()=>showTab("Imp");
 $("btnLogout").onclick=()=>{stopMining();sessionStorage.removeItem("ld_session");localStorage.removeItem("ld_seed");localStorage.removeItem("ld_mining");location.reload();};
 // --- 助记词(回退) ---
-$("btnCreate").onclick=async()=>{ if(!window.LD){toast(t("walletFail"));return;} const m=await window.LD.create(); if(m){localStorage.setItem("ld_seed",m); alert(t("saving")+"\n\n"+m); await enter(m); } };
-$("btnImport").onclick=async()=>{ if(!window.LD){toast(t("walletFail"));return;} const m=$("mnem").value.trim(); if(!m)return; localStorage.setItem("ld_seed",m); await enter(m); };
+$("btnCreate").onclick=async()=>{ function ensureLD(ms){ ms=ms||8000; return new Promise(function(res){ var t0=Date.now(); (function chk(){ if(window.LD) return res(window.LD); if(Date.now()-t0>ms) return res(null); setTimeout(chk,150); })(); }); }
+if(!await ensureLD()){toast(t("walletFail"));return;} const m=await window.LD.create(); if(m){localStorage.setItem("ld_seed",m); alert(t("saving")+"\n\n"+m); await enter(m); } };
+$("btnImport").onclick=async()=>{ if(!await ensureLD()){toast(t("walletFail"));return;} const m=$("mnem").value.trim(); if(!m)return; localStorage.setItem("ld_seed",m); await enter(m); };
 // --- Passkey(§4.9 主推) ---
 const pkAvail=()=>window.LDPasskey&&window.LDPasskey.isAvailable();
 $("btnPkCreate").onclick=async()=>{
-  if(!window.LD){toast(t("walletFail"));return;}
+  if(!await ensureLD()){toast(t("walletFail"));return;}
   if(!pkAvail()){toast(t("pkUnsupported"));showTab("New");return;}
   if(window.LDPasskey&&window.LDPasskey.hasWallet()&&!confirm("将覆盖当前 Passkey 钱包。若尚未导出助记词备份,旧钱包将永久丢失。确认继续? / Overwrite current Passkey wallet? Export your seed backup first or it is lost forever."))return;
   try{
@@ -118,7 +119,7 @@ $("btnPkSocial").onclick=async()=>{
     }catch(e){ toast(t("pkFail")+(e.message||e)); }
   }
 };
-$("btnClaim").onclick=async()=>{ if(!window.LD){toast(t("walletFail"));return;} const sel=$("claimDay"); const dv=sel&&sel.value?Number(sel.value):undefined; await window.LD.claim(dv); };
+$("btnClaim").onclick=async()=>{ if(!await ensureLD()){toast(t("walletFail"));return;} const sel=$("claimDay"); const dv=sel&&sel.value?Number(sel.value):undefined; await window.LD.claim(dv); };
 $("btnExportSeed").onclick=async()=>{ if(!window.LDPasskey){toast(t("walletFail"));return;} try{ let m; try{ m=await window.LDPasskey.unlock(); }catch(e1){ const pin=prompt(t("pkPinPrompt")); m=await window.LDPasskey.unlock(pin); } alert("⚠ 你的助记词(唯一离线备份)。请抄写在纸上,切勿截图或发送给任何人:\n\n"+m); }catch(e){ toast(t("pkFail")+(e.message||e)); } };
 $("btnSocialMain").onclick=async()=>{ if(!window.LDPasskey||!window.LDPasskey.hasWallet()){toast(t("pkSocialFirst"));return;} try{ let pin=null; const rec=JSON.parse(localStorage.getItem("ld_passkey_v1")||"null"); if(rec&&rec.kdf==="pin"){pin=prompt(t("pkPinPrompt"));} let shares; try{ shares=await window.LDPasskey.setupSocialRecovery(pin,3,5); }catch(e1){ pin=prompt(t("pkPinPrompt")); shares=await window.LDPasskey.setupSocialRecovery(pin,3,5); } alert(t("pkSocialHint")+"\n\n"+shares.map((s,i)=>(i+1)+". "+s).join("\n")); }catch(e){ toast(t("pkFail")+(e.message||e)); } };
 function esc(x){return String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
