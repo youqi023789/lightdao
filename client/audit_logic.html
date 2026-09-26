@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){try{var t=localStorage.getItem("ld_theme")||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="/theme.css">
+<title>安全与逻辑审计 — LightDAO</title>
+<style>:root{--bg:#05060a;--bg2:#0a0c12;--ink:#eef1f6;--mut:#9aa3b2;--line:rgba(255,255,255,.08);--acc:#7c8cff;--ok:#3ddc84;--warn:#ffb454;--err:#ff5d73}
+body{background:var(--bg);color:var(--ink);font:15.5px/1.7 -apple-system,"Segoe UI",Roboto,"PingFang SC",sans-serif;margin:0}
+.w{max-width:900px;margin:0 auto;padding:20px 22px 60px}h1{font-size:28px}h2{font-size:19px;margin:28px 0 10px}
+p,li,td{color:var(--mut)}a{color:var(--acc)}table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:10px}
+td,th{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{color:var(--ink);background:var(--bg2)}
+.fix{color:var(--ok)}.open{color:var(--warn)}.ok{color:var(--ok)}.bar{display:flex;gap:12px;flex-wrap:wrap;font-size:14px;margin:10px 0}.bar a{border:1px solid var(--line);border-radius:10px;padding:8px 14px}</style>
+</head>
+<body>
+<div class="bar" style="max-width:900px;margin:0 auto;padding:12px 22px"><a href="#" onclick="history.back();return false">← 返回</a><a href="/">⌂ 首页</a><a href="/AUDIT.md">无障碍/性能审计</a><button id="themeT" style="margin-left:auto;background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer;color:inherit">◐</button></div>
+<div class="w">
+<h1>安全与逻辑审计 <span style="color:var(--mut);font-size:14px">对照白皮书 V2.4 · 2026-09-27</span></h1>
+<p>范围:全站前端、网关、链上合约交互、奖励数学。方法:链上实测 + 网关数据比对 + 代码审查 + 爬虫链接审计。</p>
+
+<h2>一、奖励数学(对照白皮书 §奖励/§5)</h2>
+<table><tr><th>项</th><th>白皮书</th><th>链上实测</th><th>结论</th></tr>
+<tr><td>每日总释放</td><td>验证者 3.42万 + 矿工 65.07万</td><td>daily_release=684,931.5 LIGHT</td><td class="ok">一致</td></tr>
+<tr><td>矿工池/验证者</td><td>95% / 5%</td><td>miner_pool=650,684.9(95%)</td><td class="ok">一致</td></tr>
+<tr><td>分配方式</td><td>按加权贡献占比</td><td>gateway total_score=Σ加权;claim 凭 Merkle proof</td><td class="ok">一致</td></tr>
+<tr><td>前端"预计奖励"</td><td>应为池×占比</td><td>原为固定×650(错,约1000×)</td><td class="fix">已修为按池×实时占比;历史表加"应得LIGHT"列(定稿日用 total_score 精确计算)</td></tr>
+<tr><td>PWA +10% 在线加成</td><td>有</td><td>合约 session 封顶 3600s,加成无法生效</td><td class="open">属合约/网关层,未升级前 UI 已改为诚实文案;列入协议升级</td></tr>
+<tr><td>手续费 50/30/20</td><td>有</td><td>x/lightfee EndBlock 实测精确分配</td><td class="ok">一致</td></tr>
+<tr><td>邀请 +10% 首周</td><td>有</td><td>网关记录 referrals;赛季末结算(不进每日根)</td><td class="ok">一致(设计如此)</td></tr>
+</table>
+
+<h2>二、安全发现</h2>
+<table><tr><th>#</th><th>发现</th><th>级别</th><th>处置</th></tr>
+<tr><td>S1</td><td>explorer 将链上 rawLog 以 innerHTML 注入(潜在存储型 XSS)</td><td>中</td><td class="fix">已转义(esc)</td></tr>
+<tr><td>S2</td><td>app 我的安全卡设备指纹/邀请人注入</td><td>低</td><td class="fix">已转义</td></tr>
+<tr><td>S3</td><td>会话种子存 sessionStorage(同标签页免重复解锁)</td><td>中(权衡)</td><td class="ok">保留:仅同标签页、关标签即清;配套"导出助记词+社交恢复"强制引导;已文档化</td></tr>
+<tr><td>S4</td><td>OS 通行密钥删除不可逆导致钱包丢失</td><td>中</td><td class="fix">UX 已加删除后果警告+导出备份;不可逆本身为平台特性</td></tr>
+<tr><td>S5</td><td>nginx 缺安全响应头</td><td>低</td><td class="fix">已加 HSTS / X-Content-Type-Options / Referrer-Policy(CSP 因大量内联脚本暂不启用,列入重构)</td></tr>
+<tr><td>S6</td><td>网关心跳无速率限制</td><td>低</td><td class="open">已有指纹去重+IP 聚类兜底;限流列入网关 v2</td></tr>
+<tr><td>S7</td><td>密钥托管</td><td>—</td><td class="ok">非托管:服务器不存任何私钥/种子明文</td></tr>
+<tr><td>S8</td><td>TURN 凭证</td><td>—</td><td class="ok">REST 临时凭证 HMAC-SHA1 + 内网段 denied-peers</td></tr>
+</table>
+
+<h2>三、逻辑/功能对照白皮书(未实现项,诚实标注)</h2>
+<table><tr><th>项</th><th>状态</th></tr>
+<tr><td>委托在线 70/30</td><td class="open">协议层,网关 v2+合约升级后开放(/nodes.html 已标注)</td></tr>
+<tr><td>子代币兑换(KYC 增强)</td><td class="open">尚无子代币发行;/invest.html 提供只读视图,兑换待首笔投资提案+TGE 后</td></tr>
+<tr><td>链上 TWAP 主价格源</td><td class="open">待 LIGHT/USDC 池;现用验证者轮值 external_median(9-29 参数提案后 lightfee 动态读取)</td></tr>
+<tr><td>验证者选举开放</td><td class="open">按路线图第 7 个月起;/nodes.html 已给竞选流程</td></tr>
+</table>
+
+<h2>四、全站链接/结构</h2>
+<p>27 端点全 200;死链 0;缺锚 0;占位 0;14 语言;per-locale OG;sitemap/robots/security.txt 齐备。详见 <a href="/AUDIT.md">无障碍与性能审计</a>。</p>
+<div class="bar"><a href="/whitepaper.html">白皮书</a><a href="/app.html">挖矿</a><a href="/invest.html">子代币/多签</a><a href="/nodes.html">节点</a></div>
+</div>
+<script>document.getElementById("themeT").onclick=function(){var c=document.documentElement.getAttribute("data-theme");var n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n);try{localStorage.setItem("ld_theme",n);}catch(e){}this.textContent=n==="light"?"◑":"◐";};</script>
+</body>
+</html>

@@ -55,6 +55,7 @@ const VEST_BEN=["wasm13c2cjh3fhkesj47tsc5a0vm6pdds39qpcmykhj","wasm16sm2nlg2sp9z
 const CDN=["https://cdn.jsdelivr.net/npm/","https://esm.sh/"];
 let client=null;
 async function load(){for(const b of CDN){try{const m=await import(b+"@cosmjs/cosmwasm-stargate@0.32.4"+(b==="https://esm.sh/"?"":"/+esm"));const s=await import(b+"@cosmjs/stargate@0.32.4"+(b==="https://esm.sh/"?"":"/+esm"));return {cw:m,st:s};}catch(e){}}return null;}
+const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=(n,d=6)=>(Number(n)/10**d).toLocaleString(undefined,{maximumFractionDigits:2});
 async function init(){
   const L=await load(); if(!L){document.getElementById("stats").innerHTML='<div class="stat err">cosmjs 加载失败</div>';return;}
@@ -109,7 +110,7 @@ document.getElementById("btnQ").onclick=async()=>{
     } else if(/^[0-9A-Fa-f]{64}$/.test(q)){
       const t=await client.getTx(q.toUpperCase());
       if(!t){out.textContent="未找到该交易";return;}
-      out.innerHTML=`tx ${q.slice(0,16)}…<br>高度 ${t.height} · code <span class="${t.code===0?"ok":"err"}">${t.code}</span> · gas ${t.gasUsed}/${t.gasWanted}<br>log: ${(t.rawLog||"").slice(0,200)||"(空)"}`;
+      out.innerHTML=`tx ${q.slice(0,16)}…<br>高度 ${t.height} · code <span class="${t.code===0?"ok":"err"}">${t.code}</span> · gas ${t.gasUsed}/${t.gasWanted}<br>log: ${esc((t.rawLog||"").slice(0,200))||"(空)"}`;
     } else if(/^wasmvaloper1/.test(q)){
       out.textContent="验证者查询请用下方验证者表";
     } else out.textContent="无法识别的输入";
