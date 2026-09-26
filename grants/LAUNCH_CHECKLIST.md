@@ -3,7 +3,7 @@
 > 说明:下面这些都需要**你本人的登录态**(X/TG/Discord/Reddit/HN/PH/目录/ICF 表单),我没有浏览器接管工具,也无法用 API 改 X 资料(该档位无 bio/banner/pin 接口),所以只能你点。所有文案已写好,复制粘贴即可。
 > 已自动完成的部分:X 首发 8 帖线程、推广帖、治理里程碑 3 帖线程(含你的邀请链接)、每周自动更新 cron、GitHub 公开仓库、横幅图(见附件)。
 > 你的创始人邀请链接(所有渠道都用它):
-> `https://lightdao.net/?ref=wasm1ehx5rewlu6qusyx5ml3l6q4r2q9wqmgpx6hnm8`
+> `https://lightdao.net/?ref=wasm1vhpf9c3h8eu8hd7ca520dvspzdsxz4nkka3h7s`
 
 ---
 
@@ -35,7 +35,7 @@ Browser-only DePIN mining on a live Cosmos L1. No hardware, seedless Passkey wal
 2. 群简介填定位一句话(见 GROWTH_KIT §0)
 3. 置顶下面这条公告(复制 GROWTH_KIT.md §2 的「建群首条公告」整段),结尾加邀请链接:
 ```
-Start now: https://lightdao.net/?ref=wasm1ehx5rewlu6qusyx5ml3l6q4r2q9wqmgpx6hnm8
+Start now: https://lightdao.net/?ref=wasm1vhpf9c3h8eu8hd7ca520dvspzdsxz4nkka3h7s
 ```
 4. 把 TG 群链接回填到 X bio/website 和 lightdao.net 页脚(告诉我链接,我加到客户端)
 
