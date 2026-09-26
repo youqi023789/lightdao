@@ -2,306 +2,256 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>LightDAO — Mine crypto with just your browser</title>
-<meta name="description" content="LightDAO is a live Cosmos L1 where idle browsers mine LIGHT via Proof-of-Contribution. No hardware, no seed phrase, no money down.">
-<meta property="og:title" content="LightDAO — browser-only DePIN mining">
-<meta property="og:description" content="A live Cosmos chain where your idle browser earns LIGHT by relaying bandwidth & verifying blocks. Seedless Passkey wallet, 50% fee burn, on-chain DAO.">
-<meta property="og:image" content="/og.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LightDAO — 你的设备,不该只是别人的矿</title>
+<meta name="description" content="LightDAO 让闲置算力第一次属于它的主人:几分钟、零硬件、无需许可,把每一瓦特变成你的数字资产。">
 <style>
-:root{
-  --bg:#04060d; --bg2:#0a0f1e; --surf:rgba(255,255,255,.045); --surf2:rgba(255,255,255,.08);
-  --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
-  --tx:#eef2ff; --tx2:#a8b3d6; --mut:#7c88ad;
-  --acc:#6ea8ff; --acc2:#a06bff; --acc3:#ff6bd6; --ok:#2ee6a8;
-  --grad:linear-gradient(135deg,#6ea8ff,#a06bff 48%,#ff6bd6);
-  --grad-soft:linear-gradient(135deg,rgba(110,168,255,.14),rgba(160,107,255,.14));
-  --r-m:16px; --r-l:26px; --r-full:999px;
-  --sh:0 20px 60px rgba(0,0,0,.5); --glow:0 0 60px rgba(160,107,255,.25);
-  --ease:cubic-bezier(.22,.9,.28,1);
-  --fs-display:clamp(40px,8vw,84px); --fs-h2:clamp(26px,4.6vw,44px); --fs-h3:clamp(18px,2.6vw,24px); --fs-body:16px; --fs-sm:14px; --fs-xs:12px;
-}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html{scroll-behavior:smooth}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei","Noto Sans",sans-serif;color:var(--tx);background:var(--bg);line-height:1.6;overflow-x:hidden;font-size:var(--fs-body)}
-#net{position:fixed;inset:0;z-index:0;opacity:.5}
-.glowbg{position:fixed;inset:0;z-index:0;pointer-events:none;background:
-  radial-gradient(900px 500px at 80% -10%,rgba(160,107,255,.22),transparent 60%),
-  radial-gradient(800px 480px at 10% 110%,rgba(110,168,255,.18),transparent 60%),
-  radial-gradient(600px 380px at 50% 60%,rgba(255,107,214,.08),transparent 60%)}
-.wrap{max-width:1120px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
-/* nav */
-nav{position:sticky;top:0;z-index:30;backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);background:rgba(4,6,13,.7);border-bottom:1px solid var(--line)}
-.nav-in{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0}
-.logo{display:flex;align-items:center;gap:12px;font-weight:800;font-size:20px;letter-spacing:.2px;color:var(--tx);text-decoration:none}
-.dot{width:36px;height:36px;border-radius:12px;background:var(--grad);box-shadow:var(--glow);display:grid;place-items:center;font-size:17px}
-.links{display:flex;gap:4px;align-items:center}
-.links a{color:var(--tx2);text-decoration:none;font-size:var(--fs-sm);padding:8px 12px;border-radius:var(--r-full);transition:.2s var(--ease)}
-.links a:hover{color:var(--tx);background:var(--surf2)}
-.cta{display:inline-flex;align-items:center;gap:8px;background:var(--grad);color:#fff;text-decoration:none;font-weight:700;font-size:var(--fs-sm);padding:10px 20px;border-radius:var(--r-full);box-shadow:0 10px 30px rgba(160,107,255,.35);transition:.2s var(--ease)}
-.cta:hover{filter:brightness(1.1);transform:translateY(-1px)}
-.cta.ghost{background:var(--surf);border:1px solid var(--line2);box-shadow:none;color:var(--tx)}
-select.lang{background:var(--surf);color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:var(--fs-sm);cursor:pointer}
-select.lang option{background:#0d1226}
-/* hero */
-.hero{padding:96px 0 56px;text-align:center;position:relative}
-.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:var(--fs-xs);letter-spacing:1.5px;text-transform:uppercase;color:var(--tx2);background:var(--grad-soft);border:1px solid var(--line2);border-radius:var(--r-full);padding:7px 16px;margin-bottom:28px}
-.eyebrow .live{width:8px;height:8px;border-radius:50%;background:var(--ok);animation:pulse 1.6s infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(46,230,168,.5)}70%{box-shadow:0 0 0 10px rgba(46,230,168,0)}100%{box-shadow:0 0 0 0 rgba(46,230,168,0)}}
-h1{font-size:var(--fs-display);line-height:1.02;letter-spacing:-2px;font-weight:800;margin-bottom:24px}
-h1 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.sub{font-size:clamp(16px,2.2vw,21px);color:var(--tx2);max-width:720px;margin:0 auto 40px}
-.hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-.hero-cta .cta{padding:15px 32px;font-size:16px;border-radius:var(--r-m)}
-.trust{display:flex;gap:28px;justify-content:center;flex-wrap:wrap;margin-top:44px;color:var(--mut);font-size:var(--fs-sm)}
-.trust b{color:var(--tx);font-variant-numeric:tabular-nums}
-/* stats strip */
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:24px 0 0}
-.stat{background:var(--surf);border:1px solid var(--line);border-radius:var(--r-m);padding:18px;text-align:left;transition:.2s var(--ease)}
-.stat:hover{transform:translateY(-3px);border-color:var(--line2)}
-.stat b{display:block;font-size:24px;font-variant-numeric:tabular-nums;background:linear-gradient(180deg,#fff,#b9c6ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.stat span{color:var(--mut);font-size:var(--fs-xs)}
-/* sections */
-section{padding:88px 0}
-.kicker{font-size:var(--fs-xs);letter-spacing:2px;text-transform:uppercase;color:var(--acc);font-weight:700;margin-bottom:14px}
-h2{font-size:var(--fs-h2);letter-spacing:-1px;line-height:1.15;margin-bottom:18px}
-.lead{color:var(--tx2);font-size:clamp(15px,2vw,18px);max-width:760px}
-.center{text-align:center}.center .lead{margin:0 auto}
-/* vision pillars */
-.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:44px}
-.pillar{background:linear-gradient(180deg,var(--surf2),var(--surf));border:1px solid var(--line);border-radius:var(--r-l);padding:30px;position:relative;overflow:hidden}
-.pillar::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent)}
-.pillar .ic{width:48px;height:48px;border-radius:14px;background:var(--grad-soft);border:1px solid var(--line2);display:grid;place-items:center;font-size:22px;margin-bottom:18px}
-.pillar h3{font-size:var(--fs-h3);margin-bottom:10px}
-.pillar p{color:var(--tx2);font-size:var(--fs-sm)}
-/* steps */
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:44px;counter-reset:st}
-.step{background:var(--surf);border:1px solid var(--line);border-radius:var(--r-l);padding:28px;position:relative}
-.step .n{font-size:44px;font-weight:800;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1;margin-bottom:14px}
-.step h3{font-size:var(--fs-h3);margin-bottom:8px}
-.step p{color:var(--tx2);font-size:var(--fs-sm)}
-/* features */
-.feats{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-top:44px}
-.feat{background:var(--surf);border:1px solid var(--line);border-radius:var(--r-l);padding:28px;transition:.2s var(--ease)}
-.feat:hover{transform:translateY(-3px);border-color:var(--line2);box-shadow:var(--sh)}
-.feat .tag{display:inline-block;font-size:var(--fs-xs);color:var(--acc);background:var(--grad-soft);border:1px solid var(--line2);border-radius:var(--r-full);padding:4px 12px;margin-bottom:14px}
-.feat h3{font-size:var(--fs-h3);margin-bottom:10px}
-.feat p{color:var(--tx2);font-size:var(--fs-sm)}
-/* tokenomics */
-.tok{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;margin-top:44px;align-items:start}
-@media(max-width:820px){.tok{grid-template-columns:1fr}}
-.alloc{display:flex;flex-direction:column;gap:14px}
-.al{display:flex;align-items:center;gap:14px}
-.al .bar{flex:1;height:12px;border-radius:var(--r-full);background:rgba(255,255,255,.07);overflow:hidden}
-.al .bar i{display:block;height:100%;background:var(--grad)}
-.al .lb{width:150px;font-size:var(--fs-sm);color:var(--tx2)}
-.al .pc{width:52px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
-.flywheel{background:linear-gradient(180deg,var(--surf2),var(--surf));border:1px solid var(--line);border-radius:var(--r-l);padding:28px}
-.flywheel h3{font-size:var(--fs-h3);margin-bottom:16px}
-.fw{display:flex;flex-direction:column;gap:10px}
-.fw .row{display:flex;justify-content:space-between;font-size:var(--fs-sm);color:var(--tx2);padding:10px 14px;background:rgba(255,255,255,.03);border-radius:12px}
-.fw .row b{color:var(--ok)}
-/* roadmap */
-.road{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:44px}
-.ph{border-left:2px solid var(--line2);padding-left:22px;position:relative}
-.ph::before{content:"";position:absolute;left:-6px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--grad)}
-.ph.done::before{background:var(--ok);box-shadow:0 0 12px rgba(46,230,168,.6)}
-.ph .when{font-size:var(--fs-xs);color:var(--mut);letter-spacing:1px;text-transform:uppercase}
-.ph h3{font-size:var(--fs-h3);margin:6px 0 8px}
-.ph p{color:var(--tx2);font-size:var(--fs-sm)}
-/* CTA band */
-.band{background:var(--grad-soft);border:1px solid var(--line2);border-radius:var(--r-l);padding:56px 32px;text-align:center;position:relative;overflow:hidden}
-.band h2{margin-bottom:14px}
-.band p{color:var(--tx2);max-width:640px;margin:0 auto 30px}
-/* footer */
-footer{border-top:1px solid var(--line);padding:48px 0 40px;margin-top:40px}
-.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:28px}
-.fcol h4{font-size:var(--fs-sm);margin-bottom:14px;color:var(--tx)}
-.fcol a{display:block;color:var(--mut);text-decoration:none;font-size:var(--fs-sm);padding:4px 0}
-.fcol a:hover{color:var(--tx)}
-.fbot{margin-top:36px;color:var(--mut);font-size:var(--fs-xs);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
-@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+:root{--bg:#05060a;--bg2:#0a0c12;--ink:#eef1f6;--mut:#9aa3b2;--line:rgba(255,255,255,.08);--acc:#7c8cff;--ok:#3ddc84}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+section{padding:84px 0}
+.k{color:var(--acc);font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+h2{font-size:clamp(26px,4vw,40px);line-height:1.2;margin-bottom:16px}
+.lead{color:var(--mut);max-width:760px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:22px}
+.card h3{font-size:17px;margin-bottom:8px}
+.card p{color:var(--mut);font-size:14.5px}
+.pill{display:inline-block;background:rgba(61,220,132,.12);color:var(--ok);border-radius:999px;padding:3px 12px;font-size:12.5px}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+.btn{background:var(--acc);color:#060810;border:0;border-radius:10px;padding:12px 22px;font-size:15px;font-weight:600;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.logos{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:24px}
+.logo{background:var(--bg2);border:1px solid var(--line);border-radius:10px;height:64px;display:grid;place-items:center;color:var(--mut);font-size:13px}
+.acc{border:1px solid var(--line);border-radius:12px;margin-top:12px;overflow:hidden}
+.acc>summary{padding:16px 20px;cursor:pointer;font-weight:600;list-style:none}
+.acc>div{padding:0 20px 18px;color:var(--mut);font-size:14.5px}
+.list{margin-top:20px}
+.list li{padding:12px 0;border-bottom:1px solid var(--line);color:var(--mut);font-size:14.5px;list-style:none}
+.list li b{color:var(--ink)}
+input[type=email]{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:12px 16px;color:var(--ink);min-width:240px}
+footer{border-top:1px solid var(--line);padding:56px 0 40px;background:var(--bg2)}
+.fcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:24px}
+.fcols h4{font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:12px}
+.fcols a{display:block;color:var(--mut);font-size:14px;padding:4px 0;text-decoration:none}
+.fcols a:hover{color:var(--ink)}
+.status{display:flex;gap:14px;flex-wrap:wrap;margin-top:24px}
+nav{position:sticky;top:0;z-index:40;background:rgba(5,6,10,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.navin{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;max-width:1120px;margin:0 auto}
+.brand{font-weight:800;font-size:18px}
+select.lang{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:7px 10px;color:var(--ink)}
+.hero{padding:96px 0 72px;position:relative}
+canvas#net{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+.h1{font-size:clamp(34px,6vw,64px);line-height:1.08;letter-spacing:-1px;margin:18px 0}
+.sub{color:var(--mut);font-size:clamp(16px,2vw,20px);max-width:760px}
+.trust{display:flex;gap:22px;flex-wrap:wrap;margin-top:34px;color:var(--mut);font-size:14px}
+.trust b{color:var(--ink)}
 </style>
 </head>
 <body>
-<canvas id="net" aria-hidden="true"></canvas>
-<div class="glowbg" aria-hidden="true"></div>
+<nav><div class="navin"><span class="brand">⚡ LightDAO</span><select class="lang" id="lang"></select></div></nav>
 
-<nav>
-  <div class="wrap nav-in">
-    <a class="logo" href="/"><span class="dot">◈</span> LightDAO</a>
-    <div class="links">
-      <a href="#vision" data-i="navVision">愿景</a>
-      <a href="#how" data-i="navHow">原理</a>
-      <a href="#features" data-i="navFeat">特性</a>
-      <a href="#tokenomics" data-i="navTok">代币</a>
-      <a href="#roadmap" data-i="navRoad">路线图</a>
-      <select class="lang" id="lang" aria-label="language"></select>
-      <a class="cta" href="/app.html" data-i="navCta">开始挖矿</a>
-    </div>
-  </div>
-</nav>
+<header class="hero"><canvas id="net"></canvas><div class="wrap" style="position:relative">
+<div class="pill">● <span data-i="live">主网已上线</span> · MAINNET LIVE</div>
+<h1 class="h1" data-i="h1">你的设备,不该只是别人的矿。</h1>
+<p class="sub" data-i="sub">LightDAO 让闲置算力第一次属于它的主人——几分钟、零硬件、无需许可,把每一瓦特变成你的数字资产。</p>
+<div class="row"><button class="btn" onclick="location='/app.html'" data-i="ctaMine">开始挖矿</button><button class="btn ghost" onclick="location='/whitepaper.html'" data-i="ctaWp">读白皮书</button></div>
+<div class="trust"><span><b>7</b> <span data-i="trV">验证者</span></span><span><b>10</b> <span data-i="trC">链上合约</span></span><span><b>50%</b> <span data-i="trB">手续费销毁</span></span><span><b>2.5B</b> <span data-i="trCap">硬顶</span></span></div>
+<div class="trust" style="margin-top:18px">
+<span><b id="sH">—</b> <span data-i="stH">区块高度</span></span>
+<span><b id="sBurn">—</b> <span data-i="stBurn">已销毁</span></span>
+<span><b id="sMin">—</b> <span data-i="stMin">今日矿工</span></span>
+<span><b id="sDay">—</b> <span data-i="stDay">赛季日</span></span>
+</div>
+</div></header>
 
-<header class="hero wrap">
-  <div class="eyebrow"><span class="live"></span><span data-i="eyebrow">主网已上线 · MAINNET LIVE</span></div>
-  <h1><span data-i="h1a">把闲置浏览器</span><br><span class="g" data-i="h1b">变成一台矿机</span></h1>
-  <p class="sub" data-i="sub">LightDAO 是一条活跃的 Cosmos L1:你的浏览器贡献带宽与算力即可挖 LIGHT。无需硬件、无需助记词、零投入——贡献即收益,全程链上可验证。</p>
-  <div class="hero-cta">
-    <a class="cta" href="/app.html" data-i="ctaMine">立即开始挖矿</a>
-    <a class="cta ghost" href="/whitepaper.html" data-i="ctaWp">阅读白皮书</a>
-  </div>
-  <div class="trust">
-    <span><b id="tVals">7</b> <span data-i="trVals">验证者</span></span>
-    <span><b>10</b> <span data-i="trContracts">链上合约</span></span>
-    <span><b>50%</b> <span data-i="trBurn">手续费销毁</span></span>
-    <span><b>2.5B</b> <span data-i="trCap">硬顶供应</span></span>
-  </div>
-  <div class="stats" id="stats">
-    <div class="stat"><b id="sH">—</b><span data-i="stH">区块高度</span></div>
-    <div class="stat"><b id="sBurn">—</b><span data-i="stBurn">已销毁 LIGHT</span></div>
-    <div class="stat"><b id="sTre">—</b><span data-i="stTre">金库 LIGHT</span></div>
-    <div class="stat"><b id="sMin">—</b><span data-i="stMin">今日矿工</span></div>
-    <div class="stat"><b id="sDay">—</b><span data-i="stDay">赛季日</span></div>
-  </div>
-</header>
+<section id="vision"><div class="wrap">
+<div class="k" data-i="visK">愿景 · VISION</div>
+<h2 data-i="visH">让创造算力的人,也拥有算力的回报。</h2>
+<p class="lead" data-i="visB">今天的数字经济有使用者、有平台,却没有所有者。数十亿设备日夜产生算力,回报却流向少数中间人。LightDAO 要改写这条规则:谁产生算力,谁拥有回报——一个有主人、而非租客的数字经济体。</p>
+<div class="grid3">
+<div class="card"><h3 data-i="p1t">主权 SOVEREIGNTY</h3><p data-i="p1b">你的算力,你的回报。没有中间人抽成,没有黑箱。</p></div>
+<div class="card"><h3 data-i="p2t">准入 ACCESS</h3><p data-i="p2b">几分钟,而非几个月。零硬件、零许可、零门槛。</p></div>
+<div class="card"><h3 data-i="p3t">可证 PROOF</h3><p data-i="p3b">一切链上可验证。信数学,不信营销。</p></div>
+</div></div></section>
 
-<section id="vision">
-  <div class="wrap">
-    <div class="kicker" data-i="vKicker">愿景 · VISION</div>
-    <h2 data-i="vH2">让全球 40 亿无硬件人群,第一次拥有"生产资料"</h2>
-    <p class="lead" data-i="vLead">加密世界的门槛从来不是意愿,而是设备、资本与知识。LightDAO 把门槛降到"一个能上网的浏览器":贡献即挖矿、收益即代币、治理即权利。我们相信下一批十亿用户不会买矿机——他们只会打开网页。</p>
-    <div class="pillars">
-      <div class="pillar"><div class="ic">🌍</div><h3 data-i="p1t">金融包容</h3><p data-i="p1d">面向东南亚/拉美/非洲/南亚等新兴市场,零硬件零资本参与,把 DePIN 从"极客玩具"变成"大众收入"。</p></div>
-      <div class="pillar"><div class="ic"></div><h3 data-i="p2t">无种子钱包</h3><p data-i="p2d">Passkey/WebAuthn 生物登录 + Shamir 社交恢复,丢掉"抄助记词"这一最大流失点与安全隐患。</p></div>
-      <div class="pillar"><div class="ic">⚖️</div><h3 data-i="p3t">可验证贡献</h3><p data-i="p3d">三层 Proof-of-Contribution(验证者挑战+对等 attest+逐块 Merkle 根),贡献无法伪造,奖励无法作弊。</p></div>
-    </div>
-  </div>
-</section>
+<section id="how" style="background:var(--bg2)"><div class="wrap">
+<div class="k" data-i="howK">工作原理 · HOW</div>
+<h2 data-i="howH">四步,六十秒。</h2>
+<div class="grid3">
+<div class="card"><h3>1 <span data-i="s1t">打开网页</span></h3><p data-i="s1b">无需安装,无需账号。</p></div>
+<div class="card"><h3>2 <span data-i="s2t">Passkey 认领</span></h3><p data-i="s2b">一把钥匙,认领你的算力主权。</p></div>
+<div class="card"><h3>3 <span data-i="s3t">开始贡献</span></h3><p data-i="s3b">闲置带宽与算力,开始为你工作。</p></div>
+<div class="card"><h3>4 <span data-i="s4t">每日领取</span></h3><p data-i="s4b">回报每日到账,链上可查。</p></div>
+</div></div></section>
 
-<section id="how" style="background:var(--bg2)">
-  <div class="wrap">
-    <div class="kicker" data-i="hKicker">工作原理 · HOW IT WORKS</div>
-    <h2 data-i="hH2">四步开始,六十秒上线</h2>
-    <div class="steps">
-      <div class="step"><div class="n">1</div><h3 data-i="s1t">打开网页</h3><p data-i="s1d">无需安装,PWA 即用即走,手机电脑皆可。</p></div>
-      <div class="step"><div class="n">2</div><h3 data-i="s2t">Passkey 登录</h3><p data-i="s2d">指纹/面容创建无种子钱包,可设社交恢复。</p></div>
-      <div class="step"><div class="n">3</div><h3 data-i="s3t">开始贡献</h3><p data-i="s3d">浏览器自动中继带宽(WebRTC)、验证区块头、保持在线。</p></div>
-      <div class="step"><div class="n">4</div><h3 data-i="s4t">每日领取</h3><p data-i="s4d">贡献定稿上链后,凭 Merkle 证明领取 LIGHT,新用户 gas 代付。</p></div>
-    </div>
-  </div>
-</section>
+<section id="feat"><div class="wrap">
+<div class="k" data-i="featK">特性 · FEATURES</div>
+<h2 data-i="featH">为"所有者"而建,不为"租客"而建。</h2>
+<div class="grid3">
+<div class="card"><h3 data-i="f1t">三层贡献证明</h3><p data-i="f1b">带宽/算力/在线,三重证明,贡献不可伪造。</p></div>
+<div class="card"><h3 data-i="f2t">Passkey 钱包</h3><p data-i="f2b">无种子、无助记词,一把钥匙管主权。</p></div>
+<div class="card"><h3 data-i="f3t">WebRTC 中继</h3><p data-i="f3b">设备直连成网,百万节点共享算力。</p></div>
+<div class="card"><h3 data-i="f4t">USD-gas + 50% 销毁</h3><p data-i="f4b">稳定计价,一半手续费永久销毁。</p></div>
+<div class="card"><h3 data-i="f5t">链上治理</h3><p data-i="f5b">规则由持有者写,不由公司写。</p></div>
+<div class="card"><h3 data-i="f6t">透明 vesting</h3><p data-i="f6b">解锁全链上,无隐藏条款。</p></div>
+</div></div></section>
 
-<section id="features">
-  <div class="wrap">
-    <div class="kicker" data-i="fKicker">核心特性 · FEATURES</div>
-    <h2 data-i="fH2">为"真实贡献"而生的链</h2>
-    <div class="feats">
-      <div class="feat"><span class="tag">PoC</span><h3 data-i="f1t">三层贡献证明</h3><p data-i="f1d">验证者随机挑战 + 8–16 对等节点 attest + 逐块 Merkle 根上链,O(1) 存储、人人可自证。</p></div>
-      <div class="feat"><span class="tag">Wallet</span><h3 data-i="f2t">Passkey 无种子钱包</h3><p data-i="f2d">WebAuthn 生物登录,Shamir 3-of-5 社交恢复,助记词仅作可选回退。</p></div>
-      <div class="feat"><span class="tag">DePIN</span><h3 data-i="f3t">全量 WebRTC 中继</h3><p data-i="f3d">8 区域 TURN/TURNS 中继舰队 + WSS 信令,设备端计量中继字节,计入 40% 带宽分。</p></div>
-      <div class="feat"><span class="tag">Gas</span><h3 data-i="f4t">USD 锚定 Gas + 50% 销毁</h3><p data-i="f4d">参考转账恒约 $0.001;每笔手续费 50% 销毁 / 30% 验证者 / 20% 金库,通缩飞轮。</p></div>
-      <div class="feat"><span class="tag">DAO</span><h3 data-i="f5t">链上治理</h3><p data-i="f5d">五档提案(55%→75% 通过线)+ 双维度计票 + 低投票率抬升门槛,升级皆由投票执行。</p></div>
-      <div class="feat"><span class="tag">Trust</span><h3 data-i="f6t">透明归属</h3><p data-i="f6d">TGE 三段 vesting(75M/100M/75M)全链上可查,无隐藏解锁;浏览器实时公示。</p></div>
-    </div>
-  </div>
-</section>
+<section id="tok" style="background:var(--bg2)"><div class="wrap">
+<div class="k" data-i="tokK">代币经济 · TOKEN</div>
+<h2 data-i="tokH">2.5B 硬顶,永不增发。</h2>
+<p class="lead" data-i="tokB">分配:挖矿 40% / 生态 34% / 团队 16% / 金库 10%。手续费一半永久销毁,供应只减不增。代币是主权凭证:治理、质押、结算,都靠它。</p>
+</div></section>
 
-<section id="tokenomics" style="background:var(--bg2)">
-  <div class="wrap">
-    <div class="kicker" data-i="tKicker">代币经济 · TOKENOMICS</div>
-    <h2 data-i="tH2">2.5B 硬顶,单一排放源,通缩飞轮</h2>
-    <div class="tok">
-      <div class="alloc">
-        <div class="al"><span class="lb" data-i="a1">挖矿奖励</span><div class="bar"><i style="width:40%"></i></div><span class="pc">40%</span></div>
-        <div class="al"><span class="lb" data-i="a2">投资金库</span><div class="bar"><i style="width:34%"></i></div><span class="pc">34%</span></div>
-        <div class="al"><span class="lb" data-i="a3">生态基金</span><div class="bar"><i style="width:16%"></i></div><span class="pc">16%</span></div>
-        <div class="al"><span class="lb" data-i="a4">战略运营</span><div class="bar"><i style="width:10%"></i></div><span class="pc">10%</span></div>
-        <p class="lead" style="margin-top:18px" data-i="tNote">LIGHT 永不增发;排放仅来自挖矿合约,原生通胀已由治理归零。Gas 的 50% 持续销毁,使供应随使用递减。</p>
-      </div>
-      <div class="flywheel">
-        <h3 data-i="fwT">手续费去向(每笔)</h3>
-        <div class="fw">
-          <div class="row"><span data-i="fw1">销毁(通缩)</span><b>50%</b></div>
-          <div class="row"><span data-i="fw2">验证者激励</span><b>30%</b></div>
-          <div class="row"><span data-i="fw3">金库再投资</span><b>20%</b></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<section id="sec"><div class="wrap">
+<div class="k" data-i="secK">安全 · SECURITY</div>
+<h2 data-i="secH">安全不是口号,是纪律。</h2>
+<p class="lead" data-i="secB">定期第三方审计、漏洞赏金、负责任披露。发现问题?我们付钱,并公开修复。</p>
+<div class="grid3">
+<div class="card"><h3 data-i="sec1t">审计 Audits</h3><p data-i="sec1b">核心协议定期第三方审计,报告公开。</p></div>
+<div class="card"><h3 data-i="sec2t">漏洞赏金 Bounty</h3><p data-i="sec2b">最高 $50,000,按严重度分级。</p></div>
+<div class="card"><h3 data-i="sec3t">负责任披露</h3><p data-i="sec3b">90 天窗口,修复后公开致谢。</p></div>
+</div></div></section>
 
-<section id="roadmap">
-  <div class="wrap">
-    <div class="kicker" data-i="rKicker">路线图 · ROADMAP</div>
-    <h2 data-i="rH2">已交付与进行中</h2>
-    <div class="road">
-      <div class="ph done"><div class="when">Done</div><h3 data-i="r1t">主网 + 10 合约</h3><p data-i="r1d">7 验证者主网、CosmWasm 合约套件、浏览器挖矿闭环上线。</p></div>
-      <div class="ph done"><div class="when">Done</div><h3 data-i="r2t">Gas 经济 + 治理</h3><p data-i="r2d">USD 锚定 gas、50/30/20 分成、链上治理与自我迁移。</p></div>
-      <div class="ph"><div class="when">Now</div><h3 data-i="r3t">Season 1 + 增长</h3><p data-i="r3d">贡献赛季、邀请裂变、多语言客户端、目录/社区收录。</p></div>
-      <div class="ph"><div class="when">Next</div><h3 data-i="r4t">流动性 + 扩展</h3><p data-i="r4d">LIGHT/USDC 池与真实 oracle、Paymaster 全量、验证者扩至 100。</p></div>
-    </div>
-  </div>
-</section>
+<section id="gov" style="background:var(--bg2)"><div class="wrap">
+<div class="k" data-i="govK">治理 · GOVERNANCE</div>
+<h2 data-i="govH">规则由持有者写,不由公司写。</h2>
+<p class="lead" data-i="govB">金库、参数、升级——全部链上提案、链上投票。一瓦特一票,但每一票都可被审计。</p>
+<div class="row"><button class="btn ghost" onclick="location='/governance.html'" data-i="govC">进入治理 →</button></div>
+</div></section>
 
-<section>
-  <div class="wrap">
-    <div class="band">
-      <h2 data-i="bH2">你的浏览器,现在就能赚钱</h2>
-      <p data-i="bP">加入最早的一批矿工。贡献带宽与在线时长,每日领取 LIGHT;邀请好友再赚其首周贡献的 10%。</p>
-      <a class="cta" href="/app.html?ref=wasm1vhpf9c3h8eu8hd7ca520dvspzdsxz4nkka3h7s" data-i="bCta">开始挖矿 · 免费</a>
-    </div>
-  </div>
-</section>
+<section id="dev"><div class="wrap">
+<div class="k" data-i="devK">开发者 · DEVELOPERS</div>
+<h2 data-i="devH">开源,或者不存在。</h2>
+<p class="lead" data-i="devB">核心协议、SDK、API 全部开源。读代码,提 PR,拿赏金。</p>
+<div class="grid3">
+<div class="card"><h3 data-i="dev1t">文档 Docs</h3><p data-i="dev1b">快速上手到深度集成,中/EN。</p></div>
+<div class="card"><h3 data-i="dev2t">API 状态</h3><p><span class="pill">● Operational</span></p></div>
+<div class="card"><h3 data-i="dev3t">SDK & GitHub</h3><p data-i="dev3b">多语言 SDK,issue 赏金标签。</p></div>
+</div></div></section>
 
-<footer>
-  <div class="wrap">
-    <div class="fgrid">
-      <div class="fcol"><h4>Product</h4><a href="/app.html" data-i="ftApp">挖矿客户端</a><a href="/explorer.html" data-i="ftExp">区块浏览器</a><a href="/governance.html" data-i="ftGov">治理</a><a href="/season.html">Season 1</a></div>
-      <div class="fcol"><h4>Developers</h4><a href="https://github.com/youqi023789/lightdao" target="_blank" rel="noopener">GitHub</a><a href="/whitepaper.html" data-i="ftWp">白皮书 V2.4</a><a href="https://github.com/youqi023789/lightdao/blob/main/docs/MAINNET_STATUS.md" target="_blank" rel="noopener">Mainnet Status</a></div>
-      <div class="fcol"><h4>Community</h4><a href="https://x.com/lightdaoproto" target="_blank" rel="noopener">X / Twitter</a><a href="#" data-i="ftTg">Telegram(即将)</a><a href="#" data-i="ftDc">Discord(即将)</a></div>
-    </div>
-    <div class="fbot"><span>© 2026 LightDAO · lightdao-mainnet-1</span><span data-i="ftDisc">测试网价值阶段,请勿投入真实资产。</span></div>
-  </div>
-</footer>
+<section id="eco" style="background:var(--bg2)"><div class="wrap">
+<div class="k" data-i="ecoK">生态 · ECOSYSTEM</div>
+<h2 data-i="ecoH">一台设备很小,一百万台很大。</h2>
+<p class="lead" data-i="ecoB">钱包、矿池、支付、IoT、CDN、AI——集成 LightDAO,共享百万设备算力网络。</p>
+<div class="logos"><div class="logo">Wallet</div><div class="logo">Pool</div><div class="logo">Pay</div><div class="logo">IoT</div><div class="logo">CDN</div><div class="logo">AI</div></div>
+</div></section>
+
+<section id="com"><div class="wrap">
+<div class="k" data-i="comK">社区 · COMMUNITY</div>
+<h2 data-i="comH">所有者们,自己组织自己。</h2>
+<p class="lead" data-i="comB">Discord、Telegram、论坛、线下聚会。大使计划:把 LightDAO 带到你的城市,赚代币与声誉。</p>
+<div class="grid3">
+<div class="card"><h3>Discord</h3><p data-i="com1b">日常讨论与支援。</p></div>
+<div class="card"><h3>Telegram</h3><p data-i="com2b">多语言频道。</p></div>
+<div class="card"><h3 data-i="com3t">大使 Ambassadors</h3><p data-i="com3b">带 LightDAO 到你的城市。</p></div>
+</div></div></section>
+
+<section id="blog" style="background:var(--bg2)"><div class="wrap">
+<div class="k" data-i="blogK">更新 · CHANGELOG</div>
+<h2 data-i="blogH">我们每周交付,不是每季度承诺。</h2>
+<ul class="list">
+<li><b>v1.4</b> — <span data-i="b1">主网手续费燃烧上线</span> · 2026-06</li>
+<li><b>v1.3</b> — <span data-i="b2">Passkey 无种子钱包</span> · 2026-04</li>
+<li><b>v1.2</b> — <span data-i="b3">WebRTC 设备直连中继</span> · 2026-02</li>
+<li><b>v1.1</b> — <span data-i="b4">USD 稳定计价 gas</span> · 2025-12</li>
+</ul></div></section>
+
+<section id="faq"><div class="wrap">
+<div class="k" data-i="faqK">常见问题 · FAQ</div>
+<h2 data-i="faqH">你问,我们答。</h2>
+<details class="acc"><summary data-i="q1">需要硬件吗?</summary><div data-i="a1">不需要。任何能上网的现有设备即可,零额外硬件。</div></details>
+<details class="acc"><summary data-i="q2">回报怎么算?</summary><div data-i="a2">按你贡献的带宽/算力/在线时长,每日结算,链上可查。</div></details>
+<details class="acc"><summary data-i="q3">安全吗?</summary><div data-i="a3">定期审计+漏洞赏金+负责任披露;协议开源可自验。</div></details>
+<details class="acc"><summary data-i="q4">需要什么许可?</summary><div data-i="a4">无需任何许可。打开网页即可,无账号、无审批。</div></details>
+<details class="acc"><summary data-i="q5">代币有什么用?</summary><div data-i="a5">治理投票、质押、结算的手续费凭证;硬顶永不增发。</div></details>
+<details class="acc"><summary data-i="q6">怎么开始?</summary><div data-i="a6">点"开始挖矿",六十秒完成认领,当日开始贡献。</div></details>
+</div></section>
+
+<section id="team" style="background:var(--bg2)"><div class="wrap">
+<div class="k" data-i="teamK">团队 · TEAM</div>
+<h2 data-i="teamH">一小群相信"所有者经济"的人。</h2>
+<div class="grid3">
+<div class="card"><h3 data-i="t1t">协议工程</h3><p data-i="t1b">分布式系统与安全背景。</p></div>
+<div class="card"><h3 data-i="t2t">密码学</h3><p data-i="t2b">无种子密钥与零知识方向。</p></div>
+<div class="card"><h3 data-i="t3t">社区</h3><p data-i="t3b">把所有者组织起来。</p></div>
+</div>
+<div class="row"><button class="btn ghost" data-i="hire">我们在招人 →</button></div>
+</div></section>
+
+<section id="media"><div class="wrap">
+<div class="k" data-i="medK">媒体与品牌 · MEDIA KIT</div>
+<h2 data-i="medH">写我们?用官方素材。</h2>
+<div class="grid3">
+<div class="card"><h3 data-i="m1t">Logo 包</h3><p data-i="m1b">SVG/PNG,深浅底。</p></div>
+<div class="card"><h3 data-i="m2t">品牌指南</h3><p data-i="m2b">色彩/字体/用法。</p></div>
+<div class="card"><h3 data-i="m3t">媒体联络</h3><p>press@lightdao</p></div>
+</div></div></section>
+
+<section id="wp" style="background:var(--bg2)"><div class="wrap">
+<div class="k" data-i="wpK">白皮书 · WHITEPAPER</div>
+<h2 data-i="wpH">读原件,不读转述。</h2>
+<div class="row"><button class="btn ghost" onclick="location='/whitepaper.html'" data-i="wpC">白皮书 / 精简版 →</button></div>
+</div></section>
+
+<section id="news"><div class="wrap">
+<div class="k" data-i="newsK">订阅 · NEWSLETTER</div>
+<h2 data-i="newsH">每月一封,不垃圾。</h2>
+<div class="row"><input type="email" placeholder="you@example.com"><button class="btn" data-i="newsC">订阅</button></div>
+</div></section>
+
+<footer><div class="wrap">
+<div class="fcols">
+<div><h4>Product</h4><a href="/app.html" data-i="ftMine">挖矿</a><a href="/explorer.html" data-i="ftExp">浏览器</a><a href="/governance.html" data-i="ftGov">治理</a><a href="#" data-i="ftStatus">状态</a></div>
+<div><h4>Developers</h4><a href="#" data-i="ftDocs">文档</a><a href="https://github.com/youqi023789/lightdao">GitHub</a><a href="#">API</a><a href="#" data-i="ftBounty">赏金</a></div>
+<div><h4>Community</h4><a href="#">Discord</a><a href="#">Telegram</a><a href="#" data-i="ftForum">论坛</a><a href="#" data-i="ftAmb">大使</a></div>
+<div><h4>Company</h4><a href="#team" data-i="ftTeam">团队</a><a href="#" data-i="ftHire">招聘</a><a href="#media" data-i="ftMedia">媒体</a><a href="#blog" data-i="ftBlog">博客</a></div>
+<div><h4>Legal</h4><a href="#" data-i="ftPriv">隐私</a><a href="#" data-i="ftTerms">条款</a></div>
+</div>
+<div class="status"><span class="pill">● Network Operational</span><span class="pill">● API Operational</span></div>
+<p style="color:var(--mut);margin-top:24px;font-size:14px" data-i="footTag">你的设备,不该只是别人的矿。 · © 2026 LightDAO</p>
+</div></footer>
 
 <script>
-/* i18n (zh/en for landing; extendable) */
-const I18N={
- zh:{navVision:"愿景",navHow:"原理",navFeat:"特性",navTok:"代币",navRoad:"路线图",navCta:"开始挖矿",eyebrow:"主网已上线 · MAINNET LIVE",h1a:"把闲置浏览器",h1b:"变成一台矿机",sub:"LightDAO 是一条活跃的 Cosmos L1:你的浏览器贡献带宽与算力即可挖 LIGHT。无需硬件、无需助记词、零投入——贡献即收益,全程链上可验证。",ctaMine:"立即开始挖矿",ctaWp:"阅读白皮书",trVals:"验证者",trContracts:"链上合约",trBurn:"手续费销毁",trCap:"硬顶供应",stH:"区块高度",stBurn:"已销毁 LIGHT",stTre:"金库 LIGHT",stMin:"今日矿工",stDay:"赛季日",vKicker:"愿景 · VISION",vH2:"让全球 40 亿无硬件人群,第一次拥有\"生产资料\"",vLead:"加密世界的门槛从来不是意愿,而是设备、资本与知识。LightDAO 把门槛降到\"一个能上网的浏览器\":贡献即挖矿、收益即代币、治理即权利。我们相信下一批十亿用户不会买矿机——他们只会打开网页。",p1t:"金融包容",p1d:"面向东南亚/拉美/非洲/南亚等新兴市场,零硬件零资本参与,把 DePIN 从\"极客玩具\"变成\"大众收入\"。",p2t:"无种子钱包",p2d:"Passkey/WebAuthn 生物登录 + Shamir 社交恢复,丢掉\"抄助记词\"这一最大流失点与安全隐患。",p3t:"可验证贡献",p3d:"三层 Proof-of-Contribution(验证者挑战+对等 attest+逐块 Merkle 根),贡献无法伪造,奖励无法作弊。",hKicker:"工作原理 · HOW IT WORKS",hH2:"四步开始,六十秒上线",s1t:"打开网页",s1d:"无需安装,PWA 即用即走,手机电脑皆可。",s2t:"Passkey 登录",s2d:"指纹/面容创建无种子钱包,可设社交恢复。",s3t:"开始贡献",s3d:"浏览器自动中继带宽(WebRTC)、验证区块头、保持在线。",s4t:"每日领取",s4d:"贡献定稿上链后,凭 Merkle 证明领取 LIGHT,新用户 gas 代付。",fKicker:"核心特性 · FEATURES",fH2:"为\"真实贡献\"而生的链",f1t:"三层贡献证明",f1d:"验证者随机挑战 + 8–16 对等节点 attest + 逐块 Merkle 根上链,O(1) 存储、人人可自证。",f2t:"Passkey 无种子钱包",f2d:"WebAuthn 生物登录,Shamir 3-of-5 社交恢复,助记词仅作可选回退。",f3t:"全量 WebRTC 中继",f3d:"8 区域 TURN/TURNS 中继舰队 + WSS 信令,设备端计量中继字节,计入 40% 带宽分。",f4t:"USD 锚定 Gas + 50% 销毁",f4d:"参考转账恒约 $0.001;每笔手续费 50% 销毁 / 30% 验证者 / 20% 金库,通缩飞轮。",f5t:"链上治理",f5d:"五档提案(55%→75% 通过线)+ 双维度计票 + 低投票率抬升门槛,升级皆由投票执行。",f6t:"透明归属",f6d:"TGE 三段 vesting(75M/100M/75M)全链上可查,无隐藏解锁;浏览器实时公示。",tKicker:"代币经济 · TOKENOMICS",tH2:"2.5B 硬顶,单一排放源,通缩飞轮",a1:"挖矿奖励",a2:"投资金库",a3:"生态基金",a4:"战略运营",tNote:"LIGHT 永不增发;排放仅来自挖矿合约,原生通胀已由治理归零。Gas 的 50% 持续销毁,使供应随使用递减。",fwT:"手续费去向(每笔)",fw1:"销毁(通缩)",fw2:"验证者激励",fw3:"金库再投资",rKicker:"路线图 · ROADMAP",rH2:"已交付与进行中",r1t:"主网 + 10 合约",r1d:"7 验证者主网、CosmWasm 合约套件、浏览器挖矿闭环上线。",r2t:"Gas 经济 + 治理",r2d:"USD 锚定 gas、50/30/20 分成、链上治理与自我迁移。",r3t:"Season 1 + 增长",r3d:"贡献赛季、邀请裂变、多语言客户端、目录/社区收录。",r4t:"流动性 + 扩展",r4d:"LIGHT/USDC 池与真实 oracle、Paymaster 全量、验证者扩至 100。",bH2:"你的浏览器,现在就能赚钱",bP:"加入最早的一批矿工。贡献带宽与在线时长,每日领取 LIGHT;邀请好友再赚其首周贡献的 10%。",bCta:"开始挖矿 · 免费",ftApp:"挖矿客户端",ftExp:"区块浏览器",ftGov:"治理",ftWp:"白皮书 V2.4",ftTg:"Telegram(即将)",ftDc:"Discord(即将)",ftDisc:"测试网价值阶段,请勿投入真实资产。"},
- en:{navVision:"Vision",navHow:"How",navFeat:"Features",navTok:"Token",navRoad:"Roadmap",navCta:"Start Mining",eyebrow:"MAINNET LIVE",h1a:"Turn your idle browser",h1b:"into a mining rig",sub:"LightDAO is a live Cosmos L1 where your browser earns LIGHT by contributing bandwidth & compute. No hardware, no seed phrase, no money down — contribution is yield, fully verifiable on-chain.",ctaMine:"Start Mining Now",ctaWp:"Read Whitepaper",trVals:"validators",trContracts:"on-chain contracts",trBurn:"of fees burned",trCap:"hard-capped supply",stH:"Block height",stBurn:"LIGHT burned",stTre:"Treasury LIGHT",stMin:"Miners today",stDay:"Season day",vKicker:"VISION",vH2:"Give 4 billion hardware-less people their first \"means of production\"",vLead:"The barrier to crypto was never willingness — it was devices, capital, and knowledge. LightDAO lowers it to \"a browser with internet\": contribute to mine, earn the token, hold the governance rights. The next billion users won't buy rigs — they'll open a tab.",p1t:"Financial inclusion",p1d:"Built for emerging markets (SEA / LatAm / Africa / South Asia): zero hardware, zero capital, turning DePIN from a geek toy into mass income.",p2t:"Seedless wallet",p2d:"Passkey/WebAuthn biometric login + Shamir social recovery removes the seed-phrase step — the biggest drop-off and security risk in crypto.",p3t:"Verifiable contribution",p3d:"Three-layer Proof-of-Contribution (validator challenges + peer attestation + per-block Merkle root): contribution can't be faked, rewards can't be cheated.",hKicker:"HOW IT WORKS",hH2:"Four steps, live in 60 seconds",s1t:"Open the web",s1d:"No install; PWA works instantly on phone or desktop.",s2t:"Passkey login",s2d:"Create a seedless wallet with fingerprint/face; optional social recovery.",s3t:"Contribute",s3d:"Your browser relays bandwidth (WebRTC), verifies block headers, stays online.",s4t:"Claim daily",s4d:"Once a day finalizes on-chain, claim LIGHT via Merkle proof; new users get sponsored gas.",fKicker:"FEATURES",fH2:"A chain built for real contribution",f1t:"3-layer Proof-of-Contribution",f1d:"Validator random challenges + 8–16 peer attestations + per-block Merkle root on-chain: O(1) storage, self-verifiable by anyone.",f2t:"Passkey seedless wallet",f2d:"WebAuthn biometric login, Shamir 3-of-5 social recovery; mnemonic only as optional fallback.",f3t:"Full WebRTC relay",f3d:"8-region TURN/TURNS relay fleet + WSS signaling; relay bytes metered on-device, scoring 40% of reward.",f4t:"USD-anchored gas + 50% burn",f4d:"A reference transfer costs ~$0.001 regardless of price; every fee: 50% burned / 30% validators / 20% treasury.",f5t:"On-chain governance",f5d:"Five proposal tiers (55%→75% pass) + dual-dimension voting + low-turnout quorum guard; upgrades executed by vote.",f6t:"Transparent vesting",f6d:"TGE tranches (75M/100M/75M) fully on-chain, no hidden unlocks; live in the explorer.",tKicker:"TOKENOMICS",tH2:"2.5B hard cap, single emission source, deflationary flywheel",a1:"Mining rewards",a2:"Investment treasury",a3:"Ecosystem fund",a4:"Strategic ops",tNote:"LIGHT is never inflated; emission only from the mining contract, native inflation governance-zeroed. 50% of gas is burned continuously, so supply shrinks with usage.",fwT:"Where every fee goes",fw1:"Burned (deflation)",fw2:"Validator incentives",fw3:"Treasury reinvestment",rKicker:"ROADMAP",rH2:"Shipped & in progress",r1t:"Mainnet + 10 contracts",r1d:"7-validator mainnet, CosmWasm suite, browser mining loop live.",r2t:"Gas economics + governance",r2d:"USD-anchored gas, 50/30/20 split, on-chain governance & self-migration.",r3t:"Season 1 + growth",r3d:"Contribution seasons, referral engine, multilingual client, directory listings.",r4t:"Liquidity + scale",r4d:"LIGHT/USDC pool & real oracle, full Paymaster, validators to 100.",bH2:"Your browser can earn, right now",bP:"Join the earliest miners. Contribute bandwidth & uptime, claim LIGHT daily; invite friends and earn 10% of their first-week contribution.",bCta:"Start Mining · Free",ftApp:"Mining client",ftExp:"Block explorer",ftGov:"Governance",ftWp:"Whitepaper V2.4",ftTg:"Telegram (soon)",ftDc:"Discord (soon)",ftDisc:"Testnet-value phase; do not commit real assets."}
+var T={
+zh:{},
+en:{live:"Mainnet live",h1:"Your device shouldn't just be someone else's mine.",sub:"LightDAO returns idle compute to its owner — minutes, zero hardware, no permission. Turn every watt into your digital asset.",ctaMine:"Start mining",ctaWp:"Read whitepaper",trV:"validators",trC:"on-chain contracts",trB:"fee burn",trCap:"hard cap",visK:"VISION",visH:"Those who create compute should own its rewards.",visB:"Today's digital economy has users and platforms, but no owners. Billions of devices produce compute day and night, yet the rewards flow to a few middlemen. LightDAO rewrites that rule: whoever produces compute owns its reward — an economy of owners, not renters.",p1t:"Sovereignty",p1b:"Your compute, your reward. No middlemen skimming, no black box.",p2t:"Access",p2b:"Minutes, not months. Zero hardware, zero permission, zero barrier.",p3t:"Proof",p3b:"Everything verifiable on-chain. Trust the math, not the marketing.",howK:"HOW",howH:"Four steps, sixty seconds.",s1t:"Open the web",s1b:"No install, no account.",s2t:"Claim with Passkey",s2b:"One key to claim your compute sovereignty.",s3t:"Contribute",s3b:"Idle bandwidth & compute start working for you.",s4t:"Claim daily",s4b:"Rewards settle daily, verifiable on-chain.",featK:"FEATURES",featH:"Built for owners, not renters.",f1t:"3-layer Proof-of-Contribution",f1b:"Bandwidth / compute / uptime, triple-proven, unfakeable.",f2t:"Passkey wallet",f2b:"No seed, no mnemonic; one key to your sovereignty.",f3t:"WebRTC relay",f3b:"Devices mesh directly; millions share one compute fabric.",f4t:"USD-gas + 50% burn",f4b:"Stable pricing; half of every fee burned forever.",f5t:"On-chain governance",f5b:"Rules written by holders, not by a company.",f6t:"Transparent vesting",f6b:"Unlocks fully on-chain, no hidden terms.",tokK:"TOKEN",tokH:"2.5B hard cap, never inflated.",tokB:"Allocation: mining 40% / ecosystem 34% / team 16% / treasury 10%. Half of every fee is burned forever, so supply only shrinks. The token is a sovereignty credential: governance, staking, settlement.",secK:"SECURITY",secH:"Security is discipline, not a slogan.",secB:"Regular third-party audits, bug bounties, responsible disclosure. Found a bug? We pay, and we fix in the open.",sec1t:"Audits",sec1b:"Core protocol audited regularly, reports public.",sec2t:"Bug bounty",sec2b:"Up to $50,000, tiered by severity.",sec3t:"Responsible disclosure",sec3b:"90-day window, public credit after fix.",govK:"GOVERNANCE",govH:"Rules written by holders, not by a company.",govB:"Treasury, parameters, upgrades — all proposed and voted on-chain. One watt one vote, but every vote auditable.",govC:"Enter governance →",devK:"DEVELOPERS",devH:"Open source, or it doesn't exist.",devB:"Core protocol, SDK, API all open source. Read the code, send a PR, earn a bounty.",dev1t:"Docs",dev1b:"From quickstart to deep integration, zh/EN.",dev2t:"API status",dev3t:"SDK & GitHub",dev3b:"Multi-language SDKs, bounty-labeled issues.",ecoK:"ECOSYSTEM",ecoH:"One device is small; a million are not.",ecoB:"Wallets, pools, payments, IoT, CDN, AI — integrate LightDAO and tap a million-device compute fabric.",comK:"COMMUNITY",comH:"Owners organize themselves.",comB:"Discord, Telegram, forum, meetups. Ambassador program: bring LightDAO to your city, earn tokens & reputation.",com1b:"Daily discussion & support.",com2b:"Multilingual channels.",com3t:"Ambassadors",com3b:"Bring LightDAO to your city.",blogK:"CHANGELOG",blogH:"We ship weekly, not promise quarterly.",b1:"Mainnet fee-burn live",b2:"Passkey seedless wallet",b3:"WebRTC device-direct relay",b4:"USD-stable gas pricing",faqK:"FAQ",faqH:"You ask, we answer.",q1:"Do I need hardware?",a1:"No. Any existing internet device works; zero extra hardware.",q2:"How are rewards computed?",a2:"By your contributed bandwidth / compute / uptime, settled daily, on-chain verifiable.",q3:"Is it safe?",a3:"Regular audits + bug bounty + responsible disclosure; protocol is open-source and self-verifiable.",q4:"Do I need permission?",a4:"None. Open the page; no account, no approval.",q5:"What is the token for?",a5:"Governance voting, staking, and settlement fee credential; hard-capped, never inflated.",q6:"How do I start?",a6:"Click Start Mining; claim sovereignty in 60s and contribute the same day.",teamK:"TEAM",teamH:"A small crew who believe in owner-economics.",t1t:"Protocol engineering",t1b:"Distributed systems & security.",t2t:"Cryptography",t2b:"Seedless keys & zero-knowledge.",t3t:"Community",t3b:"Organizing the owners.",hire:"We're hiring →",medK:"MEDIA KIT",medH:"Writing about us? Use official assets.",m1t:"Logo pack",m1b:"SVG/PNG, light & dark.",m2t:"Brand guide",m2b:"Color / type / usage.",m3t:"Press contact",wpK:"WHITEPAPER",wpH:"Read the original, not the retelling.",wpC:"Whitepaper / litepaper →",newsK:"NEWSLETTER",newsH:"One email a month, no spam.",newsC:"Subscribe",ftMine:"Mining",ftExp:"Explorer",ftGov:"Governance",ftStatus:"Status",ftDocs:"Docs",ftBounty:"Bounties",ftForum:"Forum",ftAmb:"Ambassadors",ftTeam:"Team",ftHire:"Careers",ftMedia:"Media",ftBlog:"Blog",ftPriv:"Privacy",ftTerms:"Terms",footTag:"Your device shouldn't just be someone else's mine. · © 2026 LightDAO",stH:"Block height",stBurn:"Burned",stMin:"Miners today",stDay:"Season day"},
+es:{live:"Mainnet en vivo",h1:"Tu dispositivo no debería ser solo la mina de otro.",sub:"LightDAO devuelve el cómputo ocioso a su dueño: minutos, cero hardware, sin permiso.",ctaMine:"Empezar a minar",ctaWp:"Leer whitepaper",visK:"VISIÓN",visH:"Quien crea cómputo debe poseer su recompensa.",howH:"Cuatro pasos, sesenta segundos.",featH:"Construido para dueños, no inquilinos.",tokH:"Tope 2,5B, nunca inflado.",secH:"La seguridad es disciplina, no eslogan.",govH:"Reglas escritas por holders, no por una empresa.",devH:"Código abierto, o no existe.",ecoH:"Un dispositivo es pequeño; un millón no.",comH:"Los dueños se organizan solos.",blogH:"Entregamos semanalmente.",faqH:"Preguntas y respuestas.",teamH:"Un equipo que cree en la economía de dueños.",medH:"¿Escribes sobre nosotros? Usa assets oficiales.",wpH:"Lee el original.",newsH:"Un correo al mes, sin spam.",footTag:"Tu dispositivo no debería ser solo la mina de otro. · © 2026 LightDAO"},
+fr:{live:"Mainnet en ligne",h1:"Votre appareil ne devrait pas être seulement la mine d'un autre.",sub:"LightDAO rend le calcul inactif à son propriétaire: minutes, zéro matériel, sans permission.",ctaMine:"Commencer à miner",ctaWp:"Lire le whitepaper",visK:"VISION",visH:"Celui qui crée le calcul doit en posséder la récompense.",howH:"Quatre étapes, soixante secondes.",featH:"Construit pour les propriétaires, pas les locataires.",tokH:"Plafond 2,5B, jamais inflationné.",secH:"La sécurité est une discipline, pas un slogan.",govH:"Règles écrites par les détenteurs, pas par une entreprise.",devH:"Open source, ou n'existe pas.",ecoH:"Un appareil est petit; un million ne l'est pas.",comH:"Les propriétaires s'organisent eux-mêmes.",blogH:"Nous livrons chaque semaine.",faqH:"Questions-réponses.",teamH:"Une équipe qui croit à l'économie des propriétaires.",medH:"Vous écrivez sur nous? Utilisez les assets officiels.",wpH:"Lisez l'original.",newsH:"Un email par mois, sans spam.",footTag:"Votre appareil ne devrait pas être seulement la mine d'un autre. · © 2026 LightDAO"},
+de:{live:"Mainnet live",h1:"Dein Gerät sollte nicht nur die Mine eines anderen sein.",sub:"LightDAO gibt ungenutzte Rechenleistung dem Eigentümer zurück: Minuten, keine Hardware, ohne Erlaubnis.",ctaMine:"Mining starten",ctaWp:"Whitepaper lesen",visK:"VISION",visH:"Wer Rechenleistung erzeugt, sollte ihre Erträge besitzen.",howH:"Vier Schritte, sechzig Sekunden.",featH:"Für Eigentümer gebaut, nicht für Mieter.",tokH:"2,5B Hard Cap, nie inflationiert.",secH:"Sicherheit ist Disziplin, kein Slogan.",govH:"Regeln von Holdern geschrieben, nicht von einer Firma.",devH:"Open Source, oder es existiert nicht.",ecoH:"Ein Gerät ist klein; eine Million nicht.",comH:"Eigentümer organisieren sich selbst.",blogH:"Wir liefern wöchentlich.",faqH:"Fragen & Antworten.",teamH:"Ein Team, das an Owner-Economics glaubt.",medH:"Schreibst du über uns? Nutze offizielle Assets.",wpH:"Lies das Original.",newsH:"Eine Mail pro Monat, kein Spam.",footTag:"Dein Gerät sollte nicht nur die Mine eines anderen sein. · © 2026 LightDAO"},
+pt:{live:"Mainnet ativa",h1:"Seu dispositivo não deveria ser só a mina de outro.",sub:"LightDAO devolve a computação ociosa ao dono: minutos, zero hardware, sem permissão.",ctaMine:"Começar a minerar",ctaWp:"Ler whitepaper",visK:"VISÃO",visH:"Quem cria computação deve possuir sua recompensa.",howH:"Quatro passos, sessenta segundos.",featH:"Feito para donos, não inquilinos.",tokH:"Teto 2,5B, nunca inflacionado.",secH:"Segurança é disciplina, não slogan.",govH:"Regras escritas por holders, não por uma empresa.",devH:"Open source, ou não existe.",ecoH:"Um dispositivo é pequeno; um milhão não.",comH:"Donos se organizam sozinhos.",blogH:"Entregamos semanalmente.",faqH:"Perguntas e respostas.",teamH:"Uma equipe que acredita em economia de donos.",medH:"Escrevendo sobre nós? Use assets oficiais.",wpH:"Leia o original.",newsH:"Um email por mês, sem spam.",footTag:"Seu dispositivo não deveria ser só a mina de outro. · © 2026 LightDAO"},
+ru:{live:"Mainnet запущен",h1:"Твоё устройство не должно быть чужой шахтой.",sub:"LightDAO возвращает простой вычислительной мощности владельцу: минуты, ноль железа, без разрешений.",ctaMine:"Начать майнинг",ctaWp:"Читать whitepaper",visK:"ВИДЕНИЕ",visH:"Кто создаёт вычисления, тот владеет наградой.",howH:"Четыре шага, шестьдесят секунд.",featH:"Для владельцев, не для арендаторов.",tokH:"Хард-кап 2,5B, без инфляции.",secH:"Безопасность — дисциплина, не лозунг.",govH:"Правила пишут держатели, не компания.",devH:"Open source или не существует.",ecoH:"Одно устройство мало; миллион — нет.",comH:"Владельцы организуются сами.",blogH:"Мы поставляем еженедельно.",faqH:"Вопросы и ответы.",teamH:"Команда, верящая в экономику владельцев.",medH:"Пишете о нас? Используйте официальные ассеты.",wpH:"Читайте оригинал.",newsH:"Одно письмо в месяц, без спама.",footTag:"Твоё устройство не должно быть чужой шахтой. · © 2026 LightDAO"},
+ja:{live:"メインネット稼働中",h1:"あなたのデバイスは、他人の鉱山であるべきではない。",sub:"LightDAO はアイドル算力を主人の元へ——数分、ハードゼロ、許可不要で、每一ワットをあなたのデジタル資産に。",ctaMine:"マイニング開始",ctaWp:"ホワイトペーパー",visK:"ビジョン",visH:"算力を生む者が、その報酬を持つべき。",howH:"4ステップ、60秒。",featH:"所有者のために、借家人のためにあらず。",tokH:"2.5B ハードキャップ、増発なし。",secH:"安全はスローガンではなく規律。",govH:"ルールは保有者が書く、会社が書くのではない。",devH:"オープンソース、さもなくば存在しない。",ecoH:"1台は小さい、100万台は違う。",comH:"所有者は自ら組織する。",blogH:"毎週出荷、四半期の約束ではない。",faqH:"質問と回答。",teamH:"オーナー経済を信じる少人数。",medH:"執筆するなら公式アセットを。",wpH:"原文を読め。",newsH:"月1通、スパムなし。",footTag:"あなたのデバイスは、他人の鉱山であるべきではない。 · © 2026 LightDAO"},
+ko:{live:"메인넷 가동 중",h1:"당신의 기기는 남의 광산이 되어선 안 된다.",sub:"LightDAO는 유휴 연산력을 주인에게——몇 분, 하드웨어ゼロ, 허가 없이每一 와트를 당신의 디지털 자산으로.",ctaMine:"마이닝 시작",ctaWp:"백서 읽기",visK:"비전",visH:"연산력을 만드는 자가 그 보상을 가져야 한다.",howH:"4단계, 60초.",featH:"소유자를 위해, 세입자를 위해 않지.",tokH:"2.5B 하드캡, 증발 없음.",secH:"보안은 슬로건이 아닌 규율.",govH:"규칙은 보유자가 쓴다, 회사가 아니라.",devH:"오픈소스, 아니면 존재하지 않는다.",ecoH:"한 대는 작다, 백만 대는 다르다.",comH:"소유자는 스스로 조직한다.",blogH:"매주 출시, 분기의 약속이 아니다.",faqH:"질문과 답변.",teamH:"소유자 경제를 믿는 소수.",medH:"기사 쓴다면 공식 자산을.",wpH:"원문을 읽어라.",newsH:"월 1통, 스팸 없음.",footTag:"당신의 기기는 남의 광산이 되어선 안 된다. · © 2026 LightDAO"},
+ar:{live:"الشبكة الرئيسية مباشرة",h1:"جهازك لا ينبغي أن يكون منجم شخص آخر.",sub:"LightDAO يعيد قوة الحوسبة الخاملة إلى صاحبها—دقائق، بدون عتاد، بدون إذن.",ctaMine:"ابدأ التعدين",ctaWp:"اقرأ الورقة البيضاء",visK:"الرؤية",visH:"من يخلق الحوسبة يجب أن يملك مكافأتها.",howH:"أربع خطوات، ستون ثانية.",featH:"مبني للمالكين، لا للمستأجرين.",tokH:"سقف 2.5 مليار، لا تضخم.",secH:"الأمان انضباط لا شعار.",govH:"القواعد يكتبها الحاملون لا الشركة.",devH:"مفتوح المصدر أو لا يوجد.",ecoH:"جهاز واحد صغير؛ مليون ليس كذلك.",comH:"المالكون ينظمون أنفسهم.",blogH:"نصدر أسبوعياً.",faqH:"أسئلة وأجوبة.",teamH:"فريق يؤمن باقتصاد المالكين.",medH:"تكتب عنا؟ استخدم الأصول الرسمية.",wpH:"اقرأ الأصل.",newsH:"بريد واحد شهرياً، بدون سبام.",footTag:"جهازك لا ينبغي أن يكون منجم شخص آخر. · © 2026 LightDAO"},
+hi:{live:"मेननेट लाइव",h1:"आपका डिवाइस किसी और की खान नहीं होना चाहिए।",sub:"LightDAO निष्क्रिय कंप्यूट को मालिक को लौटाता है—मिनट, शून्य हार्डवेयर, बिना अनुमति।",ctaMine:"माइनिंग शुरू",ctaWp:"व्हाइटपेपर पढ़ें",visK:"विज़न",visH:"जो कंप्यूट बनाता है, वह उसका पुरस्कार रखे।",howH:"चार कदम, साठ सेकंड।",featH:"मालिकों के लिए, किरायेदारों के लिए नहीं।",tokH:"2.5B हार्ड कैप, कभी मुद्रास्फीति नहीं।",secH:"सुरक्षा अनुशासन है, नारा नहीं।",govH:"नियम धारक लिखते हैं, कंपनी नहीं।",devH:"ओपन सोर्स, वरना अस्तित्व नहीं।",ecoH:"एक डिवाइस छोटा; दस लाख नहीं।",comH:"मालिक स्वयं संगठित होते हैं।",blogH:"हम साप्ताहिक शिप करते हैं।",faqH:"प्रश्न-उत्तर।",teamH:"मालिक-अर्थव्यवस्था में विश्वास करने वाली टीम।",medH:"लिख रहे हैं? आधिकारिक एसेट उपयोग करें।",wpH:"मूल पढ़ें।",newsH:"माह में एक ईमेल, स्पैम नहीं।",footTag:"आपका डिवाइस किसी और की खान नहीं होना चाहिए। · © 2026 LightDAO"},
+tr:{live:"Mainnet canlı",h1:"Cihazın sadece başkasının madeni olmamalı.",sub:"LightDAO atıl hesap gücünü sahibine döndürür—dakikalar, sıfır donanım, izinsiz.",ctaMine:"Madenciliğe başla",ctaWp:"Whitepaper oku",visK:"VİZYON",visH:"Hesabı yaratan, ödülüne sahip olmalı.",howH:"Dört adım, altmış saniye.",featH:"Sahipler için, kiracılar için değil.",tokH:"2.5B sert tavan, asla enflasyon yok.",secH:"Güvenlik slogan değil disiplin.",govH:"Kuralları şirket değil sahipler yazar.",devH:"Açık kaynak, ya da yok.",ecoH:"Bir cihaz küçük; bir milyon değil.",comH:"Sahipler kendini örgütler.",blogH:"Haftalık teslim ederiz.",faqH:"Sorular ve cevaplar.",teamH:"Sahip-ekonomisine inanan küçük ekip.",medH:"Yazıyor musun? Resmi varlıkları kullan.",wpH:"Orijinalini oku.",newsH:"Ayda bir e-posta, spam yok.",footTag:"Cihazın sadece başkasının madeni olmamalı. · © 2026 LightDAO"},
+vi:{live:"Mainnet hoạt động",h1:"Thiết bị của bạn không nên chỉ là mỏ của người khác.",sub:"LightDAO trả sức tính toán nhàn rỗi về chủ nhân—vài phút, không phần cứng, không cần phép.",ctaMine:"Bắt đầu đào",ctaWp:"Đọc whitepaper",visK:"TẦM NHÌN",visH:"Ai tạo sức tính toán, người đó sở hữu phần thưởng.",howH:"Bốn bước, sáu mươi giây.",featH:"Xây cho chủ sở hữu, không cho người thuê.",tokH:"Trần 2,5B, không lạm phát.",secH:"Bảo mật là kỷ luật, không khẩu hiệu.",govH:"Luật do người nắm giữ viết, không phải công ty.",devH:"Mã mở, hoặc không tồn tại.",ecoH:"Một thiết bị nhỏ; một triệu thì không.",comH:"Chủ sở hữu tự tổ chức.",blogH:"Chúng tôi ship hàng tuần.",faqH:"Hỏi đáp.",teamH:"Đội ngũ tin vào kinh tế chủ sở hữu.",medH:"Viết về chúng tôi? Dùng tài sản chính thức.",wpH:"Đọc bản gốc.",newsH:"Mỗi tháng một email, không spam.",footTag:"Thiết bị của bạn không nên chỉ là mỏ của người khác. · © 2026 LightDAO"},
+id:{live:"Mainnet aktif",h1:"Perangkatmu bukan seharusnya tambang orang lain.",sub:"LightDAO mengembalikan daya komputasi nganggur ke pemiliknya—hitungan menit, nol perangkat keras, tanpa izin.",ctaMine:"Mulai menambang",ctaWp:"Baca whitepaper",visK:"VISI",visH:"Yang menciptakan komputasi harus memiliki imbalannya.",howH:"Empat langkah, enam puluh detik.",featH:"Dibangun untuk pemilik, bukan penyewa.",tokH:"Hard cap 2,5B, tak pernah inflasi.",secH:"Keamanan adalah disiplin, bukan slogan.",govH:"Aturan ditulis pemegang, bukan perusahaan.",devH:"Open source, atau tidak ada.",ecoH:"Satu perangkat kecil; sejuta tidak.",comH:"Pemilik mengorganisir diri sendiri.",blogH:"Kami kirim mingguan.",faqH:"Tanya jawab.",teamH:"Tim yang percaya ekonomi pemilik.",medH:"Menulis tentang kami? Pakai aset resmi.",wpH:"Baca aslinya.",newsH:"Satu email per bulan, tanpa spam.",footTag:"Perangkatmu bukan seharusnya tambang orang lain. · © 2026 LightDAO"}
 };
-let LANG=(navigator.language||"zh").slice(0,2); if(!I18N[LANG])LANG="en";
-const t=k=>(I18N[LANG]&&I18N[LANG][k])||I18N.en[k]||k;
-function renderLang(){document.querySelectorAll("[data-i]").forEach(e=>{const k=e.getAttribute("data-i");const v=t(k);if(v!==undefined)e.textContent=v;});document.documentElement.lang=LANG;}
-(function(){const sel=document.getElementById("lang");[["zh","中文"],["en","English"]].forEach(([c,n])=>{const o=document.createElement("option");o.value=c;o.textContent=n;sel.appendChild(o);});sel.value=LANG;sel.addEventListener("change",()=>{LANG=sel.value;renderLang();});renderLang();})();
-/* capture referral then forward to app preserving it */
-(function(){const q=new URLSearchParams(location.search).get("ref");if(q&&q.startsWith("wasm1")){localStorage.setItem("ld_ref",q);const app=document.querySelector('a[href="/app.html"]');/* keep band link with ref */}})();
-/* live stats */
-const fmtN=n=>(Number(n)/1e6).toLocaleString(undefined,{maximumFractionDigits:2});
-async function stats(){try{
-  const h=await fetch(location.origin+"/gw/v1/health").then(r=>r.json()).catch(()=>null);
-  if(h){const d=await fetch(location.origin+"/gw/v1/day?day="+h.current_day).then(r=>r.json()).catch(()=>null);
-    document.getElementById("sDay").textContent=h.current_day;
-    if(d&&d.active_miners!=null)document.getElementById("sMin").textContent=d.active_miners; else if(d&&d.miners)document.getElementById("sMin").textContent=Object.keys(d.miners).length;}
-  const m=await import("https://cdn.jsdelivr.net/npm/@cosmjs/stargate@0.32.4/+esm").catch(()=>null);
-  if(m){const c=await m.StargateClient.connect(location.origin+"/rpc/");
-    const height=await c.getHeight().catch(()=>null); if(height)document.getElementById("sH").textContent=height;
-    const burn=await c.getBalance("wasm1aeaty43lrlt9rmkyxujkkfuddnsfye6az4htcu","ulight").catch(()=>({amount:"0"})); document.getElementById("sBurn").textContent=fmtN(burn.amount);
-    const tre=await c.getBalance("wasm192u2pm80ndmh608mmvhrzhje0sjaq0txr5md77lr70ucy0j3lfys8l633u","ulight").catch(()=>({amount:"0"})); document.getElementById("sTre").textContent=fmtN(tre.amount);
-    const vals=await c.getValidators().catch(()=>[]); document.getElementById("tVals").textContent=vals.length;}
+var NAMES={zh:"中文",en:"English",es:"Español",fr:"Français",de:"Deutsch",pt:"Português",ru:"Русский",ja:"日本語",ko:"한국어",ar:"العربية",hi:"हिन्दी",tr:"Türkçe",vi:"Tiếng Việt",id:"Bahasa"};
+var sel=document.getElementById("lang");
+for(var c in NAMES){var o=document.createElement("option");o.value=c;o.textContent=NAMES[c];sel.appendChild(o);}
+T.zh={};document.querySelectorAll("[data-i]").forEach(function(el){T.zh[el.getAttribute("data-i")]=el.textContent;});
+function apply(c){var d=T[c]||{};var e2=T.en;document.querySelectorAll("[data-i]").forEach(function(el){var k=el.getAttribute("data-i");var v=d[k]||e2[k];if(v)el.textContent=v;});document.documentElement.lang=c;try{localStorage.setItem("ld_lang",c);}catch(e){}}
+sel.onchange=function(){apply(sel.value);};
+var saved="zh";try{saved=localStorage.getItem("ld_lang")||"zh";}catch(e){}
+if(!T[saved])saved="zh";
+sel.value=saved;apply(saved);
+(function(){var c=document.getElementById("net"),x=c.getContext("2d"),W,H,P=[];function rs(){W=c.width=c.offsetWidth;H=c.height=c.offsetHeight;P=[];for(var i=0;i<60;i++)P.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4});}rs();addEventListener("resize",rs);(function loop(){x.clearRect(0,0,W,H);for(var i=0;i<P.length;i++){var p=P[i];p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;x.fillStyle="rgba(124,140,255,.5)";x.fillRect(p.x,p.y,2,2);for(var j=i+1;j<P.length;j++){var q=P[j],dx=p.x-q.x,dy=p.y-q.y;if(dx*dx+dy*dy<9000){x.strokeStyle="rgba(124,140,255,.12)";x.beginPath();x.moveTo(p.x,p.y);x.lineTo(q.x,q.y);x.stroke();}}}requestAnimationFrame(loop);})();})();
+
+(function(){var f=function(n){return (Number(n)/1e6).toLocaleString(undefined,{maximumFractionDigits:2});};
+async function st(){try{var h=await fetch(location.origin+"/gw/v1/health").then(function(r){return r.json();});
+ if(h){var e=document.getElementById("sDay");if(e)e.textContent=h.current_day;
+   var d=await fetch(location.origin+"/gw/v1/day?day="+h.current_day).then(function(r){return r.json();}).catch(function(){return null;});
+   if(d&&d.miners){var m2=document.getElementById("sMin");if(m2)m2.textContent=Object.keys(d.miners).length;}}
+ var mod=await import("https://cdn.jsdelivr.net/npm/@cosmjs/stargate@0.32.4/+esm").catch(function(){return null;});
+ if(mod){var c=await mod.StargateClient.connect(location.origin+"/rpc/");
+   var ht=await c.getHeight().catch(function(){return null;});if(ht){var e1=document.getElementById("sH");if(e1)e1.textContent=ht;}
+   var b=await c.getBalance("wasm1aeaty43lrlt9rmkyxujkkfuddnsfye6az4htcu","ulight").catch(function(){return null;});if(b){var e2=document.getElementById("sBurn");if(e2)e2.textContent=f(b.amount);}}
 }catch(e){}}
-stats(); setInterval(stats,20000);
-/* hero network canvas */
-(function(){const c=document.getElementById("net");if(!c)return;const x=c.getContext("2d");let W,H,P=[];
- function rs(){W=c.width=innerWidth*devicePixelRatio;H=c.height=innerHeight*devicePixelRatio;c.style.width=innerWidth+"px";c.style.height=innerHeight+"px";P=[];const n=Math.min(70,Math.floor(innerWidth/18));for(let i=0;i<n;i++)P.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.25*devicePixelRatio,vy:(Math.random()-.5)*.25*devicePixelRatio});}
- rs();addEventListener("resize",rs);
- function loop(){x.clearRect(0,0,W,H);const R=140*devicePixelRatio;
-  for(const p of P){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;}
-  x.lineWidth=1*devicePixelRatio;
-  for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){const a=P[i],b=P[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy);if(d<R){x.strokeStyle="rgba(140,140,255,"+(0.16*(1-d/R))+")";x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke();}}
-  x.fillStyle="rgba(160,140,255,.5)";for(const p of P){x.beginPath();x.arc(p.x,p.y,1.6*devicePixelRatio,0,7);x.fill();}
-  requestAnimationFrame(loop);}
- if(!matchMedia("(prefers-reduced-motion: reduce)").matches)loop();})();
+st();setInterval(st,20000);})();
 </script>
 </body>
 </html>
