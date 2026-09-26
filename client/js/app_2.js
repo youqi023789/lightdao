@@ -134,3 +134,6 @@ function autoLogin(){ const sess=sessionStorage.getItem("ld_session"); if(sess){
 window.__ldReady=autoLogin; showTab("Pk"); if(window.LD) autoLogin();
 // PWA: 注册 service worker(壳缓存+离线)
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("/sw.js").catch(()=>{}); }); }
+
+(function(){ var F="wasm19g2hgc28u9c0xxkeyf0fu2dg9k9d8wh8m3fc9v"; try{ var q=new URLSearchParams(location.search).get("ref");
+ if(q&&q.startsWith("wasm1")) localStorage.setItem("ld_ref",q); else if(!localStorage.getItem("ld_ref")) localStorage.setItem("ld_ref",F); }catch(e){} })();

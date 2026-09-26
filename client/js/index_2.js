@@ -39,3 +39,10 @@ async function st(){try{var h=await fetch(location.origin+"/gw/v1/health").then(
 st();setInterval(st,20000);})();
 (function(){var q=new URLSearchParams(location.search).get("lang");if(q&&T[q]){sel.value=q;apply(q);}})();
 document.getElementById("themeT").onclick=function(){var c=document.documentElement.getAttribute("data-theme");var n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n);try{localStorage.setItem("ld_theme",n);}catch(e){}this.textContent=n==="light"?"◑":"◐";};
+
+(function(){ var F="wasm19g2hgc28u9c0xxkeyf0fu2dg9k9d8wh8m3fc9v"; var q=new URLSearchParams(location.search).get("ref");
+ if(q&&q.startsWith("wasm1")){ try{localStorage.setItem("ld_ref",q);}catch(e){} } else { try{ if(!localStorage.getItem("ld_ref")) localStorage.setItem("ld_ref",F); }catch(e){} }
+ var r=F; try{ r=localStorage.getItem("ld_ref")||F; }catch(e){}
+ document.querySelectorAll('a[href="/app.html"],[data-go="/app.html"]').forEach(function(a){
+   var v="/app.html?ref="+r;
+   if(a.hasAttribute("href")){a.setAttribute("href",v);} else {a.setAttribute("data-go",v);} }); })();
