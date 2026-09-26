@@ -303,7 +303,8 @@ async function enter(seed){ const s=seed||localStorage.getItem("ld_seed")||sessi
 (function(){ const q=new URLSearchParams(location.search).get("ref"); if(q&&q.startsWith("wasm1")) localStorage.setItem("ld_ref",q); })();
 document.addEventListener("DOMContentLoaded",()=>{ const b=$("btnCopyInvite"); if(b) b.onclick=()=>{ const el=$("inviteLink"); if(!el)return; if(navigator.clipboard)navigator.clipboard.writeText(el.value); else {el.removeAttribute("readonly");el.select();document.execCommand("copy");el.setAttribute("readonly","");} toast("✓ "+t("copy")); }; });
 // 自动登录:助记词老用户自动进;Passkey 需用户手势(生物识别),默认显示 Passkey 标签待解锁
-(async()=>{ showTab("Pk"); const sess=sessionStorage.getItem("ld_session"); if(sess){ await enter(sess); return; } const s=localStorage.getItem("ld_seed"); if(s && !(window.LDPasskey&&window.LDPasskey.hasWallet())){ await enter(s); } })();
+function autoLogin(){ const sess=sessionStorage.getItem("ld_session"); if(sess){ enter(sess); return; } const s=localStorage.getItem("ld_seed"); if(s && !(window.LDPasskey&&window.LDPasskey.hasWallet())){ enter(s); } }
+window.__ldReady=autoLogin; showTab("Pk"); if(window.LD) autoLogin();
 // PWA: 注册 service worker(壳缓存+离线)
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("/sw.js").catch(()=>{}); }); }
 </script>
@@ -348,6 +349,7 @@ window.LD = null;
       toast(t("claimed")+" "+res.transactionHash.slice(0,10)+"…"); this.refresh();
     }catch(e){ toast(String(e.message||e).slice(0,70)); } },
   };
+if(window.__ldReady)window.__ldReady();
 })();
 </script>
 </body>
