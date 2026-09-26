@@ -3,6 +3,43 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#05060a">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<meta property="og:site_name" content="LightDAO">
+<meta property="og:type" content="website">
+<meta property="og:title" content="LightDAO — Your device shouldn't just be someone else's mine.">
+<meta property="og:description" content="A live Cosmos L1 where idle browsers mine LIGHT via Proof-of-Contribution. No hardware, no seed phrase, no money down.">
+<meta property="og:url" content="https://lightdao.net/">
+<meta property="og:image" content="https://lightdao.net/og.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="zh_CN">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="og:locale:alternate" content="pt_BR">
+<meta property="og:locale:alternate" content="ru_RU">
+<meta property="og:locale:alternate" content="ja_JP">
+<meta property="og:locale:alternate" content="ko_KR">
+<meta property="og:locale:alternate" content="ar_AR">
+<meta property="og:locale:alternate" content="hi_IN">
+<meta property="og:locale:alternate" content="tr_TR">
+<meta property="og:locale:alternate" content="vi_VN">
+<meta property="og:locale:alternate" content="id_ID">
+<link rel="alternate" hreflang="x-default" href="https://lightdao.net/">
+<link rel="alternate" hreflang="zh" href="https://lightdao.net/zh/">
+<link rel="alternate" hreflang="en" href="https://lightdao.net/en/">
+<link rel="alternate" hreflang="es" href="https://lightdao.net/es/">
+<link rel="alternate" hreflang="fr" href="https://lightdao.net/fr/">
+<link rel="alternate" hreflang="de" href="https://lightdao.net/de/">
+<link rel="alternate" hreflang="pt" href="https://lightdao.net/pt/">
+<link rel="alternate" hreflang="ru" href="https://lightdao.net/ru/">
+<link rel="alternate" hreflang="ja" href="https://lightdao.net/ja/">
+<link rel="alternate" hreflang="ko" href="https://lightdao.net/ko/">
+<link rel="alternate" hreflang="ar" href="https://lightdao.net/ar/">
+<link rel="alternate" hreflang="hi" href="https://lightdao.net/hi/">
+<link rel="alternate" hreflang="tr" href="https://lightdao.net/tr/">
+<link rel="alternate" hreflang="vi" href="https://lightdao.net/vi/">
+<link rel="alternate" hreflang="id" href="https://lightdao.net/id/">
 <title>LightDAO — 你的设备,不该只是别人的矿</title>
 <meta name="description" content="LightDAO 让闲置算力第一次属于它的主人:几分钟、零硬件、无需许可,把每一瓦特变成你的数字资产。">
 <style>
@@ -47,10 +84,13 @@ canvas#net{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
 .sub{color:var(--mut);font-size:clamp(16px,2vw,20px);max-width:760px}
 .trust{display:flex;gap:22px;flex-wrap:wrap;margin-top:34px;color:var(--mut);font-size:14px}
 .trust b{color:var(--ink)}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:6px}
+.skip{position:absolute;left:-9999px;top:0}.skip:focus{left:8px;top:8px;background:var(--acc);color:#04101f;padding:8px 14px;border-radius:8px;z-index:99}
 </style>
 </head>
 <body>
-<nav><div class="navin"><span class="brand">⚡ LightDAO</span><select class="lang" id="lang"></select></div></nav>
+<a class="skip" href="#vision">Skip to content</a>
+<nav><div class="navin"><span class="brand">⚡ LightDAO</span><select class="lang" id="lang" aria-label="language"></select></div></nav>
 
 <header class="hero"><canvas id="net"></canvas><div class="wrap" style="position:relative">
 <div class="pill">● <span data-i="live">主网已上线</span> · MAINNET LIVE</div>
@@ -135,7 +175,7 @@ canvas#net{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
 <div class="k" data-i="ecoK">生态 · ECOSYSTEM</div>
 <h2 data-i="ecoH">一台设备很小,一百万台很大。</h2>
 <p class="lead" data-i="ecoB">钱包、矿池、支付、IoT、CDN、AI——集成 LightDAO,共享百万设备算力网络。</p>
-<div class="logos"><div class="logo">Wallet</div><div class="logo">Pool</div><div class="logo">Pay</div><div class="logo">IoT</div><div class="logo">CDN</div><div class="logo">AI</div></div>
+<div class="logos"><div class="logo">Cosmos SDK</div><div class="logo">CometBFT</div><div class="logo">CosmWasm</div><div class="logo">WebAuthn / FIDO2</div><div class="logo">WebRTC</div><div class="logo">PWA</div><div class="logo">coturn TURN</div><div class="logo">IPFS</div></div></div>
 </div></section>
 
 <section id="com"><div class="wrap">
@@ -252,6 +292,7 @@ async function st(){try{var h=await fetch(location.origin+"/gw/v1/health").then(
    var b=await c.getBalance("wasm1aeaty43lrlt9rmkyxujkkfuddnsfye6az4htcu","ulight").catch(function(){return null;});if(b){var e2=document.getElementById("sBurn");if(e2)e2.textContent=f(b.amount);}}
 }catch(e){}}
 st();setInterval(st,20000);})();
+(function(){var q=new URLSearchParams(location.search).get("lang");if(q&&T[q]){sel.value=q;apply(q);}})();
 </script>
 </body>
 </html>
