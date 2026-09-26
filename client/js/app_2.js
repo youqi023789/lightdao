@@ -77,7 +77,7 @@ $("tabNew").onclick=()=>showTab("New");
 $("tabImp").onclick=()=>showTab("Imp");
 $("btnLogout").onclick=()=>{stopMining();sessionStorage.removeItem("ld_session");localStorage.removeItem("ld_seed");localStorage.removeItem("ld_mining");location.reload();};
 // --- 助记词(回退) ---
-$("btnCreate").onclick=async()=>{ function ensureLD(ms){ ms=ms||8000; return new Promise(function(res){ var t0=Date.now(); (function chk(){ if(window.LD) return res(window.LD); if(Date.now()-t0>ms) return res(null); setTimeout(chk,150); })(); }); }
+$("btnCreate").onclick=async()=>{ function ensureLD(ms){ ms=ms||8000; return new Promise(function(res){ if(window.LD) return res(window.LD); toast("钱包库加载中,请稍候… / loading wallet…"); var t0=Date.now(); (function chk(){ if(window.LD) return res(window.LD); if(Date.now()-t0>ms) return res(null); setTimeout(chk,150); })(); }); }
 if(!await ensureLD()){toast(t("walletFail"));return;} const m=await window.LD.create(); if(m){localStorage.setItem("ld_seed",m); alert(t("saving")+"\n\n"+m); await enter(m); } };
 $("btnImport").onclick=async()=>{ if(!await ensureLD()){toast(t("walletFail"));return;} const m=$("mnem").value.trim(); if(!m)return; localStorage.setItem("ld_seed",m); await enter(m); };
 // --- Passkey(§4.9 主推) ---
@@ -130,7 +130,7 @@ async function enter(seed){ const s=seed||localStorage.getItem("ld_seed")||sessi
 (function(){ const q=new URLSearchParams(location.search).get("ref"); if(q&&q.startsWith("wasm1")) localStorage.setItem("ld_ref",q); })();
 document.addEventListener("DOMContentLoaded",()=>{ const b=$("btnCopyInvite"); if(b) b.onclick=()=>{ const el=$("inviteLink"); if(!el)return; if(navigator.clipboard)navigator.clipboard.writeText(el.value); else {el.removeAttribute("readonly");el.select();document.execCommand("copy");el.setAttribute("readonly","");} toast("✓ "+t("copy")); }; });
 // 自动登录:助记词老用户自动进;Passkey 需用户手势(生物识别),默认显示 Passkey 标签待解锁
-function autoLogin(){ const sess=sessionStorage.getItem("ld_session"); if(sess){ enter(sess); return; } const s=localStorage.getItem("ld_seed"); if(s && !(window.LDPasskey&&window.LDPasskey.hasWallet())){ enter(s); } }
+function autoLogin(){ var sess=null, sd=null; try{ sess=sessionStorage.getItem("ld_session"); sd=localStorage.getItem("ld_seed"); }catch(e){} if(sess){ enter(sess); return; } if(sd){ enter(sd); return; } }
 window.__ldReady=autoLogin; showTab("Pk"); if(window.LD) autoLogin();
 // PWA: 注册 service worker(壳缓存+离线)
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("/sw.js").catch(()=>{}); }); }
