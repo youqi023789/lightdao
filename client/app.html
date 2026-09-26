@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
+<script>(function(){try{var t=localStorage.getItem("ld_theme")||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link rel="manifest" href="/manifest.json">
@@ -85,6 +87,8 @@ header{position:sticky;top:0;z-index:6;background:rgba(7,11,24,.78);backdrop-fil
 .seclabel{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin:2px 0 8px}
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 .row .btn{font-size:14px;padding:13px}
+
+[data-theme="light"]{--bg:#f4f6fb;--bg2:#ffffff;--card:rgba(12,18,45,.05);--line:rgba(12,18,45,.12);--tx:#101527;--mut:#5b6478}
 </style>
 </head>
 <body>
@@ -92,7 +96,10 @@ header{position:sticky;top:0;z-index:6;background:rgba(7,11,24,.78);backdrop-fil
 <div class="wrap">
   <header>
     <div class="logo"><div class="dot">◈</div>LightDAO</div>
-    <select class="lang" id="lang" aria-label="language"></select>
+    <a href="/" aria-label="home" style="color:inherit;text-decoration:none;padding:7px 10px;border:1px solid var(--line);border-radius:10px">⌂</a>
+<a href="/search.html" aria-label="search" style="color:inherit;text-decoration:none;padding:7px 10px;border:1px solid var(--line);border-radius:10px">⌕</a>
+<button id="themeT" aria-label="toggle theme" style="background:var(--surf,rgba(255,255,255,.06));border:1px solid var(--line);border-radius:10px;padding:7px 11px;cursor:pointer;color:inherit;font-size:15px">◐</button>
+<select class="lang" id="lang" aria-label="language"></select>
   </header>
   <nav style="display:flex;gap:16px;margin:-4px 0 14px;font-size:13px;flex-wrap:wrap">
     <a class="lnk" href="/explorer.html">浏览器</a>
@@ -352,6 +359,7 @@ window.LD = null;
   };
 if(window.__ldReady)window.__ldReady();
 })();
+document.getElementById("themeT").onclick=function(){var c=document.documentElement.getAttribute("data-theme");var n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n);try{localStorage.setItem("ld_theme",n);}catch(e){}this.textContent=n==="light"?"◑":"◐";};
 </script>
 </body>
 </html>
