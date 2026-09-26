@@ -55,3 +55,9 @@ LightDAO 是一个 **DePIN(去中心化物理基础设施网络)**:用户用浏�
 ## 许可与联系
 
 代码 Apache-2.0(合约)/ MIT(客户端)。社区与治理见链上 governance 合约。
+
+## 社区与动态
+
+- **X/Twitter**: [@lightdaoproto](https://x.com/lightdaoproto) · 首发线程(2026-09-26,8帖): https://x.com/lightdaoproto/status/2103791251367825588
+- **Season 1 活动页**: https://lightdao.net/season.html(2026-10-01 → 10-29,5M LIGHT 池 + 邀请裂变)
+- **周更**: 每周一自动从链上拉数据发布网络周报(X)

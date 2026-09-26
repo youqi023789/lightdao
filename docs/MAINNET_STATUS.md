@@ -67,3 +67,9 @@
 ## 挖矿闭环(已上线)
 
 浏览器贡献(带宽/在线/验证/稳定)→ 打分网关每日定稿 → Merkle 根 5/7 验证者多签提交 mining_reward → 矿工凭 proof 链上领取。每日根已持续上链。
+
+## 社区与增长
+
+- X: [@lightdaoproto](https://x.com/lightdaoproto);首发线程 2026-09-26(8 帖):https://x.com/lightdaoproto/status/2103791251367825588
+- Season 1 治理提案 #4(2026-10-01→10-29,5M LIGHT 池,邀请+10% 首周):7/7 通过
+- 邀请裂变:网关记录 referrals,赛季末从 S1 池结算(每日根保持纯 PoC)
