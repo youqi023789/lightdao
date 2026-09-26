@@ -61,7 +61,7 @@ function updateUI(){
   $("mVerif").textContent=verif; $("bVerif").style.width=Math.min(verif/100*100,100)+"%";
   const stab=hbTot?Math.round(hbOk/hbTot*100):100; $("mStab").textContent=stab; $("bStab").style.width=stab+"%";
   const score=(Math.min(bw,10000)/10000*1e6*40 + Math.min(sess,3600)/3600*1e6*30 + Math.min(verif,100)/100*1e6*20 + stab/100*1e6*10)/100;
-  const myw=(MY_W||score); const est=(POOL_LIGHT&&SUM_W>0)? POOL_LIGHT*myw/SUM_W : 0; $("estReward").textContent=est>0? est.toLocaleString(undefined,{maximumFractionDigits:1}) : "—"; const em=$("estMeta"); if(em) em.textContent = (SUM_W>0)? ("我的占比 "+(myw/SUM_W*100).toFixed(2)+"% · 全网算力 "+(SUM_W/1e6).toFixed(2)+"M · 池 "+POOL_LIGHT.toLocaleString(undefined,{maximumFractionDigits:0})+" LIGHT") : "等待全网数据…";
+  const myw=MY_W; const est=(POOL_LIGHT&&SUM_W>0)? POOL_LIGHT*myw/SUM_W : 0; $("estReward").textContent=est>0? est.toLocaleString(undefined,{maximumFractionDigits:1}) : "—"; const em=$("estMeta"); if(em) em.textContent = (SUM_W>0)? ("我的占比 "+(myw/SUM_W*100).toFixed(2)+"% · 全网算力 "+(SUM_W/1e6).toFixed(2)+"M · 池 "+POOL_LIGHT.toLocaleString(undefined,{maximumFractionDigits:0})+" LIGHT") : "等待全网数据…";
   $("spinTx").textContent=stab+"%";
 }
 function setMiningUI(on){ $("spin").classList.toggle("on",on); $("liveDot").classList.toggle("on",on);
@@ -118,7 +118,7 @@ $("btnPkSocial").onclick=async()=>{
     }catch(e){ toast(t("pkFail")+(e.message||e)); }
   }
 };
-$("btnClaim").onclick=async()=>{ if(!window.LD){toast(t("walletFail"));return;} await window.LD.claim(); };
+$("btnClaim").onclick=async()=>{ if(!window.LD){toast(t("walletFail"));return;} const sel=$("claimDay"); const dv=sel&&sel.value?Number(sel.value):undefined; await window.LD.claim(dv); };
 $("btnExportSeed").onclick=async()=>{ if(!window.LDPasskey){toast(t("walletFail"));return;} try{ let m; try{ m=await window.LDPasskey.unlock(); }catch(e1){ const pin=prompt(t("pkPinPrompt")); m=await window.LDPasskey.unlock(pin); } alert("⚠ 你的助记词(唯一离线备份)。请抄写在纸上,切勿截图或发送给任何人:\n\n"+m); }catch(e){ toast(t("pkFail")+(e.message||e)); } };
 $("btnSocialMain").onclick=async()=>{ if(!window.LDPasskey||!window.LDPasskey.hasWallet()){toast(t("pkSocialFirst"));return;} try{ let pin=null; const rec=JSON.parse(localStorage.getItem("ld_passkey_v1")||"null"); if(rec&&rec.kdf==="pin"){pin=prompt(t("pkPinPrompt"));} let shares; try{ shares=await window.LDPasskey.setupSocialRecovery(pin,3,5); }catch(e1){ pin=prompt(t("pkPinPrompt")); shares=await window.LDPasskey.setupSocialRecovery(pin,3,5); } alert(t("pkSocialHint")+"\n\n"+shares.map((s,i)=>(i+1)+". "+s).join("\n")); }catch(e){ toast(t("pkFail")+(e.message||e)); } };
 function esc(x){return String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}

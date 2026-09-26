@@ -30,7 +30,7 @@ window.LD = null;
     async create(){ const w=await DirectSecp256k1HdWallet.generate(12,{prefix:CFG.prefix}); this._w=w; return w.mnemonic; },
     async connect(seed){ try{ wallet=await DirectSecp256k1HdWallet.fromMnemonic(seed,{prefix:CFG.prefix}); const [a]=await wallet.getAccounts(); this.addr=a.address; client=await SigningCosmWasmClient.connectWithSigner(CFG.rpc,wallet,{gasPrice:GasPrice.fromString("0.0025"+CFG.denom)}); return true; }catch(e){ return false; } },
     async refresh(){ try{ const b=await client.getBalance(this.addr,CFG.denom); document.getElementById("bal").textContent=(Number(b.amount)/1e6).toLocaleString(undefined,{maximumFractionDigits:2}); }catch(e){} },
-    async claim(){ try{ const h=await (await fetch(CFG.gw+"/v1/health")).json(); const d=h.current_day-1;
+    async claim(day){ try{ const h=await (await fetch(CFG.gw+"/v1/health")).json(); const d= day|| (h.current_day-1);
       const p=await fetch(CFG.gw+"/v1/proof?day="+d+"&miner="+this.addr).then(r=>r.ok?r.json():null);
       if(!p){ toast(t("nothing")); return; }
       const msg={claim:{day:d,proof:p.proof,score:{bandwidth:String(p.score.bandwidth),session:String(p.score.session),verification:String(p.score.verification),stability:String(p.score.stability)}}};
@@ -60,4 +60,14 @@ document.getElementById("themeT").onclick=function(){var c=document.documentElem
     var list=await c.queryContractSmart("wasm1uykr2f24sdj9f4la0wv78gvjuyqqnqk9r8jggcqd9ha9vxjrrkksum5x0g",{all_sub_tokens:{}});
     el.textContent = (list&&list.length)? list.map(function(s){return s.symbol||s;}).join(", ") : "暂无已发行子代币";
   }catch(e){ el.textContent="查询失败"; } })();
+})();
+
+(function(){ var b=document.getElementById("btnScan"); if(!b)return;
+ b.onclick=async function(){ var sel=document.getElementById("claimDay"); sel.innerHTML="";
+  try{ var h=await fetch(CFG.gw+"/v1/health").then(function(r){return r.json();});
+   for(var d=h.current_day-1;d>=Math.max(1,h.current_day-30);d--){
+     var sc=await fetch(CFG.gw+"/v1/scores?day="+d).then(function(r){return r.json();}).catch(function(){return null;});
+     if(sc&&sc.finalized&&sc.scores&&sc.scores[myAddr]&&sc.scores[myAddr].w>0){ var o=document.createElement("option"); o.value=d; o.textContent="第"+d+"天"; sel.appendChild(o); } }
+   if(!sel.options.length){ toast(t("nothing")); } else { toast("可领 "+sel.options.length+" 天"); }
+  }catch(e){ toast(String(e.message||e).slice(0,60)); } };
 })();
