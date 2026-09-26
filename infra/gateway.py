@@ -101,18 +101,8 @@ def finalize_day(day):
         if not d["miners"]:
             return {"error": "no miners for day"}
         addrs = sorted(d["miners"].keys())           # 确定性排序
+        # 每日根=纯PoC分(不折邀请奖励);邀请+10%在赛季末从S1池结算(见 referrals 记录)
         scores = {a: score_miner(d["miners"][a]) for a in addrs}
-        refs = d.get("referrals", {})
-        if refs:
-            base_w = {a: weighted_score(scores[a]) for a in addrs}
-            bonus = {}
-            for ite, r in refs.items():
-                ref = r.get("referrer"); fd = r.get("first_day", day)
-                if ref in base_w and ite in base_w and 0 <= (day - fd) < REFERRAL_WINDOW:
-                    bonus[ref] = bonus.get(ref, 0) + REFERRAL_BONUS * base_w[ite]
-            for inv, b in bonus.items():
-                if b > 0:
-                    scores[inv]["bandwidth"] = min(SCALE, scores[inv]["bandwidth"] + int(b * 100 // WEIGHTS["bandwidth"]))
         leaves = [leaf_hash(a, day, scores[a]["bandwidth"], scores[a]["session"], scores[a]["verification"], scores[a]["stability"]) for a in addrs]
         root, levels = build_tree(leaves)
         proofs = {a: proof_for(levels, i) for i, a in enumerate(addrs)}
