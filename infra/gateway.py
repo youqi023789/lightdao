@@ -224,6 +224,17 @@ class H(BaseHTTPRequestHandler):
                 rec["referred"] = sum(1 for k, v in refs.items() if (v or {}).get("referrer") == addr)
                 if addr in refs: rec["referrer"] = refs[addr].get("referrer")
                 out["days"][dd] = rec
+            days = out.get("days") or {}
+            act = [dd for dd, r in days.items() if r.get("active")]
+            actn = sorted(int(x) for x in act)
+            streak = 0
+            for k in range(len(actn)):
+                if k == 0 or actn[k] == actn[k-1] + 1: streak += 1
+                else: streak = 1
+            out["first_day"] = actn[0] if actn else None
+            out["active_days"] = len(actn)
+            out["streak"] = streak
+            out["referred_total"] = sum((r.get("referred") or 0) for r in days.values())
             return self._send(200, out)
         return self._send(404, {"error": "not found"})
     def do_POST(self):

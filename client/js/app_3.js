@@ -67,3 +67,22 @@ document.getElementById("themeT").onclick=function(){var c=document.documentElem
    if(!sel.options.length){ toast(t("nothing")); } else { toast("可领 "+sel.options.length+" 天"); }
   }catch(e){ toast(String(e.message||e).slice(0,60)); } };
 })();
+
+
+(async function(){ var el=document.getElementById("myBadges"); if(!el||!myAddr)return;
+ var F="wasm19g2hgc28u9c0xxkeyf0fu2dg9k9d8wh8m3fc9v";
+ try{ var r=await fetch(CFG.gw+"/v1/me?addr="+myAddr).then(function(x){return x.json();});
+  var ref=r.referred_total||0, fd=r.first_day, st=r.streak||0, ad=r.active_days||0;
+  var b=[];
+  if(myAddr===F) b.push(["创始人 Founder","var(--acc,#7c8cff)"]);
+  if(fd&&fd<=3) b.push(["创世矿工 Genesis","var(--ok,#3ddc84)"]);
+  if(ref>=50) b.push(["合伙人 Partner(50+)","var(--acc2,#a06bff)"]);
+  else if(ref>=10) b.push(["大使 Ambassador(10+)","var(--acc2,#a06bff)"]);
+  else if(ref>=3) b.push(["布道者 Evangelist(3+)","var(--ok,#3ddc84)"]);
+  if(st>=7) b.push(["坚守者 7天连续","var(--warn,#ffb454)"]);
+  if(ad>=1) b.push(["活跃贡献者","var(--mut,#9aa3b2)"]);
+  var nxt = ref>=50?null:(ref>=10?{n:50,t:"合伙人"}:(ref>=3?{n:10,t:"大使"}:{n:3,t:"布道者"}));
+  var html = b.length? b.map(function(x){return '<span style="display:inline-block;margin:2px 6px 2px 0;padding:4px 12px;border-radius:999px;border:1px solid '+x[1]+';color:'+x[1]+'">'+x[0]+"</span>";}).join("") : '<span>暂无头衔,开始邀请与贡献吧</span>';
+  if(nxt) html += '<div style="margin-top:6px">距离「'+nxt.t+'」还差 '+(nxt.n-ref)+" 人(当前 "+ref+" 人)</div>";
+  el.innerHTML=html;
+ }catch(e){ el.textContent="加载失败"; } })();
