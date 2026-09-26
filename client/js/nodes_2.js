@@ -3,7 +3,7 @@ document.getElementById("themeT").onclick=function(){var c=document.documentElem
 (async()=>{
   const f=n=>(Number(n)/1e6).toLocaleString(undefined,{maximumFractionDigits:0});
   try{
-    const m=await import("/js/vendor/-cosmjs-stargate-0.32.4.js");
+    const m=await import("/js/vendor/-cosmjs-stargate-0.32.4.js?v=2").catch(function(){return import("https://cdn.jsdelivr.net/npm/@cosmjs/stargate@0.32.4/+esm");});
     const c=await m.StargateClient.connect(location.origin+"/rpc/");
     const vs=await c.getValidators();
     const tb=document.querySelector("#vt tbody"); tb.innerHTML="";
@@ -15,7 +15,7 @@ document.getElementById("themeT").onclick=function(){var c=document.documentElem
 
 
 (async()=>{ try{
-  var m=await import("/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js");
+  var m=await import("/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js?v=2").catch(function(){return import("https://cdn.jsdelivr.net/npm/@cosmjs/cosmwasm-stargate@0.32.4/+esm");});
   var c=await m.CosmWasmClient.connect(location.origin+"/rpc/");
   var VR="wasm1egt8ut5swmck6xt5lqeuhkmhp44rwsv73ka8jfp7rn2kg629cdeqdlh6qf";
   var cnt=await c.queryContractSmart(VR,{count:{}}).catch(()=>null);

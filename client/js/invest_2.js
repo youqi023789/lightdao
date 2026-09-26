@@ -5,7 +5,7 @@ const TRE="wasm192u2pm80ndmh608mmvhrzhje0sjaq0txr5md77lr70ucy0j3lfys8l633u";
 const f=n=>(Number(n)/1e6).toLocaleString(undefined,{maximumFractionDigits:2});
 let cw=null;
 (async()=>{
-  const m=await import("/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js").catch(()=>null);
+  const m=await import("/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js?v=2").catch(function(){return import("https://cdn.jsdelivr.net/npm/@cosmjs/cosmwasm-stargate@0.32.4/+esm");}).catch(()=>null);
   if(!m){document.querySelectorAll("tbody").forEach(t=>t.innerHTML='<tr><td colspan="3">cosmjs 加载失败</td></tr>');return;}
   cw=await m.CosmWasmClient.connect(location.origin+"/rpc/");
   // sub tokens

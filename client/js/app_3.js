@@ -2,29 +2,17 @@
 const CDN = ["/js/vendor/"];
 async function loadCosmjs(){
   if(window.__c) return window.__c;
-  for(const base of CDN){
+  const L=p=>"/js/vendor/-cosmjs-"+p+"-0.32.4.js?v=2";
+  const C=p=>"https://cdn.jsdelivr.net/npm/@cosmjs/"+p+"@0.32.4/+esm";
+  for(const src of [L,C]){
     try{
-      const url = base==="https://esm.sh/" ? base : base;
-      const [cs, ps, sg] = await Promise.all([
-        import(base+"-cosmjs-cosmwasm-stargate-0.32.4.js"),
-        import(base+"-cosmjs-proto-signing-0.32.4.js"),
-        import(base+"-cosmjs-stargate-0.32.4.js"),
-      ]);
+      const [cs,ps,sg]=await Promise.all([import(src("cosmwasm-stargate")),import(src("proto-signing")),import(src("stargate"))]);
       window.__c={cs,ps,sg}; return window.__c;
     }catch(e){}
   }
   return null;
 }
-const PAYMASTER="wasm13c2cjh3fhkesj47tsc5a0vm6pdds39qpcmykhj"; // feegrant granter for gasless first txs
-window.LD = null;
-(async()=>{
-  const c = await loadCosmjs();
-  if(!c){ return; } // 优雅降级: 挖矿仍可用, 钱包/领取提示不可用
-  const { SigningCosmWasmClient } = c.cs;
-  const { DirectSecp256k1HdWallet } = c.ps;
-  const { GasPrice } = c.sg;
-  let wallet=null, client=null;
-  window.__mrq=(m)=>client.queryContractSmart(CFG.miningReward,m);
+window.__mrq=(m)=>client.queryContractSmart(CFG.miningReward,m);
   window.LD = {
     addr:null,
     async create(){ const w=await DirectSecp256k1HdWallet.generate(12,{prefix:CFG.prefix}); this._w=w; return w.mnemonic; },
@@ -55,7 +43,7 @@ document.getElementById("themeT").onclick=function(){var c=document.documentElem
 (function(){
   var el=document.getElementById("subList"); if(!el)return;
   (async()=>{ try{
-    var m=await import("/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js");
+    var m=await import("/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js?v=2").catch(function(){return import("https://cdn.jsdelivr.net/npm/@cosmjs/cosmwasm-stargate@0.32.4/+esm");});
     var c=await m.CosmWasmClient.connect(CFG.rpc);
     var list=await c.queryContractSmart("wasm1uykr2f24sdj9f4la0wv78gvjuyqqnqk9r8jggcqd9ha9vxjrrkksum5x0g",{all_sub_tokens:{}});
     el.textContent = (list&&list.length)? list.map(function(s){return s.symbol||s;}).join(", ") : "暂无已发行子代币";

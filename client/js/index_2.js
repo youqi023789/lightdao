@@ -31,7 +31,7 @@ async function st(){try{var h=await fetch(location.origin+"/gw/v1/health").then(
  if(h){var e=document.getElementById("sDay");if(e)e.textContent=h.current_day;
    var d=await fetch(location.origin+"/gw/v1/day?day="+h.current_day).then(function(r){return r.json();}).catch(function(){return null;});
    if(d&&d.miners){var m2=document.getElementById("sMin");if(m2)m2.textContent=Object.keys(d.miners).length;}}
- var mod=await import("/js/vendor/-cosmjs-stargate-0.32.4.js").catch(function(){return null;});
+ var mod=await import("/js/vendor/-cosmjs-stargate-0.32.4.js?v=2").catch(function(){return import("https://cdn.jsdelivr.net/npm/@cosmjs/stargate@0.32.4/+esm");}).catch(function(){return null;});
  if(mod){var c=await mod.StargateClient.connect(location.origin+"/rpc/");
    var ht=await c.getHeight().catch(function(){return null;});if(ht){var e1=document.getElementById("sH");if(e1)e1.textContent=ht;}
    var b=await c.getBalance("wasm1aeaty43lrlt9rmkyxujkkfuddnsfye6az4htcu","ulight").catch(function(){return null;});if(b){var e2=document.getElementById("sBurn");if(e2)e2.textContent=f(b.amount);}var sup=await c.getSupply().catch(function(){return null;});if(sup){var ul=sup.find(function(x){return x.denom==="ulight";});var e3=document.getElementById("sS");if(e3&&ul)e3.textContent=f(ul.amount);}try{var pr=await c.queryContractSmart("wasm1f622csg2af6utlxvxgch2l9qf64ce3s4h5vseaph5ku8vzcgp6qqmsyace",{external_median:{}});var e4=document.getElementById("sP");if(e4)e4.textContent="$"+f(pr);}catch(e){}}
