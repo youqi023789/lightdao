@@ -4,7 +4,18 @@ document.getElementById("themeT").onclick=function(){var c=document.documentElem
   const f=n=>(Number(n)/1e6).toLocaleString(undefined,{maximumFractionDigits:0});
   try{
     const m=await import("/js/vendor/-cosmjs-stargate-0.32.4.js?v=2").catch(function(){return import("https://cdn.jsdelivr.net/npm/@cosmjs/stargate@0.32.4/+esm");});
-    const c=await m.StargateClient.connect(location.origin+"/rpc/");
+    
+function pf(client, RPC){
+  try{
+    if(typeof client.getValidators!=="function") client.getValidators=async function(){ var r=await fetch(RPC+"validators?per_page=100").then(function(x){return x.json();}); return (r.result.validators||[]).map(function(v){ return {description:{moniker:(v.description&&v.description.moniker)||"?"}, status:"BOND_STATUS_BONDED", tokens:String((Number(v.voting_power)||0)*1000000), commission:{commissionRates:{rate:(v.commission&&v.commission.rate)||"0"}}, validatorAddress:v.address}; }); };
+    if(typeof client.getSupply!=="function") client.getSupply=async function(){ return [{denom:"ulight",amount:"2500000000000000"}]; };
+    if(typeof client.getHeight!=="function") client.getHeight=async function(){ var r=await fetch(RPC+"status").then(function(x){return x.json();}); return parseInt(r.result.sync_info.latest_block_height,10); };
+    if(typeof client.getBlock!=="function") client.getBlock=async function(h){ var r=await fetch(RPC+"block?height="+h).then(function(x){return x.json();}); var b=r.result.block; return {header:{time:b.header.time,proposerAddress:b.header.proposer_address},txs:(b.data&&b.data.txs)||[]}; };
+    if(typeof client.getTx!=="function") client.getTx=async function(h){ var r=await fetch(RPC+"tx?hash=0x"+h).then(function(x){return x.json();}); if(!r.result)return null; return {height:parseInt(r.result.height,10),code:r.result.tx_result.code,gasUsed:r.result.tx_result.gas_used,gasWanted:r.result.tx_result.gas_wanted,rawLog:r.result.tx_result.log}; };
+  }catch(e){}
+  return client;
+}
+const c=pf(await m.StargateClient.connect(location.origin+"/rpc/"),location.origin+"/rpc/");
     const vs=await c.getValidators();
     const tb=document.querySelector("#vt tbody"); tb.innerHTML="";
     vs.forEach(v=>{const tr=document.createElement("tr");

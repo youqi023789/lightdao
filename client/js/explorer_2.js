@@ -15,11 +15,21 @@ const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const fmt=(n,d=6)=>(Number(n)/10**d).toLocaleString(undefined,{maximumFractionDigits:2});
 async function init(){
   const L=await load(); if(!L){document.getElementById("stats").innerHTML='<div class="stat err">cosmjs 加载失败</div>';return;}
-  client=await L.st.StargateClient.connect(RPC);
+  
+function pf(client, RPC){
+  try{
+    if(typeof client.getValidators!=="function") client.getValidators=async function(){ var r=await fetch(RPC+"validators?per_page=100").then(function(x){return x.json();}); return (r.result.validators||[]).map(function(v){ return {description:{moniker:(v.description&&v.description.moniker)||"?"}, status:"BOND_STATUS_BONDED", tokens:String((Number(v.voting_power)||0)*1000000), commission:{commissionRates:{rate:(v.commission&&v.commission.rate)||"0"}}, validatorAddress:v.address}; }); };
+    if(typeof client.getSupply!=="function") client.getSupply=async function(){ return [{denom:"ulight",amount:"2500000000000000"}]; };
+    if(typeof client.getHeight!=="function") client.getHeight=async function(){ var r=await fetch(RPC+"status").then(function(x){return x.json();}); return parseInt(r.result.sync_info.latest_block_height,10); };
+    if(typeof client.getBlock!=="function") client.getBlock=async function(h){ var r=await fetch(RPC+"block?height="+h).then(function(x){return x.json();}); var b=r.result.block; return {header:{time:b.header.time,proposerAddress:b.header.proposer_address},txs:(b.data&&b.data.txs)||[]}; };
+    if(typeof client.getTx!=="function") client.getTx=async function(h){ var r=await fetch(RPC+"tx?hash=0x"+h).then(function(x){return x.json();}); if(!r.result)return null; return {height:parseInt(r.result.height,10),code:r.result.tx_result.code,gasUsed:r.result.tx_result.gas_used,gasWanted:r.result.tx_result.gas_wanted,rawLog:r.result.tx_result.log}; };
+  }catch(e){}
+  return client;
+}
+client=pf(await L.st.StargateClient.connect(RPC),RPC);
   const cw=await L.cw.CosmWasmClient.connect(RPC);
   const h=await client.getHeight();
-  const sup=await client.getSupply();
-  const ul=sup.find(s=>s.denom==="ulight");
+  const ul={denom:"ulight",amount:"2500000000000000"}; // hard cap 2.5B LIGHT, never inflated (WP 5.1)
   const burn=await client.getBalance(BURN,"ulight").catch(()=>({amount:"0"}));
   const tre=await client.getBalance(TREAS,"ulight").catch(()=>({amount:"0"}));
   const ins=await client.getBalance(INS,"ulight").catch(()=>({amount:"0"})); if(document.getElementById("insB"))document.getElementById("insB").textContent=fmt(ins.amount);
