@@ -1,0 +1,8 @@
+/**
+ * Bundled by jsDelivr using Rollup v4.62.2 and esbuild v0.28.1.
+ * Original file: /npm/@protobufjs/utf8@1.1.0/index.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var C={},x;function p(){return x||(x=1,(function(c){var o=c;o.length=function(l){for(var r=0,n=0,t=0;t<l.length;++t)n=l.charCodeAt(t),n<128?r+=1:n<2048?r+=2:(n&64512)===55296&&(l.charCodeAt(t+1)&64512)===56320?(++t,r+=4):r+=3;return r},o.read=function(l,r,n){var t=n-r;if(t<1)return"";for(var e=null,i=[],_=0,a;r<n;)a=l[r++],a<128?i[_++]=a:a>191&&a<224?i[_++]=(a&31)<<6|l[r++]&63:a>239&&a<365?(a=((a&7)<<18|(l[r++]&63)<<12|(l[r++]&63)<<6|l[r++]&63)-65536,i[_++]=55296+(a>>10),i[_++]=56320+(a&1023)):i[_++]=(a&15)<<12|(l[r++]&63)<<6|l[r++]&63,_>8191&&((e||(e=[])).push(String.fromCharCode.apply(String,i)),_=0);return e?(_&&e.push(String.fromCharCode.apply(String,i.slice(0,_))),e.join("")):String.fromCharCode.apply(String,i.slice(0,_))},o.write=function(l,r,n){for(var t=n,e,i,_=0;_<l.length;++_)e=l.charCodeAt(_),e<128?r[n++]=e:e<2048?(r[n++]=e>>6|192,r[n++]=e&63|128):(e&64512)===55296&&((i=l.charCodeAt(_+1))&64512)===56320?(e=65536+((e&1023)<<10)+(i&1023),++_,r[n++]=e>>18|240,r[n++]=e>>12&63|128,r[n++]=e>>6&63|128,r[n++]=e&63|128):(r[n++]=e>>12|224,r[n++]=e>>6&63|128,r[n++]=e&63|128);return n-t}})(C)),C}var h=p(),v=h.length,d=h.read,g=h.write;export{h as default,v as length,d as read,g as write};
+//# sourceMappingURL=/sm/ad44f63aa49a08d3ef2108b604f3ff12f974a37d156a8030eadb1c037c7cb9a3.map

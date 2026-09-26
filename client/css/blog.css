@@ -1,0 +1,37 @@
+:root{--bg:#05060a;--bg2:#0a0c12;--ink:#eef1f6;--mut:#9aa3b2;--line:rgba(255,255,255,.08);--acc:#7c8cff}body{background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,"Segoe UI",Roboto,"PingFang SC",sans-serif;margin:0}.w{max-width:760px;margin:0 auto;padding:40px 22px}a{text-decoration:none}h1{font-size:34px;margin:10px 0 6px}.sub{color:var(--mut)}
+.u3efb04{max-width:1120px;margin:0 auto;padding:10px 22px;display:flex;gap:16px;font-size:14px}
+.u59fa2b{color:var(--mut,#9aa3b2);text-decoration:none}
+.u59fa2b{color:var(--mut,#9aa3b2);text-decoration:none}
+.u6b0f12{margin-left:auto;background:transparent;border:1px solid rgba(128,128,160,.3);border-radius:8px;padding:4px 10px;cursor:pointer;color:inherit}
+.uf12390{color:var(--mut)}
+.uaa3a2f{margin-top:26px}
+.u6efbd2{border:1px solid var(--line);border-radius:14px;padding:26px;margin-bottom:18px;background:var(--bg2)}
+.ud19d56{color:var(--mut);font-size:13px}
+.u1b17ec{margin:8px 0 10px;font-size:20px}
+.ufeac2f{color:var(--mut);font-size:15px}
+.u553a64{margin-top:14px}
+.udb8f7a{color:var(--acc)}
+.uf12390{color:var(--mut)}
+.u6efbd2{border:1px solid var(--line);border-radius:14px;padding:26px;margin-bottom:18px;background:var(--bg2)}
+.ud19d56{color:var(--mut);font-size:13px}
+.u1b17ec{margin:8px 0 10px;font-size:20px}
+.ufeac2f{color:var(--mut);font-size:15px}
+.u553a64{margin-top:14px}
+.udb8f7a{color:var(--acc)}
+.uf12390{color:var(--mut)}
+.u6efbd2{border:1px solid var(--line);border-radius:14px;padding:26px;margin-bottom:18px;background:var(--bg2)}
+.ud19d56{color:var(--mut);font-size:13px}
+.u1b17ec{margin:8px 0 10px;font-size:20px}
+.ufeac2f{color:var(--mut);font-size:15px}
+.u553a64{margin-top:14px}
+.udb8f7a{color:var(--acc)}
+.uf12390{color:var(--mut)}
+.u6efbd2{border:1px solid var(--line);border-radius:14px;padding:26px;margin-bottom:18px;background:var(--bg2)}
+.ud19d56{color:var(--mut);font-size:13px}
+.u1b17ec{margin:8px 0 10px;font-size:20px}
+.ufeac2f{color:var(--mut);font-size:15px}
+.u553a64{margin-top:14px}
+.udb8f7a{color:var(--acc)}
+.uf12390{color:var(--mut)}
+.fs12{font-size:12px}.fs11{font-size:11.5px}.mono12{font-family:ui-monospace,monospace;font-size:12px}.errtx{color:var(--err)}.oktx{color:var(--ok)}
+.fs12{font-size:12px}.fs11{font-size:11.5px}.mono12{font-family:ui-monospace,monospace;font-size:12px}.errtx{color:var(--err)}.oktx{color:var(--ok)}

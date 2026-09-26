@@ -5,7 +5,7 @@ const TRE="wasm192u2pm80ndmh608mmvhrzhje0sjaq0txr5md77lr70ucy0j3lfys8l633u";
 const f=n=>(Number(n)/1e6).toLocaleString(undefined,{maximumFractionDigits:2});
 let cw=null;
 (async()=>{
-  const m=await import("https://cdn.jsdelivr.net/npm/@cosmjs/cosmwasm-stargate@0.32.4/+esm").catch(()=>null);
+  const m=await import("/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js").catch(()=>null);
   if(!m){document.querySelectorAll("tbody").forEach(t=>t.innerHTML='<tr><td colspan="3">cosmjs 加载失败</td></tr>');return;}
   cw=await m.CosmWasmClient.connect(location.origin+"/rpc/");
   // sub tokens
@@ -17,7 +17,7 @@ let cw=null;
   // signers
   let sg=[]; try{ sg=await cw.queryContractSmart(TRE,{signers:{}}); }catch(e){}
   const sgb=document.querySelector("#sgt tbody"); sgb.innerHTML="";
-  (sg||[]).forEach((a,i)=>{ const tr=document.createElement("tr"); tr.innerHTML="<td>"+(i+1)+"</td><td style='font-family:ui-monospace,monospace;font-size:12px'>"+a+"</td>"; sgb.appendChild(tr); });
+  (sg||[]).forEach((a,i)=>{ const tr=document.createElement("tr"); tr.innerHTML="<td>"+(i+1)+"</td><td class="mono12">"+a+"</td>"; sgb.appendChild(tr); });
   if(!sg||!sg.length) sgb.innerHTML='<tr><td colspan="2">无</td></tr>';
   // pending txs: iterate ids
   const txb=document.querySelector("#txt tbody"); txb.innerHTML=""; let any=false;

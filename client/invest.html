@@ -7,37 +7,26 @@
 <link rel="stylesheet" href="/theme.css">
 <title>子代币与金库多签 — LightDAO</title>
 <meta name="description" content="查看 LightDAO 子代币(SPVP 收益凭证)发行与持有,及金库多签签署人与待执行交易。">
-<style>:root{--bg:#05060a;--bg2:#0a0c12;--ink:#eef1f6;--mut:#9aa3b2;--line:rgba(255,255,255,.08);--acc:#7c8cff;--ok:#3ddc84;--warn:#ffb454}
-body{background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,"Segoe UI",Roboto,"PingFang SC",sans-serif;margin:0}
-.w{max-width:960px;margin:0 auto;padding:20px 22px 60px}
-h1{font-size:28px;margin:10px 0 6px}h2{font-size:19px;margin:28px 0 10px}
-p,li,td{color:var(--mut)}a{color:var(--acc);text-decoration:none}
-table{width:100%;border-collapse:collapse;font-size:14px;margin-top:12px}
-td,th{border:1px solid var(--line);padding:9px 12px;text-align:left}th{color:var(--ink);background:var(--bg2)}
-.card{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:16px}
-.bar{display:flex;gap:12px;flex-wrap:wrap;font-size:14px;margin:10px 0}
-.bar a{border:1px solid var(--line);border-radius:10px;padding:8px 14px}
-input{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--ink);width:100%;max-width:460px;font-family:ui-monospace,monospace;font-size:13px}
-.pill{display:inline-block;border-radius:999px;padding:3px 12px;font-size:12.5px;background:rgba(127,127,160,.15);color:var(--mut)}
-</style>
+<link rel="stylesheet" href="/css/invest.css">
 <script src="/js/back.js"></script>
+<script src="/js/wfix.js"></script>
 </head>
 <body>
-<div class="bar" style="max-width:960px;margin:0 auto;padding:12px 22px">
+<div class="bar u4b2b61">
 <a href="#" data-back="1">← 返回上一页</a>
 <a href="/">⌂ 返回首页</a>
 <a href="/governance.html">治理</a>
 <a href="/explorer.html">浏览器</a>
 <a href="/search.html">⌕ 搜索</a>
-<button id="themeT" aria-label="toggle theme" style="margin-left:auto;background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer;color:inherit">◐</button>
+<button id="themeT" aria-label="toggle theme" class="uec0af4">◐</button>
 </div>
 <div class="w">
-<h1>子代币与金库多签 <span style="color:var(--mut);font-size:15px">Sub-tokens & Treasury Multisig</span></h1>
-<p>子代币 = SPV 收益分配请求权凭证(白皮书 §5.9):由<b style="color:var(--ink)">治理投资提案</b>通过后经 subtoken_factory 发行;利润 40% 分配给子代币持有者。金库由多签(treasury_multisig)锁定,仅有效决议可释放。</p>
+<h1>子代币与金库多签 <span class="ufeac2f">Sub-tokens & Treasury Multisig</span></h1>
+<p>子代币 = SPV 收益分配请求权凭证(白皮书 §5.9):由<b class="uf7d924">治理投资提案</b>通过后经 subtoken_factory 发行;利润 40% 分配给子代币持有者。金库由多签(treasury_multisig)锁定,仅有效决议可释放。</p>
 
 <h2>已发行子代币</h2>
 <div class="card"><table id="stt"><thead><tr><th>符号</th><th>总量</th><th>状态</th></tr></thead><tbody><tr><td colspan="3">加载中…</td></tr></tbody></table>
-<p style="margin-top:12px;font-size:13.5px">尚无子代币=尚无投资发行。第一笔子代币将在首笔治理投资提案通过后铸造。</p></div>
+<p class="u7b1ddb">尚无子代币=尚无投资发行。第一笔子代币将在首笔治理投资提案通过后铸造。</p></div>
 
 <h2>我的子代币持有</h2>
 <div class="card">
@@ -47,7 +36,7 @@ input{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padd
 
 <h2>金库多签签署人</h2>
 <div class="card"><table id="sgt"><thead><tr><th>#</th><th>签署人地址</th></tr></thead><tbody><tr><td colspan="2">加载中…</td></tr></tbody></table>
-<p style="margin-top:12px;font-size:13.5px">多签阈值与待执行交易见下;仅达阈值的决议可释放金库。</p></div>
+<p class="u7b1ddb">多签阈值与待执行交易见下;仅达阈值的决议可释放金库。</p></div>
 
 <h2>待执行多签交易</h2>
 <div class="card"><table id="txt"><thead><tr><th>id</th><th>状态</th><th>已签</th></tr></thead><tbody><tr><td colspan="3">加载中…</td></tr></tbody></table></div>

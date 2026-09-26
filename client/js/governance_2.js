@@ -6,7 +6,7 @@ const TM="wasm192u2pm80ndmh608mmvhrzhje0sjaq0txr5md77lr70ucy0j3lfys8l633u";
 const DENOM="ulight";
 function log(m,c){const e=$("log");e.innerHTML=(c?`<span class="${c}">`:"")+String(m).replace(/</g,"&lt;")+(c?"</span>":"");}
 let client=null,addr=null;
-const CDN=["https://cdn.jsdelivr.net/npm/","https://esm.sh/"];
+const CDN=["/js/vendor/"];
 async function loadCosmjs(){if(window.__c)return window.__c;for(const b of CDN){try{const[cs,ps,sg]=await Promise.all([import(b+"@cosmjs/cosmwasm-stargate@0.32.4"+(b==="https://esm.sh/"?"":"/+esm")),import(b+"@cosmjs/proto-signing@0.32.4"+(b==="https://esm.sh/"?"":"/+esm")),import(b+"@cosmjs/stargate@0.32.4"+(b==="https://esm.sh/"?"":"/+esm"))]);window.__c={cs,ps,sg};return window.__c;}catch(e){}}return null;}
 async function connect(mnem){
   const c=await loadCosmjs(); if(!c){log("cosmjs 加载失败(网络)","err");return false;}
@@ -38,9 +38,9 @@ async function refreshProps(){
       const endLeft=Math.round((p.end-Date.now()/1000)/3600);
       const d=document.createElement("div"); d.className="prop";
       d.innerHTML=`<h3>#${p.id} ${esc(p.title)} <span class="mut">[${p.ptype}]</span></h3>
-        <div class="mut" style="font-size:12px">${esc(p.description).slice(0,120)}</div>
-        <div class="bar"><i class="y" style="width:${yp}%"></i><i class="n" style="width:${np}%"></i><i class="a" style="width:${ap}%"></i></div>
-        <div class="mut" style="font-size:11.5px">赞成 ${yp}%(${p.yes_addrs}人) · 反对 ${np}%(${p.no_addrs}人) · 弃权 ${ap}% · ${endLeft>0?endLeft+"h 后截止":"已截止"} ${p.executed?'· <span class="ok">已执行</span>':''}</div>
+        <div class="mut" class="fs12">${esc(p.description).slice(0,120)}</div>
+        <div class="bar"><i class="y" data-w="${yp}"></i><i class="n" data-w="${np}"></i><i class="a" data-w="${ap}"></i></div>
+        <div class="mut" class="fs11">赞成 ${yp}%(${p.yes_addrs}人) · 反对 ${np}%(${p.no_addrs}人) · 弃权 ${ap}% · ${endLeft>0?endLeft+"h 后截止":"已截止"} ${p.executed?'· <span class="ok">已执行</span>':''}</div>
         <button class="btn sm" data-v="yes" data-id="${p.id}">赞成</button><button class="btn ghost sm" data-v="no" data-id="${p.id}">反对</button><button class="btn ghost sm" data-v="abstain" data-id="${p.id}">弃权</button><button class="btn ghost sm" data-e="1" data-id="${p.id}">执行</button>`;
       el.appendChild(d);
     });

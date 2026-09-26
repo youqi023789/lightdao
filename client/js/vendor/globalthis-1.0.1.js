@@ -1,0 +1,8 @@
+/**
+ * Bundled by jsDelivr using Rollup v4.62.2 and esbuild v0.28.1.
+ * Original file: /npm/globalthis@1.0.1/index.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+import*as g from"define-properties-1.1.3.js";var t=typeof globalThis<"u"?globalThis:typeof window<"u"?window:typeof global<"u"?global:typeof self<"u"?self:{};function c(e){return e&&Object.prototype.hasOwnProperty.call(e,"default")?e.default:e}var p=c(g),i={exports:{}},b;function m(){return b||(b=1,typeof self<"u"?i.exports=self:typeof window<"u"?i.exports=window:i.exports=Function("return this")()),i.exports}var n,h;function d(){if(h)return n;h=1;var e=m();return n=function(){return typeof t!="object"||!t||t.Math!==Math||t.Array!==Array?e:t},n}var f,v;function _(){if(v)return f;v=1;var e=p,o=d();return f=function(){var r=o();if(e.supportsDescriptors){var l=Object.getOwnPropertyDescriptor(r,"globalThis");(!l||l.configurable&&(l.enumerable||l.writable||globalThis!==r))&&Object.defineProperty(r,"globalThis",{configurable:!0,enumerable:!1,value:r,writable:!1})}else(typeof globalThis!="object"||globalThis!==r)&&(r.globalThis=r);return r},f}var s,y;function w(){if(y)return s;y=1;var e=p,o=m(),a=d(),r=_(),l=a(),u=function(){return l};return e(u,{getPolyfill:a,implementation:o,shim:r}),s=u,s}var P=w();export{P as default};
+//# sourceMappingURL=/sm/f848f221b2025f08433e15097e7656a8006db0d829c7cc26f0cc59aff2bb26ab.map

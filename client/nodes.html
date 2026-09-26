@@ -7,55 +7,42 @@
 <link rel="stylesheet" href="/theme.css">
 <title>节点与验证者 — LightDAO</title>
 <meta name="description" content="LightDAO 节点体系:浏览器轻节点(免申请)、全节点(免许可)、验证者(质押+治理选举)。">
-<style>:root{--bg:#05060a;--bg2:#0a0c12;--ink:#eef1f6;--mut:#9aa3b2;--line:rgba(255,255,255,.08);--acc:#7c8cff;--ok:#3ddc84;--warn:#ffb454}
-body{background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,"Segoe UI",Roboto,"PingFang SC",sans-serif;margin:0}
-.w{max-width:960px;margin:0 auto;padding:20px 22px 60px}
-h1{font-size:30px;margin:10px 0 6px}h2{font-size:20px;margin:30px 0 10px}
-p,li,td{color:var(--mut)}a{color:var(--acc);text-decoration:none}
-table{width:100%;border-collapse:collapse;font-size:14px;margin-top:14px}
-td,th{border:1px solid var(--line);padding:10px 12px;text-align:left}
-th{color:var(--ink);background:var(--bg2)}
-.card{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:16px}
-.pill{display:inline-block;border-radius:999px;padding:3px 12px;font-size:12.5px}
-.ok{background:rgba(61,220,132,.12);color:var(--ok)}.no{background:rgba(255,180,84,.12);color:var(--warn)}
-.bar{display:flex;gap:12px;flex-wrap:wrap;font-size:14px;margin:10px 0}
-.bar a{border:1px solid var(--line);border-radius:10px;padding:8px 14px}
-code{background:rgba(127,127,160,.15);border-radius:6px;padding:2px 6px;font-size:13px}
-</style>
+<link rel="stylesheet" href="/css/nodes.css">
 <script src="/js/back.js"></script>
+<script src="/js/wfix.js"></script>
 </head>
 <body>
-<div class="bar" style="max-width:960px;margin:0 auto;padding:12px 22px">
+<div class="bar u4b2b61">
 <a href="#" data-back="1">← 返回上一页</a>
 <a href="/">⌂ 返回首页</a>
 <a href="/app.html">开始挖矿</a>
 <a href="/explorer.html">浏览器</a>
 <a href="/search.html">⌕ 搜索</a>
-<button id="themeT" aria-label="toggle theme" style="margin-left:auto;background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer;color:inherit">◐</button>
+<button id="themeT" aria-label="toggle theme" class="uec0af4">◐</button>
 </div>
 <div class="w">
-<h1>节点与验证者 <span style="color:var(--mut);font-size:15px">Nodes & Validators</span></h1>
-<p>LightDAO 有三类节点,<b style="color:var(--ink)">准入方式完全不同</b>——依据白皮书 §4.6 / §4.7。</p>
+<h1>节点与验证者 <span class="ufeac2f">Nodes & Validators</span></h1>
+<p>LightDAO 有三类节点,<b class="uf7d924">准入方式完全不同</b>——依据白皮书 §4.6 / §4.7。</p>
 
 <table>
 <thead><tr><th>类型</th><th>作用</th><th>准入</th><th>收益</th></tr></thead>
 <tbody>
-<tr><td><b style="color:var(--ink)">浏览器轻节点</b></td><td>贡献带宽(WebRTC 中继)/区块头验证/在线时长</td><td><span class="pill ok">免申请 · permissionless</span> 打开网页即可</td><td>挖矿奖励池 95%(每日)</td></tr>
-<tr><td><b style="color:var(--ink)">全节点</b></td><td>同步全链、提供 RPC/中继、增强去中心化</td><td><span class="pill ok">免许可</span> 自行同步即可,见仓库文档</td><td>无直接奖励(公益/基础设施)</td></tr>
-<tr><td><b style="color:var(--ink)">验证者</b></td><td>BFT 共识出块、承载 WebSocket 网关(≤50k 连接/验证者)、提交心跳 Merkle 根</td><td><span class="pill no">质押保证金 + 治理选举</span> 非免申请</td><td>手续费 30% + 区块奖励 5%</td></tr>
+<tr><td><b class="uf7d924">浏览器轻节点</b></td><td>贡献带宽(WebRTC 中继)/区块头验证/在线时长</td><td><span class="pill ok">免申请 · permissionless</span> 打开网页即可</td><td>挖矿奖励池 95%(每日)</td></tr>
+<tr><td><b class="uf7d924">全节点</b></td><td>同步全链、提供 RPC/中继、增强去中心化</td><td><span class="pill ok">免许可</span> 自行同步即可,见仓库文档</td><td>无直接奖励(公益/基础设施)</td></tr>
+<tr><td><b class="uf7d924">验证者</b></td><td>BFT 共识出块、承载 WebSocket 网关(≤50k 连接/验证者)、提交心跳 Merkle 根</td><td><span class="pill no">质押保证金 + 治理选举</span> 非免申请</td><td>手续费 30% + 区块奖励 5%</td></tr>
 </tbody>
 </table>
 
 <h2>验证者:如何申请 / 竞选</h2>
 <div class="card">
-<p>验证者<b style="color:var(--ink)">不是注册制,而是选举制</b>(白皮书 §4.6 渐进去中心化):</p>
-<ol style="margin:10px 0 0 18px">
-<li>运行一个同步良好的<b style="color:var(--ink)">全节点</b>(硬件与带宽自足,7×24 在线)。</li>
-<li>准备<b style="color:var(--ink)">质押保证金</b>(LIGHT,权益绑定;作恶或长期离线将被 slashing 罚没)。</li>
-<li>在开放席位时提交<b style="color:var(--ink)">候选治理提案</b>,由现有治理选举通过(初始 21 席/最低 10/上限 100;社区选举自第 7 个月起逐步开放)。</li>
+<p>验证者<b class="uf7d924">不是注册制,而是选举制</b>(白皮书 §4.6 渐进去中心化):</p>
+<ol class="u177b76">
+<li>运行一个同步良好的<b class="uf7d924">全节点</b>(硬件与带宽自足,7×24 在线)。</li>
+<li>准备<b class="uf7d924">质押保证金</b>(LIGHT,权益绑定;作恶或长期离线将被 slashing 罚没)。</li>
+<li>在开放席位时提交<b class="uf7d924">候选治理提案</b>,由现有治理选举通过(初始 21 席/最低 10/上限 100;社区选举自第 7 个月起逐步开放)。</li>
 <li>当选后绑定质押、发布公钥、进入活跃集;维持出勤率,否则被罚没/剔除。</li>
 </ol>
-<p style="margin-top:12px">硬性底线:<b style="color:var(--warn)">验证者 &lt; 7 时 TGE 不得执行</b>(f≤1 单点故障即全链停摆)。当前 7/7 BONDED。</p>
+<p class="u002535">硬性底线:<b class="uf95e73">验证者 &lt; 7 时 TGE 不得执行</b>(f≤1 单点故障即全链停摆)。当前 7/7 BONDED。</p>
 <div class="bar"><a href="/governance.html">提交候选提案 →</a><a href="/whitepaper.html">白皮书 §4.6 →</a><a href="https://github.com/youqi023789/lightdao/tree/main/docs">运行文档 →</a></div>
 </div>
 
@@ -63,11 +50,11 @@ code{background:rgba(127,127,160,.15);border-radius:6px;padding:2px 6px;font-siz
 <div class="card"><table id="vt"><thead><tr><th>moniker</th><th>状态</th><th>质押(LIGHT)</th><th>佣金</th></tr></thead><tbody><tr><td colspan="4">加载中…</td></tr></tbody></table></div>
 
 <h2>验证者候选注册表(链上只读)</h2>
-<div class="card"><table id="vrt"><thead><tr><th>候选/活跃验证者</th><th>状态</th></tr></thead><tbody><tr><td colspan="2">加载中…</td></tr></tbody></table><p style="margin-top:12px;font-size:13.5px">注册(Register 质押保证金)将在原生 denom 重构完成后开放;当前为只读公示。依据白皮书 §4.6。</p></div>
+<div class="card"><table id="vrt"><thead><tr><th>候选/活跃验证者</th><th>状态</th></tr></thead><tbody><tr><td colspan="2">加载中…</td></tr></tbody></table><p class="u7b1ddb">注册(Register 质押保证金)将在原生 denom 重构完成后开放;当前为只读公示。依据白皮书 §4.6。</p></div>
 <h2>轻节点需要"申请"吗?</h2>
-<p><b style="color:var(--ink)">不需要。</b> 浏览器轻节点完全免许可:打开 <a href="/app.html">lightdao.net/app.html</a>,Passkey 认领钱包,点开始挖矿即成为节点。你的贡献由三层 Proof-of-Contribution 验证(验证者挑战 + 对等 attest + 逐块 Merkle 根),无需任何审批。</p>
+<p><b class="uf7d924">不需要。</b> 浏览器轻节点完全免许可:打开 <a href="/app.html">lightdao.net/app.html</a>,Passkey 认领钱包,点开始挖矿即成为节点。你的贡献由三层 Proof-of-Contribution 验证(验证者挑战 + 对等 attest + 逐块 Merkle 根),无需任何审批。</p>
 <h2>委托在线(协议层 · 路线图)</h2>
-<div class="card"><p>白皮书「移动端适配」:委托在线机制(委托者 70% / 中继节点 30%)属<b style="color:var(--ink)">协议层</b>能力,需网关 v2 计分支持,当前未开放;开放后本页提供委托入口。现阶段 PWA 安装用户获在线时长 10% 加成。</p></div>
+<div class="card"><p>白皮书「移动端适配」:委托在线机制(委托者 70% / 中继节点 30%)属<b class="uf7d924">协议层</b>能力,需网关 v2 计分支持,当前未开放;开放后本页提供委托入口。现阶段 PWA 安装用户获在线时长 10% 加成。</p></div>
 </div>
 <script src="/js/nodes_2.js"></script>
 </body>

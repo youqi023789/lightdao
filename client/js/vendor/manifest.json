@@ -1,0 +1,5 @@
+{
+ "/npm/@cosmjs/cosmwasm-stargate@0.32.4/+esm": "-cosmjs-cosmwasm-stargate-0.32.4.js",
+ "/npm/@cosmjs/proto-signing@0.32.4/+esm": "-cosmjs-proto-signing-0.32.4.js",
+ "/npm/@cosmjs/stargate@0.32.4/+esm": "-cosmjs-stargate-0.32.4.js"
+}

@@ -1,0 +1,8 @@
+/**
+ * Bundled by jsDelivr using Rollup v4.62.2 and esbuild v0.28.1.
+ * Original file: /npm/brorand@1.1.0/index.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+function d(t,n){return n.forEach(function(o){o&&typeof o!="string"&&!Array.isArray(o)&&Object.keys(o).forEach(function(e){if(e!=="default"&&!(e in t)){var r=Object.getOwnPropertyDescriptor(o,e);Object.defineProperty(t,e,r.get?r:{enumerable:!0,get:function(){return o[e]}})}})}),Object.freeze(t)}function y(t){return t&&Object.prototype.hasOwnProperty.call(t,"default")?t.default:t}var f={exports:{}},u={},c=d({__proto__:null,default:u},[u]),_=y(c),p;function l(){if(p)return f.exports;p=1;var t;f.exports=function(r){return t||(t=new n(null)),t.generate(r)};function n(e){this.rand=e}if(f.exports.Rand=n,n.prototype.generate=function(r){return this._rand(r)},n.prototype._rand=function(r){if(this.rand.getBytes)return this.rand.getBytes(r);for(var a=new Uint8Array(r),s=0;s<a.length;s++)a[s]=this.rand.getByte();return a},typeof self=="object")self.crypto&&self.crypto.getRandomValues?n.prototype._rand=function(r){var a=new Uint8Array(r);return self.crypto.getRandomValues(a),a}:self.msCrypto&&self.msCrypto.getRandomValues?n.prototype._rand=function(r){var a=new Uint8Array(r);return self.msCrypto.getRandomValues(a),a}:typeof window=="object"&&(n.prototype._rand=function(){throw new Error("Not implemented yet")});else try{var o=_;if(typeof o.randomBytes!="function")throw new Error("Not supported");n.prototype._rand=function(r){return o.randomBytes(r)}}catch{}return f.exports}var i=l(),m=i.Rand;export{m as Rand,i as default};
+//# sourceMappingURL=/sm/e56d617b08922620008d32284406cacbc9d9f37b7cb8627721c33faa1561a378.map

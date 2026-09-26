@@ -1,14 +1,14 @@
 
-const CDN = ["https://cdn.jsdelivr.net/npm/","https://esm.sh/"];
+const CDN = ["/js/vendor/"];
 async function loadCosmjs(){
   if(window.__c) return window.__c;
   for(const base of CDN){
     try{
       const url = base==="https://esm.sh/" ? base : base;
       const [cs, ps, sg] = await Promise.all([
-        import(base+"@cosmjs/cosmwasm-stargate@0.32.4"+(base==="https://esm.sh/"?"":"/+esm")),
-        import(base+"@cosmjs/proto-signing@0.32.4"+(base==="https://esm.sh/"?"":"/+esm")),
-        import(base+"@cosmjs/stargate@0.32.4"+(base==="https://esm.sh/"?"":"/+esm")),
+        import(base+"-cosmjs-cosmwasm-stargate-0.32.4.js"),
+        import(base+"-cosmjs-proto-signing-0.32.4.js"),
+        import(base+"-cosmjs-stargate-0.32.4.js"),
       ]);
       window.__c={cs,ps,sg}; return window.__c;
     }catch(e){}
@@ -55,7 +55,7 @@ document.getElementById("themeT").onclick=function(){var c=document.documentElem
 (function(){
   var el=document.getElementById("subList"); if(!el)return;
   (async()=>{ try{
-    var m=await import("https://cdn.jsdelivr.net/npm/@cosmjs/cosmwasm-stargate@0.32.4/+esm");
+    var m=await import("/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js");
     var c=await m.CosmWasmClient.connect(CFG.rpc);
     var list=await c.queryContractSmart("wasm1uykr2f24sdj9f4la0wv78gvjuyqqnqk9r8jggcqd9ha9vxjrrkksum5x0g",{all_sub_tokens:{}});
     el.textContent = (list&&list.length)? list.map(function(s){return s.symbol||s;}).join(", ") : "暂无已发行子代币";

@@ -1,7 +1,7 @@
 document.getElementById("themeT").onclick=function(){var c=document.documentElement.getAttribute("data-theme");var n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n);try{localStorage.setItem("ld_theme",n);}catch(e){}this.textContent=n==="light"?"◑":"◐";};
 
 (async()=>{ try{
-  var m=await import("https://cdn.jsdelivr.net/npm/@cosmjs/cosmwasm-stargate@0.32.4/+esm");
+  var m=await import("/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js");
   var c=await m.CosmWasmClient.connect(location.origin+"/rpc/");
   var tw=await c.queryContractSmart("wasm1f622csg2af6utlxvxgch2l9qf64ce3s4h5vseaph5ku8vzcgp6qqmsyace",{twap30d:{}});
   var em=await c.queryContractSmart("wasm1f622csg2af6utlxvxgch2l9qf64ce3s4h5vseaph5ku8vzcgp6qqmsyace",{external_median:{}});

@@ -19,91 +19,22 @@
 <meta name="twitter:title" content="LightDAO — Mine crypto with just your browser">
 <meta name="twitter:description" content="Browser-based DePIN light-node mining on a live Cosmos L1. Passkey wallet, WebRTC relay, 50% fee burn. Mainnet live.">
 <meta name="twitter:image" content="https://lightdao.net/og.png">
-<style>
-:root{--bg:#070b18;--bg2:#0d1430;--card:rgba(255,255,255,.055);--line:rgba(255,255,255,.10);
---tx:#eaf0ff;--mut:#8a96c4;--acc:#5b8cff;--acc2:#9b6bff;--ok:#27d7a0;--warn:#ffb454;--err:#ff5d73;
---grad:linear-gradient(135deg,#5b8cff,#9b6bff 55%,#ff6bd6);}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
-background:radial-gradient(1200px 700px at 80% -10%,rgba(155,107,255,.20),transparent),radial-gradient(900px 600px at -10% 110%,rgba(91,140,255,.18),transparent),var(--bg);
-color:var(--tx);min-height:100vh;line-height:1.5;overflow-x:hidden}
-.wrap{max-width:560px;margin:0 auto;padding:18px 16px 40px}
-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:.3px}
-.dot{width:30px;height:30px;border-radius:9px;background:var(--grad);box-shadow:0 0 18px rgba(123,107,255,.6);display:grid;place-items:center;font-size:15px}
-select.lang{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:9px;padding:7px 10px;font-size:13px;appearance:auto;cursor:pointer}
-select.lang option{background:#101527;color:#e8ecf7}
-select.lang option:checked{background:#1d2742;color:#fff}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px;backdrop-filter:blur(8px)}
-.hero{text-align:center;padding:26px 18px;position:relative;overflow:hidden}
-.hero h1{font-size:23px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
-.hero p{color:var(--mut);font-size:13.5px}
-.big{font-size:40px;font-weight:800;letter-spacing:-1px;margin:8px 0}
-.mini{color:var(--mut);font-size:12px}
-.btn{width:100%;border:0;border-radius:14px;padding:15px;font-size:16px;font-weight:700;cursor:pointer;transition:.18s;color:#fff;background:var(--grad);box-shadow:0 8px 26px rgba(123,107,255,.34)}
-.btn:active{transform:scale(.975)}
-.btn.ghost{background:var(--card);border:1px solid var(--line);color:var(--tx);box-shadow:none}
-.btn:disabled{opacity:.45;cursor:not-allowed}
-.row{display:flex;gap:10px}.row>*{flex:1}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.stat{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:13px;padding:12px}
-.stat b{display:block;font-size:19px;margin-top:3px}
-.stat span{color:var(--mut);font-size:11.5px}
-.bar{height:7px;border-radius:6px;background:rgba(255,255,255,.09);overflow:hidden;margin-top:7px}
-.bar i{display:block;height:100%;background:var(--grad);width:0;transition:width .5s}
-.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 11px;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.04)}
-.live{width:8px;height:8px;border-radius:50%;background:var(--mut)}
-.live.on{background:var(--ok);box-shadow:0 0 0 0 rgba(39,215,160,.6);animation:pulse 1.6s infinite}
-@keyframes pulse{70%{box-shadow:0 0 0 9px rgba(39,215,160,0)}100%{box-shadow:0 0 0 0 rgba(39,215,160,0)}}
-.spin{width:120px;height:120px;margin:6px auto 14px;border-radius:50%;background:conic-gradient(from 0deg,#5b8cff,#9b6bff,#ff6bd6,#5b8cff);display:grid;place-items:center;animation:spin 3.4s linear infinite;opacity:.25;transition:opacity .4s;position:relative}
-.spin.on{opacity:1;box-shadow:0 0 40px rgba(155,107,255,.45)}
-.spin::after{content:"";width:96px;height:96px;border-radius:50%;background:var(--bg2);position:absolute}
-.spin b{position:absolute;font-size:13px;color:var(--mut);z-index:2}
-@keyframes spin{to{transform:rotate(360deg)}}
-.addr{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--mut);word-break:break-all}
-textarea,input{width:100%;background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:11px;color:var(--tx);padding:11px;font-size:13px;font-family:inherit}
-.hide{display:none}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#111a36;border:1px solid var(--line);padding:11px 18px;border-radius:12px;font-size:13.5px;opacity:0;transition:.3s;z-index:9;max-width:88vw;text-align:center}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.lnk{color:var(--acc);text-decoration:none;font-size:13px}
-footer{text-align:center;color:var(--mut);font-size:11.5px;margin-top:8px}
-.tabs{display:flex;gap:8px;margin-bottom:14px}.tabs button{flex:1;padding:10px;border-radius:11px;border:1px solid var(--line);background:var(--card);color:var(--mut);font-weight:600;cursor:pointer;font-size:13.5px}
-.tabs button.act{color:#fff;background:linear-gradient(135deg,rgba(91,140,255,.35),rgba(155,107,255,.35));border-color:rgba(155,107,255,.5)}
-
-/* ---- professional polish ---- */
-.wrap{max-width:600px}
-header{position:sticky;top:0;z-index:6;background:rgba(7,11,24,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:10px 0;margin-bottom:14px;border-bottom:1px solid rgba(255,255,255,.06)}
-.card{border-radius:20px;padding:20px;border-color:rgba(255,255,255,.08);box-shadow:0 12px 34px rgba(0,0,0,.28)}
-.hero{padding:32px 20px}
-.hero h1{font-size:26px}
-.hero p{font-size:14px}
-.big{font-size:46px}
-.btn{border-radius:15px;padding:16px;font-size:16.5px}
-.btn:hover{filter:brightness(1.07)}
-.btn.ghost{background:rgba(255,255,255,.045)}
-.btn.ghost:hover{background:rgba(255,255,255,.10)}
-.stat{border-radius:15px;padding:14px}
-.stat b{font-size:21px}
-.seclabel{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin:2px 0 8px}
-:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
-.row .btn{font-size:14px;padding:13px}
-
-[data-theme="light"]{--bg:#f4f6fb;--bg2:#ffffff;--card:rgba(12,18,45,.05);--line:rgba(12,18,45,.12);--tx:#101527;--mut:#5b6478}
-</style>
+<link rel="stylesheet" href="/css/app.css">
+<script src="/js/wfix.js"></script>
 </head>
 <body>
 <a class="skip" href="#sec-main">Skip to content</a>
 <div class="wrap">
   <header>
     <div class="logo"><div class="dot">◈</div>LightDAO</div>
-    <a href="/" aria-label="home" style="color:inherit;text-decoration:none;padding:7px 10px;border:1px solid var(--line);border-radius:10px">⌂</a>
-<a href="/search.html" aria-label="search" style="color:inherit;text-decoration:none;padding:7px 10px;border:1px solid var(--line);border-radius:10px">⌕</a>
-<button id="themeT" aria-label="toggle theme" style="background:var(--surf,rgba(255,255,255,.06));border:1px solid var(--line);border-radius:10px;padding:7px 11px;cursor:pointer;color:inherit;font-size:15px">◐</button>
-<a href="/invest.html" style="color:var(--mut);text-decoration:none;padding:7px 10px;border:1px solid var(--line);border-radius:10px;font-size:13px">子代币</a>
-<a href="/nodes.html" style="color:var(--mut);text-decoration:none;padding:7px 10px;border:1px solid var(--line);border-radius:10px;font-size:13px">节点</a>
+    <a href="/" aria-label="home" class="u919690">⌂</a>
+<a href="/search.html" aria-label="search" class="u919690">⌕</a>
+<button id="themeT" aria-label="toggle theme" class="u03b213">◐</button>
+<a href="/invest.html" class="uba58d5">子代币</a>
+<a href="/nodes.html" class="uba58d5">节点</a>
 <select class="lang" id="lang" aria-label="language"></select>
   </header>
-  <nav style="display:flex;gap:16px;margin:-4px 0 14px;font-size:13px;flex-wrap:wrap">
+  <nav class="u991dec">
     <a class="lnk" href="/explorer.html">浏览器</a>
     <a class="lnk" href="/governance.html">治理</a>
     <a class="lnk" href="/whitepaper.html">白皮书</a>
@@ -122,60 +53,60 @@ header{position:sticky;top:0;z-index:6;background:rgba(7,11,24,.78);backdrop-fil
         <button id="tabImp" data-i="importW">导入</button>
       </div>
       <div id="panePk">
-        <p class="mini" data-i="pkHint" style="margin-bottom:10px"></p>
+        <p class="mini ua7409f" data-i="pkHint"></p>
         <button class="btn" id="btnPkCreate" data-i="pkCreate">创建 Passkey 钱包</button>
-        <button class="btn ghost" id="btnPkUnlock" data-i="pkUnlock" style="margin-top:8px">Passkey 解锁</button>
-        <button class="btn ghost" id="btnPkSocial" data-i="pkSocial" style="margin-top:8px">社交恢复(分片)</button>
+        <button class="btn ghost ud43169" id="btnPkUnlock" data-i="pkUnlock">Passkey 解锁</button>
+        <button class="btn ghost ud43169" id="btnPkSocial" data-i="pkSocial">社交恢复(分片)</button>
       </div>
       <div id="paneNew" class="hide">
-        <p class="mini" data-i="createHint" style="margin-bottom:10px"></p>
+        <p class="mini ua7409f" data-i="createHint"></p>
         <button class="btn" id="btnCreate" data-i="btnCreate">生成新钱包</button>
       </div>
       <div id="paneImp" class="hide">
-        <textarea id="mnem" rows="3" placeholder="12/24 词助记词，空格分隔" style="margin-bottom:10px"></textarea>
+        <textarea id="mnem" rows="3" placeholder="12/24 词助记词，空格分隔" class="ua7409f"></textarea>
         <button class="btn" id="btnImport" data-i="btnImport">导入</button>
       </div>
-      <p class="mini" style="margin-top:12px" data-i="warn"></p>
+      <p class="mini u002535" data-i="warn"></p>
     </div>
   </section>
 
   <section id="sec-main" class="hide">
     <div class="card hero">
       <div class="spin" id="spin"><b id="spinTx">—</b></div>
-      <span class="pill" id="pwaBadge" style="display:none">📲 PWA 已安装 · 可离线/心跳更稳</span>
+      <span class="pill ucb4589" id="pwaBadge">📲 PWA 已安装 · 可离线/心跳更稳</span>
       <div class="pill"><span class="live" id="liveDot"></span><span id="statusTx" data-i="idle">未运行</span></div>
       <div class="big" id="estReward">0.0</div>
       <div class="mini" data-i="estLabel">今日预计奖励(按全网占比实时估算) (LIGHT)</div>
-      <div style="height:14px"></div>
+      <div class="ue3ebcf"></div>
       <button class="btn" id="btnMine" data-i="startMining">开始挖矿</button>
     </div>
     <div class="card">
-      <div class="row" style="align-items:center;margin-bottom:12px">
-        <div style="flex:1"><div class="mini" data-i="yourAddr">你的地址</div><div class="addr" id="addr"></div></div>
-        <button class="btn ghost" id="btnLogout" style="width:auto;padding:9px 14px;font-size:13px" data-i="logout">退出</button>
+      <div class="row ubc5e47">
+        <div class="uda5cd6"><div class="mini" data-i="yourAddr">你的地址</div><div class="addr" id="addr"></div></div>
+        <button class="btn ghost u885d8f" id="btnLogout" data-i="logout">退出</button>
       </div>
       <div class="grid">
         <div class="stat"><span data-i="balance">余额 (LIGHT)</span><b id="bal">0</b></div>
         <div class="stat"><span data-i="claimable">可领取</span><b id="claimable">0</b></div>
       </div>
-      <div style="height:12px"></div>
+      <div class="u616ac6"></div>
       <button class="btn ghost" id="btnClaim" data-i="claim">领取奖励</button>
       <div class="seclabel">钱包安全 / Wallet security</div>
       <div class="row">
         <button class="btn ghost" id="btnExportSeed">导出助记词备份</button>
         <button class="btn ghost" id="btnSocialMain">社交恢复(分片)</button>
       </div>
-      <a class="btn ghost" href="/governance.html" style="margin-top:8px;display:block;text-align:center;text-decoration:none">治理 · Governance(投票/提案/金库)</a>
+      <a class="btn ghost ue2b48c" href="/governance.html">治理 · Governance(投票/提案/金库)</a>
     </div>
     <div class="card">
-      <div class="mini" data-i="inviteT" style="margin-bottom:8px">邀请好友,赚 TA 首周贡献的 10%</div>
+      <div class="mini ud51702" data-i="inviteT">邀请好友,赚 TA 首周贡献的 10%</div>
       <div class="row">
-        <input id="inviteLink" readonly style="flex:1">
-        <button class="btn ghost" id="btnCopyInvite" style="width:auto;padding:9px 14px;font-size:13px" data-i="copy">复制</button>
+        <input id="inviteLink" readonly class="uda5cd6">
+        <button class="btn ghost u885d8f" id="btnCopyInvite" data-i="copy">复制</button>
       </div>
     </div>
     <div class="card">
-      <div class="mini" data-i="contrib" style="margin-bottom:10px">实时贡献</div>
+      <div class="mini ua7409f" data-i="contrib">实时贡献</div>
       <div class="grid">
         <div class="stat"><span data-i="cBw">带宽</span><b id="mBw">0</b><span>kbps</span><div class="bar"><i id="bBw"></i></div></div>
         <div class="stat"><span data-i="cSess">在线时长</span><b id="mSess">0</b><span>s</span><div class="bar"><i id="bSess"></i></div></div>
@@ -183,11 +114,11 @@ header{position:sticky;top:0;z-index:6;background:rgba(7,11,24,.78);backdrop-fil
         <div class="stat"><span data-i="cStab">稳定性</span><b id="mStab">0</b><span>%</span><div class="bar"><i id="bStab"></i></div></div>
       </div>
     </div>
-    <div class="card"><div class="seclabel">我的贡献历史 / My contribution history</div><table style="width:100%;font-size:12.5px;border-collapse:collapse"><thead><tr><th style="text-align:left;color:var(--mut)">日</th><th style="text-align:left;color:var(--mut)">带宽kbps</th><th style="text-align:left;color:var(--mut)">在线s</th><th style="text-align:left;color:var(--mut)">验证</th><th style="text-align:left;color:var(--mut)">稳定%</th><th style="text-align:left;color:var(--mut)">定稿</th><th style="text-align:left;color:var(--mut)">应得LIGHT</th></tr></thead><tbody id="myHist"><tr><td colspan="7" class="mini">加载中…</td></tr></tbody></table></div>
-<div class="card"><div class="seclabel">我的安全与邀请 / My security & referrals</div><div id="mySec" class="mini" style="line-height:1.9">加载中…</div></div>
-<div class="card"><div class="seclabel">委托在线 / Delegate uptime (70/30)</div><p class="mini" style="margin-bottom:8px">移动端可把"在线"委托给中继节点:你拿 70% 在线分,中继拿 30%(白皮书移动端适配)。留空=不委托。</p><div class="row"><input id="dlgAddr" placeholder="中继节点 wasm1… 地址(可留空)"><button class="btn ghost" id="btnDlg" style="width:auto;padding:10px 16px">保存委托</button></div><div class="mini" id="dlgStatus" style="margin-top:6px"></div></div>
-<div class="card"><div class="seclabel">子代币兑换 / Sub-token exchange</div><div id="subList" class="mini">查询中…</div><p class="mini" style="margin-top:8px">合约 Exchange 已就绪(LIGHT 兑换子代币并销毁);当前尚无子代币发行,首笔治理投资提案通过后此处开放兑换。</p></div>
-<footer><a href="/audit_logic.html" style="color:var(--mut);margin-right:10px">安全与逻辑审计</a><span data-i="footer"></span> · <a class="lnk" href="https://lightdao.net" target="_blank">lightdao.net</a></footer>
+    <div class="card"><div class="seclabel">我的贡献历史 / My contribution history</div><table class="ub2e01b"><thead><tr><th class="u5fe90d">日</th><th class="u5fe90d">带宽kbps</th><th class="u5fe90d">在线s</th><th class="u5fe90d">验证</th><th class="u5fe90d">稳定%</th><th class="u5fe90d">定稿</th><th class="u5fe90d">应得LIGHT</th></tr></thead><tbody id="myHist"><tr><td colspan="7" class="mini">加载中…</td></tr></tbody></table></div>
+<div class="card"><div class="seclabel">我的安全与邀请 / My security & referrals</div><div id="mySec" class="mini u7b4ece">加载中…</div></div>
+<div class="card"><div class="seclabel">委托在线 / Delegate uptime (70/30)</div><p class="mini ud51702">移动端可把"在线"委托给中继节点:你拿 70% 在线分,中继拿 30%(白皮书移动端适配)。留空=不委托。</p><div class="row"><input id="dlgAddr" placeholder="中继节点 wasm1… 地址(可留空)"><button class="btn ghost u44c58d" id="btnDlg">保存委托</button></div><div class="mini u9e3c4c" id="dlgStatus"></div></div>
+<div class="card"><div class="seclabel">子代币兑换 / Sub-token exchange</div><div id="subList" class="mini">查询中…</div><p class="mini ud43169">合约 Exchange 已就绪(LIGHT 兑换子代币并销毁);当前尚无子代币发行,首笔治理投资提案通过后此处开放兑换。</p></div>
+<footer><a href="/audit_logic.html" class="u0cc002">安全与逻辑审计</a><span data-i="footer"></span> · <a class="lnk" href="https://lightdao.net" target="_blank">lightdao.net</a></footer>
   </section>
 </div>
 <div class="toast" id="toast"></div>

@@ -19,5 +19,5 @@ document.getElementById("q").oninput=function(){
     d.innerHTML='<a href="'+o.url+'">'+hl(o.title,o.q)+(o.crumb?" › "+hl(o.crumb,o.q):"")+'</a><div class="crumb">'+esc(o.url)+'</div><p>'+hl(snip(o.text,o.q),o.q)+"</p>";
     res.appendChild(d);
   });
-  if(!out.length)res.innerHTML='<p style="color:var(--mut)">无结果 / no results</p>';
+  if(!out.length)res.innerHTML='<p class="mut">无结果 / no results</p>';
 };

@@ -1,0 +1,8 @@
+/**
+ * Bundled by jsDelivr using Rollup v4.62.2 and esbuild v0.28.1.
+ * Original file: /npm/@protobufjs/base64@1.1.2/index.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var l={},g;function k(){return g||(g=1,(function(b){var h=b;h.length=function(t){var o=t.length;if(!o)return 0;for(var i=0;--o%4>1&&t.charAt(o)==="=";)++i;return Math.ceil(t.length*3)/4-i};for(var u=new Array(64),p=new Array(123),n=0;n<64;)p[u[n]=n<26?n+65:n<52?n+71:n<62?n-4:n-59|43]=n++;h.encode=function(t,o,i){for(var d=null,e=[],r=0,s=0,a;o<i;){var _=t[o++];switch(s){case 0:e[r++]=u[_>>2],a=(_&3)<<4,s=1;break;case 1:e[r++]=u[a|_>>4],a=(_&15)<<2,s=2;break;case 2:e[r++]=u[a|_>>6],e[r++]=u[_&63],s=0;break}r>8191&&((d||(d=[])).push(String.fromCharCode.apply(String,e)),r=0)}return s&&(e[r++]=u[a],e[r++]=61,s===1&&(e[r++]=61)),d?(r&&d.push(String.fromCharCode.apply(String,e.slice(0,r))),d.join("")):String.fromCharCode.apply(String,e.slice(0,r))};var f="invalid encoding";h.decode=function(t,o,i){for(var d=i,e=0,r,s=0;s<t.length;){var a=t.charCodeAt(s++);if(a===61&&e>1)break;if((a=p[a])===void 0)throw Error(f);switch(e){case 0:r=a,e=1;break;case 1:o[i++]=r<<2|(a&48)>>4,r=a,e=2;break;case 2:o[i++]=(r&15)<<4|(a&60)>>2,r=a,e=3;break;case 3:o[i++]=(r&3)<<6|a,e=0;break}}if(e===1)throw Error(f);return i-d},h.test=function(t){return/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(t)}})(l)),l}var c=k(),w=c.decode,j=c.encode,A=c.length,C=c.test;export{w as decode,c as default,j as encode,A as length,C as test};
+//# sourceMappingURL=/sm/1363a665713aa4e1211d30aaf8c248eb6d95a3791925e09a985bca118b8f1107.map

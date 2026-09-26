@@ -7,7 +7,7 @@ const ORACLE="wasm1f622csg2af6utlxvxgch2l9qf64ce3s4h5vseaph5ku8vzcgp6qqmsyace";
 const VEST="wasm16l8mdmawaq4538ajr89dpfxh7cyll584yw7jqnhgmp5clwp6m8fqtwkz4x";
 const VEST_BEN=["wasm13c2cjh3fhkesj47tsc5a0vm6pdds39qpcmykhj","wasm16sm2nlg2sp9zy2dha5a80rjthjsatzcm2ue8za","wasm182d06dcj2upp9hkxqsxzp5ngws6kqdnq5yvu2g"];
 
-const CDN=["https://cdn.jsdelivr.net/npm/","https://esm.sh/"];
+const CDN=["/js/vendor/"];
 let client=null;
 async function load(){for(const b of CDN){try{const m=await import(b+"@cosmjs/cosmwasm-stargate@0.32.4"+(b==="https://esm.sh/"?"":"/+esm"));const s=await import(b+"@cosmjs/stargate@0.32.4"+(b==="https://esm.sh/"?"":"/+esm"));return {cw:m,st:s};}catch(e){}}return null;}
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -89,7 +89,7 @@ async function loadVesting(){
       sumTotal+=total;sumVested+=vested;sumClaimed+=claimed;
       const pct=total?Math.min(100,vested/total*100):0;
       const start=new Date(Number(s.start)*1000).toISOString().replace("T"," ").slice(0,10);
-      rows+='<tr><td class="mono">'+a.slice(0,10)+'…'+a.slice(-6)+'</td><td>'+fmt(total)+'</td><td class="ok">'+fmt(vested)+'</td><td>'+fmt(claimed)+'</td><td>'+yrs(s.cliff_secs)+'</td><td>'+yrs(s.linear_secs)+'</td><td class="mut">'+start+'</td><td><div class="vbar"><i style="width:'+pct.toFixed(1)+'%"></i></div><span class="mut" style="font-size:11px">'+pct.toFixed(1)+'%</span></td></tr>';
+      rows+='<tr><td class="mono">'+a.slice(0,10)+'…'+a.slice(-6)+'</td><td>'+fmt(total)+'</td><td class="ok">'+fmt(vested)+'</td><td>'+fmt(claimed)+'</td><td>'+yrs(s.cliff_secs)+'</td><td>'+yrs(s.linear_secs)+'</td><td class="mut">'+start+'</td><td><div class="vbar"><i data-w="'+pct.toFixed(1)+'"></i></div><span class="mut" class="fs11s">'+pct.toFixed(1)+'%</span></td></tr>';
     }
     tb.innerHTML=rows||'<tr><td colspan="8" class="mut">无归属计划</td></tr>';
     const vs=document.getElementById("veststats");

@@ -4,36 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LightDAO 治理(staging)</title>
-<style>
-:root{--bg:#070b18;--card:rgba(255,255,255,.055);--line:rgba(255,255,255,.10);--tx:#eaf0ff;--mut:#8a96c4;--ok:#27d7a0;--err:#ff5d73;--warn:#ffb454;--grad:linear-gradient(135deg,#5b8cff,#9b6bff 55%,#ff6bd6)}
-*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--tx);line-height:1.55;padding:18px 16px 60px}
-.wrap{max-width:720px;margin:0 auto}h1{font-size:21px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.sub{color:var(--mut);font-size:13px;margin:4px 0 16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:13px}
-.card h2{font-size:15px;margin-bottom:10px}
-.btn{width:100%;border:0;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;color:#fff;background:var(--grad);margin-top:8px}
-.btn.ghost{background:var(--card);border:1px solid var(--line);color:var(--tx)}
-.btn.sm{width:auto;padding:7px 14px;font-size:12.5px;margin:4px 4px 0 0}
-.btn:disabled{opacity:.4;cursor:not-allowed}
-input,select,textarea{width:100%;background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:10px;color:var(--tx);padding:9px;font-size:13px;font-family:inherit;margin-top:6px}
-.mono{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--mut);word-break:break-all}
-.log{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:10px;padding:10px;font-family:ui-monospace,monospace;font-size:11.5px;max-height:180px;overflow:auto;white-space:pre-wrap;margin-top:8px}
-.ok{color:var(--ok)}.err{color:var(--err)}.warn{color:var(--warn)}.mut{color:var(--mut)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:10px}.stat b{display:block;font-size:17px;margin-top:2px}.stat span{color:var(--mut);font-size:11px}
-.prop{border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:10px;background:rgba(0,0,0,.2)}
-.prop h3{font-size:14px}.bar{height:8px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden;display:flex;margin:8px 0}
-.bar i{display:block;height:100%}.bar .y{background:var(--ok)}.bar .n{background:var(--err)}.bar .a{background:var(--mut)}
-.row{display:flex;gap:8px}.row>*{flex:1}
-</style>
+<link rel="stylesheet" href="/css/governance.css">
 <script src="/js/governance_1.js"></script>
 <link rel="stylesheet" href="/theme.css">
 <script src="/js/back.js"></script>
+<script src="/js/wfix.js"></script>
 </head>
 <body>
-<div style="max-width:1120px;margin:0 auto;padding:10px 22px;display:flex;gap:16px;font-size:14px"><a href="#" data-back="1" style="color:var(--mut,#9aa3b2);text-decoration:none">← 返回上一页 / Back</a><a href="/" style="color:var(--mut,#9aa3b2);text-decoration:none">⌂ 返回首页 / Home</a><button id="themeT" aria-label="toggle theme" style="margin-left:auto;background:transparent;border:1px solid rgba(128,128,160,.3);border-radius:8px;padding:4px 10px;cursor:pointer;color:inherit">◐</button></div>
+<div class="u3efb04"><a href="#" data-back="1" class="u59fa2b">← 返回上一页 / Back</a><a href="/" class="u59fa2b">⌂ 返回首页 / Home</a><button id="themeT" aria-label="toggle theme" class="u6b0f12">◐</button></div>
 
 <div class="wrap">
-<h1>◈ LightDAO 治理 <span style="font-size:11px;color:var(--mut)">staging</span></h1>
+<h1>◈ LightDAO 治理 <span class="ub90915">staging</span></h1>
 <p class="sub">质押 LIGHT → 投票/发起提案 → 执行。合约:governance(code3)。测试页,确认无误后并入主客户端。</p>
 
 <div class="card">
@@ -42,9 +23,9 @@ input,select,textarea{width:100%;background:rgba(0,0,0,.25);border:1px solid var
     <button class="btn ghost" id="btnPk">Passkey 解锁</button>
     <button class="btn ghost" id="btnMnem">助记词导入</button>
   </div>
-  <input id="mnem" placeholder="12/24 词助记词(点助记词导入后用)" style="display:none">
-  <div class="mono" id="addrLine" style="margin-top:8px">未连接</div>
-  <div class="grid" style="margin-top:10px">
+  <input id="mnem" placeholder="12/24 词助记词(点助记词导入后用)" class="ucb4589">
+  <div class="mono ud43169" id="addrLine">未连接</div>
+  <div class="grid u5371db">
     <div class="stat"><span>LIGHT 余额</span><b id="bal">—</b></div>
     <div class="stat"><span>已质押(治理)</span><b id="staked">—</b></div>
   </div>
@@ -53,8 +34,8 @@ input,select,textarea{width:100%;background:rgba(0,0,0,.25);border:1px solid var
 
 <div class="card">
   <h2>质押 / 赎回</h2>
-  <p class="mut" style="font-size:12px">质押需先授权(light_token → governance),下方一键完成「授权+质押」。发起提案需质押 ≥ <span id="minStake">—</span> LIGHT。</p>
-  <div class="row"><input id="stakeAmt" type="number" placeholder="数量(LIGHT)"><button class="btn sm" id="btnStake" style="align-self:center">质押</button><button class="btn ghost sm" id="btnUnstake" style="align-self:center">赎回</button></div>
+  <p class="mut u6b9c17">质押需先授权(light_token → governance),下方一键完成「授权+质押」。发起提案需质押 ≥ <span id="minStake">—</span> LIGHT。</p>
+  <div class="row"><input id="stakeAmt" type="number" placeholder="数量(LIGHT)"><button class="btn sm u6b92b8" id="btnStake">质押</button><button class="btn ghost sm u6b92b8" id="btnUnstake">赎回</button></div>
 </div>
 
 <div class="card">
@@ -69,7 +50,7 @@ input,select,textarea{width:100%;background:rgba(0,0,0,.25);border:1px solid var
   <input id="ptitle" placeholder="标题">
   <textarea id="pdesc" rows="3" placeholder="描述"></textarea>
   <select id="pkind"><option value="general">通用 DAO 动作(调合约/迁移)</option><option value="investment">投资(铸造子代币)</option></select>
-  <div id="kinv" style="display:none"><div class="row"><input id="psym" placeholder="子代币符号 e.g. LDCoffee"><input id="pinv" type="number" placeholder="投资额 USD"></div></div>
+  <div id="kinv" class="ucb4589"><div class="row"><input id="psym" placeholder="子代币符号 e.g. LDCoffee"><input id="pinv" type="number" placeholder="投资额 USD"></div></div>
   <div id="kgen"><input id="ptarget" placeholder="目标合约地址(可选)"><input id="pcall" placeholder="call_msg base64(可选,执行时发给目标)"><input id="pmig" type="number" placeholder="migrate_code_id(可选)"></div>
   <button class="btn" id="btnPropose">发起提案</button>
 </div>
@@ -79,7 +60,7 @@ input,select,textarea{width:100%;background:rgba(0,0,0,.25);border:1px solid var
   <div class="mono" id="treasLine">—</div>
   <button class="btn ghost" id="btnTreas">查询金库</button>
 </div>
-<p class="sub">← <a href="/" style="color:#5b8cff">返回主客户端</a></p>
+<p class="sub">← <a href="/" class="u7b53aa">返回主客户端</a></p>
 </div>
 
 <script src="/passkey-wallet.js"></script>
