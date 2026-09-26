@@ -26,6 +26,15 @@ window.__mrq=(m)=>client.queryContractSmart(CFG.miningReward,m);
     async create(){ const w=await DirectSecp256k1HdWallet.generate(12,{prefix:CFG.prefix}); this._w=w; return w.mnemonic; },
     async connect(seed){ try{ wallet=await DirectSecp256k1HdWallet.fromMnemonic(seed,{prefix:CFG.prefix}); const [a]=await wallet.getAccounts(); this.addr=a.address; client=await SigningCosmWasmClient.connectWithSigner(CFG.rpc,wallet,{gasPrice:GasPrice.fromString("0.0025"+CFG.denom)}); return true; }catch(e){ return false; } },
     async refresh(){ try{ const b=await client.getBalance(this.addr,CFG.denom); document.getElementById("bal").textContent=(Number(b.amount)/1e6).toLocaleString(undefined,{maximumFractionDigits:2}); }catch(e){} },
+
+    async claimStaking(){ try{
+      const vals=await client.getValidators();
+      const msgs=[];
+      for(const v of vals){ try{ const dg=await client.getDelegation(this.addr,v.validatorAddress); if(dg&&dg.amount&&Number(dg.amount.amount)>0){ msgs.push({typeUrl:"/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",value:{delegatorAddress:this.addr,validatorAddress:v.validatorAddress}}); } }catch(e){} }
+      if(!msgs.length) return null;
+      const res=await client.signAndBroadcast(this.addr,msgs,"auto");
+      return res.transactionHash;
+    }catch(e){ throw e; } },
     async claim(day){ try{ const h=await (await fetch(CFG.gw+"/v1/health")).json(); const d= day|| (h.current_day-1);
       const p=await fetch(CFG.gw+"/v1/proof?day="+d+"&miner="+this.addr).then(r=>r.ok?r.json():null);
       if(!p){ toast(t("nothing")); return; }
@@ -85,4 +94,17 @@ document.getElementById("themeT").onclick=function(){var c=document.documentElem
   var html = b.length? b.map(function(x){return '<span style="display:inline-block;margin:2px 6px 2px 0;padding:4px 12px;border-radius:999px;border:1px solid '+x[1]+';color:'+x[1]+'">'+x[0]+"</span>";}).join("") : '<span>暂无头衔,开始邀请与贡献吧</span>';
   if(nxt) html += '<div style="margin-top:6px">距离「'+nxt.t+'」还差 '+(nxt.n-ref)+" 人(当前 "+ref+" 人)</div>";
   el.innerHTML=html;
+ }catch(e){ el.textContent="加载失败"; } })();
+
+(function(){ var b=document.getElementById("btnClaimStake"); if(!b)return;
+ b.onclick=async function(){ if(!window.LD){toast(t("walletFail"));return;} b.disabled=true; var ot=b.textContent; b.textContent="领取中…";
+  try{ var h=await window.LD.claimStaking(); if(h){toast("✓ 已领取 "+h.slice(0,10)+"…"); window.LD.refresh();} else {toast("当前无委托收益可领(你未质押/委托)");} }
+  catch(e){ toast(String(e.message||e).slice(0,70)); } finally{ b.disabled=false; b.textContent=ot; } }; })();
+
+
+(async function(){ var el=document.getElementById("airFirst"); if(!el||!myAddr)return;
+ try{ var r=await fetch(CFG.gw+"/v1/me?addr="+myAddr).then(function(x){return x.json();});
+  var a=r.airdrop_first_mine; var best=r.best_day_session_secs||0;
+  if(a){ el.innerHTML='<span style="color:var(--ok,#3ddc84)">✓ 首挖空投已达成:+50 LIGHT(第'+a.day+"天首次满 4 小时有效挖矿,TGE 发放)</span>"; }
+  else { var h=Math.min(4,(best/3600)); el.innerHTML="首挖空投(50 LIGHT):单日有效在线 "+h.toFixed(2)+" / 4.00 小时"+(best>0?"(继续挖满 4 小时即达成)":"(今日开始累计)"); }
  }catch(e){ el.textContent="加载失败"; } })();

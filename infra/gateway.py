@@ -153,6 +153,18 @@ def finalize_day(day):
         root, levels = build_tree(leaves)
         proofs = {a: proof_for(levels, i) for i, a in enumerate(addrs)}
         total_score = sum(weighted_score(scores[a]) for a in addrs)
+        # ---- airdrop ledger (WP 5.7): first day with >=4h valid session => 50 LIGHT ----
+        try:
+            LP = os.path.join(os.path.dirname(day_path(day)), "..", "airdrops.json")
+            LP = os.path.normpath(LP)
+            led = json.load(open(LP)) if os.path.exists(LP) else {}
+            for aa in addrs:
+                ss = (d["miners"].get(aa) or {}).get("session_secs", 0) or 0
+                if ss >= 14400 and aa not in led:
+                    led[aa] = {"type": "first_mine_4h", "amount_light": 50, "day": day}
+            json.dump(led, open(LP, "w"))
+        except Exception as _e:
+            pass
         d.update({"finalized": True, "root": root.hex(), "active_miners": len(addrs),
                   "total_score": total_score, "scores": scores, "proofs": proofs})
         save_day(d)
@@ -235,6 +247,14 @@ class H(BaseHTTPRequestHandler):
             out["active_days"] = len(actn)
             out["streak"] = streak
             out["referred_total"] = sum((r.get("referred") or 0) for r in days.values())
+            try:
+                LP = os.path.normpath(os.path.join(DATA, "..", "airdrops.json"))
+                led = json.load(open(LP)) if os.path.exists(LP) else {}
+                out["airdrop_first_mine"] = led.get(addr)
+            except Exception:
+                out["airdrop_first_mine"] = None
+            maxs = max([((r.get("score") or {}).get("session_secs") or 0) for r in days.values()] or [0])
+            out["best_day_session_secs"] = maxs
             return self._send(200, out)
         return self._send(404, {"error": "not found"})
     def do_POST(self):
