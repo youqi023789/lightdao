@@ -76,7 +76,14 @@ def main():
         sok = ("submitted root for day %s" % (day - 1)) in slog
     except Exception:
         pass
-    required = bool(fok) and bool(day)
+    need_sign = False
+    if day:
+        try:
+            dj = json.load(open("/home/ubuntu/lightdao_gateway/data/day_%d.json" % (day - 1)))
+            need_sign = bool(dj.get("miners")) and bool(fok)
+        except Exception:
+            need_sign = False
+    required = need_sign
     if required and not sok:
         import datetime
         if datetime.datetime.utcnow().hour >= 6:
