@@ -46,14 +46,14 @@ Every chain upgrade so far passed on-chain votes (7/7 validators) with testnet r
 
 8/8 Try it (testnet-phase, no real value yet):
 https://lightdao.net
-Repo, mainnet status & whitepaper V2.4: [GitHub repo]
+Repo, mainnet status & whitepaper V2.4: https://github.com/youqi023789/lightdao
 Mine with your idle laptop. That's the whole pitch. ⛏️
 ```
 
 **置顶帖(短)**:
 ```
 LightDAO = browser-only DePIN mining. Live mainnet, seedless Passkey wallet, 50% fee burn.
-Start: https://lightdao.net · Docs: [GitHub repo] · Community: [TG/Discord]
+Start: https://lightdao.net · Docs: https://github.com/youqi023789/lightdao · Community: [TG/Discord]
 ```
 
 **每周更新模板**:
@@ -102,7 +102,7 @@ Why Cosmos: IBC-native, gov-upgradable (all our upgrades were on-chain votes + c
 
 Honest status: mainnet live but pre-traffic (you'd be early); LIGHT not on a DEX yet (oracle is validator-fed reference price until a pool exists); native mint inflation governance-zeroed so emission stays single-source.
 
-Links: client https://lightdao.net · repo/status/whitepaper [GitHub repo]
+Links: client https://lightdao.net · repo/status/whitepaper https://github.com/youqi023789/lightdao
 AMA in comments — happy to walk through the contribution-verification math or the fee-split txs.
 ```
 
@@ -141,7 +141,7 @@ Tags: DePIN, Cosmos, WebRTC, WebAuthn/Passkey, PWA, Proof-of-Contribution
 
 ## 6. 执行顺序(第 1 周)
 
-1. 建 GitHub 公开仓库(代码+白皮书 V2.4+主网状态)→ 所有文案的 [GitHub repo] 占位替换
+1. 建 GitHub 公开仓库(代码+白皮书 V2.4+主网状态)→ 所有文案的 https://github.com/youqi023789/lightdao 占位替换
 2. 注册 X + TG + Discord(用定位一句话做 bio)
 3. 发 X 首发线程 + 置顶;TG/Discord 建群公告
 4. Reddit 两帖;ProductHunt/Show HN 排队

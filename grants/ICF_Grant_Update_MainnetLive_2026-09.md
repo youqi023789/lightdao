@@ -59,10 +59,10 @@ Payment: 30% upfront, 70% milestone-based.
 
 ```
 Live client (mainnet): https://lightdao.net
-Whitepaper V2.4 (EN/CN, mainnet-live edition): [GitHub repo]/whitepaper/
-Mainnet status & endpoints: [GitHub repo]/docs/MAINNET_STATUS.md
-GitHub: [repo URL — 建仓后填入]
-Testnet rehearsal & upgrade runbooks: [GitHub repo]/docs/
+Whitepaper V2.4 (EN/CN, mainnet-live edition): https://github.com/youqi023789/lightdao/whitepaper/
+Mainnet status & endpoints: https://github.com/youqi023789/lightdao/docs/MAINNET_STATUS.md
+GitHub: https://github.com/youqi023789/lightdao
+Testnet rehearsal & upgrade runbooks: https://github.com/youqi023789/lightdao/docs/
 Twitter/X: [your handle]   Discord/Telegram: [invite]
 ```
 
@@ -72,7 +72,7 @@ Twitter/X: [your handle]   Discord/Telegram: [invite]
 - Status changed since draft: mainnet is LIVE (Sep 2026), not pre-prototype. Milestones 1-3 of the original plan are delivered and on-chain verifiable; this request funds the NEXT phase (audit, scaling, tooling).
 - All chain upgrades to date were executed via on-chain governance with coordinated validator swaps and prior testnet rehearsal — demonstrating the governance maturity ICF looks for.
 - Known honest limitations: no real-user traffic yet (growth is the current focus); LIGHT not yet on a DEX (on-chain TWAP activates with liquidity; oracle currently validator-fed reference price); native mint inflation governance-zeroed to keep emission single-source.
-- Open source: chain module, contracts, client, and infra tooling published under Apache-2.0/MIT at [GitHub repo].
+- Open source: chain module, contracts, client, and infra tooling published under Apache-2.0/MIT at https://github.com/youqi023789/lightdao.
 ```
 
 ## 提交附言(cover note,粘贴到附加字段或邮件)
@@ -102,7 +102,7 @@ Thank you for considering LightDAO.
 
 ## 提交前检查清单
 
-- [ ] 建仓并 push 后,把 [GitHub repo] 占位符全部替换为真实 URL
+- [ ] 建仓并 push 后,把 https://github.com/youqi023789/lightdao 占位符全部替换为真实 URL
 - [ ] Field 9 Team:填你的名字 + 技术负责人现状(可写"协议工程已由主网交付证明,审计阶段聘外部审计")
 - [ ] Field 11 补 Twitter/Discord(增长运营产出后填)
 - [ ] 核对 grants.interchain.io 当前字段与字符上限
