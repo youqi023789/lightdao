@@ -17,7 +17,7 @@ let cw=null;
   // signers
   let sg=[]; try{ sg=await cw.queryContractSmart(TRE,{signers:{}}); }catch(e){}
   const sgb=document.querySelector("#sgt tbody"); sgb.innerHTML="";
-  (sg||[]).forEach((a,i)=>{ const tr=document.createElement("tr"); tr.innerHTML="<td>"+(i+1)+"</td><td class="mono12">"+a+"</td>"; sgb.appendChild(tr); });
+  (sg||[]).forEach((a,i)=>{ const tr=document.createElement("tr"); tr.innerHTML="<td>"+(i+1)+"</td><td class='mono12'>"+a+"</td>"; sgb.appendChild(tr); });
   if(!sg||!sg.length) sgb.innerHTML='<tr><td colspan="2">无</td></tr>';
   // pending txs: iterate ids
   const txb=document.querySelector("#txt tbody"); txb.innerHTML=""; let any=false;
