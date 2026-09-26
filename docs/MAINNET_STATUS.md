@@ -60,6 +60,12 @@
 
 3 个独立 schedule:vault 250,000,000 LIGHT → 75M(cliff 0)/ 100M(cliff 1 年)/ 75M(cliff 2 年)。
 
+## 治理(DAO,已上线)
+
+10 类提案(micro 55% / acquisition 60% / vc 60% / major 66% / emergency 75% 通过线,低投票率动态抬升门槛);双维度计票(代币权重 yes% + 地址数 yes%)。质押为原生 ulight 托管(Stake 附带原生币,Unstake 原路退回)。governance 合约自身为 admin,可通过提案自我迁移或调用/迁移任意目标合约。
+
+**投票期修复(2026-09-26)**:初始实例化遗留 `voting_period_secs=30`(测试值)。已通过提案 #8 自我迁移到 code_id 11,置 `voting_period_secs=null`,恢复按类型的默认投票期——普通提案 7 天、紧急提案 1 天。链上验证:contract-history 显示 INIT(code 3,period=30)→ MIGRATE(code 11,period=null)@ 区块 81955。
+
 ## §4.7 WebRTC 中继(已上线)
 
 8 节点 coturn(TURN/STUN,TLS 证书 turn-*.lightdao.net)+ WSS 信令 + REST 临时凭证(HMAC-SHA1)。客户端 P2P 数据通道互中继,中继字节计入 40% 带宽贡献分;对称 NAT 走 TURN 兜底,失败降级纯验证模式。
