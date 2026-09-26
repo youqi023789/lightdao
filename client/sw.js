@@ -1,7 +1,7 @@
 /* LightDAO PWA service worker v2: shell 网络优先(部署即生效),静态媒体缓存优先,离线回退 */
-const CACHE = "lightdao-v2";
-const SHELL = ["/", "/index.html", "/manifest.json", "/passkey-wallet.js", "/webrtc-relay.js"];
-const NET_FIRST = ["/", "/index.html", "/passkey-wallet.js", "/webrtc-relay.js", "/governance.html", "/explorer.html", "/season.html", "/whitepaper.html"];
+const CACHE = "lightdao-v3";
+const SHELL = ["/", "/index.html", "/app.html", "/manifest.json", "/passkey-wallet.js", "/webrtc-relay.js"];
+const NET_FIRST = ["/", "/index.html", "/app.html", "/passkey-wallet.js", "/webrtc-relay.js", "/governance.html", "/explorer.html", "/season.html", "/whitepaper.html"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
