@@ -32,7 +32,7 @@
 <tr><td>S2</td><td>app 我的安全卡设备指纹/邀请人注入</td><td>低</td><td class="fix">已转义</td></tr>
 <tr><td>S3</td><td>会话种子存 sessionStorage(同标签页免重复解锁)</td><td>中(权衡)</td><td class="ok">保留:仅同标签页、关标签即清;配套"导出助记词+社交恢复"强制引导;已文档化</td></tr>
 <tr><td>S4</td><td>OS 通行密钥删除不可逆导致钱包丢失</td><td>中</td><td class="fix">UX 已加删除后果警告+导出备份;不可逆本身为平台特性</td></tr>
-<tr><td>S5</td><td>nginx 缺安全响应头</td><td>低</td><td class="fix">已加 HSTS / X-Content-Type-Options / Referrer-Policy(CSP 因大量内联脚本暂不启用,列入重构)</td></tr>
+<tr><td>S5</td><td>nginx 缺安全响应头 / 内联脚本与样式</td><td>低</td><td class="fix">已加 HSTS/nosniff/Referrer;内联脚本全部外置、cosmjs 自托管(101 文件)、内联样式转 class/CSSOM → CSP 收至 script-src/style-src/connect-src 全 'self',无 unsafe-inline、无第三方域</td></tr>
 <tr><td>S6</td><td>网关心跳无速率限制</td><td>低</td><td class="open">已有指纹去重+IP 聚类兜底;限流列入网关 v2</td></tr>
 <tr><td>S7</td><td>密钥托管</td><td>—</td><td class="ok">非托管:服务器不存任何私钥/种子明文</td></tr>
 <tr><td>S8</td><td>TURN 凭证</td><td>—</td><td class="ok">REST 临时凭证 HMAC-SHA1 + 内网段 denied-peers</td></tr>
@@ -40,8 +40,8 @@
 
 <h2>三、逻辑/功能对照白皮书(未实现项,诚实标注)</h2>
 <table><tr><th>项</th><th>状态</th></tr>
-<tr><td>委托在线 70/30</td><td class="open">协议层,网关 v2+合约升级后开放(/nodes.html 已标注)</td></tr>
-<tr><td>子代币兑换(KYC 增强)</td><td class="open">尚无子代币发行;/invest.html 提供只读视图,兑换待首笔投资提案+TGE 后</td></tr>
+<tr><td>委托在线 70/30</td><td class="fix">已实现:网关 finalize 拆分(委托者70/中继30)+客户端委托开关</td></tr>
+<tr><td>子代币兑换(KYC 增强)</td><td class="ok">合约 Exchange 就绪;/invest+app 提供视图与入口,当前无发行(空态),首笔投资提案后开放</td></tr>
 <tr><td>链上 TWAP 主价格源</td><td class="open">待 LIGHT/USDC 池;现用验证者轮值 external_median(9-29 参数提案后 lightfee 动态读取)</td></tr>
 <tr><td>验证者选举开放</td><td class="open">按路线图第 7 个月起;/nodes.html 已给竞选流程</td></tr>
 </table>

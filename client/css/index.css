@@ -43,7 +43,7 @@ canvas#net{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
 :focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:6px}
 .skip{position:absolute;left:-9999px;top:0}.skip:focus{left:8px;top:8px;background:var(--acc);color:#04101f;padding:8px 14px;border-radius:8px;z-index:99}
 
-[data-theme="light"]{--nav:rgba(255,255,255,.9);--bg:#f5f6fa;--bg2:#ffffff;--ink:#0e1428;--mut:#5b6478;--line:rgba(12,18,45,.12);--acc:#4f6df5;--ok:#0e9f6e}
+[data-theme="light"]{--nav:rgba(255,255,255,.92);--bg:#f5f6fa;--bg2:#ffffff;--ink:#0e1428;--mut:#535e73;--tx2:#46536b;--line:rgba(12,18,45,.12);--acc:#2f4bc7;--acc2:#6d3fd4;--ok:#0b7a4b;--warn:#8a5a00;--err:#c02642}
 [data-theme="light"] canvas#net{opacity:.28}
 [data-theme="light"] .card,[data-theme="light"] .logo{box-shadow:0 8px 26px rgba(20,30,70,.08)}
 

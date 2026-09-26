@@ -67,7 +67,7 @@ header{position:sticky;top:0;z-index:6;background:rgba(7,11,24,.78);backdrop-fil
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 .row .btn{font-size:14px;padding:13px}
 
-[data-theme="light"]{--bg:#f4f6fb;--bg2:#ffffff;--card:rgba(12,18,45,.05);--line:rgba(12,18,45,.12);--tx:#101527;--mut:#5b6478}
+[data-theme="light"]{--bg:#f4f6fb;--bg2:#ffffff;--card:rgba(12,18,45,.05);--line:rgba(12,18,45,.12);--tx:#101527;--mut:#535e73;--acc:#2f4bc7;--acc2:#6d3fd4;--ok:#0b7a4b;--warn:#8a5a00;--err:#c02642}
 
 .u919690{color:inherit;text-decoration:none;padding:7px 10px;border:1px solid var(--line);border-radius:10px}
 .u919690{color:inherit;text-decoration:none;padding:7px 10px;border:1px solid var(--line);border-radius:10px}

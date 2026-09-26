@@ -193,6 +193,16 @@ class H(BaseHTTPRequestHandler):
                 return self._send(404, {"error": "no proof"})
             return self._send(200, {"day": day, "miner": miner, "proof": d["proofs"][miner],
                                     "score": d["scores"][miner], "root": d["root"]})
+        if u.path == "/v1/scores":
+            day = int((q.get("day") or [current_day()])[0])
+            d = load_day(day)
+            ms = d.get("miners") or {}
+            out = {}; tot = 0
+            for a, m in ms.items():
+                w = weighted_score(score_miner(m))
+                out[a] = {"w": w}
+                tot += w
+            return self._send(200, {"day": day, "total": tot, "scores": out, "finalized": bool(d.get("finalized"))})
         if u.path == "/v1/me":
             addr = (q.get("addr") or [""])[0]
             out = {"addr": addr, "days": {}}

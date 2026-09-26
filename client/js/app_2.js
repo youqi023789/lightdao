@@ -28,7 +28,12 @@ async function sha256hex(s){const b=await crypto.subtle.digest("SHA-256",new Tex
 // 挖矿(真实贡献, 仅用 fetch, 不需 cosmjs)
 let mining=false,timer=null,sess=0,hbOk=0,hbTot=0,verif=0,bw=0,myAddr=null;
 let POOL_LIGHT=0,SUM_W=0; const w1e6=(b,se,v,st)=>(Math.min(b,10000)/10000*4e5+Math.min(se,3600)/3600*3e5+Math.min(v,100)/100*2e5+(st||0)/100*1e5);
-async function refreshPoolSum(){ try{ const h=await fetch(CFG.gw+"/v1/health").then(r=>r.json()); const day=await fetch(CFG.gw+"/v1/day?day="+h.current_day).then(r=>r.json()).catch(()=>null); if(day&&day.miners){ let sum=0; for(const k in day.miners){ const m=day.miners[k]; sum+=w1e6(m.bandwidth_kbps||0,m.session_secs||0,m.verification_tasks||0,m.stability_pct||0);} SUM_W=sum; } if(window.__mrq){ const pl=await window.__mrq({daily_miner_pool:{day:h.current_day}}); POOL_LIGHT=Number(pl)/1e6; } }catch(e){} }
+let MY_W=0;
+async function refreshPoolSum(){ try{ const h=await fetch(CFG.gw+"/v1/health").then(r=>r.json());
+  const sc=await fetch(CFG.gw+"/v1/scores?day="+h.current_day).then(r=>r.json()).catch(()=>null);
+  if(sc&&sc.total>0){ SUM_W=sc.total; MY_W=(sc.scores&&sc.scores[myAddr])?sc.scores[myAddr].w:0; } else { SUM_W=0; MY_W=0; }
+  if(window.__mrq){ const pl=await window.__mrq({daily_miner_pool:{day:h.current_day}}); POOL_LIGHT=Number(pl)/1e6; }
+ }catch(e){ SUM_W=0; MY_W=0; } }
 // 按服务器日持久化当日累计,刷新/重开不丢贡献
 let DAYC=0;
 function dayKey(){return "ld_day_"+DAYC;}
@@ -56,7 +61,7 @@ function updateUI(){
   $("mVerif").textContent=verif; $("bVerif").style.width=Math.min(verif/100*100,100)+"%";
   const stab=hbTot?Math.round(hbOk/hbTot*100):100; $("mStab").textContent=stab; $("bStab").style.width=stab+"%";
   const score=(Math.min(bw,10000)/10000*1e6*40 + Math.min(sess,3600)/3600*1e6*30 + Math.min(verif,100)/100*1e6*20 + stab/100*1e6*10)/100;
-  const est=POOL_LIGHT? POOL_LIGHT*score/Math.max(SUM_W,score) : 0; $("estReward").textContent=est.toLocaleString(undefined,{maximumFractionDigits:1});
+  const myw=(MY_W||score); const est=(POOL_LIGHT&&SUM_W>0)? POOL_LIGHT*myw/SUM_W : 0; $("estReward").textContent=est>0? est.toLocaleString(undefined,{maximumFractionDigits:1}) : "—"; const em=$("estMeta"); if(em) em.textContent = (SUM_W>0)? ("我的占比 "+(myw/SUM_W*100).toFixed(2)+"% · 全网算力 "+(SUM_W/1e6).toFixed(2)+"M · 池 "+POOL_LIGHT.toLocaleString(undefined,{maximumFractionDigits:0})+" LIGHT") : "等待全网数据…";
   $("spinTx").textContent=stab+"%";
 }
 function setMiningUI(on){ $("spin").classList.toggle("on",on); $("liveDot").classList.toggle("on",on);
