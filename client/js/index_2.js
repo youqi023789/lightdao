@@ -46,3 +46,5 @@ document.getElementById("themeT").onclick=function(){var c=document.documentElem
  document.querySelectorAll('a[href="/app.html"],[data-go="/app.html"]').forEach(function(a){
    var v="/app.html?ref="+r;
    if(a.hasAttribute("href")){a.setAttribute("href",v);} else {a.setAttribute("data-go",v);} }); })();
+
+(function(){ function up(){ fetch("/status.json").then(function(r){return r.json();}).then(function(j){ var e=document.getElementById("sysStatus"); if(!e)return; e.textContent=j.ok?"正常":"异常"; e.style.color=j.ok?"var(--ok)":"var(--err,#f66)"; }).catch(function(){ var e=document.getElementById("sysStatus"); if(e)e.textContent="—"; }); } up(); setInterval(up,60000); })();

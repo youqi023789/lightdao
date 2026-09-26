@@ -143,7 +143,10 @@ async function persistSet(seed){ try{ var kb=devKeyBytes(); if(!kb||!crypto.subt
 async function persistGet(){ try{ var r=JSON.parse(lsGet("ld_persist_v1")||"null"); if(!r)return null; var kb=devKeyBytes(); if(!kb||!crypto.subtle)return null; var key=await crypto.subtle.importKey("raw",kb.buffer.slice(0),"AES-GCM",false,["decrypt"]); var iv=Uint8Array.from(atob(r.iv),function(c){return c.charCodeAt(0);}); var ct=Uint8Array.from(atob(r.ct),function(c){return c.charCodeAt(0);}); var pt=await crypto.subtle.decrypt({iv:iv},key,ct.buffer.slice(0)); return new TextDecoder().decode(pt); }catch(e){ return null; } }
 function persistClear(){ lsDel("ld_persist_v1"); }
 async function autoLogin(){ var sess=null, sd=null; try{ sess=ssGet("ld_session"); sd=lsGet("ld_seed"); }catch(e){} if(sess){ enter(sess); return; } var pz=await persistGet(); if(pz){ enter(pz); return; } if(sd){ enter(sd); return; } }
-window.__ldReady=autoLogin; showTab("Pk"); if(window.LD) autoLogin();
+window.__ldReady=autoLogin; var pkOK=false; try{ pkOK=!!(window.LDPasskey&&window.LDPasskey.isAvailable()); }catch(e){}
+if(!pkOK){ showTab("New"); ["btnPkCreate","btnPkUnlock","btnPkSocial"].forEach(function(id){var b=document.getElementById(id); if(b){b.disabled=true;}}); var nt=document.getElementById("pkNote"); if(nt){nt.style.display="";nt.textContent="此浏览器不支持 Passkey(WebAuthn),请用助记词方式创建/导入,功能与安全性完全相同。";} }
+else { showTab("Pk"); }
+if(window.LD) autoLogin();
 // PWA: 注册 service worker(壳缓存+离线)
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("/sw.js").catch(()=>{}); }); }
 
@@ -151,3 +154,5 @@ if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator
  if(q&&q.startsWith("wasm1")) lsSet("ld_ref",q); else if(!lsGet("ld_ref")) lsSet("ld_ref",F); }catch(e){} })();
 
 function ensureLD(ms){ ms=ms||8000; return new Promise(function(res){ if(window.LD) return res(window.LD); toast("钱包库加载中,请稍候… / loading wallet…"); var t0=Date.now(); (function chk(){ if(window.LD) return res(window.LD); if(Date.now()-t0>ms) return res(null); setTimeout(chk,150); })(); }); }
+
+(function(){ function up(){ fetch("/status.json").then(function(r){return r.json();}).then(function(j){ var e=document.getElementById("sysStatusApp"); if(!e)return; e.textContent=j.ok?"正常":"异常"; e.style.color=j.ok?"var(--ok)":"var(--err,#f66)"; }).catch(function(){ var e=document.getElementById("sysStatusApp"); if(e)e.textContent="—"; }); } up(); setInterval(up,60000); })();

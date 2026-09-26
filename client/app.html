@@ -54,6 +54,7 @@
       </div>
       <div id="panePk">
         <p class="mini ua7409f" data-i="pkHint"></p>
+      <p class="mini" id="pkNote" style="display:none;margin-top:8px;color:var(--warn,#ffb454)"></p>
         <button class="btn" id="btnPkCreate" data-i="pkCreate">创建 Passkey 钱包</button>
         <button class="btn ghost ud43169" id="btnPkUnlock" data-i="pkUnlock">Passkey 解锁</button>
         <button class="btn ghost ud43169" id="btnPkSocial" data-i="pkSocial">社交恢复(分片)</button>
@@ -121,6 +122,7 @@
 <div class="card"><div class="seclabel">我的安全与邀请 / My security & referrals</div><div id="mySec" class="mini u7b4ece">加载中…</div></div>
 <div class="card"><div class="seclabel">委托在线 / Delegate uptime (70/30)</div><p class="mini ud51702">移动端可把"在线"委托给中继节点:你拿 70% 在线分,中继拿 30%(白皮书移动端适配)。留空=不委托。</p><div class="row"><input id="dlgAddr" placeholder="中继节点 wasm1… 地址(可留空)"><button class="btn ghost u44c58d" id="btnDlg">保存委托</button></div><div class="mini u9e3c4c" id="dlgStatus"></div></div>
 <div class="card"><div class="seclabel">子代币兑换 / Sub-token exchange</div><div id="subList" class="mini">查询中…</div><p class="mini ud43169">合约 Exchange 已就绪(LIGHT 兑换子代币并销毁);当前尚无子代币发行,首笔治理投资提案通过后此处开放兑换。</p></div>
+<div class="mini" style="text-align:center;margin-bottom:6px">系统状态: <span id="sysStatusApp">…</span></div>
 <footer><a href="/audit_logic.html" class="u0cc002">安全与逻辑审计</a><span data-i="footer"></span> · <a class="lnk" href="https://lightdao.net" target="_blank">lightdao.net</a></footer>
   </section>
 </div>
