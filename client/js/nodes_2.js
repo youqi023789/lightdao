@@ -8,7 +8,7 @@ document.getElementById("themeT").onclick=function(){var c=document.documentElem
     const vs=await c.getValidators();
     const tb=document.querySelector("#vt tbody"); tb.innerHTML="";
     vs.forEach(v=>{const tr=document.createElement("tr");
-      tr.innerHTML="<td>"+(v.description?.moniker||"?")+"</td><td>"+(v.status==="BOND_STATUS_BONDED"?'<span class="pill ok">BONDED</span>':'<span class="pill no">'+v.status.replace("BOND_STATUS_","")+"</span>")+"</td><td>"+f(v.tokens)+"</td><td>"+(Number(v.commission?.commissionRates?.rate||0)*100).toFixed(0)+"%</td>";
+      tr.innerHTML="<td>"+((v.description&&v.description.moniker)||"?")+"</td><td>"+(v.status==="BOND_STATUS_BONDED"?'<span class="pill ok">BONDED</span>':'<span class="pill no">'+v.status.replace("BOND_STATUS_","")+"</span>")+"</td><td>"+f(v.tokens)+"</td><td>"+(Number((v.commission&&v.commission.commissionRates&&v.commission.commissionRates.rate)||0)*100).toFixed(0)+"%</td>";
       tb.appendChild(tr);});
   }catch(e){document.querySelector("#vt tbody").innerHTML='<tr><td colspan="4">加载失败:'+e.message+"</td></tr>";}
 })();

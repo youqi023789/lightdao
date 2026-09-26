@@ -49,7 +49,7 @@ async function init(){
   const tv=document.getElementById("vals"); tv.innerHTML="";
   for(const v of vals){
     const tr=document.createElement("tr");
-    tr.innerHTML=`<td>${v.description?.moniker||"?"}</td><td class="${v.status==="BOND_STATUS_BONDED"?"ok":"mut"}">${v.status==="BOND_STATUS_BONDED"?"绑定":"其他"}</td><td>${fmt(v.tokens)}</td><td>${(Number(v.commission?.commissionRates?.rate||0)*100).toFixed(0)}%</td>`;
+    tr.innerHTML=`<td>${(v.description&&v.description.moniker)||"?"}</td><td class="${v.status==="BOND_STATUS_BONDED"?"ok":"mut"}">${v.status==="BOND_STATUS_BONDED"?"绑定":"其他"}</td><td>${fmt(v.tokens)}</td><td>${(Number((v.commission&&v.commission.commissionRates&&v.commission.commissionRates.rate)||0)*100).toFixed(0)}%</td>`;
     tv.appendChild(tr);
   }
   window.__cw=cw; window.__st=L.st;

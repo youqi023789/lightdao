@@ -37,9 +37,9 @@ async function refreshPoolSum(){ try{ const h=await fetch(CFG.gw+"/v1/health").t
 // 按服务器日持久化当日累计,刷新/重开不丢贡献
 let DAYC=0;
 function dayKey(){return "ld_day_"+DAYC;}
-function saveDayCounters(){ if(!DAYC)return; localStorage.setItem(dayKey(),JSON.stringify({day:DAYC,sess,verif,hbOk,hbTot})); }
+function saveDayCounters(){ if(!DAYC)return; lsSet(dayKey(),JSON.stringify({day:DAYC,sess,verif,hbOk,hbTot})); }
 async function loadDayCounters(){ try{ const h=await fetch(CFG.gw+"/v1/health").then(r=>r.json()); DAYC=h.current_day||0; }catch(e){ DAYC=0; }
-  if(!DAYC)return; const st=JSON.parse(localStorage.getItem(dayKey())||"null"); if(st&&st.day===DAYC){ sess=st.sess||0; verif=st.verif||0; hbOk=st.hbOk||0; hbTot=st.hbTot||0; } else { sess=0;verif=0;hbOk=0;hbTot=0; } updateUI(); }
+  if(!DAYC)return; const st=JSON.parse(lsGet(dayKey())||"null"); if(st&&st.day===DAYC){ sess=st.sess||0; verif=st.verif||0; hbOk=st.hbOk||0; hbTot=st.hbTot||0; } else { sess=0;verif=0;hbOk=0;hbTot=0; } updateUI(); }
 // 设备指纹(§4.8 反女巫):canvas+WebGL渲染器+UA+屏幕+时区+核心数 哈希;同设备多钱包同指纹→网关去重
 let FP="";
 async function deviceFP(){ if(FP)return FP; try{
@@ -54,7 +54,7 @@ async function deviceFP(){ if(FP)return FP; try{
 }catch(e){ FP=""; } return FP; }
 async function measureBw(){ let probe=0; try{ const t0=performance.now(); const r=await fetch(CFG.gw+"/v1/probe?_="+Date.now()); const buf=await r.arrayBuffer(); const dt=(performance.now()-t0)/1000; probe=Math.min(Math.round(buf.byteLength*8/1000/Math.max(dt,.001)),100000);}catch(e){} const relay=(window.LDRelay&&window.LDRelay.isStarted())?window.LDRelay.getBandwidthKbps():0; bw=Math.min(Math.max(probe,relay),100000); }
 async function doTask(){ const pre=Math.random().toString(36).slice(2)+(myAddr||"x"); for(let n=0;n<300000;n++){ const h=await sha256hex(pre+n); if(h.startsWith("00")){verif++;break;} } }
-async function heartbeat(){ hbTot++; const body={miner:myAddr||"wasm1pending00000000000000000000000000000000000000000000000000000",bandwidth_kbps:bw,session_secs:sess,verification_tasks:verif,stability_pct:hbTot?Math.round(hbOk/hbTot*100):100}; const rf=localStorage.getItem("ld_ref"); if(rf)body.referrer=rf; const dlg=localStorage.getItem("ld_delegate"); if(dlg&&dlg.startsWith("wasm1"))body.delegate_to=dlg; body.fp=await deviceFP(); try{ const r=await fetch(CFG.gw+"/v1/heartbeat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}); if(r.ok)hbOk++; }catch(e){} sess+=CFG.heartbeatSec; updateUI(); saveDayCounters(); }
+async function heartbeat(){ hbTot++; const body={miner:myAddr||"wasm1pending00000000000000000000000000000000000000000000000000000",bandwidth_kbps:bw,session_secs:sess,verification_tasks:verif,stability_pct:hbTot?Math.round(hbOk/hbTot*100):100}; const rf=lsGet("ld_ref"); if(rf)body.referrer=rf; const dlg=lsGet("ld_delegate"); if(dlg&&dlg.startsWith("wasm1"))body.delegate_to=dlg; body.fp=await deviceFP(); try{ const r=await fetch(CFG.gw+"/v1/heartbeat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}); if(r.ok)hbOk++; }catch(e){} sess+=CFG.heartbeatSec; updateUI(); saveDayCounters(); }
 function updateUI(){
   $("mBw").textContent=bw; $("bBw").style.width=Math.min(bw/10000*100,100)+"%";
   $("mSess").textContent=sess; $("bSess").style.width=Math.min(sess/3600*100,100)+"%";
@@ -66,20 +66,20 @@ function updateUI(){
 }
 function setMiningUI(on){ $("spin").classList.toggle("on",on); $("liveDot").classList.toggle("on",on);
   $("btnMine").textContent=on?t("stopMining"):t("startMining"); $("statusTx").textContent=on?t("running"):t("idle"); }
-async function startMining(){ if(mining)return; mining=true; setMiningUI(true); localStorage.setItem("ld_mining","1");
+async function startMining(){ if(mining)return; mining=true; setMiningUI(true); lsSet("ld_mining","1");
   await loadDayCounters(); await refreshPoolSum(); if(window.LDRelay)window.LDRelay.start(myAddr); await measureBw(); heartbeat(); doTask(); timer=setInterval(async()=>{await refreshPoolSum(); await measureBw(); if(Math.random()<.5)doTask(); heartbeat();},CFG.heartbeatSec*1000); }
-function stopMining(){ if(!mining)return; mining=false; setMiningUI(false); localStorage.removeItem("ld_mining"); clearInterval(timer); if(window.LDRelay)window.LDRelay.stop(); }
+function stopMining(){ if(!mining)return; mining=false; setMiningUI(false); lsDel("ld_mining"); clearInterval(timer); if(window.LDRelay)window.LDRelay.stop(); }
 $("btnMine").onclick=()=>{ mining?stopMining():startMining(); };
 // 标签切换(Passkey / 助记词 / 导入)
 function showTab(w){ ["Pk","New","Imp"].forEach(k=>{ const a=(k===w); const tb=$("tab"+k),pn=$("pane"+k); if(tb)tb.classList.toggle("act",a); if(pn)pn.classList.toggle("hide",!a); }); }
 $("tabPk").onclick=()=>showTab("Pk");
 $("tabNew").onclick=()=>showTab("New");
 $("tabImp").onclick=()=>showTab("Imp");
-$("btnLogout").onclick=()=>{stopMining();sessionStorage.removeItem("ld_session");localStorage.removeItem("ld_seed");localStorage.removeItem("ld_mining");location.reload();};
+$("btnLogout").onclick=()=>{stopMining();lsDel("ld_session");lsDel("ld_seed");lsDel("ld_mining");location.reload();};
 // --- 助记词(回退) ---
 $("btnCreate").onclick=async()=>{ function ensureLD(ms){ ms=ms||8000; return new Promise(function(res){ if(window.LD) return res(window.LD); toast("钱包库加载中,请稍候… / loading wallet…"); var t0=Date.now(); (function chk(){ if(window.LD) return res(window.LD); if(Date.now()-t0>ms) return res(null); setTimeout(chk,150); })(); }); }
-if(!await ensureLD()){toast(t("walletFail"));return;} const m=await window.LD.create(); if(m){localStorage.setItem("ld_seed",m); alert(t("saving")+"\n\n"+m); await enter(m); } };
-$("btnImport").onclick=async()=>{ if(!await ensureLD()){toast(t("walletFail"));return;} const m=$("mnem").value.trim(); if(!m)return; localStorage.setItem("ld_seed",m); await enter(m); };
+if(!await ensureLD()){toast(t("walletFail"));return;} const m=await window.LD.create(); if(m){lsSet("ld_seed",m); alert(t("saving")+"\n\n"+m); await enter(m); } };
+$("btnImport").onclick=async()=>{ const b=$("btnImport"); const ot=b.textContent; const m=$("mnem").value.trim(); if(!m){toast("请先粘贴 12 词助记词");return;} b.disabled=true; b.textContent="导入中… / importing…"; try{ if(!await ensureLD()){toast(t("walletFail"));return;} lsSet("ld_seed",m); await enter(m); if(myAddr){toast("✓ 已导入");} else {toast("导入失败:助记词无效或网络受限");} }catch(e){ toast(t("pkFail")+(e.message||e)); } finally{ b.disabled=false; b.textContent=ot; } };
 // --- Passkey(§4.9 主推) ---
 const pkAvail=()=>window.LDPasskey&&window.LDPasskey.isAvailable();
 $("btnPkCreate").onclick=async()=>{
@@ -105,7 +105,7 @@ $("btnPkSocial").onclick=async()=>{
   if(!pkAvail()){toast(t("pkUnsupported"));return;}
   if(window.LDPasskey.hasWallet()){
     try{
-      let pin=null; const rec=JSON.parse(localStorage.getItem("ld_passkey_v1")||"null"); if(rec&&rec.kdf==="pin"){pin=prompt(t("pkPinPrompt"));}
+      let pin=null; const rec=JSON.parse(lsGet("ld_passkey_v1")||"null"); if(rec&&rec.kdf==="pin"){pin=prompt(t("pkPinPrompt"));}
       const shares=await window.LDPasskey.setupSocialRecovery(pin,3,5);
       alert(t("pkSocialHint")+"\n\n"+shares.map((s,i)=>(i+1)+". "+s).join("\n"));
     }catch(e){ toast(t("pkFail")+(e.message||e)); }
@@ -121,19 +121,24 @@ $("btnPkSocial").onclick=async()=>{
 };
 $("btnClaim").onclick=async()=>{ if(!await ensureLD()){toast(t("walletFail"));return;} const sel=$("claimDay"); const dv=sel&&sel.value?Number(sel.value):undefined; await window.LD.claim(dv); };
 $("btnExportSeed").onclick=async()=>{ if(!window.LDPasskey){toast(t("walletFail"));return;} try{ let m; try{ m=await window.LDPasskey.unlock(); }catch(e1){ const pin=prompt(t("pkPinPrompt")); m=await window.LDPasskey.unlock(pin); } alert("⚠ 你的助记词(唯一离线备份)。请抄写在纸上,切勿截图或发送给任何人:\n\n"+m); }catch(e){ toast(t("pkFail")+(e.message||e)); } };
-$("btnSocialMain").onclick=async()=>{ if(!window.LDPasskey||!window.LDPasskey.hasWallet()){toast(t("pkSocialFirst"));return;} try{ let pin=null; const rec=JSON.parse(localStorage.getItem("ld_passkey_v1")||"null"); if(rec&&rec.kdf==="pin"){pin=prompt(t("pkPinPrompt"));} let shares; try{ shares=await window.LDPasskey.setupSocialRecovery(pin,3,5); }catch(e1){ pin=prompt(t("pkPinPrompt")); shares=await window.LDPasskey.setupSocialRecovery(pin,3,5); } alert(t("pkSocialHint")+"\n\n"+shares.map((s,i)=>(i+1)+". "+s).join("\n")); }catch(e){ toast(t("pkFail")+(e.message||e)); } };
+$("btnSocialMain").onclick=async()=>{ if(!window.LDPasskey||!window.LDPasskey.hasWallet()){toast(t("pkSocialFirst"));return;} try{ let pin=null; const rec=JSON.parse(lsGet("ld_passkey_v1")||"null"); if(rec&&rec.kdf==="pin"){pin=prompt(t("pkPinPrompt"));} let shares; try{ shares=await window.LDPasskey.setupSocialRecovery(pin,3,5); }catch(e1){ pin=prompt(t("pkPinPrompt")); shares=await window.LDPasskey.setupSocialRecovery(pin,3,5); } alert(t("pkSocialHint")+"\n\n"+shares.map((s,i)=>(i+1)+". "+s).join("\n")); }catch(e){ toast(t("pkFail")+(e.message||e)); } };
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);return true;}catch(e){return false;}}
+function lsDel(k){try{localStorage.removeItem(k);}catch(e){}}
+function ssGet(k){try{return sessionStorage.getItem(k);}catch(e){return null;}}
+function ssSet(k,v){try{sessionStorage.setItem(k,v);}catch(e){}}
 function esc(x){return String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 async function loadMySec(){ const el=$("mySec"); if(!el||!myAddr)return; try{ const r=await fetch(CFG.gw+"/v1/me?addr="+myAddr).then(x=>x.json()); const ds=Object.values(r.days||{}); const act=ds.filter(d=>d.active).length; const ref=ds.reduce((a,d)=>a+(d.referred||0),0); const flag=ds.some(d=>d.flagged); const fp=(ds.find(d=>d.fp)||{}).fp||"—"; el.innerHTML="活跃天数: <b>"+act+"</b> · 我的邀请: <b>"+ref+"</b> 人<br>设备指纹: <span class=\"mono\">"+esc(fp)+"…</span> · 反女巫状态: "+(flag?'<span class="errtx">同指纹多钱包,已去重</span>':'<span class="oktx">正常</span>')+"<br>我的上级邀请人: "+((ds.find(d=>d.referrer)||{}).referrer||"无(创世/直连)"); }catch(e){ el.textContent="加载失败"; } }
 async function loadMyHistory(){ const tb=$("myHist"); if(!tb||!myAddr)return; tb.innerHTML=""; try{ const h=await fetch(CFG.gw+"/v1/health").then(r=>r.json()); for(let d=h.current_day; d>h.current_day-7 && d>0; d--){ const day=await fetch(CFG.gw+"/v1/day?day="+d).then(r=>r.json()).catch(()=>null); const m=day&&day.miners?day.miners[myAddr]:null; const tr=document.createElement("tr"); if(m){ let den=day.finalized?day.total_score:null; if(!den){let sm=0;for(const k in day.miners){const mm=day.miners[k];sm+=w1e6(mm.bandwidth_kbps||0,mm.session_secs||0,mm.verification_tasks||0,mm.stability_pct||0);}den=sm;} let earned=0; try{ const pl=await window.__mrq({daily_miner_pool:{day:d}}); earned=den? (Number(pl)/1e6)*w1e6(m.bandwidth,m.session,m.verification,m.stability)/den :0; }catch(e){} tr.innerHTML="<td>"+d+"</td><td>"+m.bandwidth+"</td><td>"+m.session+"</td><td>"+m.verification+"</td><td>"+m.stability+"</td><td>"+(day.finalized?"✓":"…")+"</td><td>"+earned.toLocaleString(undefined,{maximumFractionDigits:1})+"</td>"; } else { tr.innerHTML="<td>"+d+"</td><td colspan=\"6\" class=\"mini\">无贡献</td>"; } tb.appendChild(tr);} }catch(e){ tb.innerHTML='<tr><td colspan="7" class="mini">加载失败</td></tr>'; } }
-async function enter(seed){ const s=seed||localStorage.getItem("ld_seed")||sessionStorage.getItem("ld_session"); if(s && window.LD && await window.LD.connect(s)){ sessionStorage.setItem("ld_session",s); $("addr").textContent=myAddr=window.LD.addr; $("sec-wallet").classList.add("hide"); $("sec-main").classList.remove("hide"); if($("inviteLink"))$("inviteLink").value=location.origin+"/?ref="+myAddr; window.LD.refresh(); loadMyHistory(); loadMySec(); if(localStorage.getItem("ld_mining")==="1"){ setTimeout(startMining,400); } } }
+async function enter(seed){ const s=seed||lsGet("ld_seed")||ssGet("ld_session"); if(s && window.LD && await window.LD.connect(s)){ ssSet("ld_session",s); $("addr").textContent=myAddr=window.LD.addr; $("sec-wallet").classList.add("hide"); $("sec-main").classList.remove("hide"); if($("inviteLink"))$("inviteLink").value=location.origin+"/?ref="+myAddr; window.LD.refresh(); loadMyHistory(); loadMySec(); if(lsGet("ld_mining")==="1"){ setTimeout(startMining,400); } } }
 // 邀请裂变:读 ?ref= 存 ld_ref;复制邀请链接
-(function(){ const q=new URLSearchParams(location.search).get("ref"); if(q&&q.startsWith("wasm1")) localStorage.setItem("ld_ref",q); })();
+(function(){ const q=new URLSearchParams(location.search).get("ref"); if(q&&q.startsWith("wasm1")) lsSet("ld_ref",q); })();
 document.addEventListener("DOMContentLoaded",()=>{ const b=$("btnCopyInvite"); if(b) b.onclick=()=>{ const el=$("inviteLink"); if(!el)return; if(navigator.clipboard)navigator.clipboard.writeText(el.value); else {el.removeAttribute("readonly");el.select();document.execCommand("copy");el.setAttribute("readonly","");} toast("✓ "+t("copy")); }; });
 // 自动登录:助记词老用户自动进;Passkey 需用户手势(生物识别),默认显示 Passkey 标签待解锁
-function autoLogin(){ var sess=null, sd=null; try{ sess=sessionStorage.getItem("ld_session"); sd=localStorage.getItem("ld_seed"); }catch(e){} if(sess){ enter(sess); return; } if(sd){ enter(sd); return; } }
+function autoLogin(){ var sess=null, sd=null; try{ sess=ssGet("ld_session"); sd=lsGet("ld_seed"); }catch(e){} if(sess){ enter(sess); return; } if(sd){ enter(sd); return; } }
 window.__ldReady=autoLogin; showTab("Pk"); if(window.LD) autoLogin();
 // PWA: 注册 service worker(壳缓存+离线)
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("/sw.js").catch(()=>{}); }); }
 
 (function(){ var F="wasm19g2hgc28u9c0xxkeyf0fu2dg9k9d8wh8m3fc9v"; try{ var q=new URLSearchParams(location.search).get("ref");
- if(q&&q.startsWith("wasm1")) localStorage.setItem("ld_ref",q); else if(!localStorage.getItem("ld_ref")) localStorage.setItem("ld_ref",F); }catch(e){} })();
+ if(q&&q.startsWith("wasm1")) lsSet("ld_ref",q); else if(!lsGet("ld_ref")) lsSet("ld_ref",F); }catch(e){} })();

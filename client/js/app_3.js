@@ -36,16 +36,16 @@ window.__mrq=(m)=>client.queryContractSmart(CFG.miningReward,m);
   };
 if(window.__ldReady)window.__ldReady();
 })();
-document.getElementById("themeT").onclick=function(){var c=document.documentElement.getAttribute("data-theme");var n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n);try{localStorage.setItem("ld_theme",n);}catch(e){}this.textContent=n==="light"?"◑":"◐";};
+document.getElementById("themeT").onclick=function(){var c=document.documentElement.getAttribute("data-theme");var n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n);try{lsSet("ld_theme",n);}catch(e){}this.textContent=n==="light"?"◑":"◐";};
 (function(){ const b=$("pwaBadge"); if(!b)return; const stand=matchMedia("(display-mode: standalone)").matches||navigator.standalone; if(stand){ b.style.display=""; } else { window.addEventListener("beforeinstallprompt",function(e){ e.preventDefault(); b.style.display=""; b.textContent="📲 安装 PWA · 离线可用/心跳更稳"; b.style.cursor="pointer"; b.onclick=function(){ e.prompt(); }; }); } })();
 
 
 (function(){
   var inp=document.getElementById("dlgAddr"), btn=document.getElementById("btnDlg"), st=document.getElementById("dlgStatus");
   if(!inp||!btn)return;
-  function show(){ var d=localStorage.getItem("ld_delegate"); inp.value=d||""; st.textContent=d?("当前委托给 "+d):"未委托(自己在线)"; }
+  function show(){ var d=lsGet("ld_delegate"); inp.value=d||""; st.textContent=d?("当前委托给 "+d):"未委托(自己在线)"; }
   btn.onclick=function(){ var v=inp.value.trim(); if(v && !/^wasm1[a-z0-9]{38,}$/.test(v)){ st.textContent="地址格式无效"; return; }
-    if(v) localStorage.setItem("ld_delegate",v); else localStorage.removeItem("ld_delegate"); show(); };
+    if(v) lsSet("ld_delegate",v); else lsDel("ld_delegate"); show(); };
   show();
 })();
 (function(){
