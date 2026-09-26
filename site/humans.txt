@@ -1,0 +1,7 @@
+/* TEAM */
+Project: LightDAO
+Site: https://lightdao.net
+Repo: https://github.com/youqi023789/lightdao
+Contact: press@lightdao.net
+/* NOTE */
+Owner-economics: your device should not be someone else's mine.
