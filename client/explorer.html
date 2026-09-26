@@ -24,7 +24,7 @@ input{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.12
 <div style="max-width:1120px;margin:0 auto;padding:10px 22px;display:flex;gap:16px;font-size:14px"><a href="#" onclick="history.back();return false" style="color:var(--mut,#9aa3b2);text-decoration:none">← 返回上一页 / Back</a><a href="/" style="color:var(--mut,#9aa3b2);text-decoration:none">⌂ 返回首页 / Home</a><button id="themeT" aria-label="toggle theme" style="margin-left:auto;background:transparent;border:1px solid rgba(128,128,160,.3);border-radius:8px;padding:4px 10px;cursor:pointer;color:inherit">◐</button></div>
 
 <div class="wrap">
-<header><a href="/">← 客户端</a><a href="/governance.html">治理</a><a href="/whitepaper.html">白皮书</a></header>
+<header><a href="/nodes.html">节点</a><a href="/">← 客户端</a><a href="/governance.html">治理</a><a href="/whitepaper.html">白皮书</a></header>
 <h1>◈ LightDAO 浏览器 <span class="mut" style="font-size:12px">lightdao-mainnet-1</span></h1>
 <div class="grid" id="stats"><div class="stat"><span>加载中…</span></div></div>
 
@@ -47,6 +47,7 @@ input{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.12
 const RPC=location.origin+"/rpc/";
 const BURN="wasm1aeaty43lrlt9rmkyxujkkfuddnsfye6az4htcu";
 const TREAS="wasm192u2pm80ndmh608mmvhrzhje0sjaq0txr5md77lr70ucy0j3lfys8l633u";
+const INS="wasm1wj3369pug9sdn5wcqu74yr00vtcntqvwgqrmcs0k0twwnvgm8m2qu77ewf";
 const ORACLE="wasm1f622csg2af6utlxvxgch2l9qf64ce3s4h5vseaph5ku8vzcgp6qqmsyace";
 const VEST="wasm16l8mdmawaq4538ajr89dpfxh7cyll584yw7jqnhgmp5clwp6m8fqtwkz4x";
 const VEST_BEN=["wasm13c2cjh3fhkesj47tsc5a0vm6pdds39qpcmykhj","wasm16sm2nlg2sp9zy2dha5a80rjthjsatzcm2ue8za","wasm182d06dcj2upp9hkxqsxzp5ngws6kqdnq5yvu2g"];
@@ -64,6 +65,7 @@ async function init(){
   const ul=sup.find(s=>s.denom==="ulight");
   const burn=await client.getBalance(BURN,"ulight").catch(()=>({amount:"0"}));
   const tre=await client.getBalance(TREAS,"ulight").catch(()=>({amount:"0"}));
+  const ins=await client.getBalance(INS,"ulight").catch(()=>({amount:"0"})); if(document.getElementById("insB"))document.getElementById("insB").textContent=fmt(ins.amount);
   let oracle="—"; try{ oracle=fmt(await cw.queryContractSmart(ORACLE,{external_median:{}})); }catch(e){}
   let day="—",miners="—"; try{ const hh=await fetch(location.origin+"/gw/v1/health").then(r=>r.json()); day=hh.current_day; const dd=await fetch(location.origin+"/gw/v1/day?day="+hh.current_day).then(r=>r.json()); miners=Object.keys(dd.miners||{}).length; }catch(e){}
   const vals=await client.getValidators();
@@ -72,6 +74,7 @@ async function init(){
    <div class="stat"><span>总供应 LIGHT</span><b>${fmt(ul?ul.amount:0)}</b></div>
    <div class="stat"><span>已销毁 LIGHT</span><b class="ok">${fmt(burn.amount)}</b></div>
    <div class="stat"><span>金库 LIGHT</span><b>${fmt(tre.amount)}</b></div>
+   <div class="stat"><span>保险基金 LIGHT</span><b id="insB">—</b></div>
    <div class="stat"><span>oracle 价($)</span><b>${oracle}</b></div>
    <div class="stat"><span>验证者</span><b>${vals.length}</b></div>
    <div class="stat"><span>当前赛季日</span><b>${day}</b></div>

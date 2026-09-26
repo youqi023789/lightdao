@@ -45,7 +45,7 @@
 <title>LightDAO — 一个浏览器,分享真实经济的利润</title>
 <meta name="description" content="LightDAO:无需矿机、无需技术背景、无需合格投资者门槛。一个浏览器贡献网络资源赚取 LIGHT,并通过链上治理参与真实企业投资、按规则分享利润。">
 <style>
-:root{--bg:#05060a;--bg2:#0a0c12;--ink:#eef1f6;--mut:#9aa3b2;--line:rgba(255,255,255,.08);--acc:#7c8cff;--ok:#3ddc84}
+:root{--nav:rgba(5,6,10,.85);--bg:#05060a;--bg2:#0a0c12;--ink:#eef1f6;--mut:#9aa3b2;--line:rgba(255,255,255,.08);--acc:#7c8cff;--ok:#3ddc84}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif}
 .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
@@ -76,7 +76,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;background:var(--bg2
 .fcols a{display:block;color:var(--mut);font-size:14px;padding:4px 0;text-decoration:none}
 .fcols a:hover{color:var(--ink)}
 .status{display:flex;gap:14px;flex-wrap:wrap;margin-top:24px}
-nav{position:sticky;top:0;z-index:40;background:rgba(5,6,10,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+nav{position:sticky;top:0;z-index:40;background:var(--nav);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .navin{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;max-width:1120px;margin:0 auto}
 .brand{font-weight:800;font-size:18px}
 select.lang{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:7px 10px;color:var(--ink)}
@@ -89,15 +89,16 @@ canvas#net{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
 :focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:6px}
 .skip{position:absolute;left:-9999px;top:0}.skip:focus{left:8px;top:8px;background:var(--acc);color:#04101f;padding:8px 14px;border-radius:8px;z-index:99}
 
-[data-theme="light"]{--bg:#f5f6fa;--bg2:#ffffff;--ink:#0e1428;--mut:#5b6478;--line:rgba(12,18,45,.12);--acc:#4f6df5;--ok:#0e9f6e}
+[data-theme="light"]{--nav:rgba(255,255,255,.9);--bg:#f5f6fa;--bg2:#ffffff;--ink:#0e1428;--mut:#5b6478;--line:rgba(12,18,45,.12);--acc:#4f6df5;--ok:#0e9f6e}
 [data-theme="light"] canvas#net{opacity:.28}
 [data-theme="light"] .card,[data-theme="light"] .logo{box-shadow:0 8px 26px rgba(20,30,70,.08)}
 </style>
 </head>
 <body>
 <a class="skip" href="#vision">Skip to content</a>
-<nav><div class="navin"><span class="brand">⚡ LightDAO</span><a href="/search.html" aria-label="search" style="color:var(--tx2);text-decoration:none;padding:8px 10px;border-radius:999px">⌕</a>
-<button id="themeT" aria-label="toggle theme" style="background:var(--surf,rgba(255,255,255,.06));border:1px solid var(--line);border-radius:10px;padding:7px 11px;cursor:pointer;color:inherit;font-size:15px">◐</button>
+<nav><div class="navin"><span class="brand">⚡ LightDAO</span><a href="/search.html" aria-label="search" style="color:var(--mut);text-decoration:none;padding:8px 10px;border-radius:999px">⌕</a>
+<button id="themeT" aria-label="toggle theme" style="background:transparent;border:1px solid var(--line);border-radius:10px;padding:7px 11px;cursor:pointer;color:var(--ink);font-size:15px">◐</button>
+<a href="/nodes.html" style="color:var(--mut);text-decoration:none;padding:8px 12px;border-radius:999px">节点 Nodes</a>
 <select class="lang" id="lang" aria-label="language"></select></div></nav>
 
 <header class="hero"><canvas id="net"></canvas><div class="wrap" style="position:relative">
