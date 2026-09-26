@@ -1,0 +1,15 @@
+{
+  "name": "LightDAO — 轻节点挖矿",
+  "short_name": "LightDAO",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#070b18",
+  "theme_color": "#070b18",
+  "description": "Browser-based DePIN light-node mining on a live Cosmos L1. Passkey wallet, WebRTC relay, 50% fee burn.",
+  "lang": "zh",
+  "icons": [
+    { "src": "/og.png", "sizes": "1792x1024", "type": "image/png", "purpose": "any" },
+    { "src": "/og.png", "sizes": "1792x1024", "type": "image/png", "purpose": "maskable" }
+  ]
+}

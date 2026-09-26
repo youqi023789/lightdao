@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LightDAO 浏览器</title>
+<style>
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#0b0f1c;color:#e8ecf7;line-height:1.6;margin:0;padding:18px 16px 60px}
+.wrap{max-width:900px;margin:0 auto}h1{font-size:21px}h2{font-size:15px;margin:22px 0 8px;color:#9fb0dd}
+a{color:#8ab4ff;text-decoration:none}header a{margin-right:14px;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.stat{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 12px}.stat b{display:block;font-size:17px}.stat span{color:#8a96c4;font-size:11px}
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{border-bottom:1px solid rgba(255,255,255,.08);padding:7px 8px;text-align:left}th{color:#8a96c4;font-size:11.5px}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;word-break:break-all}
+input{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#e8ecf7;padding:10px;font-family:ui-monospace,monospace;font-size:12.5px;margin:6px 0}
+.btn{border:0;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;color:#fff;background:linear-gradient(135deg,#5b8cff,#9b6bff)}
+.ok{color:#27d7a0}.err{color:#ff5d73}.mut{color:#8a96c4}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><a href="/">← 客户端</a><a href="/governance.html">治理</a><a href="/whitepaper.html">白皮书</a></header>
+<h1>◈ LightDAO 浏览器 <span class="mut" style="font-size:12px">lightdao-mainnet-1</span></h1>
+<div class="grid" id="stats"><div class="stat"><span>加载中…</span></div></div>
+
+<h2>查询</h2>
+<input id="q" placeholder="输入 交易hash(大写16进制) 或 地址 wasm1… / wasmvaloper1…">
+<button class="btn" id="btnQ">查询</button>
+<div id="qres" class="mono" style="margin-top:8px"></div>
+
+<h2>最新区块</h2>
+<table><thead><tr><th>高度</th><th>时间(UTC)</th><th>交易数</th><th>提议者</th></tr></thead><tbody id="blocks"></tbody></table>
+
+<h2>验证者</h2>
+<table><thead><tr><th>moniker</th><th>状态</th><th>质押(LIGHT)</th><th>佣金</th></tr></thead><tbody id="vals"></tbody></table>
+</div>
+<script type="module">
+const RPC=location.origin+"/rpc/";
+const BURN="wasm1aeaty43lrlt9rmkyxujkkfuddnsfye6az4htcu";
+const TREAS="wasm192u2pm80ndmh608mmvhrzhje0sjaq0txr5md77lr70ucy0j3lfys8l633u";
+const ORACLE="wasm1f622csg2af6utlxvxgch2l9qf64ce3s4h5vseaph5ku8vzcgp6qqmsyace";
+const CDN=["https://cdn.jsdelivr.net/npm/","https://esm.sh/"];
+let client=null;
+async function load(){for(const b of CDN){try{const m=await import(b+"@cosmjs/cosmwasm-stargate@0.32.4"+(b==="https://esm.sh/"?"":"/+esm"));const s=await import(b+"@cosmjs/stargate@0.32.4"+(b==="https://esm.sh/"?"":"/+esm"));return {cw:m,st:s};}catch(e){}}return null;}
+const fmt=(n,d=6)=>(Number(n)/10**d).toLocaleString(undefined,{maximumFractionDigits:2});
+async function init(){
+  const L=await load(); if(!L){document.getElementById("stats").innerHTML='<div class="stat err">cosmjs 加载失败</div>';return;}
+  client=await L.st.StargateClient.connect(RPC);
+  const cw=await L.cw.CosmWasmClient.connect(RPC);
+  const h=await client.getHeight();
+  const sup=await client.getSupply();
+  const ul=sup.find(s=>s.denom==="ulight");
+  const burn=await client.getBalance(BURN,"ulight").catch(()=>({amount:"0"}));
+  const tre=await client.getBalance(TREAS,"ulight").catch(()=>({amount:"0"}));
+  let oracle="—"; try{ oracle=fmt(await cw.queryContractSmart(ORACLE,{external_median:{}})); }catch(e){}
+  let day="—",miners="—"; try{ const hh=await fetch(location.origin+"/gw/v1/health").then(r=>r.json()); day=hh.current_day; const dd=await fetch(location.origin+"/gw/v1/day?day="+hh.current_day).then(r=>r.json()); miners=Object.keys(dd.miners||{}).length; }catch(e){}
+  const vals=await client.getValidators();
+  document.getElementById("stats").innerHTML=`
+   <div class="stat"><span>最新高度</span><b>${h}</b></div>
+   <div class="stat"><span>总供应 LIGHT</span><b>${fmt(ul?ul.amount:0)}</b></div>
+   <div class="stat"><span>已销毁 LIGHT</span><b class="ok">${fmt(burn.amount)}</b></div>
+   <div class="stat"><span>金库 LIGHT</span><b>${fmt(tre.amount)}</b></div>
+   <div class="stat"><span>oracle 价($)</span><b>${oracle}</b></div>
+   <div class="stat"><span>验证者</span><b>${vals.length}</b></div>
+   <div class="stat"><span>当前赛季日</span><b>${day}</b></div>
+   <div class="stat"><span>今日矿工</span><b>${miners}</b></div>`;
+  // blocks
+  const chain=await client.getBlocks? null : null;
+  const tb=document.getElementById("blocks"); tb.innerHTML="";
+  for(let i=h;i>h-12;i--){
+    try{ const b=await client.getBlock(i);
+      const tr=document.createElement("tr");
+      tr.innerHTML=`<td>${i}</td><td class="mut">${(b.header.time||"").replace("T"," ").slice(0,19)}</td><td>${(b.txs||[]).length}</td><td class="mono">${(b.header.proposerAddress||"").slice(0,14)}…</td>`;
+      tb.appendChild(tr);
+    }catch(e){}
+  }
+  // validators
+  const tv=document.getElementById("vals"); tv.innerHTML="";
+  for(const v of vals){
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${v.description?.moniker||"?"}</td><td class="${v.status==="BOND_STATUS_BONDED"?"ok":"mut"}">${v.status==="BOND_STATUS_BONDED"?"绑定":"其他"}</td><td>${fmt(v.tokens)}</td><td>${(Number(v.commission?.commissionRates?.rate||0)*100).toFixed(0)}%</td>`;
+    tv.appendChild(tr);
+  }
+  window.__cw=cw; window.__st=L.st;
+}
+document.getElementById("btnQ").onclick=async()=>{
+  const q=document.getElementById("q").value.trim(); const out=document.getElementById("qres");
+  if(!client){out.textContent="未连接";return;}
+  try{
+    if(/^wasm1/.test(q)){
+      const b=await client.getBalance(q,"ulight");
+      let extra=""; try{ const st=await window.__cw.queryContractSmart("wasm14axmz74pppxqxs3qhxaaf2qzl6x53pvvzm7c6p52qrycwnyh8ktsfukapt",{staked_balance:{address:q}}); extra=" · 治理质押 "+fmt(st); }catch(e){}
+      out.innerHTML=`地址 ${q}<br>余额: <span class="ok">${fmt(b.amount)} LIGHT</span>${extra}`;
+    } else if(/^[0-9A-Fa-f]{64}$/.test(q)){
+      const t=await client.getTx(q.toUpperCase());
+      if(!t){out.textContent="未找到该交易";return;}
+      out.innerHTML=`tx ${q.slice(0,16)}…<br>高度 ${t.height} · code <span class="${t.code===0?"ok":"err"}">${t.code}</span> · gas ${t.gasUsed}/${t.gasWanted}<br>log: ${(t.rawLog||"").slice(0,200)||"(空)"}`;
+    } else if(/^wasmvaloper1/.test(q)){
+      out.textContent="验证者查询请用下方验证者表";
+    } else out.textContent="无法识别的输入";
+  }catch(e){ out.innerHTML='<span class="err">'+e.message+"</span>"; }
+};
+init();
+</script>
+</body>
+</html>

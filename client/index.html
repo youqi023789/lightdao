@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#070b18">
+<link rel="icon" href="/og.png">
 <title>LightDAO — 轻节点挖矿</title>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="LightDAO">
@@ -70,6 +73,12 @@ footer{text-align:center;color:var(--mut);font-size:11.5px;margin-top:8px}
     <div class="logo"><div class="dot">◈</div>LightDAO</div>
     <select class="lang" id="lang" aria-label="language"></select>
   </header>
+  <nav style="display:flex;gap:16px;margin:-4px 0 14px;font-size:13px;flex-wrap:wrap">
+    <a class="lnk" href="/explorer.html">浏览器</a>
+    <a class="lnk" href="/governance.html">治理</a>
+    <a class="lnk" href="/whitepaper.html">白皮书</a>
+    <a class="lnk" href="/season.html">Season 1</a>
+  </nav>
 
   <section id="sec-wallet">
     <div class="card hero">
@@ -120,6 +129,7 @@ footer{text-align:center;color:var(--mut);font-size:11.5px;margin-top:8px}
       </div>
       <div style="height:12px"></div>
       <button class="btn ghost" id="btnClaim" data-i="claim">领取奖励</button>
+      <a class="btn ghost" href="/governance.html" style="margin-top:8px;display:block;text-align:center;text-decoration:none">治理 · Governance(投票/提案/金库)</a>
     </div>
     <div class="card">
       <div class="mini" data-i="inviteT" style="margin-bottom:8px">邀请好友,赚 TA 首周贡献的 10%</div>
@@ -241,6 +251,8 @@ async function enter(seed){ const s=seed||localStorage.getItem("ld_seed"); if(s 
 document.addEventListener("DOMContentLoaded",()=>{ const b=$("btnCopyInvite"); if(b) b.onclick=()=>{ const el=$("inviteLink"); if(!el)return; if(navigator.clipboard)navigator.clipboard.writeText(el.value); else {el.removeAttribute("readonly");el.select();document.execCommand("copy");el.setAttribute("readonly","");} toast("✓ "+t("copy")); }; });
 // 自动登录:助记词老用户自动进;Passkey 需用户手势(生物识别),默认显示 Passkey 标签待解锁
 (async()=>{ showTab("Pk"); const s=localStorage.getItem("ld_seed"); if(s && !(window.LDPasskey&&window.LDPasskey.hasWallet())){ await enter(s); } })();
+// PWA: 注册 service worker(壳缓存+离线)
+if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("/sw.js").catch(()=>{}); }); }
 </script>
 
 <!-- ============ 模块: cosmjs 懒加载(仅钱包/领取需要), 失败优雅降级 ============ -->
