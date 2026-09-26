@@ -15,6 +15,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}td,th{border-bottom:1px
 input{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#e8ecf7;padding:10px;font-family:ui-monospace,monospace;font-size:12.5px;margin:6px 0}
 .btn{border:0;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;color:#fff;background:linear-gradient(135deg,#5b8cff,#9b6bff)}
 .ok{color:#27d7a0}.err{color:#ff5d73}.mut{color:#8a96c4}
+.vbar{display:inline-block;width:70px;height:7px;background:rgba(255,255,255,.12);border-radius:4px;overflow:hidden;vertical-align:middle;margin-right:6px}.vbar i{display:block;height:100%;background:linear-gradient(90deg,#27d7a0,#5b8cff)}
 </style>
 </head>
 <body>
@@ -33,12 +34,19 @@ input{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.12
 
 <h2>验证者</h2>
 <table><thead><tr><th>moniker</th><th>状态</th><th>质押(LIGHT)</th><th>佣金</th></tr></thead><tbody id="vals"></tbody></table>
+<h2>归属释放 · Vesting（TGE 三段）</h2>
+<div class="grid" id="veststats" style="margin-bottom:8px"></div>
+<table><thead><tr><th>受益人</th><th>总额(LIGHT)</th><th>已归属</th><th>已领取</th><th>悬崖</th><th>线性</th><th>起始(UTC)</th><th>进度</th></tr></thead><tbody id="vestbody"><tr><td colspan="8" class="mut">加载中…</td></tr></tbody></table>
+
 </div>
 <script type="module">
 const RPC=location.origin+"/rpc/";
 const BURN="wasm1aeaty43lrlt9rmkyxujkkfuddnsfye6az4htcu";
 const TREAS="wasm192u2pm80ndmh608mmvhrzhje0sjaq0txr5md77lr70ucy0j3lfys8l633u";
 const ORACLE="wasm1f622csg2af6utlxvxgch2l9qf64ce3s4h5vseaph5ku8vzcgp6qqmsyace";
+const VEST="wasm16l8mdmawaq4538ajr89dpfxh7cyll584yw7jqnhgmp5clwp6m8fqtwkz4x";
+const VEST_BEN=["wasm13c2cjh3fhkesj47tsc5a0vm6pdds39qpcmykhj","wasm16sm2nlg2sp9zy2dha5a80rjthjsatzcm2ue8za","wasm182d06dcj2upp9hkxqsxzp5ngws6kqdnq5yvu2g"];
+
 const CDN=["https://cdn.jsdelivr.net/npm/","https://esm.sh/"];
 let client=null;
 async function load(){for(const b of CDN){try{const m=await import(b+"@cosmjs/cosmwasm-stargate@0.32.4"+(b==="https://esm.sh/"?"":"/+esm"));const s=await import(b+"@cosmjs/stargate@0.32.4"+(b==="https://esm.sh/"?"":"/+esm"));return {cw:m,st:s};}catch(e){}}return null;}
@@ -100,7 +108,37 @@ document.getElementById("btnQ").onclick=async()=>{
     } else out.textContent="无法识别的输入";
   }catch(e){ out.innerHTML='<span class="err">'+e.message+"</span>"; }
 };
+
+const yrs=s=>{s=Number(s);if(s<=1)return "即时";if(s>=31536000){const y=s/31536000;return (Number.isInteger(y)?y:y.toFixed(1))+"年";}if(s>=86400)return (s/86400).toFixed(0)+"天";return s+"秒";};
+async function loadVesting(){
+  const tb=document.getElementById("vestbody"); if(!tb) return;
+  try{
+    const L=await load(); if(!L){tb.innerHTML='<tr><td colspan="8" class="err">cosmjs 加载失败</td></tr>';return;}
+    const cw=await L.cw.CosmWasmClient.connect(RPC);
+    const now=Math.floor(Date.now()/1000);
+    let vault="0"; try{vault=await cw.queryContractSmart(VEST,{vault_balance:{}});}catch(e){}
+    let rows="",sumTotal=0,sumVested=0,sumClaimed=0;
+    for(const a of VEST_BEN){
+      let s,v="0";
+      try{s=await cw.queryContractSmart(VEST,{schedule:{address:a}});}catch(e){continue;}
+      try{v=await cw.queryContractSmart(VEST,{vested:{address:a,at_time:now}});}catch(e){}
+      const total=Number(s.total),vested=Number(v),claimed=Number(s.claimed||0);
+      sumTotal+=total;sumVested+=vested;sumClaimed+=claimed;
+      const pct=total?Math.min(100,vested/total*100):0;
+      const start=new Date(Number(s.start)*1000).toISOString().replace("T"," ").slice(0,10);
+      rows+='<tr><td class="mono">'+a.slice(0,10)+'…'+a.slice(-6)+'</td><td>'+fmt(total)+'</td><td class="ok">'+fmt(vested)+'</td><td>'+fmt(claimed)+'</td><td>'+yrs(s.cliff_secs)+'</td><td>'+yrs(s.linear_secs)+'</td><td class="mut">'+start+'</td><td><div class="vbar"><i style="width:'+pct.toFixed(1)+'%"></i></div><span class="mut" style="font-size:11px">'+pct.toFixed(1)+'%</span></td></tr>';
+    }
+    tb.innerHTML=rows||'<tr><td colspan="8" class="mut">无归属计划</td></tr>';
+    const vs=document.getElementById("veststats");
+    if(vs) vs.innerHTML='<div class="stat"><span>金库总额 LIGHT</span><b>'+fmt(vault)+'</b></div>'
+      +'<div class="stat"><span>已归属 LIGHT</span><b class="ok">'+fmt(sumVested)+'</b></div>'
+      +'<div class="stat"><span>已领取 LIGHT</span><b>'+fmt(sumClaimed)+'</b></div>'
+      +'<div class="stat"><span>未归属 LIGHT</span><b class="mut">'+fmt(sumTotal-sumVested)+'</b></div>';
+  }catch(e){ tb.innerHTML='<tr><td colspan="8" class="err">'+e.message+'</td></tr>'; }
+}
+
 init();
+loadVesting();
 </script>
 </body>
 </html>
