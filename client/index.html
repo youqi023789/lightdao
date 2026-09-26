@@ -182,9 +182,21 @@ async function sha256hex(s){const b=await crypto.subtle.digest("SHA-256",new Tex
 
 // 挖矿(真实贡献, 仅用 fetch, 不需 cosmjs)
 let mining=false,timer=null,sess=0,hbOk=0,hbTot=0,verif=0,bw=0,myAddr=null;
+// 设备指纹(§4.8 反女巫):canvas+WebGL渲染器+UA+屏幕+时区+核心数 哈希;同设备多钱包同指纹→网关去重
+let FP="";
+async function deviceFP(){ if(FP)return FP; try{
+  const c=document.createElement("canvas"); const g=c.getContext("2d");
+  g.textBaseline="top"; g.font="14px Arial"; g.fillText("LightDAO fp",2,2);
+  g.fillStyle="rgba(100,200,30,.5)"; g.fillRect(0,0,60,20);
+  const canvas=c.toDataURL();
+  let gl=""; try{ const w=document.createElement("canvas").getContext("webgl"); const dbg=w.getExtension("webgl_debug_renderer_info"); gl=dbg?String(w.getParameter(dbg.UNMASKED_RENDERER_WEBGL)):""; }catch(e){}
+  const raw=[canvas.slice(-80),gl,navigator.userAgent,screen.width+"x"+screen.height,screen.colorDepth,Intl.DateTimeFormat().resolvedOptions().timeZone,navigator.hardwareConcurrency||0,navigator.language].join("|");
+  const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(raw));
+  FP=[...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("").slice(0,32);
+}catch(e){ FP=""; } return FP; }
 async function measureBw(){ let probe=0; try{ const t0=performance.now(); const r=await fetch(CFG.gw+"/v1/probe?_="+Date.now()); const buf=await r.arrayBuffer(); const dt=(performance.now()-t0)/1000; probe=Math.min(Math.round(buf.byteLength*8/1000/Math.max(dt,.001)),100000);}catch(e){} const relay=(window.LDRelay&&window.LDRelay.isStarted())?window.LDRelay.getBandwidthKbps():0; bw=Math.min(Math.max(probe,relay),100000); }
 async function doTask(){ const pre=Math.random().toString(36).slice(2)+(myAddr||"x"); for(let n=0;n<300000;n++){ const h=await sha256hex(pre+n); if(h.startsWith("00")){verif++;break;} } }
-async function heartbeat(){ hbTot++; const body={miner:myAddr||"wasm1pending00000000000000000000000000000000000000000000000000000",bandwidth_kbps:bw,session_secs:sess,verification_tasks:verif,stability_pct:hbTot?Math.round(hbOk/hbTot*100):100}; const rf=localStorage.getItem("ld_ref"); if(rf)body.referrer=rf; try{ const r=await fetch(CFG.gw+"/v1/heartbeat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}); if(r.ok)hbOk++; }catch(e){} sess+=CFG.heartbeatSec; updateUI(); }
+async function heartbeat(){ hbTot++; const body={miner:myAddr||"wasm1pending00000000000000000000000000000000000000000000000000000",bandwidth_kbps:bw,session_secs:sess,verification_tasks:verif,stability_pct:hbTot?Math.round(hbOk/hbTot*100):100}; const rf=localStorage.getItem("ld_ref"); if(rf)body.referrer=rf; body.fp=await deviceFP(); try{ const r=await fetch(CFG.gw+"/v1/heartbeat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}); if(r.ok)hbOk++; }catch(e){} sess+=CFG.heartbeatSec; updateUI(); }
 function updateUI(){
   $("mBw").textContent=bw; $("bBw").style.width=Math.min(bw/10000*100,100)+"%";
   $("mSess").textContent=sess; $("bSess").style.width=Math.min(sess/3600*100,100)+"%";

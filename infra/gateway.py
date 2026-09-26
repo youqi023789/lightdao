@@ -103,6 +103,27 @@ def finalize_day(day):
         addrs = sorted(d["miners"].keys())           # 确定性排序
         # 每日根=纯PoC分(不折邀请奖励);邀请+10%在赛季末从S1池结算(见 referrals 记录)
         scores = {a: score_miner(d["miners"][a]) for a in addrs}
+        # 反女巫(§4.8):同设备指纹当日只计最高分一个钱包,其余清零;同IP>3不同指纹=标记信号
+        ZERO = {"bandwidth":0,"session":0,"verification":0,"stability":0}
+        fps = d.get("fps", {}); ips = d.get("ips", {})
+        byfp = {}
+        for m in addrs:
+            fp = fps.get(m)
+            if fp: byfp.setdefault(fp, []).append(m)
+        flagged = []
+        for fp, ms in byfp.items():
+            if len(ms) > 1:
+                ms.sort(key=lambda m: weighted_score(scores[m]), reverse=True)
+                for m in ms[1:]:
+                    scores[m] = dict(ZERO); flagged.append(m)
+        byip = {}
+        for m in addrs:
+            ip = ips.get(m)
+            if ip: byip.setdefault(ip, set()).add(fps.get(m) or m)
+        for ip, fset in byip.items():
+            if len(fset) > 3:
+                flagged += [m for m in addrs if ips.get(m)==ip]
+        d["flagged"] = sorted(set(flagged))
         leaves = [leaf_hash(a, day, scores[a]["bandwidth"], scores[a]["session"], scores[a]["verification"], scores[a]["stability"]) for a in addrs]
         root, levels = build_tree(leaves)
         proofs = {a: proof_for(levels, i) for i, a in enumerate(addrs)}
@@ -158,6 +179,10 @@ class H(BaseHTTPRequestHandler):
                 d = load_day(day)
                 if d.get("finalized"): return self._send(409, {"error": "day finalized"})
                 d["miners"][miner] = {k: body.get(k, 0) for k in TARGETS}  # 客户端报当日累计
+                fp = (body.get("fp") or "")[:64]
+                ip = (self.headers.get("X-Forwarded-For") or self.client_address[0] or "").split(",")[0].strip()
+                d.setdefault("fps", {})[miner] = fp
+                d.setdefault("ips", {})[miner] = ip
                 ref = body.get("referrer")
                 if ref and ref.startswith("wasm1") and ref != miner:
                     d.setdefault("referrals", {})
