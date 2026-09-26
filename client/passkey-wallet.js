@@ -274,7 +274,23 @@
     async unlock(pin) {
       const rec = load();
       if (!rec) throw new Error("no wallet");
-      const { prf } = await assertPasskey(rec.credId);
+      let prf = null;
+      try {
+        const r = await assertPasskey(rec.credId); prf = r.prf;
+      } catch (e) {
+        if (e && e.name === "NotAllowedError") {
+          // Exact credential likely removed from the OS password manager (irreversible).
+          // Fall back to a discoverable get so the platform offers ANY lightdao.net passkey.
+          let disc = null;
+          try { disc = await assertPasskey(null); } catch (e2) { disc = null; }
+          if (disc && disc.credId === rec.credId) { prf = disc.prf; }
+          else if (disc) {
+            throw new Error("PASSKEY_MISMATCH: the passkey you picked does not match this device's wallet data (the matching one was likely removed). Import via seed phrase / social recovery, or create a new wallet. / 选中的通行密钥与本机钱包数据不匹配(对应的那枚可能已被删除)。请用助记词或社交恢复导入,或新建钱包。");
+          } else {
+            throw new Error("PASSKEY_GONE: no lightdao.net passkey remains on this device (it was likely removed from the OS password manager, which is irreversible). This wallet can no longer be unlocked here - import via seed phrase / social recovery shares, or create a new wallet. / 本机已不存在该钱包的通行密钥(可能已在系统密码管理器中删除,删除不可逆)。请用助记词或社交恢复(分片)导入,或新建钱包。");
+          }
+        } else { throw e; }
+      }
       const key = await deriveKey(rec, prf, pin);
       const pt = await aesDecrypt(key, rec.iv, rec.ct);
       return td.decode(pt);
