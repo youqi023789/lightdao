@@ -1,0 +1,21 @@
+/* LightDAO shared light-theme overrides for utility subpages (explorer/governance/whitepaper/season/blog/privacy/terms/search). */
+[data-theme="light"] body{background:#f5f6fa;color:#0e1428}
+[data-theme="light"] h1,[data-theme="light"] h2,[data-theme="light"] h3{color:#0e1428}
+[data-theme="light"] a{color:#3b5bdb}
+[data-theme="light"] .mut,[data-theme="light"] .mini,[data-theme="light"] footer,[data-theme="light"] .crumb{color:#5b6478}
+[data-theme="light"] .stat,[data-theme="light"] .card,[data-theme="light"] .pill,[data-theme="light"] .tabs button{background:rgba(12,18,45,.04);border-color:rgba(12,18,45,.12);color:#0e1428}
+[data-theme="light"] .stat span,[data-theme="light"] th{color:#5b6478}
+[data-theme="light"] table td,[data-theme="light"] table th{border-color:rgba(12,18,45,.10)}
+[data-theme="light"] input,[data-theme="light"] textarea,[data-theme="light"] select{background:#fff;border-color:rgba(12,18,45,.15);color:#0e1428}
+[data-theme="light"] .btn{color:#fff}
+[data-theme="light"] .btn.ghost{background:rgba(12,18,45,.05);border-color:rgba(12,18,45,.15);color:#0e1428}
+[data-theme="light"] .mono,[data-theme="light"] .addr{color:#3b4256}
+[data-theme="light"] .ok{color:#0e9f6e}
+[data-theme="light"] .err{color:#d33a4f}
+[data-theme="light"] .bar,[data-theme="light"] .vbar{background:rgba(12,18,45,.10)}
+[data-theme="light"] .toast{background:#fff;border-color:rgba(12,18,45,.15);color:#0e1428}
+[data-theme="light"] .hero{background:rgba(12,18,45,.03)}
+[data-theme="light"] header a{color:#3b5bdb}
+[data-theme="light"] .tabs button.act{color:#0e1428;background:rgba(79,109,245,.14);border-color:rgba(79,109,245,.4)}
+[data-theme="light"] .spin::after{background:#fff}
+[data-theme="light"] .spin b{color:#5b6478}

@@ -17,9 +17,11 @@ input{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.12
 .ok{color:#27d7a0}.err{color:#ff5d73}.mut{color:#8a96c4}
 .vbar{display:inline-block;width:70px;height:7px;background:rgba(255,255,255,.12);border-radius:4px;overflow:hidden;vertical-align:middle;margin-right:6px}.vbar i{display:block;height:100%;background:linear-gradient(90deg,#27d7a0,#5b8cff)}
 </style>
+<script>(function(){try{var t=localStorage.getItem("ld_theme")||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="/theme.css">
 </head>
 <body>
-<div style="max-width:1120px;margin:0 auto;padding:10px 22px;display:flex;gap:16px;font-size:14px"><a href="#" onclick="history.back();return false" style="color:var(--mut,#9aa3b2);text-decoration:none">← 返回上一页 / Back</a><a href="/" style="color:var(--mut,#9aa3b2);text-decoration:none">⌂ 返回首页 / Home</a></div>
+<div style="max-width:1120px;margin:0 auto;padding:10px 22px;display:flex;gap:16px;font-size:14px"><a href="#" onclick="history.back();return false" style="color:var(--mut,#9aa3b2);text-decoration:none">← 返回上一页 / Back</a><a href="/" style="color:var(--mut,#9aa3b2);text-decoration:none">⌂ 返回首页 / Home</a><button id="themeT" aria-label="toggle theme" style="margin-left:auto;background:transparent;border:1px solid rgba(128,128,160,.3);border-radius:8px;padding:4px 10px;cursor:pointer;color:inherit">◐</button></div>
 
 <div class="wrap">
 <header><a href="/">← 客户端</a><a href="/governance.html">治理</a><a href="/whitepaper.html">白皮书</a></header>
@@ -142,5 +144,6 @@ async function loadVesting(){
 init();
 loadVesting();
 </script>
+<script>document.getElementById("themeT").onclick=function(){var c=document.documentElement.getAttribute("data-theme");var n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n);try{localStorage.setItem("ld_theme",n);}catch(e){}this.textContent=n==="light"?"◑":"◐";};</script>
 </body>
 </html>

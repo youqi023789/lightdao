@@ -16,9 +16,11 @@ pre{background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.1);padding:12p
 blockquote{border-left:3px solid #7c5cff;margin:14px 0;padding:6px 14px;background:rgba(124,92,255,.08);color:#c9d2ee}
 #md{white-space:normal}
 </style>
+<script>(function(){try{var t=localStorage.getItem("ld_theme")||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="/theme.css">
 </head>
 <body>
-<div style="max-width:1120px;margin:0 auto;padding:10px 22px;display:flex;gap:16px;font-size:14px"><a href="#" onclick="history.back();return false" style="color:var(--mut,#9aa3b2);text-decoration:none">← 返回上一页 / Back</a><a href="/" style="color:var(--mut,#9aa3b2);text-decoration:none">⌂ 返回首页 / Home</a></div>
+<div style="max-width:1120px;margin:0 auto;padding:10px 22px;display:flex;gap:16px;font-size:14px"><a href="#" onclick="history.back();return false" style="color:var(--mut,#9aa3b2);text-decoration:none">← 返回上一页 / Back</a><a href="/" style="color:var(--mut,#9aa3b2);text-decoration:none">⌂ 返回首页 / Home</a><button id="themeT" aria-label="toggle theme" style="margin-left:auto;background:transparent;border:1px solid rgba(128,128,160,.3);border-radius:8px;padding:4px 10px;cursor:pointer;color:inherit">◐</button></div>
 
 <div class="wrap">
 <header>
@@ -37,5 +39,6 @@ fetch("/whitepaper.md").then(r=>r.text()).then(t=>{
   else { document.getElementById("md").innerHTML = "<pre>"+t.replace(/</g,"&lt;")+"</pre>"; }
 }).catch(e=>{ document.getElementById("md").innerHTML = "<p>加载失败,请用上方 GitHub 源。</p>"; });
 </script>
+<script>document.getElementById("themeT").onclick=function(){var c=document.documentElement.getAttribute("data-theme");var n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n);try{localStorage.setItem("ld_theme",n);}catch(e){}this.textContent=n==="light"?"◑":"◐";};</script>
 </body>
 </html>

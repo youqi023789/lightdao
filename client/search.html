@@ -8,8 +8,10 @@ body{background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,"Segoe UI
 .r a{color:var(--acc);text-decoration:none;font-weight:600}.r p{color:var(--mut);font-size:14px;margin:6px 0 0}
 .r .crumb{color:var(--mut);font-size:12px}mark{background:rgba(124,140,255,.3);color:inherit;border-radius:3px;padding:0 2px}</style>
 <script>(function(){try{var t=localStorage.getItem("ld_theme")||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem("ld_theme")||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="/theme.css">
 </head><body><div class="w">
-<p><a href="/" style="color:var(--mut)">← 返回首页 / Home</a> · <a href="#" onclick="history.back();return false" style="color:var(--mut)">← 返回上一页 / Back</a></p>
+<p><a href="/" style="color:var(--mut)">← 返回首页 / Home</a> · <a href="#" onclick="history.back();return false" style="color:var(--mut)">← 返回上一页 / Back</a> <button id="themeT" aria-label="toggle theme" style="margin-left:12px;background:transparent;border:1px solid rgba(128,128,160,.3);border-radius:8px;padding:4px 10px;cursor:pointer;color:inherit">◐</button></p>
 <h1 style="font-size:28px;margin:8px 0 18px">站内搜索 / Site search</h1>
 <input id="q" placeholder="搜索:挖矿 / 治理 / vesting / gas / Passkey …" autofocus>
 <div id="res"></div>
@@ -36,4 +38,4 @@ document.getElementById("q").oninput=function(){
   });
   if(!out.length)res.innerHTML='<p style="color:var(--mut)">无结果 / no results</p>';
 };
-</script></div></body></html>
+</script></div><script>document.getElementById("themeT").onclick=function(){var c=document.documentElement.getAttribute("data-theme");var n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n);try{localStorage.setItem("ld_theme",n);}catch(e){}this.textContent=n==="light"?"◑":"◐";};</script></body></html>

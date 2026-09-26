@@ -25,9 +25,11 @@ input,select,textarea{width:100%;background:rgba(0,0,0,.25);border:1px solid var
 .bar i{display:block;height:100%}.bar .y{background:var(--ok)}.bar .n{background:var(--err)}.bar .a{background:var(--mut)}
 .row{display:flex;gap:8px}.row>*{flex:1}
 </style>
+<script>(function(){try{var t=localStorage.getItem("ld_theme")||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="/theme.css">
 </head>
 <body>
-<div style="max-width:1120px;margin:0 auto;padding:10px 22px;display:flex;gap:16px;font-size:14px"><a href="#" onclick="history.back();return false" style="color:var(--mut,#9aa3b2);text-decoration:none">← 返回上一页 / Back</a><a href="/" style="color:var(--mut,#9aa3b2);text-decoration:none">⌂ 返回首页 / Home</a></div>
+<div style="max-width:1120px;margin:0 auto;padding:10px 22px;display:flex;gap:16px;font-size:14px"><a href="#" onclick="history.back();return false" style="color:var(--mut,#9aa3b2);text-decoration:none">← 返回上一页 / Back</a><a href="/" style="color:var(--mut,#9aa3b2);text-decoration:none">⌂ 返回首页 / Home</a><button id="themeT" aria-label="toggle theme" style="margin-left:auto;background:transparent;border:1px solid rgba(128,128,160,.3);border-radius:8px;padding:4px 10px;cursor:pointer;color:inherit">◐</button></div>
 
 <div class="wrap">
 <h1>◈ LightDAO 治理 <span style="font-size:11px;color:var(--mut)">staging</span></h1>
@@ -180,5 +182,6 @@ $("btnRefresh").onclick=refreshProps;
 $("btnPk").onclick=async()=>{ if(!window.LDPasskey||!LDPasskey.hasWallet()){log("无 Passkey 钱包,先用主客户端创建","warn");return;} let m; try{m=await LDPasskey.unlock();}catch(e){const p=prompt("PIN:");m=await LDPasskey.unlock(p);} await connect(m); };
 $("btnMnem").onclick=()=>{const i=$("mnem");i.style.display=i.style.display==="none"?"":"none";if(i.style.display!=="none"){i.onchange=async()=>{if(i.value.trim())await connect(i.value.trim());};}};
 </script>
+<script>document.getElementById("themeT").onclick=function(){var c=document.documentElement.getAttribute("data-theme");var n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n);try{localStorage.setItem("ld_theme",n);}catch(e){}this.textContent=n==="light"?"◑":"◐";};</script>
 </body>
 </html>
