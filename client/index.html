@@ -211,6 +211,12 @@ async function sha256hex(s){const b=await crypto.subtle.digest("SHA-256",new Tex
 
 // 挖矿(真实贡献, 仅用 fetch, 不需 cosmjs)
 let mining=false,timer=null,sess=0,hbOk=0,hbTot=0,verif=0,bw=0,myAddr=null;
+// 按服务器日持久化当日累计,刷新/重开不丢贡献
+let DAYC=0;
+function dayKey(){return "ld_day_"+DAYC;}
+function saveDayCounters(){ if(!DAYC)return; localStorage.setItem(dayKey(),JSON.stringify({day:DAYC,sess,verif,hbOk,hbTot})); }
+async function loadDayCounters(){ try{ const h=await fetch(CFG.gw+"/v1/health").then(r=>r.json()); DAYC=h.current_day||0; }catch(e){ DAYC=0; }
+  if(!DAYC)return; const st=JSON.parse(localStorage.getItem(dayKey())||"null"); if(st&&st.day===DAYC){ sess=st.sess||0; verif=st.verif||0; hbOk=st.hbOk||0; hbTot=st.hbTot||0; } else { sess=0;verif=0;hbOk=0;hbTot=0; } updateUI(); }
 // 设备指纹(§4.8 反女巫):canvas+WebGL渲染器+UA+屏幕+时区+核心数 哈希;同设备多钱包同指纹→网关去重
 let FP="";
 async function deviceFP(){ if(FP)return FP; try{
@@ -238,7 +244,7 @@ function updateUI(){
 function setMiningUI(on){ $("spin").classList.toggle("on",on); $("liveDot").classList.toggle("on",on);
   $("btnMine").textContent=on?t("stopMining"):t("startMining"); $("statusTx").textContent=on?t("running"):t("idle"); }
 async function startMining(){ if(mining)return; mining=true; setMiningUI(true); localStorage.setItem("ld_mining","1");
-  if(window.LDRelay)window.LDRelay.start(myAddr); await measureBw(); heartbeat(); doTask(); timer=setInterval(async()=>{await measureBw(); if(Math.random()<.5)doTask(); heartbeat();},CFG.heartbeatSec*1000); }
+  await loadDayCounters(); if(window.LDRelay)window.LDRelay.start(myAddr); await measureBw(); heartbeat(); doTask(); timer=setInterval(async()=>{await measureBw(); if(Math.random()<.5)doTask(); heartbeat();},CFG.heartbeatSec*1000); }
 function stopMining(){ if(!mining)return; mining=false; setMiningUI(false); localStorage.removeItem("ld_mining"); clearInterval(timer); if(window.LDRelay)window.LDRelay.stop(); }
 $("btnMine").onclick=()=>{ mining?stopMining():startMining(); };
 // 标签切换(Passkey / 助记词 / 导入)
