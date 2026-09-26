@@ -139,6 +139,21 @@ def finalize_day(day):
             if len(fset) > 3:
                 flagged += [m for m in addrs if ips.get(m)==ip]
         d["flagged"] = sorted(set(flagged))
+        # BEHAVIOR BOOST (WP 985): 4 behaviors x 5%, cap 20%, applied to bw/se/ve dims
+        bhs = d.get("behaviors") or {}
+        for aa in list(scores.keys()):
+            fl = bhs.get(aa) or {}
+            cnt = sum(1 for k in ("pwa", "delegated", "social", "quiz") if fl.get(k))
+            if cnt:
+                f = 1.0 + 0.05 * min(cnt, 4)
+                sc = scores[aa]
+                sc["bandwidth"] = int(sc.get("bandwidth", 0) * f)
+                sc["session"] = int(sc.get("session", 0) * f)
+                sc["verification"] = int(sc.get("verification", 0) * f)
+                # WP 338: PWA install => +10% session dim
+                if fl.get("pwa"):
+                    sc["session"] = int(sc.get("session", 0) * 1.1)  # pwa_session_bonus
+
         # DELEG SPLIT (whitepaper mobile-adaptation): delegator keeps 70% session, relay node gets 30%
         delegs = d.get("delegations") or {}
         for m, D in list(delegs.items()):
@@ -162,6 +177,28 @@ def finalize_day(day):
                 ss = (d["miners"].get(aa) or {}).get("session_secs", 0) or 0
                 if ss >= 14400 and aa not in led:
                     led[aa] = {"type": "first_mine_4h", "amount_light": 50, "day": day}
+            # referral tiers (WP 985): 3/10/50 -> 100/500/2500 LIGHT
+            ref_tot = {}
+            for fn2 in os.listdir(os.path.dirname(day_path(day))):
+                if not fn2.startswith("day_") or not fn2.endswith(".json"): continue
+                try: d2 = json.load(open(os.path.join(os.path.dirname(day_path(day)), fn2)))
+                except Exception: continue
+                for mm, rr in (d2.get("referrals") or {}).items():
+                    rf = (rr or {}).get("referrer")
+                    if rf: ref_tot[rf] = ref_tot.get(rf, 0) + 1
+            for rf, cnt in ref_tot.items():
+                for thr, amt in ((3, 100), (10, 500), (50, 2500)):
+                    key = rf + "#tier%d" % thr
+                    if cnt >= thr and key not in led:
+                        led[key] = {"type": "referral_tier", "tier": thr, "amount_light": amt, "day": day, "addr": rf}
+            # learn-to-earn 30L + first-vote 20L (first day flag true)
+            for aa in addrs:
+                fl = (d.get("behaviors") or {}).get(aa) or {}
+                if fl.get("quiz") and (aa + "#quiz") not in led:
+                    led[aa + "#quiz"] = {"type": "learn_to_earn", "amount_light": 30, "day": day, "addr": aa}
+                if fl.get("voted") and (aa + "#vote") not in led:
+                    ld2 = led
+                    ld2[aa + "#vote"] = {"type": "first_vote", "amount_light": 20, "day": day, "addr": aa}
             json.dump(led, open(LP, "w"))
         except Exception as _e:
             pass
@@ -255,6 +292,30 @@ class H(BaseHTTPRequestHandler):
                 out["airdrop_first_mine"] = None
             maxs = max([((r.get("score") or {}).get("session_secs") or 0) for r in days.values()] or [0])
             out["best_day_session_secs"] = maxs
+            out["behaviors"] = (days.get(str(day)) or {}).get("behaviors") if False else None
+            bl = None
+            for dd in sorted(days.keys(), key=lambda x: int(x)):
+                pass
+            out["airdrop_list"] = []
+            try:
+                LP2 = os.path.normpath(os.path.join(DATA, "..", "airdrops.json"))
+                led2 = json.load(open(LP2)) if os.path.exists(LP2) else {}
+                for k, v in led2.items():
+                    if v.get("addr") == addr or k == addr:
+                        out["airdrop_list"].append(v)
+            except Exception:
+                pass
+            bb = None
+            for dd in sorted(days.keys(), key=lambda x: int(x), reverse=True):
+                rec = days[dd]
+                if rec.get("active"):
+                    try:
+                        d3 = json.load(open(os.path.join(DATA, "day_%s.json" % dd)))
+                        bb = (d3.get("behaviors") or {}).get(addr)
+                    except Exception:
+                        bb = None
+                    if bb: break
+            out["behaviors"] = bb or {}
             return self._send(200, out)
         return self._send(404, {"error": "not found"})
     def do_POST(self):
@@ -275,6 +336,9 @@ class H(BaseHTTPRequestHandler):
                 d.setdefault("fps", {})[miner] = fp
                 d.setdefault("ips", {})[miner] = ip
                 ref = body.get("referrer")
+                bh = body.get("behaviors") or {}
+                if isinstance(bh, dict):
+                    d.setdefault("behaviors", {})[miner] = {k: bool(bh.get(k)) for k in ("pwa", "delegated", "social", "quiz", "voted") if k in bh}
                 dlg = body.get("delegate_to")
                 if dlg and dlg.startswith("wasm1") and dlg != miner:
                     d.setdefault("delegations", {})[miner] = dlg

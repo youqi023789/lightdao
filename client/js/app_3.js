@@ -108,3 +108,26 @@ document.getElementById("themeT").onclick=function(){var c=document.documentElem
   if(a){ el.innerHTML='<span style="color:var(--ok,#3ddc84)">✓ 首挖空投已达成:+50 LIGHT(第'+a.day+"天首次满 4 小时有效挖矿,TGE 发放)</span>"; }
   else { var h=Math.min(4,(best/3600)); el.innerHTML="首挖空投(50 LIGHT):单日有效在线 "+h.toFixed(2)+" / 4.00 小时"+(best>0?"(继续挖满 4 小时即达成)":"(今日开始累计)"); }
  }catch(e){ el.textContent="加载失败"; } })();
+
+
+
+
+(async function(){ var el=document.getElementById("airFirst"); if(!el||!myAddr)return;
+ try{ var r=await fetch(CFG.gw+"/v1/me?addr="+myAddr).then(function(x){return x.json();});
+  var ref=r.referred_total||0; var led=r.airdrop_list||[];
+  var got=function(t){ for(var i=0;i<led.length;i++){ if(led[i].type===t) return true; } return false; };
+  var rows=[];
+  rows.push(["首挖空投 50L", got("first_mine_4h")?"✓ 已达成":"进行中(单日满4h)"]);
+  var tier = ref>=50?"✓ 合伙人 2500L":(ref>=10?"✓ 大使 500L":(ref>=3?"✓ 布道者 100L":"进行中"));
+  rows.push(["邀请档 100/500/2500L", tier+"(当前 "+ref+" 人)"]);
+  rows.push(["Learn-to-Earn 30L", got("learn_to_earn")?"✓ 已达成":(lsGet("ld_quiz_passed")?"待结算":"去 /quiz.html 答题")]);
+  rows.push(["治理首投 20L", got("first_vote")?"✓ 已达成":(lsGet("ld_voted")?"待结算":"去治理投一票")]);
+  rows.push(["行为加成 4×5%(上限20%)", "PWA/委托/社交恢复/测验 各+5%"]);
+  rows.push(["地理扩张 100L","⏳ 待 ZK-KYC(TGE 后)"]);
+  rows.push(["流动性提供 200L","⏳ 待 DEX 池"]);
+  rows.push(["内容创作 50-200L","⏳ 经治理/资助审核"]);
+  rows.push(["合作渠道 80L","⏳ 待合作方接入"]);
+  var html="";
+  for(var i=0;i<rows.length;i++){ html += "<div>"+rows[i][0]+"：<b>"+rows[i][1]+"</b></div>"; }
+  el.innerHTML=html;
+ }catch(e){ el.textContent="加载失败"; } })();

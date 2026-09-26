@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){try{var t=localStorage.getItem("ld_theme")||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="/theme.css">
+<title>Learn-to-Earn 测验 — LightDAO</title>
+<style>:root{--bg:#05060a;--bg2:#0a0c12;--ink:#eef1f6;--mut:#9aa3b2;--line:rgba(255,255,255,.08);--acc:#7c8cff;--ok:#3ddc84}
+body{background:var(--bg);color:var(--ink);font:16px/1.7 -apple-system,"Segoe UI",Roboto,"PingFang SC",sans-serif;margin:0}
+.w{max-width:720px;margin:0 auto;padding:20px 22px 60px}h1{font-size:26px}
+.q{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:14px}
+.q p{margin:0 0 10px;font-weight:600}
+label{display:block;padding:8px 12px;border:1px solid var(--line);border-radius:10px;margin:6px 0;cursor:pointer;color:var(--mut)}
+label:hover{border-color:var(--acc)}
+input[type=radio]{margin-right:8px}
+.btn{background:var(--acc);color:#060810;border:0;border-radius:10px;padding:12px 22px;font-size:15px;font-weight:600;cursor:pointer;margin-top:16px}
+.bar{display:flex;gap:12px;flex-wrap:wrap;font-size:14px;margin:10px 0}.bar a{border:1px solid var(--line);border-radius:10px;padding:8px 14px;color:var(--mut);text-decoration:none}
+#res{margin-top:16px;font-size:16px}</style>
+</head>
+<body>
+<div class="bar" style="max-width:720px;margin:0 auto;padding:12px 22px"><a href="#" onclick="history.back();return false">← 返回</a><a href="/">⌂ 首页</a><a href="/app.html">挖矿</a></div>
+<div class="w">
+<h1>Learn-to-Earn 测验 <span style="color:var(--mut);font-size:14px">答对 ≥4/5 → +30 LIGHT 空投(记账,TGE 发放)+ 行为加成 5%</span></h1>
+<div id="quiz">
+<div class="q"><p>1. LightDAO 每笔手续费如何分配?</p>
+<label><input type="radio" name="q1" value="a">全部销毁</label>
+<label><input type="radio" name="q1" value="b">50% 销毁 / 30% 验证者 / 20% 金库</label>
+<label><input type="radio" name="q1" value="c">全部给验证者</label></div>
+<div class="q"><p>2. 每日释放中,轻节点矿工池占多少?</p>
+<label><input type="radio" name="q2" value="a">95%</label>
+<label><input type="radio" name="q2" value="b">50%</label>
+<label><input type="radio" name="q2" value="c">100%</label></div>
+<div class="q"><p>3. 贡献评分权重是?</p>
+<label><input type="radio" name="q3" value="a">带宽40/在线30/验证20/稳定10</label>
+<label><input type="radio" name="q3" value="b">均分</label>
+<label><input type="radio" name="q3" value="c">只看带宽</label></div>
+<div class="q"><p>4. Passkey 社交恢复的阈值是?</p>
+<label><input type="radio" name="q4" value="a">5 份中任 3 份</label>
+<label><input type="radio" name="q4" value="b">2 份</label>
+<label><input type="radio" name="q4" value="c">全部 5 份</label></div>
+<div class="q"><p>5. 验证者少于多少个时 TGE 不得执行?</p>
+<label><input type="radio" name="q5" value="a">7</label>
+<label><input type="radio" name="q5" value="b">3</label>
+<label><input type="radio" name="q5" value="c">21</label></div>
+</div>
+<button class="btn" id="submit">提交答案</button>
+<div id="res"></div>
+</div>
+<script src="/js/wfix.js"></script>
+<script>
+var ANS={q1:"b",q2:"a",q3:"a",q4:"a",q5:"a"};
+document.getElementById("submit").onclick=function(){
+ var score=0; for(var k in ANS){ var sel=document.querySelector('input[name="'+k+'"]:checked'); if(sel&&sel.value===ANS[k])score++; }
+ var el=document.getElementById("res");
+ if(score>=4){ try{localStorage.setItem("ld_quiz_passed","1");}catch(e){}
+  el.innerHTML='<span style="color:var(--ok)">✓ 通过 '+score+'/5。+30 LIGHT 已记入空投账本(下次定稿结算),行为加成 +5% 已生效。返回挖矿页查看空投中心。</span>'; }
+ else { el.innerHTML='<span style="color:#ffb454">得分 '+score+'/5,需 ≥4。再读一遍白皮书 §4/§5 后重试。</span>'; }
+};
+</script>
+</body>
+</html>
