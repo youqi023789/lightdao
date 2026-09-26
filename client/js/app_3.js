@@ -12,6 +12,14 @@ async function loadCosmjs(){
   }
   return null;
 }
+window.LD = null;
+(async()=>{
+  const c = await loadCosmjs();
+  if(!c){ return; }
+  const { SigningCosmWasmClient } = c.cs;
+  const { DirectSecp256k1HdWallet } = c.ps;
+  const { GasPrice } = c.sg;
+  let wallet=null, client=null;
 window.__mrq=(m)=>client.queryContractSmart(CFG.miningReward,m);
   window.LD = {
     addr:null,
