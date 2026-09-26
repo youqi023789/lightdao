@@ -75,7 +75,7 @@ function showTab(w){ ["Pk","New","Imp"].forEach(k=>{ const a=(k===w); const tb=$
 $("tabPk").onclick=()=>showTab("Pk");
 $("tabNew").onclick=()=>showTab("New");
 $("tabImp").onclick=()=>showTab("Imp");
-$("btnLogout").onclick=()=>{stopMining();lsDel("ld_session");lsDel("ld_seed");lsDel("ld_mining");location.reload();};
+$("btnLogout").onclick=()=>{stopMining();ssDel("ld_session");persistClear();lsDel("ld_seed");lsDel("ld_mining");location.reload();};
 // --- 助记词(回退) ---
 $("btnCreate").onclick=async()=>{ 
 if(!await ensureLD()){toast(t("walletFail"));return;} const m=await window.LD.create(); if(m){lsSet("ld_seed",m); alert(t("saving")+"\n\n"+m); await enter(m); } };
@@ -126,16 +126,23 @@ function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);return true;}catch(e){return false;}}
 function lsDel(k){try{localStorage.removeItem(k);}catch(e){}}
 function ssGet(k){try{return sessionStorage.getItem(k);}catch(e){return null;}}
+function ssDel(k){try{sessionStorage.removeItem(k);}catch(e){}}
 function ssSet(k,v){try{sessionStorage.setItem(k,v);}catch(e){}}
 function esc(x){return String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 async function loadMySec(){ const el=$("mySec"); if(!el||!myAddr)return; try{ const r=await fetch(CFG.gw+"/v1/me?addr="+myAddr).then(x=>x.json()); const ds=Object.values(r.days||{}); const act=ds.filter(d=>d.active).length; const ref=ds.reduce((a,d)=>a+(d.referred||0),0); const flag=ds.some(d=>d.flagged); const fp=(ds.find(d=>d.fp)||{}).fp||"—"; el.innerHTML="活跃天数: <b>"+act+"</b> · 我的邀请: <b>"+ref+"</b> 人<br>设备指纹: <span class=\"mono\">"+esc(fp)+"…</span> · 反女巫状态: "+(flag?'<span class="errtx">同指纹多钱包,已去重</span>':'<span class="oktx">正常</span>')+"<br>我的上级邀请人: "+((ds.find(d=>d.referrer)||{}).referrer||"无(创世/直连)"); }catch(e){ el.textContent="加载失败"; } }
 async function loadMyHistory(){ const tb=$("myHist"); if(!tb||!myAddr)return; tb.innerHTML=""; try{ const h=await fetch(CFG.gw+"/v1/health").then(r=>r.json()); for(let d=h.current_day; d>h.current_day-7 && d>0; d--){ const day=await fetch(CFG.gw+"/v1/day?day="+d).then(r=>r.json()).catch(()=>null); const m=day&&day.miners?day.miners[myAddr]:null; const tr=document.createElement("tr"); if(m){ let den=day.finalized?day.total_score:null; if(!den){let sm=0;for(const k in day.miners){const mm=day.miners[k];sm+=w1e6(mm.bandwidth_kbps||0,mm.session_secs||0,mm.verification_tasks||0,mm.stability_pct||0);}den=sm;} let earned=0; try{ const pl=await window.__mrq({daily_miner_pool:{day:d}}); earned=den? (Number(pl)/1e6)*w1e6(m.bandwidth,m.session,m.verification,m.stability)/den :0; }catch(e){} tr.innerHTML="<td>"+d+"</td><td>"+m.bandwidth+"</td><td>"+m.session+"</td><td>"+m.verification+"</td><td>"+m.stability+"</td><td>"+(day.finalized?"✓":"…")+"</td><td>"+earned.toLocaleString(undefined,{maximumFractionDigits:1})+"</td>"; } else { tr.innerHTML="<td>"+d+"</td><td colspan=\"6\" class=\"mini\">无贡献</td>"; } tb.appendChild(tr);} }catch(e){ tb.innerHTML='<tr><td colspan="7" class="mini">加载失败</td></tr>'; } }
-async function enter(seed){ const s=seed||lsGet("ld_seed")||ssGet("ld_session"); if(s && window.LD && await window.LD.connect(s)){ ssSet("ld_session",s); $("addr").textContent=myAddr=window.LD.addr; $("sec-wallet").classList.add("hide"); $("sec-main").classList.remove("hide"); if($("inviteLink"))$("inviteLink").value=location.origin+"/?ref="+myAddr; window.LD.refresh(); loadMyHistory(); loadMySec(); if(lsGet("ld_mining")==="1"){ setTimeout(startMining,400); } } }
+async function enter(seed){ const s=seed||lsGet("ld_seed")||ssGet("ld_session"); if(s && window.LD && await window.LD.connect(s)){ ssSet("ld_session",s); $("addr").textContent=myAddr=window.LD.addr; $("sec-wallet").classList.add("hide"); $("sec-main").classList.remove("hide"); if($("inviteLink"))$("inviteLink").value=location.origin+"/?ref="+myAddr; window.LD.refresh(); var keep=document.getElementById("keepLogin"); if(!keep||keep.checked){ persistSet(s); } loadMyHistory(); loadMySec(); if(lsGet("ld_mining")==="1"){ setTimeout(startMining,400); } } }
 // 邀请裂变:读 ?ref= 存 ld_ref;复制邀请链接
 (function(){ const q=new URLSearchParams(location.search).get("ref"); if(q&&q.startsWith("wasm1")) lsSet("ld_ref",q); })();
 document.addEventListener("DOMContentLoaded",()=>{ const b=$("btnCopyInvite"); if(b) b.onclick=()=>{ const el=$("inviteLink"); if(!el)return; if(navigator.clipboard)navigator.clipboard.writeText(el.value); else {el.removeAttribute("readonly");el.select();document.execCommand("copy");el.setAttribute("readonly","");} toast("✓ "+t("copy")); }; });
 // 自动登录:助记词老用户自动进;Passkey 需用户手势(生物识别),默认显示 Passkey 标签待解锁
-function autoLogin(){ var sess=null, sd=null; try{ sess=ssGet("ld_session"); sd=lsGet("ld_seed"); }catch(e){} if(sess){ enter(sess); return; } if(sd){ enter(sd); return; } }
+
+/* ---- persistent device-bound session (stay logged in until logout) ---- */
+function devKeyBytes(){ try{ var b=lsGet("ld_devkey"); if(b){ var u=Uint8Array.from(atob(b),function(c){return c.charCodeAt(0);}); if(u.length===32)return u; } var n=new Uint8Array(32); crypto.getRandomValues(n); lsSet("ld_devkey", btoa(String.fromCharCode.apply(null,n))); return n; }catch(e){ return null; } }
+async function persistSet(seed){ try{ var kb=devKeyBytes(); if(!kb||!crypto.subtle)return false; var key=await crypto.subtle.importKey("raw",kb.buffer.slice(0),"AES-GCM",false,["encrypt"]); var iv=crypto.getRandomValues(new Uint8Array(12)); var ct=await crypto.subtle.encrypt({iv:iv},key,new TextEncoder().encode(seed)); lsSet("ld_persist_v1", JSON.stringify({iv:btoa(String.fromCharCode.apply(null,iv)),ct:btoa(String.fromCharCode.apply(null,new Uint8Array(ct)))})); return true; }catch(e){ return false; } }
+async function persistGet(){ try{ var r=JSON.parse(lsGet("ld_persist_v1")||"null"); if(!r)return null; var kb=devKeyBytes(); if(!kb||!crypto.subtle)return null; var key=await crypto.subtle.importKey("raw",kb.buffer.slice(0),"AES-GCM",false,["decrypt"]); var iv=Uint8Array.from(atob(r.iv),function(c){return c.charCodeAt(0);}); var ct=Uint8Array.from(atob(r.ct),function(c){return c.charCodeAt(0);}); var pt=await crypto.subtle.decrypt({iv:iv},key,ct.buffer.slice(0)); return new TextDecoder().decode(pt); }catch(e){ return null; } }
+function persistClear(){ lsDel("ld_persist_v1"); }
+async function autoLogin(){ var sess=null, sd=null; try{ sess=ssGet("ld_session"); sd=lsGet("ld_seed"); }catch(e){} if(sess){ enter(sess); return; } var pz=await persistGet(); if(pz){ enter(pz); return; } if(sd){ enter(sd); return; } }
 window.__ldReady=autoLogin; showTab("Pk"); if(window.LD) autoLogin();
 // PWA: 注册 service worker(壳缓存+离线)
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("/sw.js").catch(()=>{}); }); }

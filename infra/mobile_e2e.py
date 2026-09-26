@@ -90,7 +90,12 @@ async def main():
                 await pg.send("Page.navigate", {"url": "https://lightdao.net/app.html"})
                 await asyncio.sleep(4)
                 auto = await pg.evaljs('!document.getElementById("sec-main").classList.contains("hide")')
-                res["steps"]["reload_auto_login"] = bool(auto) if name != "ios_private_storage_throw" else True  # storage disabled: persistence impossible by design
+                res["steps"]["reload_auto_login"] = bool(auto) if name != "ios_private_storage_throw" else True
+                await pg.evaljs('try{sessionStorage.removeItem("ld_session");}catch(e){}')
+                await pg.send("Page.navigate", {"url": "https://lightdao.net/app.html"})
+                await asyncio.sleep(4)
+                pz = await pg.evaljs('!document.getElementById("sec-main").classList.contains("hide")')
+                res["steps"]["persist_after_session_clear"] = bool(pz) if name != "ios_private_storage_throw" else True  # storage disabled: persistence impossible by design
                 ref = await pg.evaljs("(function(){try{return localStorage.getItem('ld_ref');}catch(e){return 'throw';}})()")
                 res["steps"]["ld_ref_default_founder"] = (ref == FOUNDER) or (name == "ios_private_storage_throw")
                 # landing checks
