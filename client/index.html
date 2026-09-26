@@ -130,6 +130,7 @@ footer{text-align:center;color:var(--mut);font-size:11.5px;margin-top:8px}
       <div style="height:12px"></div>
       <button class="btn ghost" id="btnClaim" data-i="claim">领取奖励</button>
       <button class="btn ghost" id="btnExportSeed" style="margin-top:8px">导出助记词备份 / Export seed backup</button>
+      <button class="btn ghost" id="btnSocialMain" style="margin-top:8px">设置社交恢复(分片) / Social recovery</button>
       <a class="btn ghost" href="/governance.html" style="margin-top:8px;display:block;text-align:center;text-decoration:none">治理 · Governance(投票/提案/金库)</a>
     </div>
     <div class="card">
@@ -264,6 +265,7 @@ $("btnPkSocial").onclick=async()=>{
 };
 $("btnClaim").onclick=async()=>{ if(!window.LD){toast(t("walletFail"));return;} await window.LD.claim(); };
 $("btnExportSeed").onclick=async()=>{ if(!window.LDPasskey){toast(t("walletFail"));return;} try{ const m=await window.LDPasskey.unlock(); alert("⚠ 你的助记词(唯一离线备份)。请抄写在纸上,切勿截图或发送给任何人:\n\n"+m); }catch(e){ toast(t("pkFail")+(e.message||e)); } };
+$("btnSocialMain").onclick=async()=>{ if(!window.LDPasskey||!window.LDPasskey.hasWallet()){toast(t("pkSocialFirst"));return;} try{ let pin=null; const rec=JSON.parse(localStorage.getItem("ld_passkey_v1")||"null"); if(rec&&rec.kdf==="pin"){pin=prompt(t("pkPinPrompt"));} const shares=await window.LDPasskey.setupSocialRecovery(pin,3,5); alert(t("pkSocialHint")+"\n\n"+shares.map((s,i)=>(i+1)+". "+s).join("\n")); }catch(e){ toast(t("pkFail")+(e.message||e)); } };
 async function enter(seed){ const s=seed||localStorage.getItem("ld_seed"); if(s && window.LD && await window.LD.connect(s)){ $("addr").textContent=myAddr=window.LD.addr; $("sec-wallet").classList.add("hide"); $("sec-main").classList.remove("hide"); if($("inviteLink"))$("inviteLink").value=location.origin+"/?ref="+myAddr; window.LD.refresh(); } }
 // 邀请裂变:读 ?ref= 存 ld_ref;复制邀请链接
 (function(){ const q=new URLSearchParams(location.search).get("ref"); if(q&&q.startsWith("wasm1")) localStorage.setItem("ld_ref",q); })();
