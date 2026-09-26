@@ -29,6 +29,21 @@ TARGETS    = {"bandwidth_kbps": 10_000, "session_secs": 3_600, "verification_tas
 os.makedirs(DATA, exist_ok=True)
 LOCK = threading.Lock()
 
+# ---- per-IP rate limiting ----
+import time as _time
+_RATE = {}
+_RATE_LIM = {"heartbeat": int(os.environ.get("GW_RATE_HB", 60)), "get": int(os.environ.get("GW_RATE_GET", 300)), "post": int(os.environ.get("GW_RATE_POST", 120))}   # per minute per IP
+def _rate_ok(ip, kind):
+    now = _time.time()
+    lim = _RATE_LIM.get(kind, 600)
+    e = _RATE.setdefault(ip, {})
+    w = e.get(kind)
+    if not w or (now - w[1]) > 60:
+        e[kind] = [1, now]
+        return True
+    w[0] += 1
+    return w[0] <= lim
+
 # ---------- Merkle (与合约严格一致) ----------
 def leaf_hash(miner: str, day: int, bw: int, se: int, ve: int, st: int) -> bytes:
     pre = miner.encode() + day.to_bytes(8, "little") \
@@ -124,6 +139,16 @@ def finalize_day(day):
             if len(fset) > 3:
                 flagged += [m for m in addrs if ips.get(m)==ip]
         d["flagged"] = sorted(set(flagged))
+        # DELEG SPLIT (whitepaper mobile-adaptation): delegator keeps 70% session, relay node gets 30%
+        delegs = d.get("delegations") or {}
+        for m, D in list(delegs.items()):
+            if m not in scores or not D or D == m: continue
+            mv = scores[m].get("session", 0) * 0.3
+            scores[m]["session"] = scores[m].get("session", 0) - mv
+            if D not in scores:
+                scores[D] = {"bandwidth": 0, "session": 0, "verification": 0, "stability": 100}
+                addrs = sorted(set(addrs) | {D})
+            scores[D]["session"] = scores[D].get("session", 0) + mv
         leaves = [leaf_hash(a, day, scores[a]["bandwidth"], scores[a]["session"], scores[a]["verification"], scores[a]["stability"]) for a in addrs]
         root, levels = build_tree(leaves)
         proofs = {a: proof_for(levels, i) for i, a in enumerate(addrs)}
@@ -145,6 +170,7 @@ class H(BaseHTTPRequestHandler):
         self.send_response(204); self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Headers", "*"); self.send_header("Access-Control-Allow-Methods", "*"); self.end_headers()
     def do_GET(self):
+        if not _rate_ok(self.client_address[0], "get"): return self._send(429, {"error": "rate limited"})
         u = urlparse(self.path); q = parse_qs(u.query)
         if u.path == "/v1/health": return self._send(200, {"ok": True, "current_day": current_day()})
         if u.path == "/v1/probe":
@@ -191,6 +217,8 @@ class H(BaseHTTPRequestHandler):
             return self._send(200, out)
         return self._send(404, {"error": "not found"})
     def do_POST(self):
+        _u = urlparse(self.path)
+        if not _rate_ok(self.client_address[0], "heartbeat" if _u.path == "/v1/heartbeat" else "post"): return self._send(429, {"error": "rate limited"})
         u = urlparse(self.path); n = int(self.headers.get("Content-Length", 0))
         body = json.loads(self.rfile.read(n) or b"{}")
         if u.path == "/v1/heartbeat":
@@ -206,6 +234,9 @@ class H(BaseHTTPRequestHandler):
                 d.setdefault("fps", {})[miner] = fp
                 d.setdefault("ips", {})[miner] = ip
                 ref = body.get("referrer")
+                dlg = body.get("delegate_to")
+                if dlg and dlg.startswith("wasm1") and dlg != miner:
+                    d.setdefault("delegations", {})[miner] = dlg
                 if ref and ref.startswith("wasm1") and ref != miner:
                     d.setdefault("referrals", {})
                     if miner not in d["referrals"]:

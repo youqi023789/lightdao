@@ -12,3 +12,17 @@ document.getElementById("themeT").onclick=function(){var c=document.documentElem
       tb.appendChild(tr);});
   }catch(e){document.querySelector("#vt tbody").innerHTML='<tr><td colspan="4">加载失败:'+e.message+"</td></tr>";}
 })();
+
+
+(async()=>{ try{
+  var m=await import("https://cdn.jsdelivr.net/npm/@cosmjs/cosmwasm-stargate@0.32.4/+esm");
+  var c=await m.CosmWasmClient.connect(location.origin+"/rpc/");
+  var VR="wasm1egt8ut5swmck6xt5lqeuhkmhp44rwsv73ka8jfp7rn2kg629cdeqdlh6qf";
+  var cnt=await c.queryContractSmart(VR,{count:{}}).catch(()=>null);
+  var act=await c.queryContractSmart(VR,{active_validators:{}}).catch(()=>[]);
+  var tb=document.querySelector("#vrt tbody"); if(!tb)return; tb.innerHTML="";
+  var list=(act&&act.length)?act:[];
+  if(!list.length){ tb.innerHTML='<tr><td colspan="2">暂无注册候选(注册开放后显示)</td></tr>'; }
+  else list.forEach(function(v){ var tr=document.createElement("tr"); tr.innerHTML="<td>"+(v.addr||v)+"</td><td>"+(v.active||v.banned?"see chain":"active")+"</td>"; tb.appendChild(tr); });
+  var n=document.createElement("caption"); 
+}catch(e){ var tb2=document.querySelector("#vrt tbody"); if(tb2)tb2.innerHTML='<tr><td colspan="2">加载失败</td></tr>'; } })();
