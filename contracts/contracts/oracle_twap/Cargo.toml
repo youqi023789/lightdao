@@ -1,0 +1,17 @@
+[package]
+name = "oracle_twap"
+version = "0.1.0"
+edition = "2021"
+description = "LightDAO price oracle: on-chain TWAP + external multi-source aggregation with manipulation resistance"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+cosmwasm-std = { workspace = true }
+cosmwasm-schema = { workspace = true }
+cw-storage-plus = { workspace = true }
+cw2 = { workspace = true }
+schemars = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }

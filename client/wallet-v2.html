@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LightDAO §4.9 Passkey 钱包 v1(staging)</title>
+<style>
+:root{--bg:#070b18;--bg2:#0d1430;--card:rgba(255,255,255,.055);--line:rgba(255,255,255,.10);
+--tx:#eaf0ff;--mut:#8a96c4;--acc:#5b8cff;--acc2:#9b6bff;--ok:#27d7a0;--warn:#ffb454;--err:#ff5d73;
+--grad:linear-gradient(135deg,#5b8cff,#9b6bff 55%,#ff6bd6);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+background:radial-gradient(1200px 700px at 80% -10%,rgba(155,107,255,.20),transparent),radial-gradient(900px 600px at -10% 110%,rgba(91,140,255,.18),transparent),var(--bg);
+color:var(--tx);min-height:100vh;line-height:1.55;padding:18px 16px 50px}
+.wrap{max-width:600px;margin:0 auto}
+h1{font-size:21px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+.sub{color:var(--mut);font-size:13px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:13px;backdrop-filter:blur(8px)}
+.card h2{font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.btn{width:100%;border:0;border-radius:12px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;color:#fff;background:var(--grad);margin-top:8px}
+.btn.ghost{background:var(--card);border:1px solid var(--line);color:var(--tx)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn:active{transform:scale(.985)}
+input,textarea{width:100%;background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:10px;color:var(--tx);padding:10px;font-size:13px;font-family:inherit;margin-top:6px}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--mut);word-break:break-all}
+.log{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:10px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;max-height:200px;overflow:auto;white-space:pre-wrap;margin-top:8px}
+.ok{color:var(--ok)}.err{color:var(--err)}.warn{color:var(--warn)}.mut{color:var(--mut)}
+.badge{display:inline-block;font-size:11px;padding:2px 9px;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.05)}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.share{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:8px;padding:8px;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;word-break:break-all;margin-top:6px}
+a{color:var(--acc)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>◈ LightDAO Passkey 钱包 <span class="badge">v1 staging</span></h1>
+  <p class="sub">§4.9 无种子体验(WebAuthn Passkey)+ Shamir 3-of-5 社交恢复。链上签名仍用 secp256k1。<b>这是测试页,不动主客户端。</b></p>
+
+  <div class="card">
+    <h2>0. 环境 & 密码学自检</h2>
+    <div id="env" class="mono"></div>
+    <button class="btn ghost" id="btnSelfTest">运行密码学自检(Shamir + AES-GCM)</button>
+    <div class="log" id="logSelf">尚未运行</div>
+  </div>
+
+  <div class="card">
+    <h2>1. 创建 Passkey 钱包</h2>
+    <p class="mut" style="font-size:12.5px">生成 12 词助记词 → 注册 Passkey → 用 Passkey 派生密钥加密助记词 → 仅存密文。日常登录零助记词。</p>
+    <input id="pin" type="password" placeholder="PIN(仅当浏览器不支持 PRF 时用作回退密钥,可留空尝试)">
+    <button class="btn" id="btnCreate">创建 Passkey 钱包</button>
+    <div class="log" id="logCreate">—</div>
+  </div>
+
+  <div class="card">
+    <h2>2. Passkey 登录(解锁)</h2>
+    <button class="btn" id="btnUnlock">用 Passkey 解锁</button>
+    <div class="log" id="logUnlock">—</div>
+  </div>
+
+  <div class="card">
+    <h2>3. 社交恢复设置(Shamir 3-of-5)</h2>
+    <p class="mut" style="font-size:12.5px">把助记词切成 5 份,任 3 份可恢复。分给 5 个监护人,<b>本地不存分片</b>。</p>
+    <button class="btn ghost" id="btnSetupRecovery">生成分片(需先解锁)</button>
+    <div id="shares"></div>
+  </div>
+
+  <div class="card">
+    <h2>4. 从分片恢复</h2>
+    <p class="mut" style="font-size:12.5px">粘贴任意 ≥3 份分片(每行一份)。</p>
+    <textarea id="recoverShares" rows="4" placeholder="1.xxxx&#10;3.yyyy&#10;5.zzzz"></textarea>
+    <button class="btn ghost" id="btnRecover">重建助记词</button>
+    <div class="log" id="logRecover">—</div>
+  </div>
+
+  <div class="card">
+    <h2>5. 链上验证(解锁后)</h2>
+    <div class="mono" id="addrLine">地址: —</div>
+    <div class="mono" id="balLine">余额: —</div>
+    <button class="btn ghost" id="btnBal">查询余额(用解锁的钱包)</button>
+  </div>
+
+  <p class="sub" style="margin-top:14px">← 返回 <a href="/">主客户端</a> · 测试需 HTTPS + 支持 WebAuthn 的浏览器(Chrome/Edge/Safari)。Passkey 绑定域名 lightdao.net。</p>
+</div>
+
+<script src="/passkey-wallet.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+function log(id,msg,cls){const el=$(id);el.innerHTML=(cls?`<span class="${cls}">`:"")+String(msg).replace(/</g,"&lt;")+(cls?"</span>":"");}
+function envCheck(){
+  const sec=window.isSecureContext;
+  const wa=typeof PublicKeyCredential!=="undefined";
+  const prf=wa&&typeof PublicKeyCredential.isUserVerifiablePlatformAuthenticatorAvailable==="function";
+  const sub=!!(crypto&&crypto.subtle);
+  const ldp=typeof window.LDPasskey!=="undefined";
+  $("env").innerHTML=
+    `secureContext(HTTPS): <span class="${sec?'ok':'err'}">${sec}</span> · `+
+    `WebAuthn: <span class="${wa?'ok':'err'}">${wa}</span> · `+
+    `WebCrypto: <span class="${sub?'ok':'err'}">${sub}</span> · `+
+    `LDPasskey: <span class="${ldp?'ok':'err'}">${ldp}</span> · `+
+    `hostname: ${location.hostname}`;
+}
+envCheck();
+
+// ---- 自检: Shamir 往返 + AES-GCM ----
+$("btnSelfTest").onclick=async()=>{
+  const P=window.LDPasskey; if(!P){log("logSelf","LDPasskey 未加载","err");return;}
+  let out="";
+  try{
+    // Shamir 3-of-5 往返(多轮)
+    const msg="abandon ability able about above absent absorb abstract absurd abuse access";
+    const bytes=new TextEncoder().encode(msg);
+    let rtOk=true,secOk=true;
+    for(let r=0;r<50;r++){
+      const sh=P.shamirSplit(bytes,3,5);
+      const strs=sh.map(P.shareToStr);
+      // 任取3份
+      const pick=[strs[0],strs[2],strs[4]].map(P.shareFromStr);
+      const rec=new TextDecoder().decode(P.shamirCombine(pick));
+      if(rec!==msg){rtOk=false;break;}
+      // 2份不应重建出原文
+      const bad=[strs[1],strs[3]].map(P.shareFromStr);
+      if(new TextDecoder().decode(P.shamirCombine(bad))===msg){secOk=false;break;}
+    }
+    out+=`Shamir 3-of-5 往返(50轮): ${rtOk?"PASS":"FAIL"}\n`;
+    out+=`Shamir 2份不可重建(安全性): ${secOk?"PASS":"FAIL"}\n`;
+    // GF(256) 逆元
+    let invOk=true;for(let a=1;a<256;a++){if(P.gmul(a,P.gdiv?P.gdiv(1,a):0)!==1){/*gdiv未导出,跳过*/}}
+    // AES-GCM 往返
+    const key=await crypto.subtle.generateKey({name:"AES-GCM",length:256},false,["encrypt","decrypt"]);
+    const iv=crypto.getRandomValues(new Uint8Array(12));
+    const pt=new TextEncoder().encode("secret-seed-"+Date.now());
+    const ct=await crypto.subtle.encrypt({name:"AES-GCM",iv},key,pt);
+    const dec=new Uint8Array(await crypto.subtle.decrypt({name:"AES-GCM",iv},key,ct));
+    out+=`AES-GCM 往返: ${new TextDecoder().decode(dec)===new TextDecoder().decode(pt)?"PASS":"FAIL"}\n`;
+    out+=(rtOk&&secOk)?"\n结论: 密码学正确 ✓":"\n结论: 有错误 ✗";
+    log("logSelf",out,(rtOk&&secOk)?"ok":"err");
+  }catch(e){log("logSelf","自检异常: "+e.message,"err");}
+};
+
+let MNEM=null; // 仅内存,刷新即失
+
+// ---- 创建 ----
+$("btnCreate").onclick=async()=>{
+  const P=window.LDPasskey; if(!P){log("logCreate","LDPasskey 未加载","err");return;}
+  if(!window.LD){log("logCreate","cosmjs 未加载(网络受限),无法生成助记词。请检查 CDN。","warn");return;}
+  try{
+    log("logCreate","生成助记词 + 注册 Passkey(请在弹窗完成生物识别)…","mut");
+    const mnem=await window.LD.createMnemonic();
+    const pin=$("pin").value.trim();
+    let r=await P.create(mnem,{userLabel:"lightdao-"+Date.now(),pin:pin||undefined});
+    if(r.needPin){
+      const p2=prompt("此浏览器不支持 Passkey PRF 扩展。请设一个 PIN 作为加密密钥(≥6位):");
+      if(!p2||p2.length<6){log("logCreate","已取消(PIN 太短)","warn");return;}
+      r=await P.createWithPin(mnem,r.credId,r.partial.salt,p2);
+    }
+    MNEM=mnem;
+    log("logCreate",`✓ 钱包已创建。密钥来源: ${r.usedPrf?"Passkey PRF(无种子体验)":"PIN 回退"}。\n助记词已加密存储,明文不落地。\n(本页内存暂存助记词用于测试,刷新即清)\n地址将由下方解锁后显示。`,"ok");
+    await afterUnlock(mnem);
+  }catch(e){log("logCreate","创建失败: "+(e.message||e),"err");}
+};
+
+// ---- 解锁 ----
+$("btnUnlock").onclick=async()=>{
+  const P=window.LDPasskey; if(!P){log("logUnlock","LDPasskey 未加载","err");return;}
+  if(!P.hasWallet()){log("logUnlock","尚无钱包,请先创建。","warn");return;}
+  try{
+    log("logUnlock","请完成 Passkey 生物识别…","mut");
+    let mnem;
+    try{ mnem=await P.unlock(); }
+    catch(e){ const pin=prompt("PRF 不可用或需要 PIN:"); mnem=await P.unlock(pin); }
+    MNEM=mnem;
+    log("logUnlock","✓ 解锁成功,助记词已解密到内存。","ok");
+    await afterUnlock(mnem);
+  }catch(e){log("logUnlock","解锁失败: "+(e.message||e),"err");}
+};
+
+async function afterUnlock(mnem){
+  if(!window.LD){log("logUnlock","cosmjs 未加载,无法连链。","warn");return;}
+  const ok=await window.LD.connect(mnem);
+  if(ok){ $("addrLine").textContent="地址: "+window.LD.addr; await window.LD.refreshBal().then(b=>$("balLine").textContent="余额: "+b+" ulight").catch(()=>{}); }
+}
+
+// ---- 社交恢复设置 ----
+$("btnSetupRecovery").onclick=async()=>{
+  const P=window.LDPasskey;
+  try{
+    let pin=null;
+    const rec=JSON.parse(localStorage.getItem("ld_passkey_v1")||"null");
+    if(rec&&rec.kdf==="pin"){pin=prompt("输入 PIN 以解锁生成分片:");}
+    const strs=await P.setupSocialRecovery(pin,3,5);
+    $("shares").innerHTML=strs.map((s,i)=>`<div class="share">分片 ${i+1}/5(给监护人 ${i+1}):<br>${s}</div>`).join("")+
+      `<p class="warn" style="font-size:12px;margin-top:8px">⚠ 抄下分发给 5 位监护人。任 3 份可恢复你的钱包。本地不保存。</p>`;
+  }catch(e){$("shares").innerHTML=`<span class="err">失败: ${e.message||e}(可能需先解锁)</span>`;}
+};
+
+// ---- 从分片恢复 ----
+$("btnRecover").onclick=()=>{
+  const P=window.LDPasskey;
+  try{
+    const lines=$("recoverShares").value.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+    if(lines.length<3){log("logRecover","至少粘贴 3 份分片。","warn");return;}
+    const mnem=P.recoverFromShares(lines);
+    MNEM=mnem;
+    log("logRecover","✓ 重建成功!助记词:\n"+mnem+"\n\n(可据此重建 Passkey 钱包或导入主客户端)","ok");
+    afterUnlock(mnem);
+  }catch(e){log("logRecover","恢复失败: "+(e.message||e),"err");}
+};
+
+// ---- 余额 ----
+$("btnBal").onclick=async()=>{ if(window.LD&&window.LD.addr){ const b=await window.LD.refreshBal(); $("balLine").textContent="余额: "+b+" ulight"; } else log("logUnlock","请先解锁。","warn"); };
+
+// ---- cosmjs 懒加载(复用主客户端模式)+ 助记词生成 ----
+const CDN=["https://cdn.jsdelivr.net/npm/","https://esm.sh/"];
+async function loadCosmjs(){
+  if(window.__c)return window.__c;
+  for(const base of CDN){try{
+    const [cs,ps,sg]=await Promise.all([
+      import(base+"@cosmjs/cosmwasm-stargate@0.32.4"+(base==="https://esm.sh/"?"":"/+esm")),
+      import(base+"@cosmjs/proto-signing@0.32.4"+(base==="https://esm.sh/"?"":"/+esm")),
+      import(base+"@cosmjs/stargate@0.32.4"+(base==="https://esm.sh/"?"":"/+esm"))]);
+    window.__c={cs,ps,sg};return window.__c;}catch(e){}}
+  return null;
+}
+window.LD=null;
+(async()=>{
+  const c=await loadCosmjs(); if(!c)return;
+  const {SigningCosmWasmClient}=c.cs,{DirectSecp256k1HdWallet}=c.ps,{GasPrice}=c.sg;
+  let wallet=null,client=null;
+  window.LD={
+    addr:null,
+    async createMnemonic(){const w=await DirectSecp256k1HdWallet.generate(12,{prefix:"wasm"});return w.mnemonic;},
+    async connect(seed){try{wallet=await DirectSecp256k1HdWallet.fromMnemonic(seed,{prefix:"wasm"});const[a]=await wallet.getAccounts();this.addr=a.address;client=await SigningCosmWasmClient.connectWithSigner(location.origin+"/rpc/",wallet,{gasPrice:GasPrice.fromString("0.0025ulight")});return true;}catch(e){return false;}},
+    async refreshBal(){const b=await client.getBalance(this.addr,"ulight");return b.amount;},
+  };
+})();
+</script>
+</body>
+</html>

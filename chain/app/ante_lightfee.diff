@@ -1,0 +1,29 @@
+--- app/ante.go.bak	2026-09-22 15:12:18.948579851 +0800
++++ app/ante.go	2026-09-22 15:12:25.356599242 +0800
+@@ -13,6 +13,7 @@
+ 	sdk "github.com/cosmos/cosmos-sdk/types"
+ 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
+ 
++	"github.com/CosmWasm/wasmd/x/lightfee"
+ 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+ 	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"
+ )
+@@ -27,6 +28,9 @@
+ 	WasmKeeper            *wasmkeeper.Keeper
+ 	TXCounterStoreService corestoretypes.KVStoreService
+ 	CircuitKeeper         *circuitkeeper.Keeper
++	// LightFeeKeeper drives the §4.5 USD-anchored min-gas-price check.
++	// nil => decorator is a passthrough (safe fallback for tests / early boot).
++	LightFeeKeeper *lightfee.Keeper
+ }
+ 
+ // NewAnteHandler constructor
+@@ -62,6 +66,8 @@
+ 		ante.NewTxTimeoutHeightDecorator(),
+ 		ante.NewValidateMemoDecorator(options.AccountKeeper),
+ 		ante.NewConsumeGasForTxSizeDecorator(options.AccountKeeper),
++		// LightDAO §4.5: enforce USD-anchored min-gas-price BEFORE fee deduction.
++		lightfee.NewMinGasPriceDecorator(options.LightFeeKeeper),
+ 		ante.NewDeductFeeDecorator(options.AccountKeeper, options.BankKeeper, options.FeegrantKeeper, options.TxFeeChecker),
+ 		ante.NewSetPubKeyDecorator(options.AccountKeeper), // SetPubKeyDecorator must be called before all signature verification decorators
+ 		ante.NewValidateSigCountDecorator(options.AccountKeeper),

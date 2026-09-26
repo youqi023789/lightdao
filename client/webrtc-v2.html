@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LightDAO §4.7 WebRTC 中继测试(staging)</title>
+<style>
+:root{--bg:#070b18;--card:rgba(255,255,255,.055);--line:rgba(255,255,255,.10);--tx:#eaf0ff;--mut:#8a96c4;--ok:#27d7a0;--err:#ff5d73;--warn:#ffb454;--grad:linear-gradient(135deg,#5b8cff,#9b6bff 55%,#ff6bd6);}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--tx);line-height:1.55;padding:18px 16px 50px}
+.wrap{max-width:640px;margin:0 auto}
+h1{font-size:20px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+.sub{color:var(--mut);font-size:13px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:13px}
+.card h2{font-size:15px;margin-bottom:10px}
+.btn{width:100%;border:0;border-radius:12px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;color:#fff;background:var(--grad);margin-top:8px}
+.btn.ghost{background:var(--card);border:1px solid var(--line);color:var(--tx)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.log{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:10px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;max-height:260px;overflow:auto;white-space:pre-wrap;margin-top:8px}
+.ok{color:var(--ok)}.err{color:var(--err)}.warn{color:var(--warn)}.mut{color:var(--mut)}
+.stat{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.stat div{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:12px}
+.stat b{display:block;font-size:16px}
+.peer{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-family:ui-monospace,monospace;font-size:11px;margin-top:6px;cursor:pointer}
+.peer:hover{border-color:#9b6bff}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>◈ LightDAO WebRTC 中继测试 <span style="font-size:11px;color:var(--mut)">staging</span></h1>
+<p class="sub">§4.7 P2P 数据通道 + TURN 兜底 + 中继字节计量。开<b>两个</b>浏览器窗口(或两台设备)各打开本页,点「连接」后互相发现并建立数据通道,观察中继字节增长。</p>
+
+<div class="card">
+  <h2>1. 环境</h2>
+  <div id="env" class="mut" style="font-size:12px"></div>
+  <label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;color:var(--mut)">
+    <input type="checkbox" id="forceRelay" style="width:auto"> 强制走 TURN 中继(测试 TURN 端口用;不勾则优先 P2P 直连)
+  </label>
+  <button class="btn" id="btnStart">连接信令 + 获取 TURN 凭证</button>
+</div>
+
+<div class="card">
+  <h2>2. 在线对等体(点击发起 P2P)</h2>
+  <div id="peerList" class="mut" style="font-size:12px">尚未连接信令</div>
+</div>
+
+<div class="card">
+  <h2>3. 连接状态 & 中继计量</h2>
+  <div class="stat">
+    <div>ICE 状态<b id="iceState">—</b></div>
+    <div>通道<b id="dcState">—</b></div>
+    <div>类型<b id="connType">—</b></div>
+    <div>已中继<b id="relayBytes">0</b> B</div>
+    <div>已接收<b id="recvBytes">0</b> B</div>
+  </div>
+  <button class="btn ghost" id="btnSend">发送测试数据(1KB×10)</button>
+</div>
+
+<div class="card">
+  <h2>日志</h2>
+  <div class="log" id="log">—</div>
+</div>
+<p class="sub">← 返回 <a href="/" style="color:#5b8cff">主客户端</a> · 需 HTTPS + 现代浏览器</p>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+function log(m,cls){const el=$("log");const d=document.createElement("div");if(cls)d.className=cls;d.textContent="["+new Date().toLocaleTimeString()+"] "+m;el.appendChild(d);el.scrollTop=el.scrollHeight;}
+let ws=null, myId=null, pc=null, dc=null, relayBytes=0, recvBytes=0, iceServers=null, rcvIce=0;
+const ADDR="wasm1webrtctest"+Math.random().toString(36).slice(2,10)+"000000000000000000000000000000000000";
+const pcConfig=()=>({iceServers:iceServers,iceCandidatePoolSize:4,iceTransportPolicy:(document.getElementById("forceRelay")&&document.getElementById("forceRelay").checked)?"relay":"all"});
+
+// 环境检测
+(function(){
+  const rtcp=typeof RTCPeerConnection!=="undefined";
+  const dcok=rtcp&&("createDataChannel" in RTCPeerConnection.prototype);
+  $("env").innerHTML="RTCPeerConnection: <span class='"+(rtcp?"ok":"err")+"'>"+rtcp+"</span> · DataChannel: <span class='"+(dcok?"ok":"err")+"'>"+dcok+"</span> · secure: <span class='"+(isSecureContext?"ok":"err")+"'>"+isSecureContext+"</span>";
+})();
+
+async function getIce(){
+  const r=await fetch(location.origin+"/turn/");
+  const j=await r.json();
+  return j.iceServers;
+}
+function connectSignal(){
+  return new Promise((res,rej)=>{
+    const u=(location.protocol==="https:"?"wss://":"ws://")+location.host+"/signal";
+    ws=new WebSocket(u);
+    ws.onopen=()=>{ ws.send(JSON.stringify({type:"hello",addr:ADDR,region:"web"})); res(); };
+    ws.onerror=e=>rej(e);
+    ws.onmessage=ev=>handleSignal(JSON.parse(ev.data));
+  });
+}
+function handleSignal(m){
+  if(m.type==="welcome"){ myId=m.id; log("信令已连接, 我的id="+myId+" 在线="+m.peers,"ok"); refreshPeers(); }
+  else if(m.type==="peer-count"){ log("在线对等体数="+m.peers,"mut"); refreshPeers(); }
+  else if(m.type==="peer-list"){ renderPeers(m.peers); }
+  else if(m.type==="offer"){ log("收到 offer(from "+(m.from||"?")+")","mut"); onOffer(m); }
+  else if(m.type==="answer"){ log("收到 answer, 设 remoteDesc","mut"); onAnswer(m); }
+  else if(m.type==="ice"){ rcvIce++; queueOrAdd(m.candidate); }
+}
+function renderPeers(peers){
+  const el=$("peerList"); el.innerHTML="";
+  if(!peers||!peers.length){ el.textContent="暂无其他在线对等体(再开一个浏览器窗口)"; return; }
+  peers.forEach(p=>{
+    const d=document.createElement("div"); d.className="peer"; d.textContent="连接 → "+p.id+" ("+p.addr.slice(0,20)+"…)";
+    d.onclick=()=>startPeer(p.id); el.appendChild(d);
+  });
+}
+function refreshPeers(){ if(ws&&ws.readyState===1) ws.send(JSON.stringify({type:"peers"})); }
+
+let S={pc:null,pending:[],remoteSet:false,toId:null};
+function resetS(){ S={pc:null,pending:[],remoteSet:false,toId:null}; }
+function queueOrAdd(c){ if(S.remoteSet&&S.pc){ S.pc.addIceCandidate(c).catch(()=>{}); } else { S.pending.push(c); } }
+function flushPending(){ while(S.pending.length&&S.pc){ const c=S.pending.shift(); S.pc.addIceCandidate(c).catch(e=>log("addIce err:"+e,"err")); } }
+async function startPeer(toId){
+  log("发起 P2P → "+toId+(document.getElementById("forceRelay").checked?" [强制TURN]":""));
+  resetS(); S.toId=toId;
+  pc=new RTCPeerConnection(pcConfig()); S.pc=pc;
+  wirePC(pc,toId);
+  dc=pc.createDataChannel("relay",{ordered:false,maxRetransmits:3});
+  wireDC(dc);
+  const offer=await pc.createOffer();
+  await pc.setLocalDescription(offer);
+  ws.send(JSON.stringify({type:"offer",to:toId,sdp:pc.localDescription}));
+}
+async function onOffer(m){
+  log("收到 offer, 应答"+(document.getElementById("forceRelay").checked?" [强制TURN]":""));
+  resetS(); S.toId=m.from;
+  pc=new RTCPeerConnection(pcConfig()); S.pc=pc;
+  wirePC(pc,m.from);
+  pc.ondatachannel=e=>{ dc=e.channel; wireDC(dc); };
+  await pc.setRemoteDescription(m.sdp);
+  S.remoteSet=true; flushPending(); log("remoteDesc已设, 累计收到对方候选="+rcvIce,"mut");
+  const ans=await pc.createAnswer();
+  await pc.setLocalDescription(ans);
+  ws.send(JSON.stringify({type:"answer",to:m.from,sdp:pc.localDescription}));
+}
+async function onAnswer(m){ if(pc){ await pc.setRemoteDescription(m.sdp); S.remoteSet=true; flushPending(); log("remoteDesc已设, 累计收到对方候选="+rcvIce,"mut"); } }
+
+function wirePC(p,toId){
+  p.onicecandidate=e=>{
+    if(e.candidate){ log("gather: "+e.candidate.type+"/"+(e.candidate.protocol||""),"mut"); ws.send(JSON.stringify({type:"ice",to:toId,candidate:e.candidate})); }
+    else log("gather 完成","mut");
+  };
+  p.oniceconnectionstatechange=()=>{ $("iceState").textContent=p.iceConnectionState; log("ICE: "+p.iceConnectionState, p.iceConnectionState==="connected"?"ok":(p.iceConnectionState==="failed"?"err":"mut")); };
+  p.onconnectionstatechange=()=>{ log("conn: "+p.connectionState, p.connectionState==="connected"?"ok":(p.connectionState==="failed"?"err":"mut")); if(p.connectionState==="connected")detectType(p); if(p.connectionState==="failed")diagnose(p); };
+}
+async function diagnose(p){
+  try{
+    const st=await p.getStats(); let relay=0,srflx=0,host=0;
+    st.forEach(r=>{ if(r.type==="local-candidate"){ if(r.candidateType==="relay")relay++; else if(r.candidateType==="srflx")srflx++; else host++; } });
+    const fr=document.getElementById("forceRelay").checked;
+    log("诊断: 本地候选 host="+host+" srflx="+srflx+" relay="+relay+(relay===0&&fr?" → 强制TURN但无relay候选(TURN端口/凭证问题)":""), "warn");
+  }catch(e){}
+}
+function wireDC(d){
+  d.onopen=()=>{ $("dcState").textContent="open"; log("数据通道已打开 ✓","ok"); };
+  d.onclose=()=>{ $("dcState").textContent="closed"; };
+  d.onmessage=e=>{ const n=(e.data&&e.data.byteLength)||e.data.length||0; recvBytes+=n; $("recvBytes").textContent=recvBytes; };
+}
+async function detectType(p){
+  try{
+    const st=await p.getStats();
+    st.forEach(r=>{
+      if(r.type==="candidate-pair"&&r.state==="succeeded"){
+        const local=st.get(r.localCandidateId), remote=st.get(r.remoteCandidateId);
+        if(local&&remote){
+          let type=remote.candidateType+"/"+local.candidateType;
+          if(local.candidateType==="relay"||remote.candidateType==="relay") type="TURN中继";
+          else if(local.candidateType==="srflx"||remote.candidateType==="srflx") type="P2P(STUN)";
+          else type="直连(host)";
+          $("connType").textContent=type;
+          log("连接类型: "+type+(type.includes("TURN")?" (经TURN中继)":" (P2P直连)"),"ok");
+        }
+      }
+    });
+  }catch(e){}
+}
+// 发送测试数据并计量中继字节
+$("btnSend").onclick=()=>{
+  if(!dc||dc.readyState!=="open"){log("通道未打开","err");return;}
+  const chunk=new Uint8Array(1024);
+  for(let i=0;i<10;i++){ dc.send(chunk); relayBytes+=chunk.byteLength; }
+  $("relayBytes").textContent=relayBytes;
+  log("已发送 10×1KB 测试数据");
+};
+// 周期上报中继字节到信令(计量)
+setInterval(()=>{ if(ws&&ws.readyState===1&&relayBytes>0){ ws.send(JSON.stringify({type:"relay",bytes:relayBytes})); } },10000);
+
+$("btnStart").onclick=async()=>{
+  try{
+    log("获取 TURN 凭证…");
+    iceServers=await getIce();
+    log("TURN 节点数="+iceServers.length,"ok");
+    await connectSignal();
+    setInterval(refreshPeers,5000);
+  }catch(e){ log("失败: "+(e.message||e),"err"); }
+};
+</script>
+</body>
+</html>

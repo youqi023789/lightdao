@@ -1,0 +1,83 @@
+--- app/app.go.bak	2026-09-22 15:12:18.948579851 +0800
++++ app/app.go	2026-09-22 15:35:58.268873146 +0800
+@@ -128,6 +128,7 @@
+ 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+ 
+ 	"github.com/CosmWasm/wasmd/x/wasm"
++	"github.com/CosmWasm/wasmd/x/lightfee"
+ 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+ 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+ )
+@@ -218,6 +219,9 @@
+ 	TransferKeeper      ibctransferkeeper.Keeper
+ 	WasmKeeper          wasmkeeper.Keeper
+ 
++	// LightDAO §4.5 gas economics keeper (ante min-gas-price + fee 50/30/20)
++	LightFeeKeeper      *lightfee.Keeper
++
+ 	// the module manager
+ 	ModuleManager      *module.Manager
+ 	BasicModuleManager module.BasicManager
+@@ -776,6 +780,14 @@
+ 	// Uncomment if you want to set a custom migration order here.
+ 	// app.ModuleManager.SetOrderMigrations(custom order)
+ 
++	// Initialize LightDAO §4.5 lightfee keeper (config from env, static-price fallback).
++	// Placed after ModuleManager so BankKeeper and logger are ready. WasmQuerier is nil
++	// for now; oracle_twap wiring is a separate follow-up (see lightfee.QueryOraclePrice).
++	{
++		lightfeeCfg := lightfee.ConfigFromEnv()
++		app.LightFeeKeeper = lightfee.NewKeeper(lightfeeCfg, app.BankKeeper, nil, logger)
++	}
++
+ 	app.ModuleManager.RegisterInvariants(app.CrisisKeeper)
+ 	app.configurator = module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
+ 	err = app.ModuleManager.RegisterServices(app.configurator)
+@@ -890,6 +902,7 @@
+ 			WasmKeeper:            &app.WasmKeeper,
+ 			TXCounterStoreService: runtime.NewKVStoreService(txCounterStoreKey),
+ 			CircuitKeeper:         &app.CircuitKeeper,
++			LightFeeKeeper:        app.LightFeeKeeper,
+ 		},
+ 	)
+ 	if err != nil {
+@@ -921,12 +934,37 @@
+ 
+ // BeginBlocker application updates every begin block
+ func (app *WasmApp) BeginBlocker(ctx sdk.Context) (sdk.BeginBlock, error) {
+-	return app.ModuleManager.BeginBlock(ctx)
++	resp, err := app.ModuleManager.BeginBlock(ctx)
++	if err != nil {
++		return resp, err
++	}
++	// LightDAO §4.5: refresh USD-anchored min-gas-price. ModuleManager.BeginBlock
++	// swaps in a fresh EventManager, so we run lightfee with our own EM and merge
++	// its events into the response (state is shared; only events are captured here).
++	if app.LightFeeKeeper != nil {
++		emCtx := ctx.WithEventManager(sdk.NewEventManager())
++		app.LightFeeKeeper.BeginBlock(emCtx)
++		resp.Events = append(resp.Events, emCtx.EventManager().ABCIEvents()...)
++	}
++	return resp, nil
+ }
+ 
+ // EndBlocker application updates every end block
+ func (app *WasmApp) EndBlocker(ctx sdk.Context) (sdk.EndBlock, error) {
+-	return app.ModuleManager.EndBlock(ctx)
++	resp, err := app.ModuleManager.EndBlock(ctx)
++	if err != nil {
++		return resp, err
++	}
++	// LightDAO §4.5: split accumulated fee_collector balance 50% burn / 20% treasury /
++	// 30% left for x/distribution to sweep to validators on next BeginBlock.
++	// Uses a fresh EventManager (module manager discarded the outer one) and merges
++	// events into the response; bank transfers still commit to the shared store.
++	if app.LightFeeKeeper != nil {
++		emCtx := ctx.WithEventManager(sdk.NewEventManager())
++		app.LightFeeKeeper.EndBlock(emCtx)
++		resp.Events = append(resp.Events, emCtx.EventManager().ABCIEvents()...)
++	}
++	return resp, nil
+ }
+ 
+ func (a *WasmApp) Configurator() module.Configurator {

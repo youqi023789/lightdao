@@ -1,0 +1,17 @@
+[package]
+name = "insurance_fund"
+version = "0.1.0"
+edition = "2021"
+description = "LightDAO insurance fund: 10% profit accrual, claim voting, partial payout"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+cosmwasm-std = { workspace = true }
+cosmwasm-schema = { workspace = true }
+cw-storage-plus = { workspace = true }
+cw2 = { workspace = true }
+schemars = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }

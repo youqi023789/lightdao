@@ -1,0 +1,11 @@
+--- app/upgrades.go.bak	2026-09-22 16:41:59.948481907 +0800
++++ app/upgrades.go	2026-09-22 16:41:59.960481943 +0800
+@@ -26,7 +26,7 @@
+ )
+ 
+ // Upgrades list of chain upgrades
+-var Upgrades = []upgrades.Upgrade{v050.Upgrade}
++var Upgrades = []upgrades.Upgrade{v050.Upgrade, noop.NewUpgrade("v2-lightfee")}
+ 
+ // RegisterUpgradeHandlers registers the chain upgrade handlers
+ func (app *WasmApp) RegisterUpgradeHandlers() {

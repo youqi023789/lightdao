@@ -1,0 +1,19 @@
+[package]
+name = "mining_reward"
+version = "0.1.0"
+edition = "2021"
+description = "LightDAO mining reward: daily settlement, Merkle verification, halving schedule"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+cosmwasm-std = { workspace = true }
+cosmwasm-schema = { workspace = true }
+cw-storage-plus = { workspace = true }
+cw2 = { workspace = true }
+schemars = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+sha2 = "0.10"
+hex = "0.4.3"
