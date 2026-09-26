@@ -77,7 +77,7 @@ $("tabNew").onclick=()=>showTab("New");
 $("tabImp").onclick=()=>showTab("Imp");
 $("btnLogout").onclick=()=>{stopMining();lsDel("ld_session");lsDel("ld_seed");lsDel("ld_mining");location.reload();};
 // --- 助记词(回退) ---
-$("btnCreate").onclick=async()=>{ function ensureLD(ms){ ms=ms||8000; return new Promise(function(res){ if(window.LD) return res(window.LD); toast("钱包库加载中,请稍候… / loading wallet…"); var t0=Date.now(); (function chk(){ if(window.LD) return res(window.LD); if(Date.now()-t0>ms) return res(null); setTimeout(chk,150); })(); }); }
+$("btnCreate").onclick=async()=>{ 
 if(!await ensureLD()){toast(t("walletFail"));return;} const m=await window.LD.create(); if(m){lsSet("ld_seed",m); alert(t("saving")+"\n\n"+m); await enter(m); } };
 $("btnImport").onclick=async()=>{ const b=$("btnImport"); const ot=b.textContent; const m=$("mnem").value.trim(); if(!m){toast("请先粘贴 12 词助记词");return;} b.disabled=true; b.textContent="导入中… / importing…"; try{ if(!await ensureLD()){toast(t("walletFail"));return;} lsSet("ld_seed",m); await enter(m); if(myAddr){toast("✓ 已导入");} else {toast("导入失败:助记词无效或网络受限");} }catch(e){ toast(t("pkFail")+(e.message||e)); } finally{ b.disabled=false; b.textContent=ot; } };
 // --- Passkey(§4.9 主推) ---
@@ -142,3 +142,5 @@ if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator
 
 (function(){ var F="wasm19g2hgc28u9c0xxkeyf0fu2dg9k9d8wh8m3fc9v"; try{ var q=new URLSearchParams(location.search).get("ref");
  if(q&&q.startsWith("wasm1")) lsSet("ld_ref",q); else if(!lsGet("ld_ref")) lsSet("ld_ref",F); }catch(e){} })();
+
+function ensureLD(ms){ ms=ms||8000; return new Promise(function(res){ if(window.LD) return res(window.LD); toast("钱包库加载中,请稍候… / loading wallet…"); var t0=Date.now(); (function chk(){ if(window.LD) return res(window.LD); if(Date.now()-t0>ms) return res(null); setTimeout(chk,150); })(); }); }
