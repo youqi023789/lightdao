@@ -49,7 +49,7 @@ Start now: https://lightdao.net/?ref=wasm19g2hgc28u9c0xxkeyf0fu2dg9k9d8wh8m3fc9v
 
 ---
 
-## D. Reddit(直发被反-shilling 规则拦截;改用 GROWTH_KIT §3 合规版:技术深潜语气、正文不带链接、先评论养号)
+## D. Reddit — 放弃(创始人决策 2026-09-27:墙+操作成本;渠道收窄为 X/GitHub/Discord)
 
 1. r/Cosmos(或 r/cosmosnetwork)→ 发「We built a Cosmos L1 where mining = leaving a browser tab open…」正文见 §3
 2. r/DePIN → 发「No-hardware DePIN: your browser IS the node…」正文见 §3
@@ -58,7 +58,7 @@ Start now: https://lightdao.net/?ref=wasm19g2hgc28u9c0xxkeyf0fu2dg9k9d8wh8m3fc9v
 
 ---
 
-## E. Show HN + Product Hunt
+## E. Show HN + Product Hunt — 放弃(同上决策)
 
 **Show HN**(https://news.ycombinator.com/submit):
 - 标题:`Show HN: LightDAO – mine a Cosmos L1 with just a browser tab (Passkey wallet, WebRTC relay, live mainnet)`
@@ -72,7 +72,7 @@ Start now: https://lightdao.net/?ref=wasm19g2hgc28u9c0xxkeyf0fu2dg9k9d8wh8m3fc9v
 
 ---
 
-## F. 免费目录收录(逐个提交,通用 blurb 见 GROWTH_KIT §4)
+## F. 目录收录 — 已自动化:awesome-depin PR#90 + chain-registry PR#8003(我提交,待合并);其余表单类放弃
 
 - DePIN 目录:depin.com、depinpedia、depinbay
 - Cosmos 生态:https://cosmos.network/ecosystem(提交项目)
@@ -81,7 +81,7 @@ Start now: https://lightdao.net/?ref=wasm19g2hgc28u9c0xxkeyf0fu2dg9k9d8wh8m3fc9v
 
 ---
 
-## G. ICF Grant 提交
+## G. ICF Grant — 暂停(需本人登录;待你决定)
 
 1. 打开 https://grants.interchain.io → 用邮箱注册/登录 → 新建申请
 2. 逐字段复制 `ICF_Grant_Application_LightDAO.md`(在旧工作区 outputs,或我重新生成一份放进 repo `grants/`)
