@@ -268,6 +268,8 @@ class H(BaseHTTPRequestHandler):
                 if m: rec["score"] = m
                 fps = d.get("fps") or {}
                 if addr in fps: rec["fp"] = fps[addr][:12]
+                if addr in fps:
+                    rec["fp_peers"] = [x for x in fps if fps[x] == fps[addr] and x != addr]
                 # flagged if my score zeroed while sharing fp with another miner (dedupe)
                 if m and fps.get(addr):
                     same = [a for a, f2 in fps.items() if f2 == fps[addr] and a != addr]

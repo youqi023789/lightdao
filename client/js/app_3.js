@@ -135,3 +135,12 @@ document.getElementById("themeT").onclick=function(){var c=document.documentElem
   for(var i=0;i<rows.length;i++){ html += "<div>"+rows[i][0]+"：<b>"+rows[i][1]+"</b></div>"; }
   el.innerHTML=html;
  }catch(e){ el.textContent="加载失败"; } })();
+
+
+(async function(){ var nb=document.getElementById("sybilNote"); var nt=document.getElementById("sybilTxt"); if(!nb||!myAddr)return;
+ try{ var h=await fetch(CFG.gw+"/v1/health").then(function(r){return r.json();});
+  var me=await fetch(CFG.gw+"/v1/me?addr="+myAddr).then(function(r){return r.json();});
+  var peers=[]; var zeroed=false;
+  for(var k in (me.days||{})){ var rec=me.days[k]; if(rec.fp_peers&&rec.fp_peers.length){ peers=rec.fp_peers; } if(rec.active&&rec.score){ var w=(Math.min(rec.score.bandwidth||0,10000)*40+Math.min(rec.score.session||0,3600)*30+Math.min(rec.score.verification||0,100)*20+Math.min(rec.score.stability||0,100)*10)/100; if(w===0) zeroed=true; } }
+  if(peers.length||zeroed){ nb.style.display=""; nt.innerHTML="本设备(同指纹)今日有多个钱包在挖矿:"+peers.map(function(p){return p.slice(0,10)+"…";}).join(", ")+"。按白皮书 §4.8,每日仅最高分钱包计分,其余归零——<b>一台设备请只保留一个钱包挖矿</b>,关闭其它钱包的标签页,明日即正常计分。"; }
+ }catch(e){} })();
