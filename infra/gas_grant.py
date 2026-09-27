@@ -10,7 +10,7 @@ DEP = "wasm13c2cjh3fhkesj47tsc5a0vm6pdds39qpcmykhj"
 NODE = "tcp://127.0.0.1:26657"
 CHAIN = "lightdao-mainnet-1"
 HOME = "/home/ubuntu/.wasmd"
-LIMIT = "500000ulight"      # ~ enough for many claim txs at 0.2 ulight/gas
+LIMIT = "5000000ulight"      # ~ enough for many claim txs at 0.2 ulight/gas
 
 def exp_rfc3339():
     return (datetime.now(timezone.utc) + timedelta(days=30)).strftime("%Y-%m-%dT%H:%M:%SZ")
