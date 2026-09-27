@@ -39,7 +39,7 @@ window.__mrq=(m)=>client.queryContractSmart(CFG.miningReward,m);
       const p=await fetch(CFG.gw+"/v1/proof?day="+d+"&miner="+this.addr).then(r=>r.ok?r.json():null);
       if(!p){ toast(t("nothing")); return; }
       const msg={claim:{day:d,proof:p.proof,score:{bandwidth:String(p.score.bandwidth),session:String(p.score.session),verification:String(p.score.verification),stability:String(p.score.stability)}}};
-      let res; try{ res=await client.execute(this.addr,CFG.miningReward,msg,{amount:[{denom:CFG.denom,amount:"75000"}],gas:"300000",granter:PAYMASTER}); }catch(e){ res=await client.execute(this.addr,CFG.miningReward,msg,"auto"); }
+      let res; try{ res=await client.execute(this.addr,CFG.miningReward,msg,{amount:[{denom:CFG.denom,amount:"75000"}],gas:"300000",granter:PAYMASTER}); }catch(e){ if(String(e.message||e).indexOf("code 13")>=0){ res=await client.execute(this.addr,CFG.miningReward,msg,{amount:[{denom:CFG.denom,amount:"150000"}],gas:"500000",granter:PAYMASTER}); } else { res=await client.execute(this.addr,CFG.miningReward,msg,"auto"); } }
       toast(t("claimed")+" "+res.transactionHash.slice(0,10)+"…"); this.refresh();
     }catch(e){ toast(String(e.message||e).slice(0,70)); } },
   };
