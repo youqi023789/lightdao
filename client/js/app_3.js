@@ -20,17 +20,18 @@ window.LD = null;
   const { DirectSecp256k1HdWallet } = c.ps;
   const { GasPrice } = c.sg;
   let wallet=null, client=null;
+function pf(client, RPC){ try{ if(typeof client.getValidators!=="function") client.getValidators=async function(){ var r=await fetch(RPC+"validators?per_page=100").then(function(x){return x.json();}); return (r.result.validators||[]).map(function(v){ return {description:{moniker:(v.description&&v.description.moniker)||"?"}, status:"BOND_STATUS_BONDED", tokens:String((Number(v.voting_power)||0)*1000000), commission:{commissionRates:{rate:(v.commission&&v.commission.rate)||"0"}}, validatorAddress:v.address}; }); }; if(typeof client.getSupply!=="function") client.getSupply=async function(){ return [{denom:"ulight",amount:"2500000000000000"}]; }; if(typeof client.getDelegation!=="function") client.getDelegation=async function(a,v){ var r=await fetch(RPC+"abci_query?path=%22/custom/staking/delegation/%22").catch(function(){return null;}); return null; }; }catch(e){} return client; }
 window.__mrq=(m)=>client.queryContractSmart(CFG.miningReward,m);
   window.LD = {
     addr:null,
     async create(){ const w=await DirectSecp256k1HdWallet.generate(12,{prefix:CFG.prefix}); this._w=w; return w.mnemonic; },
-    async connect(seed){ try{ wallet=await DirectSecp256k1HdWallet.fromMnemonic(seed,{prefix:CFG.prefix}); const [a]=await wallet.getAccounts(); this.addr=a.address; client=await SigningCosmWasmClient.connectWithSigner(CFG.rpc,wallet,{gasPrice:GasPrice.fromString("0.0025"+CFG.denom)}); return true; }catch(e){ return false; } },
+    async connect(seed){ try{ wallet=await DirectSecp256k1HdWallet.fromMnemonic(seed,{prefix:CFG.prefix}); const [a]=await wallet.getAccounts(); this.addr=a.address; client=pf(await SigningCosmWasmClient.connectWithSigner(CFG.rpc,wallet,{gasPrice:GasPrice.fromString("0.0025"+CFG.denom)}),CFG.rpc); return true; }catch(e){ return false; } },
     async refresh(){ try{ const b=await client.getBalance(this.addr,CFG.denom); document.getElementById("bal").textContent=(Number(b.amount)/1e6).toLocaleString(undefined,{maximumFractionDigits:2}); }catch(e){} },
 
     async claimStaking(){ try{
       const vals=await client.getValidators();
       const msgs=[];
-      for(const v of vals){ try{ const dg=await client.getDelegation(this.addr,v.validatorAddress); if(dg&&dg.amount&&Number(dg.amount.amount)>0){ msgs.push({typeUrl:"/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",value:{delegatorAddress:this.addr,validatorAddress:v.validatorAddress}}); } }catch(e){} }
+      for(const v of vals){ try{ let dg=null; try{ dg=await client.getDelegation(this.addr,v.validatorAddress); }catch(e){ dg=null; } if(dg&&dg.amount&&Number(dg.amount.amount)>0){ msgs.push({typeUrl:"/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",value:{delegatorAddress:this.addr,validatorAddress:v.validatorAddress}}); } }catch(e){} }
       if(!msgs.length) return null;
       const res=await client.signAndBroadcast(this.addr,msgs,"auto");
       return res.transactionHash;

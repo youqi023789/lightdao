@@ -4,5 +4,5 @@
 
 try{ if(sessionStorage.getItem("ld_session")||localStorage.getItem("ld_persist_v1")||localStorage.getItem("ld_seed")){ document.documentElement.classList.add("ld-restoring"); } }catch(e){}
 
-var APPV=8;
+var APPV=9;
 (function(){ try{ var done=sessionStorage.getItem("ld_verreload"); fetch("/js/ver.json?ts="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ if(j.v!==APPV && done!=="8"){ sessionStorage.setItem("ld_verreload","8"); location.reload(); } }).catch(function(){}); }catch(e){} })();
