@@ -55,3 +55,26 @@ if __name__ == "__main__":
     print("ORPHAN INTERACTIVE FAILS:", len(o))
     for x in o: print("  ", x)
     sys.exit(1 if (e or o) else 0)
+
+
+def defined_globals():
+    """Each page's concatenated js must DEFINE every global it uses from a known critical set."""
+    fails = []
+    CRIT = ["PAYMASTER", "CFG", "ensureLD", "autoLogin", "startMining", "loadDayCounters", "saveDayCounters", "w1e6", "esc"]
+    for pre, pg in PAGE_OF_PREFIX.items():
+        js = ""
+        for f in glob.glob(WWW + "/js/" + pre + "*.js"):
+            js += open(f, encoding="utf-8").read()
+        if not js: continue
+        for name in CRIT:
+            used = re.search(r"\b" + name + r"\b", js)
+            defined = re.search(r"(const|let|var|function|async function)\s+" + name + r"\b", js) or (name + "=") in js.replace(" ", "")
+            if used and not defined:
+                fails.append((pg, name))
+    return fails
+
+if __name__ == "__main__":
+    dg = defined_globals()
+    print("DEFINED-GLOBALS FAILS:", len(dg))
+    for x in dg: print("  ", x)
+    sys.exit(1 if dg else 0)

@@ -14,6 +14,7 @@ async function loadCosmjs(){
   }
   return null;
 }
+const PAYMASTER="wasm13c2cjh3fhkesj47tsc5a0vm6pdds39qpcmykhj";
 window.LD = null;
 (async()=>{
   const c = await loadCosmjs();
