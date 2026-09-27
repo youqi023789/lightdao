@@ -43,7 +43,15 @@ def main():
         if not m.startswith("wasm1") or len(m) < 20: continue
         if g.get(m, {}).get("ok"): continue
         ok, log = grant(m)
-        g[m] = {"day": day, "ok": ok, "log": log, "ts": int(time.time())}
+        try:
+            bal=subprocess.run(["wasmd","q","bank","balances",m,"--node",NODE,"-o","json"],capture_output=True,text=True,timeout=30)
+            if not json.loads(bal.stdout).get("balances"):
+                subprocess.run(["wasmd","tx","bank","send",DEP,m,"1000ulight","--from","deployer","--home",HOME,"--keyring-backend","test","--chain-id",CHAIN,"--node",NODE,"--gas","150000","--fees","45000ulight","-y"],capture_output=True,text=True,timeout=60)
+                time.sleep(4)
+        except Exception:
+            pass
+
+        g[m] = {"day": day, "ok": ok, "log": log, "ts": int(time.time()), "dust": True}
         changed = True
         print("grant", m, "ok" if ok else "FAIL " + log)
         time.sleep(3)  # avoid sequence race on same signer
