@@ -43,7 +43,7 @@ window.__mrq=(m)=>client.queryContractSmart(CFG.miningReward,m);
       const p=await fetch(CFG.gw+"/v1/proof?day="+d+"&miner="+this.addr).then(r=>r.ok?r.json():null);
       if(!p){ toast(t("nothing")); return; }
       const msg={claim:{day:d,proof:p.proof,score:{bandwidth:String(p.score.bandwidth),session:String(p.score.session),verification:String(p.score.verification),stability:String(p.score.stability)}}};
-      let res; const FEE=[["75000","300000"],["200000","400000"],["400000","400000"]]; let lastE=null; for(const [fa,ga] of FEE){ try{ res=await client.execute(this.addr,CFG.miningReward,msg,{amount:[{denom:CFG.denom,amount:fa}],gas:ga,granter:PAYMASTER}); lastE=null; break; }catch(e){ lastE=e; if(String(e.message||e).indexOf("code 13")<0) break; } } if(lastE) throw lastE;
+      let res; const FEE=[["75000","300000"],["200000","400000"],["400000","400000"]]; let lastE=null; for(const [fa,ga] of FEE){ try{ res=await client.execute(this.addr,CFG.miningReward,msg,{amount:[{denom:CFG.denom,amount:fa}],gas:ga,granter:PAYMASTER}); lastE=null; break; }catch(e){ lastE=e; var em=String(e.message||e); if(em.indexOf("code 13")>=0) continue; if(em.indexOf("code 38")>=0){ try{ res=await client.execute(this.addr,CFG.miningReward,msg,"auto"); lastE=null; break; }catch(e2){ lastE=e2; continue; } } break; } } if(lastE) throw lastE;
       toast(t("claimed")+" "+res.transactionHash.slice(0,10)+"…"); this.refresh();
     }catch(e){ toast(terr(e)); } },
   };

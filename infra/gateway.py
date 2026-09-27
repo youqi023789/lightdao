@@ -247,10 +247,14 @@ class H(BaseHTTPRequestHandler):
             d = load_day(day)
             ms = d.get("miners") or {}
             out = {}; tot = 0
+            fin = bool(d.get("finalized")) and bool(d.get("scores"))
             for a, m in ms.items():
-                w = weighted_score(score_miner(m))
+                dims = d["scores"].get(a) if fin else score_miner(m)
+                w = weighted_score(dims or {})
                 out[a] = {"w": w}
                 tot += w
+            if fin:
+                tot = d.get("total_score") or tot
             return self._send(200, {"day": day, "total": tot, "scores": out, "finalized": bool(d.get("finalized"))})
         if u.path == "/v1/me":
             addr = (q.get("addr") or [""])[0]
