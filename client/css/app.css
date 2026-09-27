@@ -112,3 +112,5 @@ header{position:sticky;top:0;z-index:6;background:rgba(7,11,24,.78);backdrop-fil
 [data-theme="light"] .toast{background:#ffffff;color:#0e1428;border-color:rgba(12,18,45,.2)}
 [data-theme="light"] textarea,[data-theme="light"] input{background:#ffffff;color:#0e1428;border-color:rgba(12,18,45,.18)}
 [data-theme="light"] textarea::placeholder,[data-theme="light"] input::placeholder{color:#8a94a8}
+
+html.ld-restoring body::before{content:"正在恢复登录状态,请稍候… / Restoring session…";position:fixed;inset:0;z-index:80;display:grid;place-items:center;background:rgba(5,6,10,.78);color:#eef1f6;font-size:15px;text-align:center;padding:20px}

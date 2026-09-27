@@ -21,6 +21,9 @@
 <meta name="twitter:image" content="https://lightdao.net/og.png">
 <link rel="stylesheet" href="/css/app.css">
 <script src="/js/wfix.js?v=6"></script>
+<link rel="modulepreload" href="/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js?v=2">
+<link rel="modulepreload" href="/js/vendor/-cosmjs-proto-signing-0.32.4.js?v=2">
+<link rel="modulepreload" href="/js/vendor/-cosmjs-stargate-0.32.4.js?v=2">
 </head>
 <body>
 <div id="loginOverlay" style="display:none;position:fixed;inset:0;z-index:80;background:rgba(5,6,10,.72);backdrop-filter:blur(4px);align-items:center;justify-content:center;flex-direction:column;gap:14px"><div style="width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.2);border-top-color:#7c8cff;animation:ldspin 1s linear infinite"></div><div style="color:#eef1f6;font-size:15px">正在恢复登录状态,请稍候… / Restoring session…</div><div style="color:#9aa3b2;font-size:12.5px">请勿重复点击,以免误操作</div></div><style>@keyframes ldspin{to{transform:rotate(360deg)}}</style>
@@ -81,6 +84,7 @@
       <div class="big" id="estReward">0.0</div>
       <div class="mini" data-i="estLabel">今日预计奖励(按全网占比实时估算) (LIGHT)</div>
       <div class="mini" id="estMeta">等待全网数据…</div>
+      <div class="mini" id="blkInfo" data-i="blkInfo">每区块池 ≈13.87 LIGHT(全网共享,按贡献占比)· 每日池 ≈650,685 LIGHT</div>
       <div class="ue3ebcf"></div>
       <button class="btn" id="btnMine" data-i="startMining">开始挖矿</button>
     </div>
