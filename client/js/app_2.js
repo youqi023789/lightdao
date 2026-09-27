@@ -1,4 +1,4 @@
-window.LDBUILD="v9";
+window.LDBUILD="v10";
 function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
 
 window.CFG = {
@@ -21,7 +21,7 @@ let LANG=(navigator.language||"zh").toLowerCase(); if(LANG.startsWith("fil")||LA
 const t = k => (I18N[LANG]&&I18N[LANG][k]) || I18N.en[k] || k;
 function renderLang(){ document.querySelectorAll("[data-i]").forEach(e=>{const k=e.getAttribute("data-i"); const v=t(k); if(v!==undefined) e.textContent=v;}); document.documentElement.lang=LANG; }
 const $=id=>document.getElementById(id);
-function toast(m){const el=$("toast");el.textContent=m;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2600);}
+function toast(m){ if(window.__ldReport && /失败|failed|error|Error/.test(String(m))) window.__ldReport(m); const el=$("toast");el.textContent=m;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2600);}
 async function sha256hex(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");}
 
 // 语言下拉(普通脚本, 立即生效)

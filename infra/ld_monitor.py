@@ -113,6 +113,33 @@ def main():
     except Exception as e: code = 0
     if code != 200: st["ok"] = False; alert("http %s" % code)
     st["checks"]["http"] = code
+    ce = 0
+    ce_state_f = "/home/ubuntu/ld_ce_alert_state"
+    BENIGN = ("selftest", "beacon-proof", "route-test", "real-uncaught-v10",
+              "ResizeObserver loop", "favicon", "Non-Error promise rejection",
+              "Loading chunk", "Script error.")
+    try:
+        import time as _t2
+        cut = int(_t2.time()) - 3600
+        for ln in open("/home/ubuntu/lightdao_gateway/clienterr.log"):
+            try:
+                j = json.loads(ln)
+                if j.get("ts", 0) < cut: continue
+                m = str((j.get("body") or {}).get("msg", ""))
+                if any(b in m for b in BENIGN): continue
+                ce += 1
+            except Exception: pass
+    except Exception: pass
+    st["checks"]["client_errors_last_hour"] = ce
+    # only page on a real spike (>=5/hr), at most once per hour
+    if ce >= 5:
+        last = 0
+        try: last = int((open(ce_state_f).read().strip() or "0"))
+        except Exception: last = 0
+        if now - last >= 3600:
+            alert("client errors last hour: %d" % ce)
+            try: open(ce_state_f, "w").write(str(now))
+            except Exception: pass
     json.dump(st, open(STATUS, "w"))
     print("monitor ok=%s height=%s miners=%s" % (st["ok"], h, mn))
 

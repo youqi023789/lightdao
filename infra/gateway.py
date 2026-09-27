@@ -354,6 +354,15 @@ class H(BaseHTTPRequestHandler):
                         d["referrals"][miner] = {"referrer": ref, "first_day": day}
                 save_day(d)
             return self._send(200, {"ok": True, "day": day})
+        if u.path == "/v1/clienterr":
+            try:
+                ip = (self.headers.get("X-Forwarded-For") or self.client_address[0] or "").split(",")[0].strip()
+                ua = (self.headers.get("User-Agent") or "")[:300]
+                with open("/home/ubuntu/lightdao_gateway/clienterr.log", "a") as lf:
+                    lf.write(json.dumps({"ts": int(time.time()), "ip": ip, "ua": ua, "body": body}) + "\n")
+            except Exception:
+                pass
+            return self._send(200, {"ok": True})
         if u.path == "/v1/finalize":
             if self.headers.get("X-Admin") != ADMIN: return self._send(403, {"error": "forbidden"})
             day = int(body.get("day", current_day()-1))
