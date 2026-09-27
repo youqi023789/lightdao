@@ -1,3 +1,5 @@
+window.LDBUILD="v9";
+function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,90); }
 
 window.CFG = {
   gw: location.origin + "/gw",

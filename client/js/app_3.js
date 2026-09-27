@@ -1,3 +1,5 @@
+window.LDBUILD="v9";
+function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,90); }
 
 const CDN = ["/js/vendor/"];
 async function loadCosmjs(){
@@ -42,7 +44,7 @@ window.__mrq=(m)=>client.queryContractSmart(CFG.miningReward,m);
       const msg={claim:{day:d,proof:p.proof,score:{bandwidth:String(p.score.bandwidth),session:String(p.score.session),verification:String(p.score.verification),stability:String(p.score.stability)}}};
       let res; try{ res=await client.execute(this.addr,CFG.miningReward,msg,{amount:[{denom:CFG.denom,amount:"75000"}],gas:"300000",granter:PAYMASTER}); }catch(e){ if(String(e.message||e).indexOf("code 13")>=0){ res=await client.execute(this.addr,CFG.miningReward,msg,{amount:[{denom:CFG.denom,amount:"150000"}],gas:"500000",granter:PAYMASTER}); } else { res=await client.execute(this.addr,CFG.miningReward,msg,"auto"); } }
       toast(t("claimed")+" "+res.transactionHash.slice(0,10)+"…"); this.refresh();
-    }catch(e){ toast(String(e.message||e).slice(0,70)); } },
+    }catch(e){ toast(terr(e)); } },
   };
 if(window.__ldReady)window.__ldReady();
 })();
@@ -75,7 +77,7 @@ document.getElementById("themeT").onclick=function(){var c=document.documentElem
      var sc=await fetch(CFG.gw+"/v1/scores?day="+d).then(function(r){return r.json();}).catch(function(){return null;});
      if(sc&&sc.finalized&&sc.scores&&sc.scores[myAddr]&&sc.scores[myAddr].w>0){ var o=document.createElement("option"); o.value=d; o.textContent="第"+d+"天"; sel.appendChild(o); } }
    if(!sel.options.length){ toast(t("nothing")); } else { toast("可领 "+sel.options.length+" 天"); }
-  }catch(e){ toast(String(e.message||e).slice(0,60)); } };
+  }catch(e){ toast(terr(e)); } };
 })();
 
 
@@ -100,7 +102,7 @@ document.getElementById("themeT").onclick=function(){var c=document.documentElem
 (function(){ var b=document.getElementById("btnClaimStake"); if(!b)return;
  b.onclick=async function(){ if(!window.LD){toast(t("walletFail"));return;} b.disabled=true; var ot=b.textContent; b.textContent="领取中…";
   try{ var h=await window.LD.claimStaking(); if(h){toast("✓ 已领取 "+h.slice(0,10)+"…"); window.LD.refresh();} else {toast("当前无委托收益可领(你未质押/委托)");} }
-  catch(e){ toast(String(e.message||e).slice(0,70)); } finally{ b.disabled=false; b.textContent=ot; } }; })();
+  catch(e){ toast(terr(e)); } finally{ b.disabled=false; b.textContent=ot; } }; })();
 
 
 (async function(){ var el=document.getElementById("airFirst"); if(!el||!myAddr)return;
