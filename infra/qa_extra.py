@@ -54,7 +54,7 @@ if __name__ == "__main__":
     for x in e: print("  ", x)
     print("ORPHAN INTERACTIVE FAILS:", len(o))
     for x in o: print("  ", x)
-    sys.exit(1 if (e or o) else 0)
+    FAILS_EO = bool(e or o)
 
 
 def defined_globals():
@@ -77,4 +77,4 @@ if __name__ == "__main__":
     dg = defined_globals()
     print("DEFINED-GLOBALS FAILS:", len(dg))
     for x in dg: print("  ", x)
-    sys.exit(1 if dg else 0)
+    sys.exit(1 if (dg or globals().get('FAILS_EO')) else 0)
