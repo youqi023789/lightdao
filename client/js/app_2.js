@@ -172,3 +172,22 @@ async function autoClaim(){ if(!window.LD||!myAddr)return; try{
   }
  }catch(e){} }
 setTimeout(function(){ document.documentElement.classList.remove("ld-restoring"); }, 8000);
+
+async function refreshClaimable(){ var el=document.getElementById("claimable"); if(!el||!myAddr||!window.__mrq)return;
+ try{ var h=await fetch(CFG.gw+"/v1/health").then(function(r){return r.json();});
+  var done=[]; try{ done=JSON.parse(lsGet("ld_claimed_days")||"[]"); }catch(e){}
+  for(var d=h.current_day-1; d>=Math.max(1,h.current_day-7); d--){
+   if(done.indexOf(d)>=0) continue;
+   var rs=await fetch(CFG.gw+"/v1/day?day="+d).then(function(r){return r.json();}).catch(function(){return null;});
+   if(!rs||!rs.finalized) continue;
+   var sc=await fetch(CFG.gw+"/v1/scores?day="+d).then(function(r){return r.json();}).catch(function(){return null;});
+   if(!sc||!sc.scores||!sc.scores[myAddr]||!(sc.scores[myAddr].w>0)||!sc.total) continue;
+   var on=false; try{ on=await window.__mrq({root_submitted:{day:d}}); }catch(e){}
+   if(!on) continue;
+   var pl=await window.__mrq({daily_miner_pool:{day:d}});
+   el.textContent=(Number(pl)/1e6*sc.scores[myAddr].w/sc.total).toLocaleString(undefined,{maximumFractionDigits:1});
+   return;
+  }
+  el.textContent="0";
+ }catch(e){} }
+setInterval(refreshClaimable,60000);

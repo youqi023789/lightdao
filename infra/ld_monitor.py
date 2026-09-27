@@ -59,6 +59,11 @@ def main():
                 fok = ("no miners" not in ln) and ("error" not in ln.lower()); break
     except Exception:
         pass
+    try:
+        dj0 = json.load(open("/home/ubuntu/lightdao_gateway/data/day_%d.json" % (day - 1)))
+        if dj0.get("finalized"): fok = True
+    except Exception:
+        pass
     if fok is None:
         # day had no miners -> nothing to finalize; check day file miners count
         try:
