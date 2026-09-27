@@ -74,28 +74,23 @@ def main():
     if day and fok is False:
         st["ok"] = False; alert("finalize failed for day %s" % (day - 1))
     st["checks"]["finalize"] = {"ok": bool(fok), "day": (day - 1) if day else None}
-    # sign root for day-1
+    # sign root for day-1: authoritative = on-chain root_submitted
     sok = False
-    try:
-        slog = open("/home/ubuntu/ld_sign.log").read()
-        sok = ("submitted root for day %s" % (day - 1)) in slog
-    except Exception:
-        pass
-    need_sign = False
-    if day:
+    if need_sign:
         try:
-            dj = json.load(open("/home/ubuntu/lightdao_gateway/data/day_%d.json" % (day - 1)))
-            need_sign = bool(dj.get("miners")) and bool(fok)
+            r = subprocess.run(["wasmd", "q", "wasm", "contract-state", "smart",
+                                "wasm173y0pgdh6ensz4gpgglz40a260www6qse4dswshc87za9du6h4fsm5r9wx",
+                                json.dumps({"root_submitted": {"day": day - 1}}),
+                                "--node", "tcp://127.0.0.1:26657", "-o", "json"],
+                               capture_output=True, text=True, timeout=30)
+            sok = json.loads(r.stdout).get("data") is True
         except Exception:
-            need_sign = False
-    required = need_sign
-    if required and not sok:
-        import datetime
-        if datetime.datetime.utcnow().hour >= 6:
-            st["ok"] = False; alert("root not signed for day %s" % (day - 1))
-        st["checks"]["sign_root"] = {"ok": False}
-    else:
-        st["checks"]["sign_root"] = {"ok": True}
+            sok = False
+        if not sok:
+            import datetime
+            if datetime.datetime.utcnow().hour >= 6:
+                st["ok"] = False; alert("root not signed for day %s" % (day - 1))
+    st["checks"]["sign_root"] = {"ok": sok or not need_sign}
     # miners today
     code, body = curl("http://127.0.0.1:8080/v1/scores?day=%s" % day)
     mn = 0
