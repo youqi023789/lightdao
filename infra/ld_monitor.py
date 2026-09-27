@@ -75,6 +75,13 @@ def main():
         st["ok"] = False; alert("finalize failed for day %s" % (day - 1))
     st["checks"]["finalize"] = {"ok": bool(fok), "day": (day - 1) if day else None}
     # sign root for day-1: authoritative = on-chain root_submitted
+    need_sign = False
+    if day:
+        try:
+            djn = json.load(open("/home/ubuntu/lightdao_gateway/data/day_%d.json" % (day - 1)))
+            need_sign = bool(djn.get("miners")) and bool(fok)
+        except Exception:
+            need_sign = False
     sok = False
     if need_sign:
         try:
