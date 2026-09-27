@@ -115,14 +115,24 @@ AMA in comments — happy to walk through the contribution-verification math or 
 
 ### 3.1 合规版(反 shilling 规则,2026-09-27 直发被拦后改写)
 
-**为什么被拦**:r/cosmosnetwork Rule 1 = No Spamming/Shilling/Scamming;推广语气+正文带链接=典型 shilling 特征。改法:**技术深潜+自我披露+正文零链接+邀请批评**,先发 3-5 条有价值评论养号再发。
+**为什么被拦**:r/cosmosnetwork Rule 1 = No Spamming/Shilling/Scamming;推广语气+正文带链接=典型 shilling 特征。改法:技术深潜+自我披露+正文零链接+邀请批评;先发 3-5 条有价值评论养号再发。
 
 **r/cosmosnetwork 标题**: How we verify browser-contributed bandwidth on a Cosmos L1 without trusting client reports (PoC design critique welcome)
+
 **正文**:
 
+    TL;DR: I help build a Cosmos SDK chain where the "nodes" are browser tabs. They relay bandwidth over WebRTC and verify block headers in a Web Worker. The hard problem is proving contribution without trusting the client, so I want critique on our 3-layer design:
+    1) Validator random challenges: 5% of nodes every 10 min, 30s response window, 3 misses = day score zeroed.
+    2) Peer attestation: each node gets 8-16 P2P peers who independently meter exchanged bytes; median wins.
+    3) Per-block Merkle root of all scores, O(1) on-chain, self-verifiable by any user.
+    Weaknesses we know: (a) sybil via many browsers on one machine - we device-fingerprint and dedupe per day; (b) peer collusion - random assignment helps but is still weak against a determined sybil ring; (c) bandwidth gaming - probe vs relay metering can diverge on asymmetric links.
+    What would you break first? Disclosure: I am one of the builders. Per sub rules I put no links in the post; happy to share repo/chain-id in comments if mods allow.
+
 **r/DePIN 标题**: DePIN without hardware: what breaks when the node is a browser tab? (design critique welcome)
-**正文**: 同上,但把开头换成 DePIN 视角(对比 Helium/Filecoin 需 00-000 硬件;我们零硬件的代价是验证更难),其余相同。
-**发帖前置**:账号 karma≥50、账龄≥7 天、先评论 3-5 条; flair 选 Build/Dev 类;避开 mod 活跃时段外连发。
+
+**正文**: 同上,但开头换 DePIN 视角(对比 Helium/Filecoin 需 $200-$1000 硬件;零硬件的代价是验证更难),其余相同。
+
+**发帖前置**:账号 karma≥50、账龄≥7 天、先评论 3-5 条;flair 选 Build/Dev 类;不要连发。
 
 ## 4. 免费目录/生态收录(逐个提交,文案通用)
 
