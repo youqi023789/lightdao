@@ -29,7 +29,7 @@ Browser-only DePIN mining on a live Cosmos L1. No hardware, seedless Passkey wal
 
 ---
 
-## B. Telegram(建群 + 首条公告)
+## B. Telegram(受阻:中国大陆网络封锁,需代理登录后建群;暂以 Discord 为主)
 
 1. TG → 新建群组,名称:`LightDAO — Browser Mining`,用户名设为 `@LightDAO_mining`(若可用)
 2. 群简介填定位一句话(见 GROWTH_KIT §0)
@@ -41,15 +41,15 @@ Start now: https://lightdao.net/?ref=wasm19g2hgc28u9c0xxkeyf0fu2dg9k9d8wh8m3fc9v
 
 ---
 
-## C. Discord(建服 + 公告)
+## C. Discord(已完成 ✅ 邀请链接:https://discord.gg/9YY9X2Cdv)
 
 1. Discord → 新建服务器:`LightDAO`,分类频道 `#announcements` `#general` `#mining-help`
 2. `#announcements` 首条 = GROWTH_KIT.md §2 公告整段 + 你的邀请链接
-3. 服务器邀请设为「永不过期」,把链接发我 → 我加到客户端页脚和 X bio
+3. 已完成:链接已接入全站页脚/社区区和 X bio
 
 ---
 
-## D. Reddit(2 帖,标题+正文都在 GROWTH_KIT §3,直接复制)
+## D. Reddit(直发被反-shilling 规则拦截;改用 GROWTH_KIT §3 合规版:技术深潜语气、正文不带链接、先评论养号)
 
 1. r/Cosmos(或 r/cosmosnetwork)→ 发「We built a Cosmos L1 where mining = leaving a browser tab open…」正文见 §3
 2. r/DePIN → 发「No-hardware DePIN: your browser IS the node…」正文见 §3
