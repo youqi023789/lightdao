@@ -1,5 +1,8 @@
 
 const $=id=>document.getElementById(id);
+/* SEC-LOCK step-up gate: false => user failed/cancelled verification => abort. */
+async function ldGate(label){ if(!window.LDStepUp)return true; try{ return !!(await window.LDStepUp(label)); }catch(e){ return false; } }
+function ldGateFail(){ log("已取消:未通过安全验证 / Cancelled: security check not passed","warn"); }
 const GOV="wasm14axmz74pppxqxs3qhxaaf2qzl6x53pvvzm7c6p52qrycwnyh8ktsfukapt";
 const LT="wasm13c9t6xmar22xclseua6xevw4t4cnrampy6y5ajdydhyv5k0znrcsth555z";
 const TM="wasm192u2pm80ndmh608mmvhrzhje0sjaq0txr5md77lr70ucy0j3lfys8l633u";
@@ -54,18 +57,22 @@ async function refreshProps(){
 function esc(s){return String(s||"").replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));}
 async function vote(id,opt){
   if(!client){log("先连接钱包","err");return;}
+  if(!await ldGate("治理投票 #"+id+" / Governance vote")){ldGateFail();return;}
   log("投票 #"+id+" "+opt+"…");
   try{ const r=await client.execute(addr,GOV,{vote:{proposal_id:Number(id),option:opt,bet:"0"}},"auto"); log("✓ 已投票 "+r.transactionHash.slice(0,12),"ok"); await refreshProps(); }
   catch(e){ log("投票失败: "+(e.message||e).slice(0,120),"err"); }
 }
 async function exec(id){
-  if(!client)return; log("执行 #"+id+"…");
+  if(!client)return;
+  if(!await ldGate("执行提案 #"+id+" / Execute proposal")){ldGateFail();return;}
+  log("执行 #"+id+"…");
   try{ const r=await client.execute(addr,GOV,{execute_proposal:{proposal_id:Number(id)}},"auto"); log("✓ 已执行 "+r.transactionHash.slice(0,12),"ok"); await refreshProps(); }
   catch(e){ log("执行失败(可能未通过): "+(e.message||e).slice(0,120),"err"); }
 }
 $("btnStake").onclick=async()=>{
   if(!client){log("先连接钱包","err");return;}
   const amt=Math.floor(Number($("stakeAmt").value||0)*1e6); if(amt<=0){log("输入数量","warn");return;}
+  if(!await ldGate("质押 / Stake")){ldGateFail();return;}
   log("授权 light_token → governance…");
   try{
     await client.execute(addr,LT,{increase_allowance:{spender:GOV,amount:String(amt)}},"auto");
@@ -76,11 +83,13 @@ $("btnStake").onclick=async()=>{
 };
 $("btnUnstake").onclick=async()=>{
   if(!client)return; const amt=Math.floor(Number($("stakeAmt").value||0)*1e6); if(amt<=0){log("输入数量","warn");return;}
+  if(!await ldGate("赎回质押 / Unstake")){ldGateFail();return;}
   try{ const r=await client.execute(addr,GOV,{unstake:{amount:String(amt)}},"auto"); log("✓ 已赎回 "+r.transactionHash.slice(0,12),"ok"); await refreshBal(); }
   catch(e){log("赎回失败: "+(e.message||e).slice(0,120),"err");}
 };
 $("btnPropose").onclick=async()=>{
   if(!client){log("先连接钱包","err");return;}
+  if(!await ldGate("发起提案 / Create proposal")){ldGateFail();return;}
   const kind=$("pkind").value;
   const msg={create_proposal:{ptype:$("ptype").value,title:$("ptitle").value,description:$("pdesc").value,
     symbol:kind==="investment"?$("psym").value:null, investment_usd:kind==="investment"?String(Math.floor(Number($("pinv").value||0)*1e6)):null,
@@ -106,13 +115,15 @@ $("btnMnem").onclick=()=>{const i=$("mnem");i.style.display=i.style.display==="n
   try{
     var seed=null;
     try{ seed=sessionStorage.getItem("ld_session"); }catch(e){}
-    if(!seed){ try{ seed=localStorage.getItem("ld_seed"); }catch(e){} }
-    if(!seed){ try{
-      var rec=JSON.parse(localStorage.getItem("ld_persist_v1")||"null");
-      if(rec){ var kb=localStorage.getItem("ld_devkey"); if(kb){ var key=await crypto.subtle.importKey("raw",Uint8Array.from(atob(kb),c=>c.charCodeAt(0)).buffer.slice(0),"AES-GCM",false,["decrypt"]);
-        var iv=Uint8Array.from(atob(rec.iv),c=>c.charCodeAt(0)); var ct=Uint8Array.from(atob(rec.ct),c=>c.charCodeAt(0));
-        var pt=await crypto.subtle.decrypt({iv:iv},key,ct.buffer.slice(0)); seed=new TextDecoder().decode(pt); } }
-    }catch(e){} }
+    /* SEC-LOCK: a fresh tab was never verified, so require an unlock before the wallet
+       is reused. The legacy plaintext ld_seed and the device-key blob ld_persist_v1 are
+       deliberately NOT read here: reading them would bypass the lock, and deleting
+       ld_seed here could destroy a user's only copy before app.html has migrated them
+       (app.html shows the seed, forces a password, then removes both). */
+    if(!seed && window.LDLock && window.LDLock.hasLock()){
+      var okL=await window.LDLock.showUnlock();
+      if(okL){ seed=window.LDLock.currentSeed(); }
+    }
     if(seed){ var ok=await connect(seed); if(ok){ var el=$("addrLine"); if(el) el.textContent="已连接(沿用主客户端登录): "+addr; } }
   }catch(e){}
 })();

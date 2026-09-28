@@ -1,4 +1,4 @@
-window.LDBUILD="1.0.1";
+window.LDBUILD="1.1.0";
 function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
 
 const CDN = ["/js/vendor/"];
@@ -36,7 +36,7 @@ window.__mrq=(m)=>client.queryContractSmart(CFG.miningReward,m);
       const msgs=[];
       for(const v of vals){ try{ let dg=null; try{ dg=await client.getDelegation(this.addr,v.validatorAddress); }catch(e){ dg=null; } if(dg&&dg.amount&&Number(dg.amount.amount)>0){ msgs.push({typeUrl:"/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",value:{delegatorAddress:this.addr,validatorAddress:v.validatorAddress}}); } }catch(e){} }
       if(!msgs.length) return null;
-      const res=await client.signAndBroadcast(this.addr,msgs,"auto");
+      const res=await ldBroadcast(msgs,"auto",null); /* withdraw-rewards = claim: frictionless, no step-up */
       return res.transactionHash;
     }catch(e){ throw e; } },
     async claim(day){ try{ const h=await (await fetch(CFG.gw+"/v1/health")).json(); const d= day|| (h.current_day-1);
@@ -47,6 +47,20 @@ window.__mrq=(m)=>client.queryContractSmart(CFG.miningReward,m);
       toast(t("claimed")+" "+res.transactionHash.slice(0,10)+"…"); this.refresh();
     }catch(e){ toast(terr(e)); } },
   };
+/* ---- SEC-LOCK: step-up gated signing paths --------------------------------
+   Every value-moving signature (bank send, delegate/undelegate, sub-token
+   exchange, generic contract execute) must pass window.LDStepUp first.
+   Reward claims (claim / claimStaking) pass gateLabel=null and stay
+   frictionless by design - they only credit the user.                          */
+async function ldStepUpOk(label){ if(!window.LDStepUp)return true; try{ return !!(await window.LDStepUp(label)); }catch(e){ return false; } }
+async function ldBroadcast(msgs,fee,gateLabel){ if(gateLabel){ const okG=await ldStepUpOk(gateLabel); if(!okG){ throw new Error("step-up-cancelled"); } } return client.signAndBroadcast(window.LD.addr,msgs,fee||"auto"); }
+async function ldExecute(contract,msg,fee,gateLabel){ if(gateLabel){ const okG=await ldStepUpOk(gateLabel); if(!okG){ throw new Error("step-up-cancelled"); } } return client.execute(window.LD.addr,contract,msg,fee||"auto"); }
+window.LD.signGated=async function(msgs,label,fee){ return ldBroadcast(msgs,fee,label||"敏感操作签名 / Sensitive signing"); };
+window.LD.executeGated=async function(contract,msg,label,fee){ return ldExecute(contract,msg,fee,label||"合约执行 / Contract execute"); };
+window.LD.sendTokens=async function(to,amountUl,label){ return ldBroadcast([{typeUrl:"/cosmos.bank.v1beta1.MsgSend",value:{fromAddress:window.LD.addr,toAddress:to,amount:[{denom:CFG.denom,amount:String(amountUl)}]}}],"auto",label||"转账 / Send tokens"); };
+window.LD.delegate=async function(validator,amountUl,label){ return ldBroadcast([{typeUrl:"/cosmos.staking.v1beta1.MsgDelegate",value:{delegatorAddress:window.LD.addr,validatorAddress:validator,amount:{denom:CFG.denom,amount:String(amountUl)}}}],"auto",label||"委托 / Delegate"); };
+window.LD.undelegate=async function(validator,amountUl,label){ return ldBroadcast([{typeUrl:"/cosmos.staking.v1beta1.MsgUndelegate",value:{delegatorAddress:window.LD.addr,validatorAddress:validator,amount:{denom:CFG.denom,amount:String(amountUl)}}}],"auto",label||"撤委托 / Undelegate"); };
+window.LD.exchangeSubToken=async function(exchangeContract,symbol,amountUl,label){ return ldExecute(exchangeContract,{exchange:{symbol:String(symbol),amount_in:String(amountUl)}},"auto",label||"子代币兑换 / Sub-token exchange"); };
 if(window.__ldReady)window.__ldReady();
 })();
 document.getElementById("themeT").onclick=function(){var c=document.documentElement.getAttribute("data-theme");var n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n);try{lsSet("ld_theme",n);}catch(e){}this.textContent=n==="light"?"◑":"◐";};

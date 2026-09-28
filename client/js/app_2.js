@@ -1,4 +1,4 @@
-window.LDBUILD="1.0.1";
+window.LDBUILD="1.1.0";
 function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
 
 window.CFG = {
@@ -77,11 +77,21 @@ function showTab(w){ ["Pk","New","Imp"].forEach(k=>{ const a=(k===w); const tb=$
 $("tabPk").onclick=()=>showTab("Pk");
 $("tabNew").onclick=()=>showTab("New");
 $("tabImp").onclick=()=>showTab("Imp");
-$("btnLogout").onclick=()=>{stopMining();ssDel("ld_session");persistClear();lsDel("ld_seed");lsDel("ld_mining");location.reload();};
+/* SEC-LOCK: logout clears the tab session only - ld_lock_v1 stays, so the next
+   login on this device must be verified again (password or biometric). */
+$("btnLogout").onclick=()=>{stopMining();ssDel("ld_session");persistClear();lsDel("ld_seed");lsDel("ld_mining");if(window.LDLock)window.LDLock.forgetSession();location.reload();};
+/* SEC-LOCK: explicit "remove this device's login info" control (clears ld_lock_v1) */
+(function(){ var brd=document.getElementById("btnRemoveDevice"); if(!brd)return;
+ brd.onclick=function(){ if(!window.LDLock){toast(t("walletFail"));return;}
+  if(!confirm("将删除本机保存的钱包登录信息(ld_lock_v1),之后必须用助记词重新导入才能登录。确认?\n\nRemove this device's saved wallet login? You will need your seed phrase to log in again."))return;
+  window.LDLock.removeDevice(); stopMining(); ssDel("ld_session"); lsDel("ld_mining");
+  toast("✓ 已移除本机登录信息 / Removed this device's login");
+  setTimeout(function(){ location.reload(); },700); };
+})();
 // --- 助记词(回退) ---
 $("btnCreate").onclick=async()=>{ 
-if(!await ensureLD()){toast(t("walletFail"));return;} const m=await window.LD.create(); if(m){lsSet("ld_seed",m); alert(t("saving")+"\n\n"+m); await enter(m); } };
-$("btnImport").onclick=async()=>{ const b=$("btnImport"); const ot=b.textContent; const m=$("mnem").value.trim(); if(!m){toast("请先粘贴 12 词助记词");return;} b.disabled=true; b.textContent="导入中… / importing…"; try{ if(!await ensureLD()){toast(t("walletFail"));return;} lsSet("ld_seed",m); await enter(m); if(myAddr){toast("✓ 已导入");} else {toast("导入失败:助记词无效或网络受限");} }catch(e){ toast(t("pkFail")+(e.message||e)); } finally{ b.disabled=false; b.textContent=ot; } };
+if(!await ensureLD()){toast(t("walletFail"));return;} const m=await window.LD.create(); if(m){ alert(t("saving")+"\n\n"+m); await ldOnboard(m,true); } };
+$("btnImport").onclick=async()=>{ const b=$("btnImport"); const ot=b.textContent; const m=$("mnem").value.trim(); if(!m){toast("请先粘贴 12 词助记词");return;} b.disabled=true; b.textContent="导入中… / importing…"; try{ if(!await ensureLD()){toast(t("walletFail"));return;} lsDel("ld_seed"); await ldOnboard(m,true); if(myAddr){toast("✓ 已导入");} else {toast("导入失败:助记词无效或网络受限");} }catch(e){ toast(t("pkFail")+(e.message||e)); } finally{ b.disabled=false; b.textContent=ot; } };
 // --- Passkey(§4.9 主推) ---
 const pkAvail=()=>window.LDPasskey&&window.LDPasskey.isAvailable();
 $("btnPkCreate").onclick=async()=>{
@@ -92,7 +102,7 @@ $("btnPkCreate").onclick=async()=>{
     const mnem=await window.LD.create();
     let r=await window.LDPasskey.create(mnem,{userLabel:"lightdao-"+Date.now()});
     if(r.needPin){ const pin=prompt(t("pkPinPrompt")); if(!pin||pin.length<6){toast(t("pkFail")+"PIN<6");return;} r=await window.LDPasskey.createWithPin(mnem,r.credId,r.partial.salt,pin); }
-    toast(t("pkCreated")); await enter(mnem);
+    toast(t("pkCreated")); await ldOnboard(mnem,false);
   }catch(e){ toast(t("pkFail")+(e.message||e)); }
 };
 $("btnPkUnlock").onclick=async()=>{
@@ -100,7 +110,7 @@ $("btnPkUnlock").onclick=async()=>{
   if(!window.LDPasskey.hasWallet()){toast(t("pkSocialFirst"));return;}
   try{
     let mnem; try{ mnem=await window.LDPasskey.unlock(); }catch(e){ const pin=prompt(t("pkPinPrompt")); mnem=await window.LDPasskey.unlock(pin); }
-    toast(t("pkUnlocked")); await enter(mnem);
+    toast(t("pkUnlocked")); if(window.LDLock&&window.LDLock.hasLock()){ lsDel("ld_seed"); await enter(mnem); } else { await ldOnboard(mnem,false); }
   }catch(e){ toast(t("pkFail")+(e.message||e)); }
 };
 $("btnPkSocial").onclick=async()=>{
@@ -117,13 +127,21 @@ $("btnPkSocial").onclick=async()=>{
       const lines=inp.split(/\n+/).map(s=>s.trim()).filter(Boolean);
       const mnem=window.LDPasskey.recoverFromShares(lines);
       await window.LDPasskey.create(mnem,{userLabel:"lightdao-recovered"});
-      toast(t("pkRecoverOk")); await enter(mnem);
+      toast(t("pkRecoverOk")); await ldOnboard(mnem,false);
     }catch(e){ toast(t("pkFail")+(e.message||e)); }
   }
 };
 $("btnClaim").onclick=async()=>{ if(!await ensureLD()){toast(t("walletFail"));return;} const sel=$("claimDay"); const dv=sel&&sel.value?Number(sel.value):undefined; var gd=dv||((await fetch(CFG.gw+"/v1/health").then(function(r){return r.json();})).current_day-1); var gs=await fetch(CFG.gw+"/v1/scores?day="+gd).then(function(r){return r.json();}).catch(function(){return null;}); if(gs&&gs.scores&&gs.scores[myAddr]&&!(gs.scores[myAddr].w>0)){ toast("本钱包第 "+gd+" 天被反女巫归零(同设备多钱包),无可领金额;见反女巫提示"); return; } await window.LD.claim(dv); };
-$("btnExportSeed").onclick=async()=>{ if(!window.LDPasskey){toast(t("walletFail"));return;} try{ let m; try{ m=await window.LDPasskey.unlock(); }catch(e1){ const pin=prompt(t("pkPinPrompt")); m=await window.LDPasskey.unlock(pin); } alert("⚠ 你的助记词(唯一离线备份)。请抄写在纸上,切勿截图或发送给任何人:\n\n"+m); }catch(e){ toast(t("pkFail")+(e.message||e)); } };
-$("btnSocialMain").onclick=async()=>{ if(!window.LDPasskey||!window.LDPasskey.hasWallet()){toast(t("pkSocialFirst"));return;} try{ let pin=null; const rec=JSON.parse(lsGet("ld_passkey_v1")||"null"); if(rec&&rec.kdf==="pin"){pin=prompt(t("pkPinPrompt"));} let shares; try{ shares=await window.LDPasskey.setupSocialRecovery(pin,3,5); }catch(e1){ pin=prompt(t("pkPinPrompt")); shares=await window.LDPasskey.setupSocialRecovery(pin,3,5); } alert(t("pkSocialHint")+"\n\n"+shares.map((s,i)=>(i+1)+". "+s).join("\n")); }catch(e){ toast(t("pkFail")+(e.message||e)); } };
+/* SEC-LOCK step-up gate: exporting the seed phrase is a sensitive action */
+$("btnExportSeed").onclick=async()=>{
+ if(window.LDStepUp){ const okE=await window.LDStepUp("导出助记词 / Export seed phrase"); if(!okE){ toast("已取消:未通过安全验证 / Cancelled: security check not passed"); return; } }
+ let m=null; if(window.LDLock&&window.LDLock.currentSeed()){ m=window.LDLock.currentSeed(); }
+ if(!m){ if(!window.LDPasskey){toast(t("walletFail"));return;}
+  try{ try{ m=await window.LDPasskey.unlock(); }catch(e1){ const pin=prompt(t("pkPinPrompt")); m=await window.LDPasskey.unlock(pin); } }
+  catch(e){ toast(t("pkFail")+(e.message||e)); return; } }
+ if(m){ alert("⚠ 你的助记词(唯一离线备份)。请抄写在纸上,切勿截图或发送给任何人:\n\n"+m); } };
+/* SEC-LOCK step-up gate: social-recovery shares are key material */
+$("btnSocialMain").onclick=async()=>{ if(window.LDStepUp){ const okR=await window.LDStepUp("社交恢复分片 / Social recovery shares"); if(!okR){ toast("已取消:未通过安全验证 / Cancelled: security check not passed"); return; } } if(!window.LDPasskey||!window.LDPasskey.hasWallet()){toast(t("pkSocialFirst"));return;} try{ let pin=null; const rec=JSON.parse(lsGet("ld_passkey_v1")||"null"); if(rec&&rec.kdf==="pin"){pin=prompt(t("pkPinPrompt"));} let shares; try{ shares=await window.LDPasskey.setupSocialRecovery(pin,3,5); }catch(e1){ pin=prompt(t("pkPinPrompt")); shares=await window.LDPasskey.setupSocialRecovery(pin,3,5); } alert(t("pkSocialHint")+"\n\n"+shares.map((s,i)=>(i+1)+". "+s).join("\n")); }catch(e){ toast(t("pkFail")+(e.message||e)); } };
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);return true;}catch(e){return false;}}
 function lsDel(k){try{localStorage.removeItem(k);}catch(e){}}
@@ -133,7 +151,8 @@ function ssSet(k,v){try{sessionStorage.setItem(k,v);}catch(e){}}
 function esc(x){return String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 async function loadMySec(){ const el=$("mySec"); if(!el||!myAddr)return; try{ const r=await fetch(CFG.gw+"/v1/me?addr="+myAddr).then(x=>x.json()); const ds=Object.values(r.days||{}); const act=ds.filter(d=>d.active).length; const ref=ds.reduce((a,d)=>a+(d.referred||0),0); const flag=ds.some(d=>d.flagged); const fp=(ds.find(d=>d.fp)||{}).fp||"—"; el.innerHTML="活跃天数: <b>"+act+"</b> · 我的邀请: <b>"+ref+"</b> 人<br>设备指纹: <span class=\"mono\">"+esc(fp)+"…</span> · 反女巫状态: "+(flag?'<span class="errtx">同指纹多钱包,已去重</span>':'<span class="oktx">正常</span>')+"<br>我的上级邀请人: "+((ds.find(d=>d.referrer)||{}).referrer||"无(创世/直连)"); }catch(e){ el.textContent="加载失败"; } }
 async function loadMyHistory(){ const tb=$("myHist"); if(!tb||!myAddr)return; tb.innerHTML=""; try{ const h=await fetch(CFG.gw+"/v1/health").then(r=>r.json()); for(let d=h.current_day; d>h.current_day-7 && d>0; d--){ const day=await fetch(CFG.gw+"/v1/day?day="+d).then(r=>r.json()).catch(()=>null); const m=day&&day.miners?day.miners[myAddr]:null; const tr=document.createElement("tr"); if(m){ let den=day.finalized?day.total_score:null; if(!den){let sm=0;for(const k in day.miners){const mm=day.miners[k];sm+=w1e6(mm.bandwidth_kbps||0,mm.session_secs||0,mm.verification_tasks||0,mm.stability_pct||0);}den=sm;} let earned=0; try{ const pl=await window.__mrq({daily_miner_pool:{day:d}}); earned=den? (Number(pl)/1e6)*w1e6(m.bandwidth,m.session,m.verification,m.stability)/den :0; }catch(e){} tr.innerHTML="<td>"+d+"</td><td>"+m.bandwidth+"</td><td>"+m.session+"</td><td>"+m.verification+"</td><td>"+m.stability+"</td><td>"+(day.finalized?"✓":"…")+"</td><td>"+earned.toLocaleString(undefined,{maximumFractionDigits:1})+"</td>"; } else { tr.innerHTML="<td>"+d+"</td><td colspan=\"6\" class=\"mini\">无贡献</td>"; } tb.appendChild(tr);} }catch(e){ tb.innerHTML='<tr><td colspan="7" class="mini">加载失败</td></tr>'; } }
-async function enter(seed){ const s=seed||lsGet("ld_seed")||ssGet("ld_session"); if(s && window.LD && await window.LD.connect(s)){ ssSet("ld_session",s); $("addr").textContent=myAddr=window.LD.addr; $("sec-wallet").classList.add("hide"); $("sec-main").classList.remove("hide"); if($("inviteLink"))$("inviteLink").value=location.origin+"/?ref="+myAddr; window.LD.refresh(); var ovv=document.getElementById("loginOverlay"); if(ovv) ovv.style.display="none"; document.documentElement.classList.remove("ld-restoring"); /*loginOverlayHide*/ var keep=document.getElementById("keepLogin"); if(!keep||keep.checked){ persistSet(s); } loadMyHistory(); loadMySec(); if(lsGet("ld_mining")==="1"){ setTimeout(startMining,400); } } }
+async function enter(seed){ const s=seed||ssGet("ld_session")||lsGet("ld_seed"); if(s && window.LD && await window.LD.connect(s)){ ssSet("ld_session",s); $("addr").textContent=myAddr=window.LD.addr; $("sec-wallet").classList.add("hide"); $("sec-main").classList.remove("hide"); if($("inviteLink"))$("inviteLink").value=location.origin+"/?ref="+myAddr; window.LD.refresh(); var ovv=document.getElementById("loginOverlay"); if(ovv) ovv.style.display="none"; document.documentElement.classList.remove("ld-restoring"); /*loginOverlayHide*/ /* SEC-LOCK: never write the device-key blob ld_persist_v1; ld_lock_v1 (written at
+   onboarding) is the only saved login info. Plaintext ld_seed is always removed. */ lsDel("ld_seed"); loadMyHistory(); loadMySec(); if(lsGet("ld_mining")==="1"){ setTimeout(startMining,400); } } }
 // 邀请裂变:读 ?ref= 存 ld_ref;复制邀请链接
 (function(){ const q=new URLSearchParams(location.search).get("ref"); if(q&&q.startsWith("wasm1")) lsSet("ld_ref",q); })();
 document.addEventListener("DOMContentLoaded",()=>{ const b=$("btnCopyInvite"); if(b) b.onclick=()=>{ const el=$("inviteLink"); if(!el)return; if(navigator.clipboard)navigator.clipboard.writeText(el.value); else {el.removeAttribute("readonly");el.select();document.execCommand("copy");el.setAttribute("readonly","");} toast("✓ "+t("copy")); }; });
@@ -141,11 +160,47 @@ document.addEventListener("DOMContentLoaded",()=>{ const b=$("btnCopyInvite"); i
 
 /* ---- persistent device-bound session (stay logged in until logout) ---- */
 function devKeyBytes(){ try{ var b=lsGet("ld_devkey"); if(b){ var u=Uint8Array.from(atob(b),function(c){return c.charCodeAt(0);}); if(u.length===32)return u; } var n=new Uint8Array(32); crypto.getRandomValues(n); lsSet("ld_devkey", btoa(String.fromCharCode.apply(null,n))); return n; }catch(e){ return null; } }
-async function persistSet(seed){ try{ var kb=devKeyBytes(); if(!kb||!crypto.subtle)return false; var key=await crypto.subtle.importKey("raw",kb.buffer.slice(0),"AES-GCM",false,["encrypt"]); var iv=crypto.getRandomValues(new Uint8Array(12)); var ct=await crypto.subtle.encrypt({iv:iv},key,new TextEncoder().encode(seed)); lsSet("ld_persist_v1", JSON.stringify({iv:btoa(String.fromCharCode.apply(null,iv)),ct:btoa(String.fromCharCode.apply(null,new Uint8Array(ct)))})); return true; }catch(e){ return false; } }
-async function persistGet(){ try{ var r=JSON.parse(lsGet("ld_persist_v1")||"null"); if(!r)return null; var kb=devKeyBytes(); if(!kb||!crypto.subtle)return null; var key=await crypto.subtle.importKey("raw",kb.buffer.slice(0),"AES-GCM",false,["decrypt"]); var iv=Uint8Array.from(atob(r.iv),function(c){return c.charCodeAt(0);}); var ct=Uint8Array.from(atob(r.ct),function(c){return c.charCodeAt(0);}); var pt=await crypto.subtle.decrypt({iv:iv},key,ct.buffer.slice(0)); return new TextDecoder().decode(pt); }catch(e){ return null; } }
+async function persistSet(seed){ try{ var kb=devKeyBytes(); if(!kb||!crypto.subtle)return false; var key=await crypto.subtle.importKey("raw",kb.buffer.slice(0),"AES-GCM",false,["encrypt"]); var iv=crypto.getRandomValues(new Uint8Array(12)); var ct=await crypto.subtle.encrypt({name:"AES-GCM",iv:iv},key,new TextEncoder().encode(seed)); /* SEC-LOCK fix: algorithm needs "name" or Blink throws */ lsSet("ld_persist_v1", JSON.stringify({iv:btoa(String.fromCharCode.apply(null,iv)),ct:btoa(String.fromCharCode.apply(null,new Uint8Array(ct)))})); return true; }catch(e){ return false; } }
+async function persistGet(){ try{ var r=JSON.parse(lsGet("ld_persist_v1")||"null"); if(!r)return null; var kb=devKeyBytes(); if(!kb||!crypto.subtle)return null; var key=await crypto.subtle.importKey("raw",kb.buffer.slice(0),"AES-GCM",false,["decrypt"]); var iv=Uint8Array.from(atob(r.iv),function(c){return c.charCodeAt(0);}); var ct=Uint8Array.from(atob(r.ct),function(c){return c.charCodeAt(0);}); var pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:iv},key,ct.buffer.slice(0)); return new TextDecoder().decode(pt); /* SEC-LOCK fix: legacy migration path must actually decrypt */ }catch(e){ return null; } }
 function persistClear(){ lsDel("ld_persist_v1"); }
-async function autoLogin(){ var sess=null, sd=null; try{ sess=ssGet("ld_session"); sd=lsGet("ld_seed"); }catch(e){} if(sess){ enter(sess); return; } var pz=await persistGet(); if(pz){ enter(pz); return; } if(sd){ enter(sd); return; } }
-window.__ldReady=function(){ var has=false; try{ has=!!(ssGet("ld_session")||lsGet("ld_persist_v1")||lsGet("ld_seed")); }catch(e){} if(has){ var ov=document.getElementById("loginOverlay"); if(ov) ov.style.display="flex"; } autoLogin(); setTimeout(function(){ var ov=document.getElementById("loginOverlay"); if(ov) ov.style.display="none"; },6000); }; var pkOK=false; try{ pkOK=!!(window.LDPasskey&&window.LDPasskey.isAvailable()); }catch(e){}
+/* SEC-LOCK autoLogin order:
+   1) sessionStorage ld_session (same tab / reload / back-forward) -> enter, no prompt
+   2) ld_lock_v1 present -> unlock overlay (password or biometric); enter only on success
+   3) legacy ld_persist_v1 or plaintext ld_seed -> migrate: unlock via the old path once,
+      force setting a password, write ld_lock_v1, then DELETE ld_seed + ld_persist_v1
+   4) nothing saved -> onboarding (create / import) */
+var ldAutoTried=false;
+async function autoLogin(){ if(ldAutoTried)return; ldAutoTried=true;
+ var sess=null; try{ sess=ssGet("ld_session"); }catch(e){}
+ if(sess){ lsDel("ld_seed"); enter(sess); return; }
+ function hideOv(){ var o=document.getElementById("loginOverlay"); if(o)o.style.display="none"; }
+ if(window.LDLock&&window.LDLock.hasLock()){ hideOv();
+  const okU=await window.LDLock.showUnlock();
+  const sdU=okU?window.LDLock.currentSeed():null;
+  if(sdU){ enter(sdU); }
+  return; }
+ var legacy=null; try{ legacy=await persistGet(); }catch(e){ legacy=null; }
+ if(!legacy){ try{ legacy=lsGet("ld_seed"); }catch(e){} }
+ if(legacy){ lsDel("ld_seed"); persistClear();
+  if(window.LDLock&&window.LDLock.showSetup){ hideOv();
+   const okM=await window.LDLock.showSetup(legacy,{migrate:true});
+   if(okM){ enter(legacy); } }
+  else { enter(legacy); }
+  return; }
+}
+/* SEC-LOCK onboarding: a mandatory unlock password (+ optional biometric) is set
+   before the wallet is entered. replaceLock=true also covers "forgot password ->
+   re-import the seed phrase", which re-proves ownership and resets the password. */
+async function ldOnboard(mnem,replaceLock){ lsDel("ld_seed");
+ if(!window.LDLock||!window.LDLock.showSetup){ await enter(mnem); return; }
+ var keep=document.getElementById("keepLogin");
+ if(keep&&!keep.checked){ window.LDLock.removeDevice(); await enter(mnem); return; }
+ if(window.LDLock.hasLock()&&!replaceLock){ await enter(mnem); return; }
+ const okS=await window.LDLock.showSetup(mnem,{migrate:false});
+ if(okS){ await enter(mnem); }
+ else { toast("未设置解锁密码,钱包未登录 / Unlock password not set, wallet not entered"); }
+}
+window.__ldReady=function(){ var has=false; try{ has=!!(ssGet("ld_session")||lsGet("ld_lock_v1")||lsGet("ld_persist_v1")||lsGet("ld_seed")); }catch(e){} if(has){ var ov=document.getElementById("loginOverlay"); if(ov) ov.style.display="flex"; } autoLogin(); setTimeout(function(){ var ov=document.getElementById("loginOverlay"); if(ov) ov.style.display="none"; },6000); }; var pkOK=false; try{ pkOK=!!(window.LDPasskey&&window.LDPasskey.isAvailable()); }catch(e){}
 if(!pkOK){ showTab("New"); ["btnPkCreate","btnPkUnlock","btnPkSocial"].forEach(function(id){var b=document.getElementById(id); if(b){b.disabled=true;}}); var nt=document.getElementById("pkNote"); if(nt){nt.style.display="";nt.textContent="此浏览器不支持 Passkey(WebAuthn),请用助记词方式创建/导入,功能与安全性完全相同。";} }
 else { showTab("Pk"); }
 if(window.LD) autoLogin();
