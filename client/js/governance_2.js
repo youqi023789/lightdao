@@ -42,12 +42,14 @@ async function refreshProps(){
       const tot=Number(p.yes_weight)+Number(p.no_weight)+Number(p.abstain_weight);
       const yp=tot?Math.round(Number(p.yes_weight)/tot*100):0, np=tot?Math.round(Number(p.no_weight)/tot*100):0, ap=tot?100-yp-np:0;
       const endLeft=Math.round((p.end-Date.now()/1000)/3600);
+      const ended=(Number(p.end)*1000)<=Date.now();
+      const dis=ended?" disabled":"";
       const d=document.createElement("div"); d.className="prop";
-      d.innerHTML=`<h3>#${p.id} ${esc(p.title)} <span class="mut">[${p.ptype}]</span></h3>
+      d.innerHTML=`<h3>#${p.id} ${esc(p.title)} <span class="mut">[${p.ptype}]</span>${ended?' <span class="err">已结束</span>':""}</h3>
         <div class="mut" class="fs12">${esc(p.description).slice(0,120)}</div>
         <div class="bar"><i class="y" data-w="${yp}"></i><i class="n" data-w="${np}"></i><i class="a" data-w="${ap}"></i></div>
         <div class="mut" class="fs11">赞成 ${yp}%(${p.yes_addrs}人) · 反对 ${np}%(${p.no_addrs}人) · 弃权 ${ap}% · ${endLeft>0?endLeft+"h 后截止":"已截止"} ${p.executed?'· <span class="ok">已执行</span>':''}</div>
-        <button class="btn sm" data-v="yes" data-id="${p.id}">赞成</button><button class="btn ghost sm" data-v="no" data-id="${p.id}">反对</button><button class="btn ghost sm" data-v="abstain" data-id="${p.id}">弃权</button><button class="btn ghost sm" data-e="1" data-id="${p.id}">执行</button>`;
+        <button class="btn sm" data-v="yes" data-id="${p.id}"${dis}>赞成</button><button class="btn ghost sm" data-v="no" data-id="${p.id}"${dis}>反对</button><button class="btn ghost sm" data-v="abstain" data-id="${p.id}"${dis}>弃权</button><button class="btn ghost sm" data-e="1" data-id="${p.id}">执行</button>`;
       el.appendChild(d);
     });
     el.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>vote(b.dataset.id,b.dataset.v));
