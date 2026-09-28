@@ -7,10 +7,10 @@
 <meta name="description" content="Engineering notes and release announcements from the LightDAO mainnet.">
 <link rel="alternate" type="application/rss+xml" title="LightDAO Blog" href="/rss.xml">
 <link rel="stylesheet" href="/css/blog.css">
-<script src="/js/blog_1.js?v=16"></script>
+<script src="/js/blog_1.js?v=17"></script>
 <link rel="stylesheet" href="/theme.css">
-<script src="/js/back.js?v=16"></script>
-<script src="/js/wfix.js?v=16"></script>
+<script src="/js/back.js?v=17"></script>
+<script src="/js/wfix.js?v=17"></script>
 </head>
 <body>
 <div class="u3efb04"><a href="#" data-back="1" class="u59fa2b">← 返回上一页 / Back</a><a href="/" class="u59fa2b">⌂ 返回首页 / Home</a><button id="themeT" aria-label="toggle theme" class="u6b0f12">◐</button></div>
@@ -21,6 +21,6 @@
 <p class="sub">Shipped, weekly. Engineering notes from lightdao-mainnet-1.</p>
 <div class="uaa3a2f"><article class="u6efbd2"><div class="ud19d56">2026-06-18</div><h3 class="u1b17ec">Mainnet fee-burn is live: 50% of every gas fee, gone forever</h3><p class="ufeac2f">With the v2-lightfee coordinated upgrade, every transaction on lightdao-mainnet-1 now splits its fee 50% burn / 30% validators / 20% treasury, enforced at the chain layer (x/lightfee), not by convention. Gas is USD-anchored so a reference transfer costs ~$0.001 regardless of LIGHT price. Burn is verifiable: watch the burn address balance only ever rise.</p><p class="u553a64"><a href="/app.html" class="udb8f7a">Try it in the app →</a> · <a href="/rss.xml" class="uf12390">RSS</a></p></article><article class="u6efbd2"><div class="ud19d56">2026-04-02</div><h3 class="u1b17ec">We deleted the seed phrase (and the #1 way users lose funds)</h3><p class="ufeac2f">LightDAO wallets log in with Passkey/WebAuthn biometrics; the mnemonic is encrypted device-side and never shown by default, with Shamir 3-of-5 social recovery as backup. Mnemonic remains only as an optional fallback. Result: onboarding in seconds and no 12 words to lose.</p><p class="u553a64"><a href="/app.html" class="udb8f7a">Try it in the app →</a> · <a href="/rss.xml" class="uf12390">RSS</a></p></article><article class="u6efbd2"><div class="ud19d56">2026-02-11</div><h3 class="u1b17ec">Your browser is now infrastructure: device-direct WebRTC relay</h3><p class="ufeac2f">Light nodes form a P2P mesh over WebRTC with an 8-region TURN/TURNS fleet for symmetric NAT. Relayed bytes are metered on-device and score 40% of mining reward, verified by validator challenges + peer attestation + per-block Merkle root.</p><p class="u553a64"><a href="/app.html" class="udb8f7a">Try it in the app →</a> · <a href="/rss.xml" class="uf12390">RSS</a></p></article><article class="u6efbd2"><div class="ud19d56">2025-12-05</div><h3 class="u1b17ec">Gas that doesn't move with the token: USD-anchored pricing</h3><p class="ufeac2f">min-gas-price is derived from an on-chain TWAP oracle so fees stay stable in USD terms even before a LIGHT/USDC pool exists. When liquidity arrives, the oracle switches to real market median automatically via governance parameter.</p><p class="u553a64"><a href="/app.html" class="udb8f7a">Try it in the app →</a> · <a href="/rss.xml" class="uf12390">RSS</a></p></article></div>
 </div>
-<script src="/js/blog_2.js?v=16"></script>
+<script src="/js/blog_2.js?v=17"></script>
 </body>
 </html>

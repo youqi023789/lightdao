@@ -6,7 +6,10 @@
 import asyncio, json, sys, urllib.request, re
 import websockets
 
-CDP="http://127.0.0.1:9222"; BASE="https://lightdao.net/app.html"
+CDP="http://127.0.0.1:9222"
+PORT=sys.argv[1] if len(sys.argv)>1 else "443"
+ORIGIN=("https://lightdao.net:"+PORT) if PORT!="443" else "https://lightdao.net"
+BASE=ORIGIN+"/app.html"
 R=[]
 def rec(n,ok,d=""):
     R.append((n,ok)); print(("PASS " if ok else "FAIL ")+n+(" | "+d if d else ""))
@@ -42,7 +45,8 @@ def static_checks():
     import ssl
     ctx=ssl.create_default_context(); ctx.check_hostname=False; ctx.verify_mode=ssl.CERT_NONE
     def g(u): return urllib.request.urlopen(urllib.request.Request(u,headers={"Host":"lightdao.net"}),context=ctx,timeout=15).read().decode("utf-8","replace")
-    a1=g("https://127.0.0.1/js/app_1.js"); a2=g("https://127.0.0.1/js/app_2.js"); a3=g("https://127.0.0.1/js/app_3.js"); ah=g("https://127.0.0.1/app.html")
+    ORI="https://127.0.0.1:"+PORT
+    a1=g(ORI+"/js/app_1.js"); a2=g(ORI+"/js/app_2.js"); a3=g(ORI+"/js/app_3.js"); ah=g(ORI+"/app.html")
     rec("static status fetch cache-busted", ('/status.json?ts=' in a2 and 'no-store' in a2))
     rec("static resume listeners", all(k in a2 for k in ("visibilitychange","pageshow","focus")))
     rec("static per-version self-heal sentinel", ("done!==String(j.v)" in a1))
@@ -51,7 +55,7 @@ def static_checks():
     rec("static status element present", ('id="sysStatusApp"' in ah))
     rec("static dayBnd element present", ('id="dayBnd"' in ah))
     # badge/LDBUILD/ver consistency
-    ver=json.loads(g("https://127.0.0.1/js/ver.json"))["v"]
+    ver=json.loads(g(ORI+"/js/ver.json"))["v"]
     m=re.search(r'window\.LDBUILD="v(\d+)"',a1)
     rec("static LDBUILD==ver.json", m and int(m.group(1))==ver, f"ldb={m.group(1) if m else None} ver={ver}")
 

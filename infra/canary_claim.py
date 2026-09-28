@@ -25,6 +25,13 @@ def sh(c, timeout=90):
     except Exception as e:
         return "ERR:%s" % e, 99
 
+def shc(c, timeout=90):
+    try:
+        r = subprocess.run(c, shell=isinstance(c, str), capture_output=True, text=True, timeout=timeout)
+        return (r.stdout or "") + (r.stderr or ""), r.returncode
+    except Exception as e:
+        return "ERR:%s" % e, 99
+
 def alert(msg):
     try:
         with open("/home/ubuntu/ld_alerts.log", "a") as f:
@@ -55,6 +62,8 @@ def main():
     addr = canary_addr()
     if not addr:
         alert("canary key missing"); sys.exit(1)
+    if mode == "degraded":
+        return degraded()
     if mode == "beat":
         h = json.load(urllib.request.urlopen(GW + "/v1/health", timeout=20))
         day = h["current_day"]
@@ -104,6 +113,20 @@ def main():
                         "✅ Canary claim OK: day %d +%s LIGHT (settle→sign→proof→claim→payout verified)" % (d, round((b1 - b0) / 1e6, 2))], timeout=30)
     except Exception:
         pass
+
+CANARY2 = "wasm14ca7lzmsg2768rjpavqjmz756tyd6w5d5876zx"  # no-grant, zero-balance degraded canary
+def degraded():
+    d = json.load(urllib.request.urlopen(GW + "/v1/health", timeout=20))["current_day"] - 1
+    msg = {"claim": {"day": d, "proof": [], "score": {"bandwidth":"0","session":"0","verification":"0","stability":"0"}}}
+    out1,_ = shc([WASMD,"tx","wasm","execute",MR,json.dumps(msg),"--from","canary2","--fee-granter",DEP,"--gas","300000","--fees","60000ulight","-y","-o","json"]+KB)
+    c1=None
+    try: c1=json.loads(out1[out1.find("{"):]).get("code")
+    except Exception: pass
+    out2,_ = shc([WASMD,"tx","wasm","execute",MR,json.dumps(msg),"--from","canary2","--gas","300000","--fees","60000ulight","-y","-o","json"]+KB)
+    bad2 = ("min-gas-price not met" in out2)
+    print("DEGRADED tx1 code=%s (expect 38) | tx2 min-gas-regression=%s" % (c1, bad2))
+    if c1 not in (38,): alert("degraded: expected code38 got %s" % c1)
+    if bad2: alert("degraded: FEE REGRESSION min-gas not met despite 0.2 fee")
 
 if __name__ == "__main__":
     main()
