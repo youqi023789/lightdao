@@ -69,7 +69,7 @@ def main():
     for f in glob.glob(os.path.join(MAIN, "js", "*.js")): shutil.copy(f, PREV)
     io.open(os.path.join(PREV, "VERSION"), "w").write(cur)
     # promote candidate -> main
-    for f in glob.glob(os.path.join(src, "js", "*.js")): shutil.copy(f, os.path.join(MAIN, "js", os.path.basename(f)))
+    for f in glob.glob(os.path.join(STG, "js", "*.js")): shutil.copy(f, os.path.join(MAIN, "js", os.path.basename(f)))
     relabel(MAIN, nxt)
     print("PROMOTED main %s -> %s (prev snapshot=%s)" % (cur, nxt, PREV))
 

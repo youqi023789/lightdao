@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-<script src="/js/app_1.js?v=1.0.0"></script>
+<script src="/js/app_1.js?v=1.0.1"></script>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -20,10 +20,10 @@
 <meta name="twitter:description" content="Browser-based DePIN light-node mining on a live Cosmos L1. Passkey wallet, WebRTC relay, 50% fee burn. Mainnet live.">
 <meta name="twitter:image" content="https://lightdao.net/og.png">
 <link rel="stylesheet" href="/css/app.css">
-<script src="/js/wfix.js?v=1.0.0"></script>
-<link rel="modulepreload" href="/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js?v=1.0.0">
-<link rel="modulepreload" href="/js/vendor/-cosmjs-proto-signing-0.32.4.js?v=1.0.0">
-<link rel="modulepreload" href="/js/vendor/-cosmjs-stargate-0.32.4.js?v=1.0.0">
+<script src="/js/wfix.js?v=1.0.1"></script>
+<link rel="modulepreload" href="/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js?v=1.0.1">
+<link rel="modulepreload" href="/js/vendor/-cosmjs-proto-signing-0.32.4.js?v=1.0.1">
+<link rel="modulepreload" href="/js/vendor/-cosmjs-stargate-0.32.4.js?v=1.0.1">
 </head>
 <body>
 <div id="loginOverlay" style="display:none;position:fixed;inset:0;z-index:80;background:rgba(5,6,10,.72);backdrop-filter:blur(4px);align-items:center;justify-content:center;flex-direction:column;gap:14px"><div style="width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.2);border-top-color:#7c8cff;animation:ldspin 1s linear infinite"></div><div style="color:#eef1f6;font-size:15px">正在恢复登录状态,请稍候… / Restoring session…</div><div style="color:#9aa3b2;font-size:12.5px">请勿重复点击,以免误操作</div></div><style>@keyframes ldspin{to{transform:rotate(360deg)}}</style>
@@ -144,9 +144,9 @@
 <!-- WebRTC 中继模块(§4.7):P2P 数据通道中继 + 真实带宽计量 -->
 <script src="/webrtc-relay.js"></script>
 <!-- ============ 普通脚本: UI/多语言/挖矿循环, 不依赖任何 CDN, 断网可用 ============ -->
-<script src="/js/app_2.js?v=1.0.0"></script>
+<script src="/js/app_2.js?v=1.0.1"></script>
 
 <!-- ============ 模块: cosmjs 懒加载(仅钱包/领取需要), 失败优雅降级 ============ -->
-<script src="/js/app_3.js?v=1.0.0"></script>
+<script src="/js/app_3.js?v=1.0.1"></script>
 </body>
 </html>
