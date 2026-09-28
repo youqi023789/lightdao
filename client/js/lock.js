@@ -628,6 +628,7 @@
     isUnlocked: function () { return !!memSeed; },
     isLocked: function () { return !!readRec() && !memSeed; },
     currentSeed: function () { return memSeed; },
+    adoptSeed: function (sd) { if (sd) { memSeed = String(sd); } return !!memSeed; },
     memOnly: function () { return memOnly; },
     bioSupported: bioSupported,
     bioAvailable: bioAvailable,
