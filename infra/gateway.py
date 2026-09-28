@@ -108,7 +108,18 @@ def load_day(day):
     return {"day": day, "miners": {}, "finalized": False}
 def save_day(d):
     with open(day_path(d["day"]), "w") as f: json.dump(d, f)
-def current_day(): return int((time.time() - GENESIS) // DAY_SECS)
+CUTOVER = int(os.environ.get("GW_DAY_CUTOVER", "1790726400"))  # 2026-09-30 00:00:00 UTC; 之后日界=00:00UTC
+D_CUT = (CUTOVER - GENESIS - 1) // DAY_SECS + 1   # 截断的旧天保留其索引;首个00:00对齐天=+1,防索引碰撞
+def current_day():
+    now = int(time.time())
+    if now < CUTOVER: return (now - GENESIS) // DAY_SECS
+    return D_CUT + (now - CUTOVER) // DAY_SECS
+def next_boundary_ts():
+    now = int(time.time())
+    if now < CUTOVER:
+        nb = ((now - GENESIS) // DAY_SECS + 1) * DAY_SECS + GENESIS
+        return min(nb, CUTOVER)
+    return CUTOVER + ((now - CUTOVER) // DAY_SECS + 1) * DAY_SECS
 
 def finalize_day(day):
     with LOCK:
@@ -221,7 +232,7 @@ class H(BaseHTTPRequestHandler):
     def do_GET(self):
         if not _rate_ok(self.client_address[0], "get"): return self._send(429, {"error": "rate limited"})
         u = urlparse(self.path); q = parse_qs(u.query)
-        if u.path == "/v1/health": return self._send(200, {"ok": True, "current_day": current_day()})
+        if u.path == "/v1/health": return self._send(200, {"ok": True, "current_day": current_day(), "next_boundary_ts": next_boundary_ts()})
         if u.path == "/v1/probe":
             blob = b"\0" * (256 * 1024)   # 256KB 下载探测, 供客户端实测带宽
             self.send_response(200)
@@ -366,6 +377,8 @@ class H(BaseHTTPRequestHandler):
         if u.path == "/v1/finalize":
             if self.headers.get("X-Admin") != ADMIN: return self._send(403, {"error": "forbidden"})
             day = int(body.get("day", current_day()-1))
+            _dd = load_day(day)
+            if _dd.get("finalized"): return self._send(200, {"already": True, "day": day, "root": _dd.get("root")})
             return self._send(200, finalize_day(day))
         return self._send(404, {"error": "not found"})
 
