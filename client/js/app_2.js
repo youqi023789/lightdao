@@ -1,4 +1,4 @@
-window.LDBUILD="v13";
+window.LDBUILD="v15";
 function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
 
 window.CFG = {
@@ -157,7 +157,7 @@ if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator
 
 function ensureLD(ms){ ms=ms||8000; return new Promise(function(res){ if(window.LD) return res(window.LD); toast("钱包库加载中,请稍候… / loading wallet…"); var t0=Date.now(); (function chk(){ if(window.LD) return res(window.LD); if(Date.now()-t0>ms) return res(null); setTimeout(chk,150); })(); }); }
 
-(function(){ function up(){ fetch("/status.json").then(function(r){return r.json();}).then(function(j){ var e=document.getElementById("sysStatusApp"); if(!e)return; e.textContent=j.ok?"正常":"异常"; e.style.color=j.ok?"var(--ok)":"var(--err,#f66)"; }).catch(function(){ var e=document.getElementById("sysStatusApp"); if(e)e.textContent="—"; }); } up(); setInterval(up,60000); })();
+(function(){ function up(){ fetch("/status.json?ts="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ var e=document.getElementById("sysStatusApp"); if(!e)return; e.textContent=j.ok?"正常":"异常"; e.style.color=j.ok?"var(--ok)":"var(--err,#f66)"; }).catch(function(){ var e=document.getElementById("sysStatusApp"); if(e)e.textContent="—"; }); } up(); setInterval(up,60000); document.addEventListener("visibilitychange",function(){ if(!document.hidden) up(); }); window.addEventListener("pageshow",up); window.addEventListener("focus",up); })();
 
 async function autoClaim(){ if(!window.LD||!myAddr)return; try{
   var h=await fetch(CFG.gw+"/v1/health").then(function(r){return r.json();});
