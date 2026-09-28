@@ -175,6 +175,12 @@ def finalize_day(day):
                 scores[D] = {"bandwidth": 0, "session": 0, "verification": 0, "stability": 100}
                 addrs = sorted(set(addrs) | {D})
             scores[D]["session"] = scores[D].get("session", 0) + mv
+        # clamp boosted dims to contract SCORE_MAX(1e6): behavior boost must never push a
+        # saturated dim above 1e6 or the contract rejects the claim (code5 out-of-range).
+        for a in addrs:
+            _sc = scores[a]
+            for k in ("bandwidth", "session", "verification", "stability"):
+                if _sc.get(k, 0) > 1000000: _sc[k] = 1000000
         leaves = [leaf_hash(a, day, scores[a]["bandwidth"], scores[a]["session"], scores[a]["verification"], scores[a]["stability"]) for a in addrs]
         root, levels = build_tree(leaves)
         proofs = {a: proof_for(levels, i) for i, a in enumerate(addrs)}

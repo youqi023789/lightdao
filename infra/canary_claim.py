@@ -83,6 +83,11 @@ def main():
     day = json.load(urllib.request.urlopen(GW + "/v1/day?day=%d" % d, timeout=20))
     if not day.get("finalized"):
         print("day", d, "not finalized"); return
+    stc = {}
+    try: stc = json.load(open("/home/ubuntu/canary_state.json"))
+    except Exception: pass
+    if d in (stc.get("claimed") or []):
+        print("canary already claimed day", d); return
     sc = json.load(urllib.request.urlopen(GW + "/v1/scores?day=%d" % d, timeout=20))
     mine = (sc.get("scores") or {}).get(addr)
     if not mine or not (mine.get("w", 0) > 0):
@@ -98,8 +103,11 @@ def main():
     out, rc = sh([WASMD, "tx", "wasm", "execute", MR, json.dumps(msg), "--from", "canary",
                   "--fee-granter", DEP, "--gas", "300000", "--fees", "75000ulight", "-y", "-o", "json"] + KB)
     code = None
-    try: code = json.loads(out).get("code")
+    try: code = json.loads(out[out.find("{"):]).get("code")
     except Exception: pass
+    if code == 5 and "already claimed" in (out or ""):
+        stc.setdefault("claimed", []).append(d); json.dump(stc, open("/home/ubuntu/canary_state.json","w"))
+        print("canary day %d already claimed (ok)" % d); return
     if code not in (0, None):
         alert("canary claim tx code %s day %s log %s" % (code, d, out[:200])); sys.exit(1)
     time.sleep(8)
@@ -107,6 +115,7 @@ def main():
     b1 = sum(int(x["amount"]) for x in bal1.get("balances", []) if x["denom"] == "ulight")
     if b1 <= b0:
         alert("canary claim did not increase balance day %d (%d->%d)" % (d, b0, b1)); sys.exit(1)
+    stc.setdefault("claimed", []).append(d); json.dump(stc, open("/home/ubuntu/canary_state.json","w"))
     print("CANARY OK day %d +%s ulight" % (d, b1 - b0))
     try:
         subprocess.run(["python3", "/usr/local/bin/discord_bot.py", "send",

@@ -1,0 +1,8 @@
+{
+ "wasm1ar9mg3ls3xw3ac44j29dvptnls0zgdhy8aghc3": {
+  "type": "d16_boost_clamp_comp",
+  "amount_light": 116625.5424,
+  "day": 16,
+  "reason": "behavior boost pushed dim >1e6; on-chain claim rejects; compensated at TGE"
+ }
+}
