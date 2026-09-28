@@ -140,6 +140,37 @@ def main():
             alert("client errors last hour: %d" % ce)
             try: open(ce_state_f, "w").write(str(now))
             except Exception: pass
+    # ---- production truth-probe: served files must not lie / disagree ----
+    tp_ok = True; tp_msg = ""
+    try:
+        import ssl as _ssl2, re as _re2
+        _ctx2 = _ssl2.create_default_context(); _ctx2.check_hostname = False; _ctx2.verify_mode = _ssl2.CERT_NONE
+        def _g(u):
+            rq = urllib.request.Request(u, headers={"Host": "lightdao.net"})
+            return urllib.request.urlopen(rq, context=_ctx2, timeout=10).read().decode("utf-8", "replace")
+        a1 = _g("https://127.0.0.1/js/app_1.js"); a2 = _g("https://127.0.0.1/js/app_2.js"); a3 = _g("https://127.0.0.1/js/app_3.js")
+        vj = json.loads(_g("https://127.0.0.1/js/ver.json"))
+        ldb = set(_re2.findall(r'window\.LDBUILD="v(\d+)"', a1 + a2 + a3))
+        appv = _re2.search(r'var APPV=(\d+);', a1)
+        if len(ldb) != 1: tp_ok = False; tp_msg = "LDBUILD mismatch %s" % ldb
+        elif not appv or appv.group(1) not in ldb: tp_ok = False; tp_msg = "APPV/LDBUILD mismatch"
+        elif str(vj.get("v")) != list(ldb)[0]: tp_ok = False; tp_msg = "ver.json!=LDBUILD"
+        elif 'GasPrice.fromString("0.2"' not in a3: tp_ok = False; tp_msg = "gasPrice!=0.2"
+        elif '/status.json?ts=' not in a2 or 'no-store' not in a2: tp_ok = False; tp_msg = "status cache-bust missing"
+        stj = json.loads(_g("https://127.0.0.1/status.json"))
+        if now - stj.get("ts", 0) > 900: tp_ok = False; tp_msg = "status.json stale"
+        elif bool(stj.get("ok")) != gok: tp_ok = False; tp_msg = "status.json ok != gateway ok"
+    except Exception as e:
+        tp_ok = False; tp_msg = "probe err %s" % e
+    st["checks"]["truth_probe"] = tp_ok
+    if not tp_ok:
+        last = 0
+        try: last = int(open("/home/ubuntu/ld_tp_alert_state").read().strip() or 0)
+        except Exception: last = 0
+        if now - last >= 3600:
+            alert("truth-probe: %s" % tp_msg)
+            try: open("/home/ubuntu/ld_tp_alert_state", "w").write(str(now))
+            except Exception: pass
     json.dump(st, open(STATUS, "w"))
     print("monitor ok=%s height=%s miners=%s" % (st["ok"], h, mn))
 

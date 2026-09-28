@@ -1,4 +1,4 @@
-window.LDBUILD="v15";
+window.LDBUILD="v16";
 function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
 
 window.CFG = {
@@ -194,11 +194,18 @@ async function refreshClaimable(){ var el=document.getElementById("claimable"); 
  }catch(e){} }
 setInterval(refreshClaimable,60000);
 
-(function(){ var el=document.getElementById("dayBnd"); if(!el) return; var nb=0;
+(function(){ var el=document.getElementById("dayBnd"); if(!el) return; var nb=0,srv=0,loc=0;
  function p(n){return (n<10?"0":"")+n;}
  function cd(sec){ sec=Math.max(0,sec|0); return p((sec/3600)|0)+":"+p(((sec%3600)/60)|0)+":"+p(sec%60); }
- function tick(){ if(!nb) return; var left=Math.floor(nb-Date.now()/1000); var d=new Date(nb*1000);
+ function tick(){ if(!nb||!srv) return; var elapsed=Date.now()/1000-loc; var left=Math.floor(nb-(srv+elapsed)); var d=new Date(nb*1000);
    var lt=d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}); var ld=d.toLocaleDateString([],{month:"2-digit",day:"2-digit"});
    el.textContent="每日结算刷新:你当地 "+ld+" "+lt+" · 倒计时 "+cd(left); }
- function pull(){ fetch(CFG.gw+"/v1/health").then(function(r){return r.json();}).then(function(hh){ if(hh&&hh.next_boundary_ts){ nb=hh.next_boundary_ts; tick(); } }).catch(function(){}); }
+ function pull(){ fetch(CFG.gw+"/v1/health").then(function(r){return r.json();}).then(function(hh){ if(hh&&hh.next_boundary_ts&&hh.now_ts){ nb=hh.next_boundary_ts; srv=hh.now_ts; loc=Date.now()/1000; tick(); } }).catch(function(){}); }
  pull(); setInterval(tick,1000); setInterval(pull,60000); })();
+(function(){ function audit(){ try{
+   var bb=document.getElementById("ld-build"); if(bb && bb.textContent!==window.LDBUILD){ window.__ldReport && window.__ldReport("truth-mismatch badge="+bb.textContent+" vs "+window.LDBUILD); }
+   fetch("/status.json?ts="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){
+     var st=document.getElementById("sysStatusApp"); if(st){ var shown=st.textContent; var want=j.ok?"正常":"异常"; if(shown!==want && shown!=="—"){ window.__ldReport && window.__ldReport("truth-mismatch status="+shown+" vs "+want); } }
+   }).catch(function(){});
+ }catch(e){} }
+ setTimeout(audit,5000); setInterval(audit,60000); })();

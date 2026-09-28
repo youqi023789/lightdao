@@ -232,7 +232,7 @@ class H(BaseHTTPRequestHandler):
     def do_GET(self):
         if not _rate_ok(self.client_address[0], "get"): return self._send(429, {"error": "rate limited"})
         u = urlparse(self.path); q = parse_qs(u.query)
-        if u.path == "/v1/health": return self._send(200, {"ok": True, "current_day": current_day(), "next_boundary_ts": next_boundary_ts()})
+        if u.path == "/v1/health": return self._send(200, {"ok": True, "current_day": current_day(), "next_boundary_ts": next_boundary_ts(), "now_ts": int(time.time())})
         if u.path == "/v1/probe":
             blob = b"\0" * (256 * 1024)   # 256KB 下载探测, 供客户端实测带宽
             self.send_response(200)
