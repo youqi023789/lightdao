@@ -3,7 +3,7 @@
 script/css asset existence. Run before every deploy."""
 import glob, os, re, subprocess, sys
 
-WWW = "/var/www/lightdao"
+WWW = __import__("os").environ.get("LD_WEB_ROOT", "/var/www/lightdao")
 PAGE_OF_PREFIX = {"app_": "app.html", "explorer_": "explorer.html", "index_": "index.html",
                   "landing_": "landing.html", "nodes_": "nodes.html", "invest_": "invest.html",
                   "governance_": "governance.html", "search_": "search.html", "season_": "season.html",

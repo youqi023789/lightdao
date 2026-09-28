@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-<script src="/js/app_1.js?v=17"></script>
+<script src="/js/app_1.js?v=1.0.0"></script>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -20,10 +20,10 @@
 <meta name="twitter:description" content="Browser-based DePIN light-node mining on a live Cosmos L1. Passkey wallet, WebRTC relay, 50% fee burn. Mainnet live.">
 <meta name="twitter:image" content="https://lightdao.net/og.png">
 <link rel="stylesheet" href="/css/app.css">
-<script src="/js/wfix.js?v=17"></script>
-<link rel="modulepreload" href="/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js?v=17">
-<link rel="modulepreload" href="/js/vendor/-cosmjs-proto-signing-0.32.4.js?v=17">
-<link rel="modulepreload" href="/js/vendor/-cosmjs-stargate-0.32.4.js?v=17">
+<script src="/js/wfix.js?v=1.0.0"></script>
+<link rel="modulepreload" href="/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js?v=1.0.0">
+<link rel="modulepreload" href="/js/vendor/-cosmjs-proto-signing-0.32.4.js?v=1.0.0">
+<link rel="modulepreload" href="/js/vendor/-cosmjs-stargate-0.32.4.js?v=1.0.0">
 </head>
 <body>
 <div id="loginOverlay" style="display:none;position:fixed;inset:0;z-index:80;background:rgba(5,6,10,.72);backdrop-filter:blur(4px);align-items:center;justify-content:center;flex-direction:column;gap:14px"><div style="width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.2);border-top-color:#7c8cff;animation:ldspin 1s linear infinite"></div><div style="color:#eef1f6;font-size:15px">正在恢复登录状态,请稍候… / Restoring session…</div><div style="color:#9aa3b2;font-size:12.5px">请勿重复点击,以免误操作</div></div><style>@keyframes ldspin{to{transform:rotate(360deg)}}</style>
@@ -133,7 +133,7 @@
 <div class="card"><div class="seclabel">委托在线 / Delegate uptime (70/30)</div><p class="mini ud51702">移动端可把"在线"委托给中继节点:你拿 70% 在线分,中继拿 30%(白皮书移动端适配)。留空=不委托。</p><div class="row"><input id="dlgAddr" placeholder="中继节点 wasm1… 地址(可留空)"><button class="btn ghost u44c58d" id="btnDlg">保存委托</button></div><div class="mini u9e3c4c" id="dlgStatus"></div></div>
 <div class="card"><div class="seclabel">子代币兑换 / Sub-token exchange</div><div id="subList" class="mini">查询中…</div><p class="mini ud43169">合约 Exchange 已就绪(LIGHT 兑换子代币并销毁);当前尚无子代币发行,首笔治理投资提案通过后此处开放兑换。</p></div>
 <div class="mini" style="text-align:center;margin-bottom:6px">系统状态: <span id="sysStatusApp">…</span></div>
-<div class="mini" style="text-align:center;margin-bottom:4px;color:var(--mut,#7c88ad)">build <span id="ld-build">v13</span></div>
+<div class="mini" style="text-align:center;margin-bottom:4px;color:var(--mut,#7c88ad)">build <span id="ld-build">1.0.0</span></div>
 <footer><a href="/audit_logic.html" class="u0cc002">安全与逻辑审计</a><span data-i="footer"></span> · <a class="lnk" href="https://lightdao.net" target="_blank">lightdao.net</a></footer>
   </section>
 </div>
@@ -144,9 +144,9 @@
 <!-- WebRTC 中继模块(§4.7):P2P 数据通道中继 + 真实带宽计量 -->
 <script src="/webrtc-relay.js"></script>
 <!-- ============ 普通脚本: UI/多语言/挖矿循环, 不依赖任何 CDN, 断网可用 ============ -->
-<script src="/js/app_2.js?v=17"></script>
+<script src="/js/app_2.js?v=1.0.0"></script>
 
 <!-- ============ 模块: cosmjs 懒加载(仅钱包/领取需要), 失败优雅降级 ============ -->
-<script src="/js/app_3.js?v=17"></script>
+<script src="/js/app_3.js?v=1.0.0"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-window.LDBUILD="v17";
+window.LDBUILD="1.0.0";
 function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
 
 const CDN = ["/js/vendor/"];

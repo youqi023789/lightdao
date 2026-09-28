@@ -56,8 +56,8 @@ def static_checks():
     rec("static dayBnd element present", ('id="dayBnd"' in ah))
     # badge/LDBUILD/ver consistency
     ver=json.loads(g(ORI+"/js/ver.json"))["v"]
-    m=re.search(r'window\.LDBUILD="v(\d+)"',a1)
-    rec("static LDBUILD==ver.json", m and int(m.group(1))==ver, f"ldb={m.group(1) if m else None} ver={ver}")
+    m=re.search(r'window\.LDBUILD="([\d.]+)"',a1)
+    rec("static LDBUILD==ver.json", m and m.group(1)==str(ver), f"ldb={m.group(1) if m else None} ver={ver}")
 
 async def browser_checks():
     health=json.load(urllib.request.urlopen("http://127.0.0.1:8080/v1/health"))
@@ -70,7 +70,8 @@ async def browser_checks():
         ldb=await pg.ev("window.LDBUILD")
         rec("S0 badge==LDBUILD", badge==ldb, f"{badge}/{ldb}")
         st=await pg.ev("document.getElementById('sysStatusApp')&&document.getElementById('sysStatusApp').textContent")
-        rec("S0 status badge==server", (st in ("正常","—")) and (st=="正常")==bool(health["ok"]) or st=="—", f"{st}/{health['ok']}")
+        stj=await pg.ev("(async()=>{try{const j=await fetch('/status.json?ts='+Date.now(),{cache:'no-store'}).then(r=>r.json());return j.ok?'正常':'异常';}catch(e){return '—';}})()",True)
+        rec("S0 status badge==status.json", st==stj, f"badge={st} status.json={stj}")
         bnd=await pg.ev("document.getElementById('dayBnd')&&document.getElementById('dayBnd').textContent")
         rec("S0 countdown present", bool(bnd) and "倒计时" in (bnd or ""), str(bnd)[:50])
         rec("S0 no exceptions", len(pg.errors)==0)
