@@ -1,0 +1,26 @@
+# 草案:治理合约迁移提案(x/gov MsgMigrateContract)— 目标窗口 2026-10-05
+
+状态:DRAFT,待 10-04 v4 执行后提交。**不要用链内治理提案做此事**(见"为什么")。
+
+## 问题(已实测)
+- 链上 governance 实例 `wasm14axmz74pppxqxs3qhxaaf2qzl6x53pvvzm7c6p52qrycwnyh8ktsfukapt` = code 11(旧构建):stake 走 light_token 的 allowance + 内部 transfer_from。
+- 链上 light_token `wasm13c9t6xmar22xclseua6xevw4t4cnrampy6y5ajdydhyv5k0znrcsth555z` = code 1(新构建,消息形状已变)。
+- 两者不兼容 → 质押必报 `Error parsing into type light_token::ExecuteMsg`;投票因权重=质押额而报 `no stake`。治理实质不可用。
+- 仓库当前 governance 源码已改为**原生 LIGHT 随消息质押**(不再调 light_token),即迁移目标构建。
+- 证据:直接向 light_token 发 increase_allowance / transfer_from{from,to,amount} 均 code 0(代币侧形状正常)→ 失败点在治理合约内部子消息。
+
+## 为什么走 x/gov 而非链内提案
+链内 create_proposal 需要质押权重,而质押已坏 → 鸡生蛋。故用链级 `x/gov`(MsgStoreCode + MsgMigrateContract,authority=gov 模块),由 7 个验证者投票通过(与共识级变更同路径)。
+
+## 步骤
+1. SG 构建目标 governance wasm:`cargo rustc --release --target wasm32-unknown-unknown --crate-type cdylib -- -C target-feature=-reference-types`,再 `wasm-opt --mvp-features -O3`;记录 sha256。
+2. **测试网先行**:在 lightdao-testnet-1 对测试网 governance 实例做同构迁移,验证 STAKED/提案状态保留、原生 stake/vote 可用,再上主网。
+3. x/gov 提案(消息序):① MsgStoreCode(新 governance wasm)→ 得 code_id N;② MsgMigrateContract{contract: wasm14axmz…, code_id: N, msg:{}}。deposit 10 LIGHT;7 验证者 yes。
+4. **顺序约束:必须在 10-04 05:35Z v4(proposal 10 执行)之后**(proposal 10 的存在与 executed 标记在 governance 状态里,迁移虽保留同键状态,仍避开同窗口叠加风险)。建议 10-05。
+5. 网页 1.2.0:stake 改为随消息附原生 LIGHT(删除 increase_allowance 步骤),unstake 返回原生;文案同步。
+6. 验收:已知地址 staked_balance 迁移前后一致;active_proposals 含 #10 且 executed 标记不变;新 stake/vote 成功;qa_site/qa_extra/site_audit/qa_truth/qa_click 全过;monitor truth-probe 绿。
+7. 回滚:仅当存储键向前兼容时迁回 code 11;否则前向修复。迁移前快照 governance 全状态(`contract-state all` 导出)留存。
+
+## 提案正文(中文摘要,供提交)
+标题:迁移治理合约至原生质押构建(修复质押/投票不可用)
+摘要:治理合约 code 11 与 light_token code 1 消息形状不兼容,导致质押与投票不可用。本提案经 x/gov 存储新治理代码并迁移治理实例;迁移保留全部质押与提案状态;网页客户端同步改为原生质押。不影响挖矿、领取、v4 排放。
