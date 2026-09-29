@@ -1,0 +1,22 @@
+# LightDAO ops log rotation.
+# Added 2026-09-29 for OPS_ROADMAP S5 / audit finding F8.2 (gateway + cron logs had no
+# rotation, so a full or unwritable disk silently kills both the logs and the alerts).
+#
+# Additive only: no pre-existing logrotate stanza is modified. `missingok` makes the file
+# a no-op on nodes that do not produce a given path (the root nodes only write
+# /root/ld_sign.log; the ubuntu nodes write /home/ubuntu/ld_*.log).
+#
+# copytruncate is used deliberately: every ld_*.log is appended to by cron (`>> file`) and
+# by short-lived python helpers, so none of them reopen their fd on signal. Renaming the
+# file would strand the next writer on the old inode; copytruncate keeps the same inode.
+su root root
+
+/home/ubuntu/ld_*.log /root/ld_*.log {
+    daily
+    rotate 14
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+}
