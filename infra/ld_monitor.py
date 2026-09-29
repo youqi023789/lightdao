@@ -194,6 +194,19 @@ def main():
             alert("truth-probe: %s" % tp_msg)
             try: open("/home/ubuntu/ld_tp_alert_state", "w").write(str(now))
             except Exception: pass
+    # expiry watch (domain/cert) from /home/ubuntu/ld_expiry.json
+    try:
+        import datetime as _dt
+        _ex = json.load(open("/home/ubuntu/ld_expiry.json"))
+        for _k, _v in _ex.items():
+            if not isinstance(_v, str) or not _v.endswith("Z"): continue
+            _t = _dt.datetime.fromisoformat(_v.replace("Z", "+00:00")).timestamp()
+            _days = (_t - now) / 86400.0
+            st["checks"]["expiry_" + _k] = round(_days, 1)
+            if _days < 45:
+                alert("expiry: %s in %.0f days" % (_k, _days))
+    except Exception:
+        pass
     json.dump(st, open(STATUS, "w"))
     print("monitor ok=%s height=%s miners=%s" % (st["ok"], h, mn))
 
