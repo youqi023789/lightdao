@@ -1,11 +1,11 @@
-window.LDBUILD="1.1.0";
+window.LDBUILD="1.1.7";
 function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
 
 const CDN = ["/js/vendor/"];
 async function loadCosmjs(){
   if(window.__c) return window.__c;
   const L=p=>"/js/vendor/-cosmjs-"+p+"-0.32.4.js?v=2";
-  const C=p=>"https://cdn.jsdelivr.net/npm/@cosmjs/"+p+"@0.32.4/+esm";
+  const C=p=>"/js/vendor/-cosmjs-"+p+"-0.32.4.js?v=2";
   for(const src of [L,C]){
     try{
       const [cs,ps,sg]=await Promise.all([import(src("cosmwasm-stargate")),import(src("proto-signing")),import(src("stargate"))]);
@@ -72,13 +72,14 @@ document.getElementById("themeT").onclick=function(){var c=document.documentElem
   if(!inp||!btn)return;
   function show(){ var d=lsGet("ld_delegate"); inp.value=d||""; st.textContent=d?("当前委托给 "+d):"未委托(自己在线)"; }
   btn.onclick=function(){ var v=inp.value.trim(); if(v && !/^wasm1[a-z0-9]{38,}$/.test(v)){ st.textContent="地址格式无效"; return; }
+    if(v && !/^wasm1[a-z0-9]{20,}$/.test(v)){ if(window.toast)toast("委托地址须为 wasm1… 或留空(=不委托)"); return; }
     if(v) lsSet("ld_delegate",v); else lsDel("ld_delegate"); show(); };
   show();
 })();
 (function(){
   var el=document.getElementById("subList"); if(!el)return;
   (async()=>{ try{
-    var m=await import("/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js?v=2").catch(function(){return import("https://cdn.jsdelivr.net/npm/@cosmjs/cosmwasm-stargate@0.32.4/+esm");});
+    var m=await import("/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js?v=2").catch(function(){return null;});
     var c=await m.CosmWasmClient.connect(CFG.rpc);
     var list=await c.queryContractSmart("wasm1uykr2f24sdj9f4la0wv78gvjuyqqnqk9r8jggcqd9ha9vxjrrkksum5x0g",{all_sub_tokens:{}});
     el.textContent = (list&&list.length)? list.map(function(s){return s.symbol||s;}).join(", ") : "暂无已发行子代币";

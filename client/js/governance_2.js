@@ -7,10 +7,13 @@ const GOV="wasm14axmz74pppxqxs3qhxaaf2qzl6x53pvvzm7c6p52qrycwnyh8ktsfukapt";
 const LT="wasm13c9t6xmar22xclseua6xevw4t4cnrampy6y5ajdydhyv5k0znrcsth555z";
 const TM="wasm192u2pm80ndmh608mmvhrzhje0sjaq0txr5md77lr70ucy0j3lfys8l633u";
 const DENOM="ulight";
+/* 1.2.0 native-stake flag - see docs/PROPOSAL_GOV_MIGRATION.md. Keep false until the
+   governance x/gov migration (~2026-10-05) executes; then flip to true + bump version. */
+const STAKE_NATIVE=false;
 function log(m,c){const e=$("log");if(!e)return;e.innerHTML=(c?`<span class="${c}">`:"")+String(m).replace(/</g,"&lt;")+(c?"</span>":"");e.scrollIntoView({block:"nearest"});}
 let client=null,addr=null;
 const VEN=p=>"/js/vendor/-cosmjs-"+p+"-0.32.4.js?v=2";
-const CDNU=p=>"https://cdn.jsdelivr.net/npm/@cosmjs/"+p+"@0.32.4/+esm";
+const CDNU=p=>"/js/vendor/-cosmjs-"+p+"-0.32.4.js?v=2";
 async function loadCosmjs(){if(window.__c)return window.__c;
  for(const src of [VEN,CDNU]){ try{ const [cs,ps,sg]=await Promise.all([import(src("cosmwasm-stargate")),import(src("proto-signing")),import(src("stargate"))]); window.__c={cs,ps,sg}; return window.__c; }catch(e){} }
  return null;}
@@ -59,6 +62,9 @@ async function refreshProps(){
 function esc(s){return String(s||"").replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));}
 async function vote(id,opt){
   if(!client){log("先连接钱包","err");return;}
+  try{ const sb=await client.queryContractSmart(GOV,{staked_balance:{address:addr}});
+    if(!Number((sb&&sb.amount)||0)){ log("投票需先质押 LIGHT(治理权重=质押额)。质押通道维护中,迁移完成后即可质押并投票。","warn"); return; } }
+  catch(e){ log("查询质押额失败: "+(e.message||e).slice(0,80),"err"); return; }
   if(!await ldGate("治理投票 #"+id+" / Governance vote")){ldGateFail();return;}
   log("投票 #"+id+" "+opt+"…");
   try{ const r=await client.execute(addr,GOV,{vote:{proposal_id:Number(id),option:opt,bet:"0"}},"auto"); log("✓ 已投票 "+r.transactionHash.slice(0,12),"ok"); await refreshProps(); }
@@ -71,18 +77,26 @@ async function exec(id){
   try{ const r=await client.execute(addr,GOV,{execute_proposal:{proposal_id:Number(id)}},"auto"); log("✓ 已执行 "+r.transactionHash.slice(0,12),"ok"); await refreshProps(); }
   catch(e){ log("执行失败(可能未通过): "+(e.message||e).slice(0,120),"err"); }
 }
+/* 1.2.0 native-funds staking (docs/PROPOSAL_GOV_MIGRATION.md). While STAKE_NATIVE=false
+   the maintenance notice below is kept verbatim (identical to current live behavior).
+   After the governance x/gov migration (~2026-10-05), flip STAKE_NATIVE=true + bump the
+   version: stake then attaches native LIGHT as msg funds; the light_token CW20
+   allowance step is removed. This flag flip + version bump is the ONLY web change. */
 $("btnStake").onclick=async()=>{
   if(!client){log("先连接钱包","err");return;}
+  if(!STAKE_NATIVE){
+    log("质押通道维护中:链上治理合约(旧CW20质押)与代币合约版本不兼容,需一次合约迁移(改为原生质押,已排期治理提案)。迁移完成前质押不可用,不影响挖矿/领取/委托。","warn");
+    return;
+  }
   const amt=Math.floor(Number($("stakeAmt").value||0)*1e6); if(amt<=0){log("输入数量","warn");return;}
   if(!await ldGate("质押 / Stake")){ldGateFail();return;}
-  log("授权 light_token → governance…");
+  log("质押(原生 LIGHT 随消息附带)…");
   try{
-    await client.execute(addr,LT,{increase_allowance:{spender:GOV,amount:String(amt)}},"auto");
-    log("质押…");
-    const r=await client.execute(addr,GOV,{stake:{amount:String(amt)}},"auto");
+    const r=await client.execute(addr,GOV,{stake:{amount:String(amt)}},"auto","",[{denom:DENOM,amount:String(amt)}]);
     log("✓ 已质押 "+r.transactionHash.slice(0,12),"ok"); await refreshBal();
   }catch(e){log("质押失败: "+(e.message||e).slice(0,140),"err");}
 };
+/* native unstake (contract returns native LIGHT post-migration); message shape unchanged. */
 $("btnUnstake").onclick=async()=>{
   if(!client)return; const amt=Math.floor(Number($("stakeAmt").value||0)*1e6); if(amt<=0){log("输入数量","warn");return;}
   if(!await ldGate("赎回质押 / Unstake")){ldGateFail();return;}
