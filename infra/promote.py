@@ -63,7 +63,14 @@ def main():
     print("STAGING GATE PASS (v%s)" % nxt)
     if not apply:
         print("(dry-run; pass --apply to promote)"); return
-    # snapshot prev for rollback
+    # snapshot prev for rollback + permanent versioned archive
+    ARCH = "/var/www/lightdao_js_archive"
+    os.makedirs(ARCH, exist_ok=True)
+    av = os.path.join(ARCH, cur)
+    if not os.path.isdir(av):
+        os.makedirs(av)
+        for f in glob.glob(os.path.join(MAIN, "js", "*.js")): shutil.copy(f, av)
+        io.open(os.path.join(av, "VERSION"), "w").write(cur)
     if os.path.exists(PREV): shutil.rmtree(PREV)
     os.makedirs(PREV)
     for f in glob.glob(os.path.join(MAIN, "js", "*.js")): shutil.copy(f, PREV)

@@ -136,7 +136,7 @@ def main():
         _nb = _hb.get("next_boundary_ts"); _cd = _hb.get("current_day")
         if _nb and _cd:
             _start = _nb - 86400
-            _lag = now - (_start + 86400)  # seconds since current day began == prev day's age past boundary
+            _lag = now - _start  # seconds since current day began (= prev day's end)
             _prev_done = None
             try:
                 _pd = json.loads(urllib.request.urlopen("http://127.0.0.1:8080/v1/day?day=%d" % (_cd - 1), timeout=10).read())
