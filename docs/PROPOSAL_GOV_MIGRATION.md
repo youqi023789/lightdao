@@ -24,3 +24,9 @@
 ## 提案正文(中文摘要,供提交)
 标题:迁移治理合约至原生质押构建(修复质押/投票不可用)
 摘要:治理合约 code 11 与 light_token code 1 消息形状不兼容,导致质押与投票不可用。本提案经 x/gov 存储新治理代码并迁移治理实例;迁移保留全部质押与提案状态;网页客户端同步改为原生质押。不影响挖矿、领取、v4 排放。
+
+## 14. 两段式提案(取代单提案;09-29 演练发现的攻击面)
+- 链参数 code_upload_access=Everybody → 任何人可 store code;CosmWasm 不对同 checksum 去重(drill FAIL 项)→ 单提案内预测 code_id 可被"序号顶移"攻击迁移到恶意代码。
+- 故拆为:A=MsgStoreCode(独立提案,执行后观测真实 code_id);B=MsgMigrateContract(独立提案,提交前用 make_proposal_b.sh 校验 sha256(code[id])==9e0dc33866396d34e4a151d67d6e6504e1de91f27a53aad6805fd961ffcced6a 并填入真实 id;不匹配即 ABORT)。
+- 文件:/home/ubuntu/gov_migration_A_storecode.json、gov_migration_B_migrate_TEMPLATE.json、make_proposal_b.sh。
+- 窗口顺序:10-05 提 A → 48h 投票 → 执行 → 跑 make_proposal_b.sh → 提 B → 48h → 执行 → 验收(MIGRATION 12 条)。
