@@ -9,8 +9,8 @@
 | 2 | USD-gas + 50/30/20 | §4.5 | ✅ | x/lightfee | 链上事件 lightfee_price_update | 验收 cron | v3 已验 | Oracle 主源⏳(#18) |
 | 3 | Passkey+Shamir 3-of-5 | §4.9 | ✅ | passkey-wallet.js | qa_lock | — | e2e | PIN 强度(F6)排期 |
 | 4 | WebRTC 中继+TURN | §4.7 | ✅ | webrtc-relay+coturn×8 | TURN 凭据 HMAC | — | e2e | — |
-| 5 | vesting TGE 三段 75/100/75 | §5.3/1135 | ✅ | vesting 合约(deployer/strat2/strat3) | 链上 schedule 查询==WP 参数 | 月度审计 | 已核 09-29 | strat2/3 明文key→S1 runbook |
-| 6 | 链上治理 5 档/双维度 | §5.14 | ⚠️ | governance code11 | — | — | — | execute 无权限/无过期(F4)→10-05 迁移;质押坏→同迁移 |
+| 5 | vesting vault 三分批 75/100/75 | §5.3/1135 | ✅ | vesting 合约(deployer/strat2/strat3=运维键,非个人钱包) | 链上 schedule 查询==WP 参数 | 月度审计 | 已核 09-29 | 子分配(服务125/战略75/贡献者50,§525-527)⏳治理恢复后按里程碑;贡献者释放受益默认创始地址;strat2/3 明文key→S1 |
+| 6 | 链上治理 5 档/双维度 | §5.14 | ⚠️ | governance code11 | — | — | — | execute 无权限/无过期(F4)→10-05 迁移;质押坏→同迁移;迁移后第一提案=贡献者释放流程(§527) |
 | 7 | 邀请返佣 10% 首周 | §985 | ✅ | 网关 referrals | 对账 cron | RECON-FAIL | 赛季脚本 | — |
 | 8 | 头衔/徽章/投票权重 | §368/985 | 🟡 | app 徽章卡(链下) | qa_click | — | e2e | 链上徽章⏳第7月 |
 | 9 | 空投九类 | §5.7/985 | 🟡 | 前五项账本+空投中心 | 对账 cron | RECON-FAIL | qa | 后四项(ZK-KYC/DEX/审核/合作) |
