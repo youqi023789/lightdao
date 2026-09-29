@@ -37,11 +37,21 @@ def main():
         print("usage: gas_grant.py <day>"); sys.exit(1)
     p = os.path.join(DATA, "day_%d.json" % day)
     if not os.path.exists(p): print("no day file", p); return
-    miners = (json.load(open(p)).get("miners") or {}).keys()
+    _dj = json.load(open(p))
+    miners = (_dj.get("miners") or {}).keys()
+    ips = _dj.get("ips") or {}
     g = load(); changed = False
+    import time as _t
+    _today = _t.gmtime().tm_mday
+    def _ip_count(ip):
+        return sum(1 for v in g.values() if v.get("ip") == ip and v.get("d") == _today)
+
     for m in sorted(miners):
         if not m.startswith("wasm1") or len(m) < 20: continue
         if g.get(m, {}).get("ok"): continue
+        _ip = ips.get(m) or "unknown"
+        if _ip_count(_ip) >= 3:
+            print("skip grant %s: ip %s reached daily cap 3" % (m, _ip)); continue
         ok, log = grant(m)
         try:
             bal=subprocess.run(["wasmd","q","bank","balances",m,"--node",NODE,"-o","json"],capture_output=True,text=True,timeout=30)
@@ -51,7 +61,7 @@ def main():
         except Exception:
             pass
 
-        g[m] = {"day": day, "ok": ok, "log": log, "ts": int(time.time()), "dust": True}
+        g[m] = {"day": day, "ok": ok, "log": log, "ts": int(time.time()), "dust": True, "ip": (ips.get(m) or "unknown"), "d": __import__("time").gmtime().tm_mday}
         changed = True
         print("grant", m, "ok" if ok else "FAIL " + log)
         time.sleep(3)  # avoid sequence race on same signer

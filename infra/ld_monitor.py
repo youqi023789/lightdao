@@ -130,6 +130,30 @@ def main():
                 ce += 1
             except Exception: pass
     except Exception: pass
+    # settle SLA: current day's predecessor must be finalized within 2h of boundary
+    try:
+        _hb = json.loads(urllib.request.urlopen("http://127.0.0.1:8080/v1/health", timeout=10).read())
+        _nb = _hb.get("next_boundary_ts"); _cd = _hb.get("current_day")
+        if _nb and _cd:
+            _start = _nb - 86400
+            _lag = now - (_start + 86400)  # seconds since current day began == prev day's age past boundary
+            _prev_done = None
+            try:
+                _pd = json.loads(urllib.request.urlopen("http://127.0.0.1:8080/v1/day?day=%d" % (_cd - 1), timeout=10).read())
+                _prev_done = bool(_pd.get("finalized"))
+            except Exception:
+                _prev_done = None
+            if _prev_done is False and _lag > 7200:
+                _lf = "/home/ubuntu/ld_sla_state"
+                _la = 0
+                try: _la = int(open(_lf).read().strip() or 0)
+                except Exception: _la = 0
+                if now - _la >= 3600:
+                    alert("settle SLA: day %d not finalized %dh after boundary" % (_cd - 1, _lag // 3600))
+                    try: open(_lf, "w").write(str(now))
+                    except Exception: pass
+    except Exception:
+        pass
     st["checks"]["client_errors_last_hour"] = ce
     # only page on a real spike (>=5/hr), at most once per hour
     if ce >= 5:
