@@ -1,4 +1,4 @@
-window.LDBUILD="1.1.3";
+window.LDBUILD="1.1.6";
 function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
 
 window.CFG = {
@@ -214,9 +214,13 @@ function ensureLD(ms){ ms=ms||8000; return new Promise(function(res){ if(window.
 
 (function(){ function up(){ fetch("/status.json?ts="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ var e=document.getElementById("sysStatusApp"); if(!e)return; e.textContent=j.ok?"正常":"异常"; e.style.color=j.ok?"var(--ok)":"var(--err,#f66)"; }).catch(function(){ var e=document.getElementById("sysStatusApp"); if(e)e.textContent="—"; }); } up(); setInterval(up,60000); document.addEventListener("visibilitychange",function(){ if(!document.hidden) up(); }); window.addEventListener("pageshow",up); window.addEventListener("focus",up); })();
 
+function claimedKey(){ return "ld_claimed_"+(myAddr||"x"); }
+async function claimedOnChain(addr){ try{ var q=String.fromCharCode(34)+"message.sender="+String.fromCharCode(39)+addr+String.fromCharCode(39)+String.fromCharCode(34); var u=CFG.rpc.replace(/\/$/,"")+"/tx_search?query="+encodeURIComponent(q)+"&per_page=100"; var r=await fetch(u).then(function(x){return x.json();}); var out=[]; ((r.result&&r.result.txs)||[]).forEach(function(t){ if(t.tx_result&&t.tx_result.code!==0)return; var raw=""; try{ raw=atob(t.tx); }catch(e){} var ms=raw.match(/"claim"\s*:\s*\{\s*"day"\s*:\s*(\d+)/g)||[]; ms.forEach(function(x){ var n=x.match(/(\d+)/); if(n)out.push(Number(n[1])); }); }); return out; }catch(e){ return []; } }
+async function claimedSet(){ var loc=[]; try{ loc=JSON.parse(lsGet(claimedKey())||lsGet("ld_claimed_days")||"[]"); }catch(e){} var on=await claimedOnChain(myAddr); var set={}; loc.concat(on).forEach(function(d){set[d]=1;}); var arr=Object.keys(set).map(Number); try{ lsSet(claimedKey(),JSON.stringify(arr.slice(-60))); }catch(e){} return arr; }
+function saveClaimed(done){ try{ lsSet(claimedKey(),JSON.stringify(done.slice(-60))); }catch(e){} }
 async function autoClaim(){ if(!window.LD||!myAddr)return; try{
   var h=await fetch(CFG.gw+"/v1/health").then(function(r){return r.json();});
-  var done=[]; try{ done=JSON.parse(lsGet("ld_claimed_days")||"[]"); }catch(e){}
+  var done=await claimedSet();
   for(var d=h.current_day-1; d>=Math.max(1,h.current_day-7); d--){
     if(done.indexOf(d)>=0) continue;
     var rs=await fetch(CFG.gw+"/v1/day?day="+d).then(function(r){return r.json();}).catch(function(){return null;});
@@ -225,14 +229,14 @@ async function autoClaim(){ if(!window.LD||!myAddr)return; try{
     if(!sc||!sc.scores||!sc.scores[myAddr]||!(sc.scores[myAddr].w>0)) continue;
     var on=false; try{ on=await window.__mrq({root_submitted:{day:d}}); }catch(e){}
     if(!on) continue;
-    try{ await window.LD.claim(d); done.push(d); lsSet("ld_claimed_days",JSON.stringify(done.slice(-30))); toast("✓ 已自动领取第 "+d+" 天奖励"); }catch(e){}
+    try{ await window.LD.claim(d); done.push(d); saveClaimed(done); toast("✓ 已自动领取第 "+d+" 天奖励"); }catch(e){}
   }
  }catch(e){} }
 setTimeout(function(){ document.documentElement.classList.remove("ld-restoring"); }, 8000);
 
 async function refreshClaimable(){ var el=document.getElementById("claimable"); if(!el||!myAddr||!window.__mrq)return;
  try{ var h=await fetch(CFG.gw+"/v1/health").then(function(r){return r.json();});
-  var done=[]; try{ done=JSON.parse(lsGet("ld_claimed_days")||"[]"); }catch(e){}
+  var done=await claimedSet(); var sum=0;
   for(var d=h.current_day-1; d>=Math.max(1,h.current_day-7); d--){
    if(done.indexOf(d)>=0) continue;
    var rs=await fetch(CFG.gw+"/v1/day?day="+d).then(function(r){return r.json();}).catch(function(){return null;});
@@ -242,10 +246,9 @@ async function refreshClaimable(){ var el=document.getElementById("claimable"); 
    var on=false; try{ on=await window.__mrq({root_submitted:{day:d}}); }catch(e){}
    if(!on) continue;
    var pl=await window.__mrq({daily_miner_pool:{day:d}});
-   el.textContent=(Number(pl)/1e6*sc.scores[myAddr].w/sc.total).toLocaleString(undefined,{maximumFractionDigits:1});
-   return;
+   sum+=Number(pl)/1e6*sc.scores[myAddr].w/sc.total;
   }
-  el.textContent="0";
+  el.textContent=sum>0? sum.toLocaleString(undefined,{maximumFractionDigits:1}) : "0";
  }catch(e){} }
 setInterval(refreshClaimable,60000);
 
