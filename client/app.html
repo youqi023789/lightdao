@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-<script src="/js/app_1.js?v=1.1.5"></script>
+<script src="/js/app_1.js?v=1.1.8"></script>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -20,10 +20,10 @@
 <meta name="twitter:description" content="Browser-based DePIN light-node mining on a live Cosmos L1. Passkey wallet, WebRTC relay, 50% fee burn. Mainnet live.">
 <meta name="twitter:image" content="https://lightdao.net/og.png">
 <link rel="stylesheet" href="/css/app.css">
-<script src="/js/wfix.js?v=1.1.5"></script>
-<link rel="modulepreload" href="/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js?v=1.1.5">
-<link rel="modulepreload" href="/js/vendor/-cosmjs-proto-signing-0.32.4.js?v=1.1.5">
-<link rel="modulepreload" href="/js/vendor/-cosmjs-stargate-0.32.4.js?v=1.1.5">
+<script src="/js/wfix.js?v=1.1.8"></script>
+<link rel="modulepreload" href="/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js?v=1.1.8">
+<link rel="modulepreload" href="/js/vendor/-cosmjs-proto-signing-0.32.4.js?v=1.1.8">
+<link rel="modulepreload" href="/js/vendor/-cosmjs-stargate-0.32.4.js?v=1.1.8">
 </head>
 <body>
 <div id="loginOverlay" style="display:none;position:fixed;inset:0;z-index:80;background:rgba(5,6,10,.72);backdrop-filter:blur(4px);align-items:center;justify-content:center;flex-direction:column;gap:14px"><div style="width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.2);border-top-color:#7c8cff;animation:ldspin 1s linear infinite"></div><div style="color:#eef1f6;font-size:15px">正在恢复登录状态,请稍候… / Restoring session…</div><div style="color:#9aa3b2;font-size:12.5px">请勿重复点击,以免误操作</div></div><style>@keyframes ldspin{to{transform:rotate(360deg)}}</style>
@@ -127,7 +127,7 @@
       </div>
     </div>
     <div class="card"><div class="seclabel">我的贡献历史 / My contribution history</div><table class="ub2e01b"><thead><tr><th class="u5fe90d">日</th><th class="u5fe90d">带宽kbps</th><th class="u5fe90d">在线s</th><th class="u5fe90d">验证</th><th class="u5fe90d">稳定%</th><th class="u5fe90d">定稿</th><th class="u5fe90d">应得LIGHT</th></tr></thead><tbody id="myHist"><tr><td colspan="7" class="mini">加载中…</td></tr></tbody></table></div>
-<div class="card"><div class="seclabel">空投中心 / Airdrops(白皮书 §5.7)</div><div id="airFirst" class="mini" style="line-height:1.9">加载中…</div><div class="mini" style="margin-top:8px;line-height:1.9;color:var(--mut,#7c88ad)">赛季空投:S1 池 5M LIGHT 按赛季贡献分结算(见 Season 页)。<br>子代币空投:每次投资发行的 30% 空投给社区(待首笔发行)。<br>TGE 种子空投:4,800 万枚于 TGE 发放(白皮书 §5.3/5.7)。<br><span style="color:var(--warn,#ffb454)">空投当前记账于网关账本,TGE 时链上发放;不构成收益承诺。</span></div></div>
+<div class="card"><div class="seclabel">空投中心 / Airdrops(白皮书 §5.7)</div><div id="airFirst" class="mini" style="line-height:1.9">加载中…</div><div class="mini" style="margin-top:8px;line-height:1.9;color:var(--mut,#7c88ad)">赛季空投:S1 池 5M LIGHT 按赛季贡献分结算(见 Season 页)。<br>子代币空投:每次投资发行的 30% 空投给社区(待首笔发行)。<br>TGE 种子空投:4,800 万枚于 TGE 发放(白皮书 §5.3/5.7)。<br><span style="color:var(--warn,#ffb454)">空投当前记账于网关账本,TGE 时链上发放;不构成收益承诺。 Airdrops are ledger-recorded now and distributed on-chain at TGE; no yield is promised.</span></div></div>
 <div class="card"><div class="seclabel">我的头衔与成就 / Titles & Achievements</div><div id="myBadges" class="mini" style="line-height:2">加载中…</div><div class="mini" style="margin-top:6px;color:var(--mut,#7c88ad)">依据白皮书 §985:3人=布道者(10%+100L)·10人=大使(15%+500L+徽章+投票权重+5%)·50人=合伙人(20%+2500L+徽章+10%);链上徽章与投票权重加成于治理第 7 个月激活。</div></div>
 <div class="card" id="sybilNote" style="display:none;border-color:var(--warn,#ffb454)"><div class="seclabel">反女巫提示 / Anti-sybil notice</div><div id="sybilTxt" class="mini" style="line-height:1.8"></div></div>
 <div class="card"><div class="seclabel">我的安全与邀请 / My security & referrals</div><div id="mySec" class="mini u7b4ece">加载中…</div></div>
@@ -145,11 +145,11 @@
 <!-- WebRTC 中继模块(§4.7):P2P 数据通道中继 + 真实带宽计量 -->
 <script src="/webrtc-relay.js"></script>
 <!-- ============ 钱包解锁 / 敏感操作 step-up 模块(必须在 app_2.js 之前) ============ -->
-<script src="/js/lock.js?v=1.1.5"></script>
+<script src="/js/lock.js?v=1.1.8"></script>
 <!-- ============ 普通脚本: UI/多语言/挖矿循环, 不依赖任何 CDN, 断网可用 ============ -->
-<script src="/js/app_2.js?v=1.1.5"></script>
+<script src="/js/app_2.js?v=1.1.8"></script>
 
 <!-- ============ 模块: cosmjs 懒加载(仅钱包/领取需要), 失败优雅降级 ============ -->
-<script src="/js/app_3.js?v=1.1.5"></script>
+<script src="/js/app_3.js?v=1.1.8"></script>
 </body>
 </html>
