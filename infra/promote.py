@@ -39,6 +39,7 @@ def main():
         if not os.path.isdir(PREV): print("no prev snapshot"); sys.exit(1)
         pv = open(os.path.join(PREV, "VERSION")).read().strip()
         for f in glob.glob(os.path.join(PREV, "*.js")): shutil.copy(f, os.path.join(MAIN, "js", os.path.basename(f)))
+        for f in glob.glob(os.path.join(PREV, "*.html")): shutil.copy(f, os.path.join(MAIN, os.path.basename(f)))
         relabel(MAIN, pv)
         print("ROLLED BACK main to", pv); return
     if len(args) < 2: print(__doc__); sys.exit(2)
@@ -70,13 +71,16 @@ def main():
     if not os.path.isdir(av):
         os.makedirs(av)
         for f in glob.glob(os.path.join(MAIN, "js", "*.js")): shutil.copy(f, av)
+        for f in glob.glob(os.path.join(MAIN, "*.html")): shutil.copy(f, av)
         io.open(os.path.join(av, "VERSION"), "w").write(cur)
     if os.path.exists(PREV): shutil.rmtree(PREV)
     os.makedirs(PREV)
     for f in glob.glob(os.path.join(MAIN, "js", "*.js")): shutil.copy(f, PREV)
+    for f in glob.glob(os.path.join(MAIN, "*.html")): shutil.copy(f, PREV)
     io.open(os.path.join(PREV, "VERSION"), "w").write(cur)
     # promote candidate -> main
     for f in glob.glob(os.path.join(STG, "js", "*.js")): shutil.copy(f, os.path.join(MAIN, "js", os.path.basename(f)))
+    for f in glob.glob(os.path.join(STG, "*.html")): shutil.copy(f, os.path.join(MAIN, os.path.basename(f)))
     relabel(MAIN, nxt)
     print("PROMOTED main %s -> %s (prev snapshot=%s)" % (cur, nxt, PREV))
 

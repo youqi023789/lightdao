@@ -1,314 +1,194 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-<script src="/js/index_1.js?v=1.1.8"></script>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#05060a">
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<meta property="og:site_name" content="LightDAO">
-<meta property="og:type" content="website">
-<meta property="og:title" content="LightDAO — One browser. A share of the real economy's profits.">
-<meta property="og:description" content="A live Cosmos L1: contribute from your browser to earn LIGHT, and vote on-chain to invest in real businesses via compliant SPVs. No rig, no expertise, no accredited-investor threshold.">
-<meta property="og:url" content="https://lightdao.net/">
-<meta property="og:image" content="https://lightdao.net/og.png">
-<meta property="og:locale" content="en_US">
-<meta property="og:locale:alternate" content="zh_CN">
-<meta property="og:locale:alternate" content="es_ES">
-<meta property="og:locale:alternate" content="fr_FR">
-<meta property="og:locale:alternate" content="de_DE">
-<meta property="og:locale:alternate" content="pt_BR">
-<meta property="og:locale:alternate" content="ru_RU">
-<meta property="og:locale:alternate" content="ja_JP">
-<meta property="og:locale:alternate" content="ko_KR">
-<meta property="og:locale:alternate" content="ar_AR">
-<meta property="og:locale:alternate" content="hi_IN">
-<meta property="og:locale:alternate" content="tr_TR">
-<meta property="og:locale:alternate" content="vi_VN">
-<meta property="og:locale:alternate" content="id_ID">
-<link rel="alternate" hreflang="x-default" href="https://lightdao.net/">
-<link rel="alternate" hreflang="zh" href="https://lightdao.net/zh/">
-<link rel="alternate" hreflang="en" href="https://lightdao.net/en/">
-<link rel="alternate" hreflang="es" href="https://lightdao.net/es/">
-<link rel="alternate" hreflang="fr" href="https://lightdao.net/fr/">
-<link rel="alternate" hreflang="de" href="https://lightdao.net/de/">
-<link rel="alternate" hreflang="pt" href="https://lightdao.net/pt/">
-<link rel="alternate" hreflang="ru" href="https://lightdao.net/ru/">
-<link rel="alternate" hreflang="ja" href="https://lightdao.net/ja/">
-<link rel="alternate" hreflang="ko" href="https://lightdao.net/ko/">
-<link rel="alternate" hreflang="ar" href="https://lightdao.net/ar/">
-<link rel="alternate" hreflang="hi" href="https://lightdao.net/hi/">
-<link rel="alternate" hreflang="tr" href="https://lightdao.net/tr/">
-<link rel="alternate" hreflang="vi" href="https://lightdao.net/vi/">
-<link rel="alternate" hreflang="id" href="https://lightdao.net/id/">
-<title>LightDAO — 一个浏览器,分享真实经济的利润</title>
-<meta name="description" content="LightDAO:无需矿机、无需技术背景、无需合格投资者门槛。一个浏览器贡献网络资源赚取 LIGHT,并通过链上治理参与真实企业投资、按规则分享利润。">
-<link rel="stylesheet" href="/css/index.css">
-<script src="/js/go.js?v=1.1.8"></script>
-<script src="/js/wfix.js?v=1.1.8"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LightDAO — 传统私募的门,链上 DAO 的票</title>
+<meta name="description" content="LightDAO:首个链上私募自治组织。浏览器即节点,零成本挖矿;投资谁、收购谁,社区投票说了算。">
+<style>
+:root{--bg:#0b0e17;--bg2:#0e1322;--card:#141a2a;--line:#232b42;--mut:#8b94ad;--txt:#e8ebf5;--acc:#7c8cff;--acc2:#c86bfa;--ok:#39d98a;--warn:#ffb454}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.75 -apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:0;z-index:9;background:rgba(11,14,23,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:16px;height:58px;flex-wrap:wrap}
+.logo{font-weight:800;font-size:19px;background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.nav a{color:var(--mut);text-decoration:none;font-size:14px}
+.nav a:hover{color:var(--txt)}
+.ctl{margin-left:auto;display:flex;gap:8px;align-items:center}
+.ctl button,.ctl select{background:var(--card);color:var(--txt);border:1px solid var(--line);border-radius:9px;padding:5px 9px;font-size:13px}
+section{padding:66px 0;border-bottom:1px solid var(--line)}
+.k{color:var(--acc);font-size:13px;letter-spacing:.14em;font-weight:700}
+h1{font-size:clamp(30px,5.4vw,50px);line-height:1.22;margin:14px 0 10px;font-weight:800}
+h2{font-size:clamp(22px,3.4vw,30px);margin:12px 0 14px;font-weight:800}
+p.lead{color:#c6cde4;font-size:17px;margin:10px 0}
+.sub{color:var(--mut)}
+.btns{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0 8px}
+.btn{display:inline-block;padding:13px 22px;border-radius:12px;font-weight:700;text-decoration:none;font-size:15px}
+.btn.p{background:linear-gradient(90deg,var(--acc),var(--acc2));color:#fff}
+.btn.g{border:1px solid var(--line);color:var(--txt);background:var(--card)}
+.badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.pill{font-size:13px;color:#aee9c8;border:1px solid #1d4634;background:#0e1f17;padding:5px 11px;border-radius:99px}
+.stats{display:flex;gap:22px;flex-wrap:wrap;margin:22px 0 0;padding:14px 18px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;font-size:14px;color:var(--mut)}
+.stats b{color:var(--txt);font-size:16px;margin-right:5px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px}
+.person{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.person b{display:block;font-size:16px;margin-bottom:6px}
+.person .no{color:var(--warn);font-weight:700}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14.5px}
+td,th{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--bg2);color:var(--mut);font-weight:600}
+td.good{color:#aee9c8}
+.steps{counter-reset:s;display:grid;gap:14px;margin-top:22px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 18px 16px;position:relative}
+.step:before{counter-increment:s;content:counter(s);position:absolute;top:-14px;left:18px;width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:15px}
+.step h3{margin:4px 0 6px;font-size:17px}
+ul{margin:8px 0;padding-left:20px}li{margin:5px 0}
+.risk{background:#1a1410;border:1px solid #4a3416;border-radius:14px;padding:18px;color:#f0d9b0}
+.foot{padding:34px 0 60px;color:var(--mut);font-size:13px}
+.foot a{color:var(--acc)}
+@media(max-width:760px){.grid3{grid-template-columns:1fr}.nav a.hide-s{display:none}}
+#net{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.45}
+section,footer,header{position:relative;z-index:1}
+</style>
+<script src="/js/index_1.js?v=1.3.1"></script>
+<script src="/js/go.js?v=1.3.1"></script>
+<script src="/js/wfix.js?v=1.3.1"></script>
 </head>
 <body>
-<a class="skip" href="#vision">Skip to content</a>
-<nav><div class="navin"><span class="brand">⚡ LightDAO</span><a href="/search.html" aria-label="search" class="u462810">⌕</a>
-<button id="themeT" aria-label="toggle theme" class="u6234ce">◐</button>
-<a href="/nodes.html" class="ue86adb">节点 Nodes</a>
-<select class="lang" id="lang" aria-label="language"></select></div></nav>
+<canvas id="net" aria-hidden="true"></canvas>
+<header><div class="wrap nav">
+<span class="logo">◆ LightDAO</span>
+<a href="#why" data-i="nvWhy">为什么</a><a href="#how" data-i="nvHow">三步参与</a><a class="hide-s" href="#engine" data-i="nvEng">双引擎</a><a class="hide-s" href="#live" data-i="nvLive">主网实况</a><a href="#token" data-i="nvTok">代币</a><a href="#risk" data-i="nvRisk">风险</a><a href="/app.html" data-i="nvMine">挖矿</a>
+<span class="ctl"><button id="themeT" aria-label="toggle theme">◐</button><select class="lang" id="lang" aria-label="language"></select></span>
+</div></header>
 
-<header class="hero"><canvas id="net"></canvas><div class="wrap uc451fd">
-<div class="pill">● <span data-i="live">主网已上线</span> · MAINNET LIVE</div>
-<div class="k u2937bf" data-i="principle">浏览器即节点 · 全民可参与 · 利润按规则共享</div>
-<h1 class="h1" data-i="h1">一个浏览器,分享真实经济的利润。</h1>
-<p class="sub" data-i="sub">无需矿机、无需技术背景、无需合格投资者门槛:贡献网络资源赚取 LIGHT,并通过链上治理投票参与真实企业投资、按规则分享利润。</p>
-<div class="row"><button class="btn" data-go="/app.html" data-i="ctaMine">开始挖矿</button><button class="btn ghost" data-go="/whitepaper.html" data-i="ctaWp">读白皮书</button></div>
-<div class="trust"><span><b>7</b> <span data-i="trV">验证者</span></span><span><b>10</b> <span data-i="trC">链上合约</span></span><span><b>50%</b> <span data-i="trB">手续费销毁</span></span><span><b>2.5B</b> <span data-i="trCap">硬顶</span>
-<span><b id="sysStatus">…</b> <span data-i="stSys">系统状态</span></span></span></div>
-<div class="trust u4a909e">
+<section style="border-bottom:none;padding-top:80px">
+<div class="wrap">
+<div class="k" data-i="hk">LIGHTDAO · 首个链上私募自治组织</div>
+<h1 data-i="ht">传统私募的门,<br>链上 DAO 的票。</h1>
+<p class="lead" data-i="hb">浏览器即节点:挖矿 0 成本、零硬件;投资谁、收购谁,社区提案与投票说了算,每笔资金链上实时可查。</p>
+<p class="sub" data-i="hm">主网已上线:7 验证者全部 BONDED · Gas 经济已实测 · Passkey 无种子登录运行中。</p>
+<div class="btns">
+<a class="btn p" href="/app.html" data-i="ctaMine">连接钱包,开始挖矿</a>
+<a class="btn g" href="/explorer.html" data-i="ctaLive">查看主网实况</a>
+</div>
+<div class="badges">
+<span class="pill">✓ lightdao-mainnet-1</span><span class="pill" data-i="bg1">✓ 50% 手续费销毁</span><span class="pill" data-i="bg2">✓ Merkle 根 5/7 多签上链</span><span class="pill" data-i="bg3">✓ 开源可自验</span>
+</div>
+<div class="stats">
 <span><b id="sH">—</b> <span data-i="stH">区块高度</span></span>
 <span><b id="sBurn">—</b> <span data-i="stBurn">已销毁</span></span>
 <span><b id="sMin">—</b> <span data-i="stMin">今日矿工</span></span>
-<span><b id="sDay">—</b> <span data-i="stDay">赛季日</span>
+<span><b id="sDay">—</b> <span data-i="stDay">赛季日</span></span>
 <span><b id="sP">—</b> <span data-i="stPrice">LIGHT 价</span></span>
 <span><b id="sS">—</b> <span data-i="stSupply">总供应</span></span>
 <span><b id="sBt">~1.75s</b> <span data-i="stBt">出块时间</span></span>
-</span>
+<span><b id="sysStatus">…</b> <span data-i="stSys">系统状态</span></span>
 </div>
-</div></header>
-
-<section id="whatis"><div class="wrap">
-<div class="k" data-i="wK">入门 · WHAT IS LIGHTDAO</div>
-<h2 data-i="wH">三分钟读懂 LightDAO</h2>
-<p class="lead" data-i="wB">LightDAO 是一条"浏览器原生"公链 + 一个全民投资自治组织。你的浏览器作为轻节点贡献带宽与算力(挖矿)赚 LIGHT;LIGHT 持有者通过链上治理投票,把金库投进真实企业(经合规 SPV),利润按规则回流。一句话:贡献即挖矿,持币即股东,规则即代码。</p>
-<div class="grid3">
-<div class="card"><h3 data-i="w1t">它不是什么</h3><p data-i="w1b">不是空气币:不靠叙事融资,靠真实贡献与真实利润。</p></div>
-<div class="card"><h3 data-i="w2t">它是什么</h3><p data-i="w2b">一条 Cosmos L1 + 10 个链上合约 + 浏览器轻节点网络。</p></div>
-<div class="card"><h3 data-i="w3t">谁适合</h3><p data-i="w3b">有闲置设备与时间的普通人;想低门槛参与真实经济的投资者。</p></div>
-</div></div></section>
-<section id="vision"><div class="wrap">
-<div class="k" data-i="visK">愿景 · VISION</div>
-<h2 data-i="visH">有判断力,就该有入场券。</h2>
-<p class="lead" data-i="visB">全球后 50% 人口(约 40 亿)仅拥有 2% 的财富;优质资产被 $20 万年收入 / $100 万净资产的合格投资者门槛排斥;而多数加密代币终局归零、DAO 投票参与率仅 3–12%。LightDAO 用浏览器原生公链 + 合规 SPV,把"参与真实经济并分享利润"的门槛,降到一个网页。</p>
-<div class="grid3">
-<div class="card"><h3 data-i="p1t">零门槛网页挖矿</h3><p data-i="p1b">浏览器即节点:无需矿机/背景/资本,贡献带宽与算力即赚 LIGHT;三层 Proof-of-Contribution 防伪造。</p></div>
-<div class="card"><h3 data-i="p2t">合规 SPV 实体投资</h3><p data-i="p2b">双引擎(70% 现金流 / 30% 增长)经开曼 SPV 执行;利润 40% 子代币 / 30% 金库 / 20% 回购销毁 / 10% 保险。</p></div>
-<div class="card"><h3 data-i="p3t">链上治理共享利润</h3><p data-i="p3b">人人可投票决定资金配置;规则与解锁全链上可审计,把 DAO 参与率难题由低门槛化解。</p></div>
-</div></div></section>
-
-<section id="how" class="ubcba7b"><div class="wrap">
-<div class="k" data-i="howK">工作原理 · HOW</div>
-<h2 data-i="howH">四步,六十秒。</h2>
-<div class="grid3">
-<div class="card"><h3>1 <span data-i="s1t">打开网页</span></h3><p data-i="s1b">无需安装,无需账号。</p></div>
-<div class="card"><h3>2 <span data-i="s2t">Passkey 认领</span></h3><p data-i="s2b">一把钥匙,认领你的算力主权。</p></div>
-<div class="card"><h3>3 <span data-i="s3t">开始贡献</span></h3><p data-i="s3b">闲置带宽与算力,开始为你工作。</p></div>
-<div class="card"><h3>4 <span data-i="s4t">每日领取</span></h3><p data-i="s4b">回报每日到账,链上可查。</p></div>
-</div></div></section>
-
-<section id="feat"><div class="wrap">
-<div class="k" data-i="featK">特性 · FEATURES</div>
-<h2 data-i="featH">浏览器原生公链:贡献可验证,奖励不可伪造。</h2>
-<div class="grid3">
-<div class="card"><h3 data-i="f1t">三层贡献证明</h3><p data-i="f1b">带宽/算力/在线,三重证明,贡献不可伪造。</p></div>
-<div class="card"><h3 data-i="f2t">Passkey 钱包</h3><p data-i="f2b">无种子、无助记词,一把钥匙管主权。</p></div>
-<div class="card"><h3 data-i="f3t">WebRTC 中继</h3><p data-i="f3b">设备直连成网,百万节点共享算力。</p></div>
-<div class="card"><h3 data-i="f4t">USD-gas + 50% 销毁</h3><p data-i="f4b">稳定计价,一半手续费永久销毁。</p></div>
-<div class="card"><h3 data-i="f5t">链上治理</h3><p data-i="f5b">规则由持有者写,不由公司写。</p></div>
-<div class="card"><h3 data-i="f6t">透明 vesting</h3><p data-i="f6b">解锁全链上,无隐藏条款。</p></div>
-</div></div></section>
-
-<section id="compare" class="ubcba7b"><div class="wrap">
-<div class="k" data-i="cmpK">差异化 · WHY LIGHTDAO</div>
-<h2 data-i="cmpH">目前唯一:零门槛网页挖矿 × 合规 SPV 实体投资。</h2>
-<div class="u435bc3"><table class="ua38f72">
-<thead><tr class="u5fe90d"><th class="uf6e2a4">维度</th><th class="uf6e2a4">Pi Network</th><th class="uf6e2a4">Helium</th><th class="uf6e2a4">传统 DAO</th><th class="ub71171">LightDAO</th></tr></thead>
-<tbody>
-<tr><td class="uf6e2a4">参与方式</td><td>手机点击</td><td>买硬件 $200+</td><td>买代币+链上操作</td><td class="u8c89ff">浏览器,零硬件</td></tr>
-<tr><td class="uf6e2a4">准入成本</td><td>零(无效用)</td><td>高</td><td>中高</td><td class="u8c89ff">零</td></tr>
-<tr><td class="uf6e2a4">真实投资功能</td><td>无</td><td>无</td><td>有但门槛极高</td><td class="u8c89ff">有(SPV,全民可参与)</td></tr>
-<tr><td class="u176884">利润分享</td><td>无</td><td>无</td><td>精英治理</td><td class="u8c89ff">按规则共享(40/30/20/10)</td></tr>
-</tbody></table></div>
-</div></section>
-
-<section id="story"><div class="wrap">
-<div class="k" data-i="stoK">他们不是例外 · REAL PEOPLE</div>
-<h2 data-i="stoH">Maria 拿不出 $25,000。Kwame 拿不出 $100,000。</h2>
-<p class="lead" data-i="stoB">马尼拉的外卖骑手 Maria 想入股隔壁的奶茶连锁,被"最低 $25,000"挡回;拉各斯的网约车司机 Kwame 想投一家金融科技公司,被"最低 $100,000、锁定期 5 年"挡回。他们有判断力、有参与意愿,缺的只是一条低门槛、透明、可负担的通道。LightDAO 就是那条通道。</p>
-</div></section>
-
-<section id="use" class="ubcba7b"><div class="wrap">
-<div class="k" data-i="uK">用途 · USE CASES</div>
-<h2 data-i="uH">LIGHT 能做什么</h2>
-<div class="grid3">
-<div class="card"><h3 data-i="u1t">挖矿</h3><p data-i="u1b">浏览器贡献带宽/算力/在线,每日领 LIGHT。</p></div>
-<div class="card"><h3 data-i="u2t">治理</h3><p data-i="u2b">投票决定金库投资与协议参数。</p></div>
-<div class="card"><h3 data-i="u3t">分享利润</h3><p data-i="u3b">子代币持有者分得 SPV 经营利润 40%。</p></div>
-<div class="card"><h3 data-i="u4t">支付 Gas</h3><p data-i="u4b">链上交易手续费,USD 锚定、50% 销毁。</p></div>
-<div class="card"><h3 data-i="u5t">质押/验证</h3><p data-i="u5b">运行验证者或委托,保障网络安全。</p></div>
-<div class="card"><h3 data-i="u6t">中继</h3><p data-i="u6b">设备互中继带宽,计入贡献分。</p></div>
-</div></div></section>
-<section id="paths"><div class="wrap">
-<div class="k" data-i="paK">参与 · GET INVOLVED</div>
-<h2 data-i="paH">选你的入口</h2>
-<div class="grid3">
-<div class="card"><h3 data-i="pa1t">个人 / 矿工</h3><p data-i="pa1b">打开网页,六十秒开始贡献并领取。</p><div class="row"><button class="btn" data-go="/app.html" data-i="pa1c">开始挖矿</button></div></div>
-<div class="card"><h3 data-i="pa2t">开发者</h3><p data-i="pa2b">读源码、提 PR、拿 issue 赏金、接 SDK。</p><div class="row"><button class="btn ghost" data-go="https://github.com/youqi023789/lightdao">GitHub</button></div></div>
-<div class="card"><h3 data-i="pa3t">社区 / 投资者</h3><p data-i="pa3b">加入治理、提案、大使计划,分享利润。</p><div class="row"><button class="btn ghost" data-go="/governance.html" data-i="pa3c">进入治理</button></div></div>
-</div></div></section>
-<section id="tok" class="ubcba7b"><div class="wrap">
-<div class="k" data-i="tokK">代币经济 · TOKEN</div>
-<h2 data-i="tokH">2.5B 硬顶,永不增发。</h2>
-<p class="lead" data-i="tokB">分配:挖矿 40% / 生态 34% / 团队 16% / 金库 10%。手续费一半永久销毁,供应只减不增。代币是主权凭证:治理、质押、结算,都靠它。</p>
-</div></section>
-
-<section id="sec"><div class="wrap">
-<div class="k" data-i="secK">安全 · SECURITY</div>
-<h2 data-i="secH">安全不是口号,是纪律。</h2>
-<p class="lead" data-i="secB">定期第三方审计、漏洞赏金、负责任披露。发现问题?我们付钱,并公开修复。</p>
-<div class="grid3">
-<div class="card"><h3 data-i="sec1t">审计 Audits</h3><p data-i="sec1b">核心协议定期第三方审计,报告公开。</p></div>
-<div class="card"><h3 data-i="sec2t">漏洞赏金 Bounty</h3><p data-i="sec2b">最高 $50,000,按严重度分级。</p></div>
-<div class="card"><h3 data-i="sec3t">负责任披露</h3><p data-i="sec3b">90 天窗口,修复后公开致谢。</p></div>
-</div></div></section>
-
-<section id="stake" class="ubcba7b"><div class="wrap">
-<div class="k" data-i="stkK">验证与质押 · STAKING</div>
-<h2 data-i="stkH">保障网络,获得验证者收益</h2>
-<p class="lead" data-i="stkB">7 验证者(7 国)BFT 共识;手续费 30% 归验证者。未来经治理选举扩至 100 席并开放委托。当前可在浏览器查看验证者与质押。</p>
-<div class="row"><button class="btn ghost" data-go="/explorer.html" data-i="stkC">查看验证者 →</button></div>
-</div></section>
-<section id="gov" class="ubcba7b"><div class="wrap">
-<div class="k" data-i="govK">治理 · GOVERNANCE</div>
-<h2 data-i="govH">规则由持有者写,不由公司写。</h2>
-<p class="lead" data-i="govB">金库、参数、升级——全部链上提案、链上投票。一瓦特一票,但每一票都可被审计。</p>
-<div class="row"><button class="btn ghost" data-go="/governance.html" data-i="govC">进入治理 →</button></div>
-</div></section>
-
-<section id="scam"><div class="wrap">
-<div class="k" data-i="scK">用户安全 · STAY SAFE</div>
-<h2 data-i="scH">防骗三原则</h2>
-<div class="grid3">
-<div class="card"><h3 data-i="sc1t">官方域名唯一</h3><p data-i="sc1b">只认 lightdao.net;任何其它域名/空投/客服皆假。</p></div>
-<div class="card"><h3 data-i="sc2t">永不索要私钥</h3><p data-i="sc2b">任何人(含"官方")索要助记词/分片/PIN 都是诈骗。</p></div>
-<div class="card"><h3 data-i="sc3t">本地保管</h3><p data-i="sc3b">助记词/分片只离线自存;Passkey 不落地明文。</p></div>
-</div></div></section>
-<section id="dev"><div class="wrap">
-<div class="k" data-i="devK">开发者 · DEVELOPERS</div>
-<h2 data-i="devH">开源,或者不存在。</h2>
-<p class="lead" data-i="devB">核心协议、SDK、API 全部开源。读代码,提 PR,拿赏金。</p>
-<div class="grid3">
-<div class="card"><h3 data-i="dev1t">文档 Docs</h3><p data-i="dev1b">快速上手到深度集成,中/EN。</p></div>
-<div class="card"><h3 data-i="dev2t">API 状态</h3><p><span class="pill">● Operational</span></p></div>
-<div class="card"><h3 data-i="dev3t">SDK & GitHub</h3><p data-i="dev3b">多语言 SDK,issue 赏金标签。</p></div>
-</div></div></section>
-
-<section id="grants" class="ubcba7b"><div class="wrap">
-<div class="k" data-i="grK">生态资助 · GRANTS</div>
-<h2 data-i="grH">为生态建设者付钱</h2>
-<p class="lead" data-i="grB">生态基金(16%)资助工具/文档/翻译/集成/研究,以 LIGHT 结算(token-for-service),零现金门槛。提交治理提案即申请。</p>
-<div class="row"><button class="btn ghost" data-go="/governance.html" data-i="grC">提交资助提案 →</button></div>
-</div></section>
-<section id="eco" class="ubcba7b"><div class="wrap">
-<div class="k" data-i="ecoK">生态 · ECOSYSTEM</div>
-<h2 data-i="ecoH">一台设备很小,一百万台很大。</h2>
-<p class="lead" data-i="ecoB">钱包、矿池、支付、IoT、CDN、AI——集成 LightDAO,共享百万设备算力网络。</p>
-<div class="logos"><div class="logo">Cosmos SDK</div><div class="logo">CometBFT</div><div class="logo">CosmWasm</div><div class="logo">WebAuthn / FIDO2</div><div class="logo">WebRTC</div><div class="logo">PWA</div><div class="logo">coturn TURN</div><div class="logo">IPFS</div></div></div>
-</div></section>
-
-<section id="com"><div class="wrap">
-<div class="k" data-i="comK">社区 · COMMUNITY</div>
-<h2 data-i="comH">所有者们,自己组织自己。</h2>
-<p class="lead" data-i="comB">Discord 与 X 上的日常讨论与更新。大使计划:把 LightDAO 带到你的城市,赚代币与声誉。</p>
-<div class="grid3">
-<div class="card"><h3>Discord</h3><p data-i="com1b">日常讨论与支援。</p></div>
-<div class="card"><h3>X</h3><p data-i="com2b">每日构建、链上数据与互动。</p><div class="row"><a class="btn ghost" href="https://x.com/lightdaoproto" target="_blank" rel="noopener">@lightdaoproto</a></div></div>
-<div class="card"><h3 data-i="com3t">大使 Ambassadors</h3><p data-i="com3b">带 LightDAO 到你的城市。</p></div>
-</div></div></section>
-
-<section id="events"><div class="wrap">
-<div class="k" data-i="evK">活动 · EVENTS</div>
-<h2 data-i="evH">线上与线下</h2>
-<ul class="list">
-<li><b>Season 1</b> — <span data-i="ev1">贡献赛季(4 周),按分空投</span> · 2026-10</li>
-<li><b data-i="ev2t">社区 AMA</b> — <span data-i="ev2">每月一次,链上数据复盘</span></li>
-<li><b data-i="ev3t">城市 meetup</b> — <span data-i="ev3">大使计划驱动,筹备中</span></li>
-</ul></div></section>
-<section id="blog" class="ubcba7b"><div class="wrap">
-<div class="k" data-i="blogK">更新 · CHANGELOG</div>
-<h2 data-i="blogH">我们每周交付,不是每季度承诺。</h2>
-<ul class="list">
-<li><b>v1.4</b> — <span data-i="b1">主网手续费燃烧上线</span> · 2026-06</li>
-<li><b>v1.3</b> — <span data-i="b2">Passkey 无种子钱包</span> · 2026-04</li>
-<li><b>v1.2</b> — <span data-i="b3">WebRTC 设备直连中继</span> · 2026-02</li>
-<li><b>v1.1</b> — <span data-i="b4">USD 稳定计价 gas</span> · 2025-12</li>
-</ul></div></section>
-
-<section id="faq"><div class="wrap">
-<div class="k" data-i="faqK">常见问题 · FAQ</div>
-<h2 data-i="faqH">你问,我们答。</h2>
-<details class="acc"><summary data-i="q1">需要硬件吗?</summary><div data-i="a1">不需要。任何能上网的现有设备即可,零额外硬件。</div></details>
-<details class="acc"><summary data-i="q2">回报怎么算?</summary><div data-i="a2">按你贡献的带宽/算力/在线时长,每日结算,链上可查。</div></details>
-<details class="acc"><summary data-i="q3">安全吗?</summary><div data-i="a3">定期审计+漏洞赏金+负责任披露;协议开源可自验。</div></details>
-<details class="acc"><summary data-i="q4">需要什么许可?</summary><div data-i="a4">无需任何许可。打开网页即可,无账号、无审批。</div></details>
-<details class="acc"><summary data-i="q5">代币有什么用?</summary><div data-i="a5">治理投票、质押、结算的手续费凭证;硬顶永不增发。</div></details>
-<details class="acc"><summary data-i="q6">怎么开始?</summary><div data-i="a6">点"开始挖矿",六十秒完成认领,当日开始贡献。</div></details>
-</div></section>
-
-<section id="gloss" class="ubcba7b"><div class="wrap">
-<div class="k" data-i="glK">术语 · GLOSSARY</div>
-<h2 data-i="glH">把黑话翻译成人话</h2>
-<ul class="list">
-<li><b>PoC</b> — <span data-i="g1">贡献证明:验证者挑战 + 对等 attest + 逐块 Merkle 根,证明你真贡献了。</span></li>
-<li><b>SPV</b> — <span data-i="g2">特殊目的载体:隔离风险的独立法律实体(开曼),DAO 经它投资。</span></li>
-<li><b>TWAP</b> — <span data-i="g3">时间加权均价:链上预言机抗操纵计价。</span></li>
-<li><b>Merkle 根</b> — <span data-i="g4">把当日所有贡献压缩成一个哈希上链,人人可自证。</span></li>
-<li><b>Passkey</b> — <span data-i="g5">WebAuthn 生物密钥:无种子登录,私钥不落地。</span></li>
-<li><b>Shamir 分片</b> — <span data-i="g6">把秘密拆 5 份,任 3 份可恢复,单份无用。</span></li>
-</ul></div></section>
-<section id="team" class="ubcba7b"><div class="wrap">
-<div class="k" data-i="teamK">团队 · TEAM</div>
-<h2 data-i="teamH">一小群相信"所有者经济"的人。</h2>
-<div class="grid3">
-<div class="card"><h3 data-i="t1t">协议工程</h3><p data-i="t1b">分布式系统与安全背景。</p></div>
-<div class="card"><h3 data-i="t2t">密码学</h3><p data-i="t2b">无种子密钥与零知识方向。</p></div>
-<div class="card"><h3 data-i="t3t">社区</h3><p data-i="t3b">把所有者组织起来。</p></div>
 </div>
-<div class="row"><button class="btn ghost" data-i="hire">我们在招人 →</button></div>
-</div></section>
+</section>
 
-<section id="media"><div class="wrap">
-<div class="k" data-i="medK">媒体与品牌 · MEDIA KIT</div>
-<h2 data-i="medH">写我们?用官方素材。</h2>
+<section id="why"><div class="wrap">
+<div class="k" data-i="whyK">WHY · 三个人,一种困境</div>
+<h2 data-i="whyH">他们不缺判断力,缺的是一张入场券。</h2>
 <div class="grid3">
-<div class="card"><h3 data-i="m1t">Logo 包</h3><p data-i="m1b">SVG/PNG,深浅底。</p></div>
-<div class="card"><h3 data-i="m2t">品牌指南</h3><p data-i="m2b">色彩/字体/用法。</p></div>
-<div class="card"><h3 data-i="m3t">媒体联络</h3><p>press@lightdao</p></div>
-</div></div></section>
-
-<section id="wp" class="ubcba7b"><div class="wrap">
-<div class="k" data-i="wpK">白皮书 · WHITEPAPER</div>
-<h2 data-i="wpH">读原件,不读转述。</h2>
-<div class="row"><button class="btn ghost" data-go="/whitepaper.html" data-i="wpC">白皮书 / 精简版 →</button></div>
-</div></section>
-
-<section id="news"><div class="wrap">
-<div class="k" data-i="newsK">订阅 · NEWSLETTER</div>
-<h2 data-i="newsH">每月一封,不垃圾。</h2>
-<div class="row"><input type="email" placeholder="you@example.com"><button class="btn" data-i="newsC">订阅</button></div>
-</div></section>
-
-<footer><div class="wrap">
-<div class="fcols">
-<div><h4>Product</h4><a href="/app.html" data-i="ftMine">挖矿</a><a href="/explorer.html" data-i="ftExp">浏览器</a><a href="/governance.html" data-i="ftGov">治理</a><a href="/explorer.html" data-i="ftStatus">状态</a></div>
-<div><h4>Developers</h4><a href="https://github.com/youqi023789/lightdao/tree/main/docs" data-i="ftDocs">文档</a><a href="https://github.com/youqi023789/lightdao">GitHub</a><a href="https://github.com/youqi023789/lightdao/blob/main/docs/MAINNET_STATUS.md">API</a><a href="#grants" data-i="ftBounty">赏金</a></div>
-<div><h4>Community</h4><a href="https://discord.gg/9YY9X2Cdv" target="_blank" rel="noopener">Discord</a><a href="https://x.com/lightdaoproto" target="_blank" rel="noopener">X</a><a href="#com" data-i="ftAmb">大使</a></div>
-<div><h4>Company</h4><a href="#team" data-i="ftTeam">团队</a><a href="#team" data-i="ftHire">招聘</a><a href="#media" data-i="ftMedia">媒体</a><a href="#blog" data-i="ftBlog">博客</a></div>
-<div><h4>Legal</h4><a href="/privacy.html" data-i="ftPriv">隐私</a><a href="/audit_logic.html">安全审计</a><a href="/terms.html" data-i="ftTerms">条款</a></div>
+<div class="person"><b>Maria · 马尼拉外卖骑手</b><span data-i="p1">月入 $270。想入股隔壁奶茶店,对方说:</span><span class="no" data-i="p1n">最低 $25,000。</span></div>
+<div class="person"><b>Kwame · 拉各斯网约车司机</b><span data-i="p2">看好 AI 赛道。机构说:</span><span class="no" data-i="p2n">最低 $100,000,锁 5 年。</span></div>
+<div class="person"><b>Elena · 圣保罗退休教师</b><span data-i="p3">月养老金 $550。</span><span class="no" data-i="p3n">看不懂白皮书,也买不起矿机。</span></div>
 </div>
-<div class="status"><span class="pill">● Network Operational</span><span class="pill">● API Operational</span></div>
-<p data-i="legal" class="u2884b9">LIGHT 及子代币为生态贡献积分与 SPV 收益分配请求权凭证,不构成证券、理财产品或投资建议。参与前请咨询法律/税务/财务专业人士。 LIGHT and sub-tokens are contribution credits and SPV profit-distribution claim credentials — not securities, not a wealth-management product, not investment advice.</p>
-<p data-i="footTag" class="ub540db">浏览器即节点 · 全民可参与 · 利润按规则共享 · © 2026 LightDAO</p>
+<p class="lead" style="margin-top:18px" data-i="whyL">全球后 50% 人口(约 40 亿人)仅拥有约 2% 的总财富;优质资产被合格投资者门槛挡在门外。LightDAO 就是为这三个人设计的。</p>
+</div></section>
+
+<section><div class="wrap">
+<div class="k" data-i="ctK">CONTRAST · 对比冲击</div>
+<h2 data-i="ctH">同一个私募,两种命运。</h2>
+<table>
+<tr><th></th><th data-i="ctT1">传统私募</th><th>LightDAO</th></tr>
+<tr><td data-i="r0a">门槛</td><td data-i="r0b">$25万–$100万起投</td><td class="good" data-i="r0c">挖矿 0 成本;投资侧最低额度由治理首笔提案设定(目标 ≤10U)</td></tr>
+<tr><td data-i="r1a">决策</td><td data-i="r1b">少数 GP 说了算</td><td class="good" data-i="r1c">社区提案 + 持币权重/地址数双维度投票</td></tr>
+<tr><td data-i="r2a">透明</td><td data-i="r2b">季度报告,滞后</td><td class="good" data-i="r2c">每笔资金链上实时可查</td></tr>
+<tr><td data-i="r3a">退出</td><td data-i="r3b">锁仓 3–5 年</td><td class="good" data-i="r3c">子代币可转让(30 天锁定期)</td></tr>
+<tr><td data-i="r4a">早期机会</td><td data-i="r4b">普通人拿不到</td><td class="good" data-i="r4c">早期矿工即合伙人</td></tr>
+</table>
+</div></section>
+
+<section id="how"><div class="wrap">
+<div class="k" data-i="howK">HOW · 三步参与</div>
+<h2 data-i="howH">六十秒开始,规则替你执行。</h2>
+<div class="steps">
+<div class="step"><h3 data-i="s1t">浏览器挖矿</h3><span data-i="s1b">访问 lightdao.net,Passkey 无种子登录。贡献带宽、会话、区块验证,零成本获得 LIGHT。</span></div>
+<div class="step"><h3 data-i="s2t">提案 / 投票</h3><span data-i="s2b">投哪个项目、收购哪个资产,你提案、你投票。持币权重 + 地址数量双维度,巨鲸和散户都有话语权。</span></div>
+<div class="step"><h3 data-i="s3t">分润 / 退出</h3><span data-i="s3b">利润按链上规则分配:40% 子代币持有者 / 30% 金库 / 20% 回购销毁 / 10% 保险基金。</span></div>
+</div>
+</div></section>
+
+<section id="engine"><div class="wrap">
+<div class="k" data-i="engK">MODEL · 双引擎</div>
+<h2 data-i="engH">守得住现金流,攻得向增长。</h2>
+<table>
+<tr><th data-i="e0a">引擎</th><th data-i="e0b">方向</th><th data-i="e0c">配置</th></tr>
+<tr><td data-i="e1a">🛡 现金流引擎(守)</td><td data-i="e1b">社区级刚性消费资产</td><td>70%</td></tr>
+<tr><td data-i="e2a">🚀 增长引擎(攻)</td><td data-i="e2b">前沿科技公司</td><td>30%</td></tr>
+</table>
+<p class="sub" data-i="engN1">投资通过开曼 SPV 执行,风险隔离。子代币 = SPV 收益分配请求权凭证,不附带股东权利。</p>
+<p class="sub" data-i="engN2">配置纪律:单一标的 ≤ 金库 25%,行业 ≤ 40%,地域 ≤ 30%(白皮书条款,由治理执行)。</p>
+</div></section>
+
+<section id="live"><div class="wrap">
+<div class="k" data-i="liveK">LIVE · 主网已跑通的事</div>
+<h2 data-i="liveH">不承诺,只展示已验证的。</h2>
+<ul>
+<li data-i="lv1"><b>链</b>:lightdao-mainnet-1,7 验证者(JP/KR/SG/US/HK/FR/UK)全部 BONDED。</li>
+<li data-i="lv2"><b>Gas 经济</b>:USD 锚定 min-gas(动态价 2026-10-01 提案生效后启用);50/30/20 已实测精确分配。</li>
+<li data-i="lv3"><b>Passkey 钱包</b>:WebAuthn 无种子登录 + Shamir 3-of-5 社交恢复;解锁密码/生物识别二次验证。</li>
+<li data-i="lv4"><b>WebRTC 中继</b>:8 节点 coturn + WSS 信令,端到端实测通过。</li>
+<li data-i="lv5"><b>挖矿闭环</b>:浏览器贡献 → 网关定稿 → Merkle 根 5/7 多签上链 → 凭 proof 领取。</li>
+<li data-i="lv6"><b>价格预言机</b>:外部中位数喂价现役;7 验证者轮值 + TWAP 主源切换排期中;当前参考价 $0.05。</li>
+<li data-i="lv7"><b>合约</b>:开源、可自验;持续自审 + 每日独立对账;第三方审计排期中。</li>
+</ul>
+</div></section>
+
+<section id="token"><div class="wrap">
+<div class="k" data-i="tokK">TOKEN · 关键数字</div>
+<h2 data-i="tokH">25 亿硬顶,永不增发。</h2>
+<table>
+<tr><th data-i="t0a">指标</th><th data-i="t0b">数值</th></tr>
+<tr><td data-i="t1a">LIGHT 总量</td><td data-i="t1b">25 亿枚,永不增发</td></tr>
+<tr><td data-i="t2a">挖矿产出</td><td data-i="t2b">10 亿枚,每 2 年减半</td></tr>
+<tr><td data-i="t3a">投资金库</td><td data-i="t3b">8.5 亿枚(基准可部署 ≈ $1 亿)</td></tr>
+<tr><td data-i="t4a">首纪元日释放</td><td data-i="t4b">≈ 68.49 万枚</td></tr>
+<tr><td data-i="t5a">通缩底线</td><td data-i="t5b">流通 ≤ 10 亿枚时停止销毁(白皮书条款,合约开关排期中)</td></tr>
+<tr><td data-i="t6a">提案门槛</td><td data-i="t6b">链上现行质押 1,000 LIGHT;白皮书资格线 5,000 LIGHT + 连续质押 30 天</td></tr>
+<tr><td data-i="t7a">委员会门槛</td><td data-i="t7b">≥ 50,000 LIGHT(竞选质押)</td></tr>
+</table>
+</div></section>
+
+<section id="risk"><div class="wrap">
+<div class="k" data-i="riskK">RISK · 透明才可信</div>
+<div class="risk">
+<ul>
+<li data-i="rk1">链上投资仍有归零风险,参与需谨慎。</li>
+<li data-i="rk2">投票权按份额计算,非一人一票。</li>
+<li data-i="rk3">智能合约开源并持续自审,但非绝对安全。</li>
+<li data-i="rk4">退出流动性取决于市场,不保证随时成交。</li>
+<li data-i="rk5">LIGHT 不是证券,不具内在价值,价格可能归零。</li>
+</ul>
+</div>
+</div></section>
+
+<section style="border-bottom:none"><div class="wrap" style="text-align:center">
+<h2 data-i="finH">传统私募的早期额度,普通人从来拿不到。<br>这一次,你的浏览器就是入场券。</h2>
+<div class="btns" style="justify-content:center">
+<a class="btn p" href="/app.html" data-i="ctaJoin">连接钱包,加入 LightDAO</a>
+<a class="btn g" href="/whitepaper.html" data-i="ctaWp">读白皮书 V2.4</a>
+</div>
+</div></section>
+
+<footer class="foot"><div class="wrap">
+<span data-i="ftTag">浏览器即节点 · 全民可参与 · 利润按规则共享</span> · © 2026 LightDAO<br>
+<a href="/privacy.html" data-i="ftPriv">隐私</a> · <a href="/terms.html" data-i="ftTerms">条款</a> · <a href="/governance.html" data-i="ftGov">治理</a> · <a href="/nodes.html" data-i="ftNodes">节点</a> · <a href="/invest.html" data-i="ftInv">投资</a> · <a href="/season.html" data-i="ftSeason">赛季</a> · <a href="/blog.html" data-i="ftBlog">博客</a>
 </div></footer>
-
-<script src="/js/index_2.js?v=1.1.8"></script>
+<script src="/js/index_2.js?v=1.3.1"></script>
 </body>
 </html>
