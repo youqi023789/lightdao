@@ -32,7 +32,7 @@ except Exception: base = 0
 newlog = NL.join(open("/home/ubuntu/ld_sign.log").read().splitlines()[base:])
 lie = bool(re.search(r"submitted root for day \d+\s*$", newlog, re.M))
 rec("C3 sign-log truth", not lie, "lying lines since baseline" if lie else "clean since baseline(%d)" % base)
-tz = sh("date +%Z"); cr = sh("crontab -l | grep -cE 'ld_finalize.sh|ld_sign_root.sh'")
+tz = sh("date +%Z"); cr = sh("(crontab -u ubuntu -l 2>/dev/null || crontab -l 2>/dev/null) | grep -cE 'ld_finalize.sh|ld_sign_root.sh'")
 rec("C4 TZ+crons", tz == "UTC" and int(cr or 0) >= 6, "tz=%s lines=%s" % (tz, cr))
 st = json.load(open("/var/www/lightdao/status.json"))
 rec("C5 status reason", (st["ok"] is True) or bool(st.get("reason")), "ok=%s reason=%r" % (st["ok"], st.get("reason")))
