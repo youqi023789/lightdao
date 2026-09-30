@@ -236,11 +236,15 @@ async function autoClaim(){ if(!window.LD||!myAddr)return; try{
 setTimeout(function(){ document.documentElement.classList.remove("ld-restoring"); }, 8000);
 
 function claimHintEl(){ var e=document.getElementById("claimHint"); if(!e){ e=document.createElement("div"); e.id="claimHint"; e.className="mini"; e.style.margin="6px 0 2px"; var b=document.getElementById("btnClaim"); if(b&&b.parentNode) b.parentNode.insertBefore(e,b); } return e; }
-function claimWindowUI(){ var el=claimHintEl(); if(!el) return; var cd=Math.floor((Date.now()/1000-1789102088)/86400); var openAt=(cd+1)*86400+1789102088; var left=openAt-Math.floor(Date.now()/1000); var btn=document.getElementById("btnClaim");
-  if(left>0){ var h=Math.floor(left/3600), m=Math.floor(left%3600/60), ss=left%60; function p(n){return (n<10?"0":"")+n;}
-    el.textContent="结算刷新:你当地 08:00(北京) · 领取开放:北京 12:48(合约日界,临时) · 倒计时 "+p(h)+":"+p(m)+":"+p(ss)+" · 2026-10-11 起领取与结算统一为北京 08:00";
-    if(btn) btn.disabled=true;
-  } else { el.textContent=""; if(btn) btn.disabled=false; } }
+function claimWindowUI(){ var el=claimHintEl(); if(!el) return; var btn=document.getElementById("btnClaim");
+  var cd=Math.floor((Date.now()/1000-1789102088)/86400);
+  if(window.__claimOpen){ if(btn) btn.disabled=false; el.textContent=""; return; }
+  var openAt=(cd+1)*86400+1789102088; var left=openAt-Math.floor(Date.now()/1000);
+  function p(n){return (n<10?"0":"")+n;}
+  if(window.__gwd && (window.__gwd-1)>=cd){ if(btn) btn.disabled=true;
+    el.textContent="结算刷新:你当地 08:00(北京) · 领取开放:北京 12:48(合约日界,临时) · 倒计时 "+p(Math.floor(left/3600))+":"+p(Math.floor(left%3600/60))+":"+p(left%60)+" · 2026-10-11 起统一为北京 08:00";
+  } else { if(btn) btn.disabled=true;
+    el.textContent="昨日已定稿,等待验证者签根上链(通常北京 13:10–13:30),完成后自动可领;领取不会过期,7 天内随时可领,更早日可用『加载可领历史』。"; } }
 setInterval(claimWindowUI,1000);
 async function refreshClaimable(){ var el=document.getElementById("claimable"); if(!el||!myAddr||!window.__mrq)return;
  try{ var h=await fetch(CFG.gw+"/v1/health").then(function(r){return r.json();});
@@ -257,6 +261,7 @@ async function refreshClaimable(){ var el=document.getElementById("claimable"); 
    sum+=Number(pl)/1e6*sc.scores[myAddr].w/sc.total;
   }
   el.textContent=sum>0? sum.toLocaleString(undefined,{maximumFractionDigits:1}) : "0";
+  window.__claimOpen = sum>0; window.__gwd = h.current_day; try{ claimWindowUI(); }catch(e){}
  }catch(e){} }
 setInterval(refreshClaimable,60000);
 
