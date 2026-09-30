@@ -1,4 +1,4 @@
-window.LDBUILD="1.1.6";
+window.LDBUILD="1.1.8";
 function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
 
 window.CFG = {
