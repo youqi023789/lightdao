@@ -1,4 +1,4 @@
-window.LDBUILD="1.1.8";
+window.LDBUILD="1.1.9";
 function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
 
 const CDN = ["/js/vendor/"];
@@ -14,6 +14,7 @@ async function loadCosmjs(){
   }
   return null;
 }
+function contractDay(){ return Math.floor((Date.now()/1000-1789102088)/86400); }
 const PAYMASTER="wasm13c2cjh3fhkesj47tsc5a0vm6pdds39qpcmykhj";
 window.LD = null;
 (async()=>{
@@ -39,7 +40,7 @@ window.__mrq=(m)=>client.queryContractSmart(CFG.miningReward,m);
       const res=await ldBroadcast(msgs,"auto",null); /* withdraw-rewards = claim: frictionless, no step-up */
       return res.transactionHash;
     }catch(e){ throw e; } },
-    async claim(day){ try{ const h=await (await fetch(CFG.gw+"/v1/health")).json(); const d= day|| (h.current_day-1);
+    async claim(day){ try{ const h=await (await fetch(CFG.gw+"/v1/health")).json(); const d= day|| (h.current_day-1); if(d>=contractDay()){ throw new Error("第 "+d+" 天将于合约日界(每日 04:48 UTC / 北京 12:48)后开放领取,请稍后再试 / opens after 04:48 UTC"); }
       const p=await fetch(CFG.gw+"/v1/proof?day="+d+"&miner="+this.addr).then(r=>r.ok?r.json():null);
       if(!p){ toast(t("nothing")); return; }
       const msg={claim:{day:d,proof:p.proof,score:{bandwidth:String(p.score.bandwidth),session:String(p.score.session),verification:String(p.score.verification),stability:String(p.score.stability)}}};

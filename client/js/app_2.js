@@ -1,4 +1,4 @@
-window.LDBUILD="1.1.8";
+window.LDBUILD="1.1.9";
 function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
 
 window.CFG = {
@@ -131,7 +131,7 @@ $("btnPkSocial").onclick=async()=>{
     }catch(e){ toast(t("pkFail")+(e.message||e)); }
   }
 };
-$("btnClaim").onclick=async()=>{ if(!await ensureLD()){toast(t("walletFail"));return;} const sel=$("claimDay"); const dv=sel&&sel.value?Number(sel.value):undefined; var gd=dv||((await fetch(CFG.gw+"/v1/health").then(function(r){return r.json();})).current_day-1); var gs=await fetch(CFG.gw+"/v1/scores?day="+gd).then(function(r){return r.json();}).catch(function(){return null;}); if(gs&&gs.scores&&gs.scores[myAddr]&&!(gs.scores[myAddr].w>0)){ toast("本钱包第 "+gd+" 天被反女巫归零(同设备多钱包),无可领金额;见反女巫提示"); return; } await window.LD.claim(dv); };
+$("btnClaim").onclick=async()=>{ if(!await ensureLD()){toast(t("walletFail"));return;} const sel=$("claimDay"); const dv=sel&&sel.value?Number(sel.value):undefined; var gd=dv||((await fetch(CFG.gw+"/v1/health").then(function(r){return r.json();})).current_day-1); if(gd>=Math.floor((Date.now()/1000-1789102088)/86400)){ toast("第 "+gd+" 天将于每日 04:48 UTC(北京 12:48)后开放领取 / opens after 04:48 UTC"); return; } var gs=await fetch(CFG.gw+"/v1/scores?day="+gd).then(function(r){return r.json();}).catch(function(){return null;}); if(gs&&gs.scores&&gs.scores[myAddr]&&!(gs.scores[myAddr].w>0)){ toast("本钱包第 "+gd+" 天被反女巫归零(同设备多钱包),无可领金额;见反女巫提示"); return; } await window.LD.claim(dv); };
 /* SEC-LOCK step-up gate: exporting the seed phrase is a sensitive action */
 $("btnExportSeed").onclick=async()=>{
  if(window.LDStepUp){ const okE=await window.LDStepUp("导出助记词 / Export seed phrase"); if(!okE){ toast("已取消:未通过安全验证 / Cancelled: security check not passed"); return; } }
@@ -225,6 +225,7 @@ async function autoClaim(){ if(!window.LD||!myAddr)return; try{
     if(done.indexOf(d)>=0) continue;
     var rs=await fetch(CFG.gw+"/v1/day?day="+d).then(function(r){return r.json();}).catch(function(){return null;});
     if(!rs||!rs.finalized) continue;
+    if(d>=Math.floor((Date.now()/1000-1789102088)/86400)) continue;
     var sc=await fetch(CFG.gw+"/v1/scores?day="+d).then(function(r){return r.json();}).catch(function(){return null;});
     if(!sc||!sc.scores||!sc.scores[myAddr]||!(sc.scores[myAddr].w>0)) continue;
     var on=false; try{ on=await window.__mrq({root_submitted:{day:d}}); }catch(e){}

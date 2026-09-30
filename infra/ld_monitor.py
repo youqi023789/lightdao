@@ -207,6 +207,15 @@ def main():
                 alert("expiry: %s in %.0f days" % (_k, _days))
     except Exception:
         pass
+    _why=[]
+    c=st["checks"]
+    if not c.get("chain",{}).get("advancing",True): _why.append("chain")
+    if not c.get("gateway",{}).get("ok",True): _why.append("gateway")
+    if c.get("finalize") is False: _why.append("finalize")
+    if c.get("sign_root") is False: _why.append("sign_root")
+    if c.get("http")!=200: _why.append("http")
+    if c.get("truth_probe") is False: _why.append("truth_probe")
+    st["reason"]=",".join(_why)
     json.dump(st, open(STATUS, "w"))
     print("monitor ok=%s height=%s miners=%s" % (st["ok"], h, mn))
 
