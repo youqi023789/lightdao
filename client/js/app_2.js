@@ -1,4 +1,4 @@
-window.LDBUILD="1.1.9";
+window.LDBUILD="1.2.0";
 function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
 
 window.CFG = {
@@ -131,7 +131,7 @@ $("btnPkSocial").onclick=async()=>{
     }catch(e){ toast(t("pkFail")+(e.message||e)); }
   }
 };
-$("btnClaim").onclick=async()=>{ if(!await ensureLD()){toast(t("walletFail"));return;} const sel=$("claimDay"); const dv=sel&&sel.value?Number(sel.value):undefined; var gd=dv||((await fetch(CFG.gw+"/v1/health").then(function(r){return r.json();})).current_day-1); if(gd>=Math.floor((Date.now()/1000-1789102088)/86400)){ toast("第 "+gd+" 天将于每日 04:48 UTC(北京 12:48)后开放领取 / opens after 04:48 UTC"); return; } var gs=await fetch(CFG.gw+"/v1/scores?day="+gd).then(function(r){return r.json();}).catch(function(){return null;}); if(gs&&gs.scores&&gs.scores[myAddr]&&!(gs.scores[myAddr].w>0)){ toast("本钱包第 "+gd+" 天被反女巫归零(同设备多钱包),无可领金额;见反女巫提示"); return; } await window.LD.claim(dv); };
+$("btnClaim").onclick=async()=>{ if(!await ensureLD()){toast(t("walletFail"));return;} const sel=$("claimDay"); const dv=sel&&sel.value?Number(sel.value):undefined; var gd=dv||((await fetch(CFG.gw+"/v1/health").then(function(r){return r.json();})).current_day-1); if(gd>=Math.floor((Date.now()/1000-1789102088)/86400)){ claimWindowUI(); toast("第 "+gd+" 天领取将在北京 12:48 开放(合约日界);10-11 起统一为 08:00,见上方倒计时"); return; } var gs=await fetch(CFG.gw+"/v1/scores?day="+gd).then(function(r){return r.json();}).catch(function(){return null;}); if(gs&&gs.scores&&gs.scores[myAddr]&&!(gs.scores[myAddr].w>0)){ toast("本钱包第 "+gd+" 天被反女巫归零(同设备多钱包),无可领金额;见反女巫提示"); return; } await window.LD.claim(dv); };
 /* SEC-LOCK step-up gate: exporting the seed phrase is a sensitive action */
 $("btnExportSeed").onclick=async()=>{
  if(window.LDStepUp){ const okE=await window.LDStepUp("导出助记词 / Export seed phrase"); if(!okE){ toast("已取消:未通过安全验证 / Cancelled: security check not passed"); return; } }
@@ -225,7 +225,7 @@ async function autoClaim(){ if(!window.LD||!myAddr)return; try{
     if(done.indexOf(d)>=0) continue;
     var rs=await fetch(CFG.gw+"/v1/day?day="+d).then(function(r){return r.json();}).catch(function(){return null;});
     if(!rs||!rs.finalized) continue;
-    if(d>=Math.floor((Date.now()/1000-1789102088)/86400)) continue;
+    if(d>=Math.floor((Date.now()/1000-1789102088)/86400)){ claimWindowUI(); continue; }
     var sc=await fetch(CFG.gw+"/v1/scores?day="+d).then(function(r){return r.json();}).catch(function(){return null;});
     if(!sc||!sc.scores||!sc.scores[myAddr]||!(sc.scores[myAddr].w>0)) continue;
     var on=false; try{ on=await window.__mrq({root_submitted:{day:d}}); }catch(e){}
@@ -235,6 +235,13 @@ async function autoClaim(){ if(!window.LD||!myAddr)return; try{
  }catch(e){} }
 setTimeout(function(){ document.documentElement.classList.remove("ld-restoring"); }, 8000);
 
+function claimHintEl(){ var e=document.getElementById("claimHint"); if(!e){ e=document.createElement("div"); e.id="claimHint"; e.className="mini"; e.style.margin="6px 0 2px"; var b=document.getElementById("btnClaim"); if(b&&b.parentNode) b.parentNode.insertBefore(e,b); } return e; }
+function claimWindowUI(){ var el=claimHintEl(); if(!el) return; var cd=Math.floor((Date.now()/1000-1789102088)/86400); var openAt=(cd+1)*86400+1789102088; var left=openAt-Math.floor(Date.now()/1000); var btn=document.getElementById("btnClaim");
+  if(left>0){ var h=Math.floor(left/3600), m=Math.floor(left%3600/60), ss=left%60; function p(n){return (n<10?"0":"")+n;}
+    el.textContent="结算刷新:你当地 08:00(北京) · 领取开放:北京 12:48(合约日界,临时) · 倒计时 "+p(h)+":"+p(m)+":"+p(ss)+" · 2026-10-11 起领取与结算统一为北京 08:00";
+    if(btn) btn.disabled=true;
+  } else { el.textContent=""; if(btn) btn.disabled=false; } }
+setInterval(claimWindowUI,1000);
 async function refreshClaimable(){ var el=document.getElementById("claimable"); if(!el||!myAddr||!window.__mrq)return;
  try{ var h=await fetch(CFG.gw+"/v1/health").then(function(r){return r.json();});
   var done=await claimedSet(); var sum=0;
