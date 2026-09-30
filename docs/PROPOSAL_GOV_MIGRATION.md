@@ -30,3 +30,10 @@
 - 故拆为:A=MsgStoreCode(独立提案,执行后观测真实 code_id);B=MsgMigrateContract(独立提案,提交前用 make_proposal_b.sh 校验 sha256(code[id])==9e0dc33866396d34e4a151d67d6e6504e1de91f27a53aad6805fd961ffcced6a 并填入真实 id;不匹配即 ABORT)。
 - 文件:/home/ubuntu/gov_migration_A_storecode.json、gov_migration_B_migrate_TEMPLATE.json、make_proposal_b.sh。
 - 窗口顺序:10-05 提 A → 48h 投票 → 执行 → 跑 make_proposal_b.sh → 提 B → 48h → 执行 → 验收(MIGRATION 12 条)。
+
+## 16. 加速时间线(09-30 起执行, 取代原 10-05 单窗口)
+- A(store gov v2 code): 09-30 已提交 x/gov #6, 7/7 yes(3.5e12), 自动执行 2026-10-02 03:23Z。
+- B(migrate governance→v2, void 2/5/6/7/9): cron 0455dcc4 @ 10-02 04:00Z(sha 校验 9e0dc338… 后提交+7票); 自动执行 ~10-04 04:xxZ。
+- v4(mining_reward→code12): cron d417f628 @ 10-04 05:35Z(execute_proposal 10, deployer=proposer, v2 权限模型下仍可行)。
+- C(mining_reward→epoch 对齐 code, genesis_time=1789084800): cron 428470ec @ 10-04 12:00Z(构建+store+治理提案, 投票7d)→ 执行 ~10-11 → **领取开放统一为北京 08:00**。
+- 过渡期(至 ~10-11): 结算 08:00 / 领取 12:48(合约日界), UI 1.2.0 单处展示双时间+倒计时+统一日期, 不再弹报错吐司。
