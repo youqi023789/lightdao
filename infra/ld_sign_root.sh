@@ -15,6 +15,9 @@ ROOT=$(echo "$INFO" | grep -aoE '"root": *"[a-f0-9]+"' | grep -aoE '[a-f0-9]{64}
 AM=$(echo "$INFO"  | grep -aoE '"active_miners": *[0-9]+' | grep -aoE '[0-9]+' | head -1)
 TS=$(echo "$INFO"  | grep -aoE '"total_score": *[0-9]+'  | grep -aoE '[0-9]+' | head -1)
 [ -n "$ROOT" ] || { echo "no root"; exit 0; }
-wasmd tx wasm execute "$MR" "{\"submit_daily_root\":{\"day\":$DAY,\"root\":\"$ROOT\",\"active_miners\":\"$AM\",\"total_score\":\"$TS\"}}" \
-  --from operator --home "$H" --node "$RPC" $KB --chain-id "$CID" --gas 500000 --fees 150000ulight -y -b sync >/dev/null 2>&1
-echo "submitted root for day $DAY"
+OUT=$(wasmd tx wasm execute "$MR" "{\"submit_daily_root\":{\"day\":$DAY,\"root\":\"$ROOT\",\"active_miners\":\"$AM\",\"total_score\":\"$TS\"}}" \
+  --from operator --home "$H" --node "$RPC" $KB --chain-id "$CID" --gas 500000 --fees 150000ulight -y -b sync -o json 2>&1)
+CODE=$(printf '%s' "$OUT" | python3 -c "import sys,json;s=sys.stdin.read()
+try: print(json.loads(s[s.find('{'):]).get('code'))
+except Exception: print('parse-fail')" 2>/dev/null)
+if [ "$CODE" = "0" ]; then echo "submitted root for day $DAY (code 0)"; else echo "SIGN-FAIL day $DAY code=$CODE $(printf '%s' "$OUT" | cut -c1-140)"; fi
