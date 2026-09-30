@@ -53,7 +53,7 @@ def main():
     gates = [("qa_site", ["python3", "/home/ubuntu/qa_site.py"]),
              ("qa_extra", ["python3", "/home/ubuntu/qa_extra.py"]),
              ("site_audit", ["python3", "/home/ubuntu/site_audit.py"]),
-             ("qa_truth", ["python3", "/home/ubuntu/qa_truth.py", "8093"])]
+             ("qa_truth", ["python3", "/home/ubuntu/qa_truth.py", "8093"]), ("qa_cross", ["python3", "/usr/local/bin/qa_cross.py"])]
     for name, cmd in gates:
         rc, out = run(cmd, env)
         last = [l for l in out.strip().splitlines() if l.strip()][-3:]
