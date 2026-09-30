@@ -1,0 +1,72 @@
+{
+ "zh": {
+  "title": "LightDAO — 传统私募的门, 链上 DAO 的票。",
+  "desc": "浏览器即节点:挖矿 0 成本、零硬件;投资谁、收购谁,社区提案与投票说了算,每笔资金链上实时可查。",
+  "hlang": "zh"
+ },
+ "en": {
+  "title": "LightDAO — The door of traditional PE. The vote of an on-chain DAO.",
+  "desc": "Browser as node: mine at zero cost, zero hardware. Who to invest in, what to acquire — community proposals and votes decide; every flow is public on-chain.",
+  "hlang": "en"
+ },
+ "es": {
+  "title": "LightDAO — La puerta del PE tradicional. El voto de una DAO on-chain.",
+  "desc": "Navegador como nodo: mina sin coste ni hardware. En qué invertir lo deciden propuestas y votos; cada flujo es público on-chain.",
+  "hlang": "es"
+ },
+ "fr": {
+  "title": "LightDAO — La porte du PE traditionnel. Le vote d'une DAO on-chain.",
+  "desc": "Navigateur = nœud : minez sans coût ni matériel. Investir ou acquérir : propositions et votes décident ; chaque flux est public on-chain.",
+  "hlang": "fr"
+ },
+ "de": {
+  "title": "LightDAO — Die Tür des traditionellen PE. Die Stimme einer On-Chain-DAO.",
+  "desc": "Browser als Node: kostenlos minen, ohne Hardware. Worin investiert wird, entscheiden Proposals & Votes; jeder Fluss ist on-chain öffentlich.",
+  "hlang": "de"
+ },
+ "pt": {
+  "title": "LightDAO — A porta do PE tradicional. O voto de uma DAO on-chain.",
+  "desc": "Navegador como nó: mine sem custo nem hardware. Em que investir é decidido por propostas e votos; cada fluxo é público on-chain.",
+  "hlang": "pt"
+ },
+ "ru": {
+  "title": "LightDAO — Дверь традиционного PE. Голос on-chain DAO.",
+  "desc": "Браузер как нода: майнинг без затрат и железа. Куда инвестировать решают предложения и голоса; каждый поток публичен on-chain.",
+  "hlang": "ru"
+ },
+ "ja": {
+  "title": "LightDAO — 伝統PEの扉。 オンチェーンDAOの票。",
+  "desc": "ブラウザがノード:コスト零・ハード零で採掘。投資先は提案と投票で決定、すべての資金フローはオンチェーンで公開。",
+  "hlang": "ja"
+ },
+ "ko": {
+  "title": "LightDAO — 전통 PE의 문. 온체인 DAO의 표.",
+  "desc": "브라우저가 노드: 비용·하드웨어 없이 채굴. 투자 대상은 제안과 투표로 결정, 모든 흐름은 온체인 공개.",
+  "hlang": "ko"
+ },
+ "ar": {
+  "title": "LightDAO — باب الملكية التقليدية. صوت DAO على السلسلة.",
+  "desc": "المتصفح عقدة: تعدين بلا تكلفة ولا أجهزة. الاستثمار بقرارات المجتمع وكل التدفقات علنية على السلسلة.",
+  "hlang": "ar"
+ },
+ "hi": {
+  "title": "LightDAO — पारंपरिक PE का दरवाज़ा. ऑन-चेन DAO का वोट.",
+  "desc": "ब्राउज़र ही नोड: बिना लागत व हार्डवेयर माइनिंग। निवेश प्रस्तावों और वोटों से तय; हर प्रवाह ऑन-चेन सार्वजनिक।",
+  "hlang": "hi"
+ },
+ "tr": {
+  "title": "LightDAO — Geleneksel PE'nin kapısı. Zincir üstü DAO'nun oyu.",
+  "desc": "Tarayıcı düğüm: maliyetsiz, donanımsız kazı. Yatırımı teklifler ve oylar belirler; her akış zincirde açık.",
+  "hlang": "tr"
+ },
+ "vi": {
+  "title": "LightDAO — Cửa của PE truyền thống. Lá phiếu của DAO on-chain.",
+  "desc": "Trình duyệt là node: đào không chi phí, không phần cứng. Đầu tư do đề xuất và bỏ phiếu quyết định; mọi dòng tiền công khai on-chain.",
+  "hlang": "vi"
+ },
+ "id": {
+  "title": "LightDAO — Pintu PE tradisional. Suara DAO on-chain.",
+  "desc": "Browser sebagai node: menambang tanpa biaya dan perangkat. Investasi diputuskan proposal & suara; setiap aliran publik on-chain.",
+  "hlang": "id"
+ }
+}
