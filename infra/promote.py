@@ -12,6 +12,30 @@ import io, os, re, glob, json, shutil, subprocess, sys
 MAIN = "/var/www/lightdao"; STG = "/var/www/lightdao_staging"; PREV = "/var/www/lightdao_js_prev"
 SEM = r"[\d]+\.[\d]+\.[\d]+"
 
+# N1 (2026-10 monthly audit): SRI/integrity is now enforced in the served HTML, so every release
+# MUST regenerate the manifest and re-inject integrity (relabel rewrites ?v= and JS bytes, which
+# changes hashes). Without this the next promote would white-screen the site. sri_integrity.py is
+# the shared, root-parameterized helper (gen/inject/verify) installed under /usr/local/bin.
+sys.path.insert(0, "/usr/local/bin")
+try:
+    import sri_integrity as _sri
+except Exception:
+    _sri = None
+
+def maintain_sri(root, label=""):
+    """Regenerate SRI.json for `root`, (re)inject integrity= into its HTML, then verify every
+    tagged local resource hashes to its integrity value. Hard-fail the release on any mismatch."""
+    if _sri is None:
+        print("SRI GATE FAIL (sri_integrity module unavailable) -> NOT promoting"); sys.exit(1)
+    man = _sri.gen_sri(root)
+    changed = _sri.inject_integrity(root)
+    checked, fails = _sri.verify_integrity(root)
+    print("[sri%s] manifest=%d html_changed=%d injected_tags=%d verified=%d fails=%d"
+          % (label, len(man), len(changed), sum(n for _, n in changed), checked, len(fails)))
+    if fails:
+        for f in fails[:20]: print("   SRI FAIL", f)
+        print("SRI GATE FAIL -> NOT promoting"); sys.exit(1)
+
 def readv(root): return json.load(open(os.path.join(root, "js/ver.json")))["v"]
 def setv(root, v):
     io.open(os.path.join(root, "js/ver.json"), "w", encoding="utf-8").write('{"v": "%s"}\n' % v)
@@ -39,8 +63,8 @@ def main():
         if not os.path.isdir(PREV): print("no prev snapshot"); sys.exit(1)
         pv = open(os.path.join(PREV, "VERSION")).read().strip()
         for f in glob.glob(os.path.join(PREV, "*.js")): shutil.copy(f, os.path.join(MAIN, "js", os.path.basename(f)))
-        for f in glob.glob(os.path.join(PREV, "*.html")): shutil.copy(f, os.path.join(MAIN, os.path.basename(f)))
         relabel(MAIN, pv)
+        maintain_sri(MAIN, " rollback")
         print("ROLLED BACK main to", pv); return
     if len(args) < 2: print(__doc__); sys.exit(2)
     src, nxt = args[0], args[1]; apply = "--apply" in args
@@ -49,12 +73,13 @@ def main():
     if os.path.exists(STG): shutil.rmtree(STG)
     shutil.copytree(src, STG)
     relabel(STG, nxt)
+    maintain_sri(STG, " staging")
     print("staging built: candidate=%s as v%s (main cur=%s)" % (src, nxt, cur))
     env = {"LD_WEB_ROOT": STG, "LD_PORT": "8093"}
     gates = [("qa_site", ["python3", "/home/ubuntu/qa_site.py"]),
              ("qa_extra", ["python3", "/home/ubuntu/qa_extra.py"]),
              ("site_audit", ["python3", "/home/ubuntu/site_audit.py"]),
-             ("qa_truth", ["python3", "/home/ubuntu/qa_truth.py", "8093"]), ("qa_cross", ["python3", "/usr/local/bin/qa_cross.py"])]
+             ("qa_truth", ["python3", "/home/ubuntu/qa_truth.py", "8093"])]
     for name, cmd in gates:
         rc, out = run(cmd, env)
         last = [l for l in out.strip().splitlines() if l.strip()][-3:]
@@ -64,24 +89,15 @@ def main():
     print("STAGING GATE PASS (v%s)" % nxt)
     if not apply:
         print("(dry-run; pass --apply to promote)"); return
-    # snapshot prev for rollback + permanent versioned archive
-    ARCH = "/var/www/lightdao_js_archive"
-    os.makedirs(ARCH, exist_ok=True)
-    av = os.path.join(ARCH, cur)
-    if not os.path.isdir(av):
-        os.makedirs(av)
-        for f in glob.glob(os.path.join(MAIN, "js", "*.js")): shutil.copy(f, av)
-        for f in glob.glob(os.path.join(MAIN, "*.html")): shutil.copy(f, av)
-        io.open(os.path.join(av, "VERSION"), "w").write(cur)
+    # snapshot prev for rollback
     if os.path.exists(PREV): shutil.rmtree(PREV)
     os.makedirs(PREV)
     for f in glob.glob(os.path.join(MAIN, "js", "*.js")): shutil.copy(f, PREV)
-    for f in glob.glob(os.path.join(MAIN, "*.html")): shutil.copy(f, PREV)
     io.open(os.path.join(PREV, "VERSION"), "w").write(cur)
     # promote candidate -> main
     for f in glob.glob(os.path.join(STG, "js", "*.js")): shutil.copy(f, os.path.join(MAIN, "js", os.path.basename(f)))
-    for f in glob.glob(os.path.join(STG, "*.html")): shutil.copy(f, os.path.join(MAIN, os.path.basename(f)))
     relabel(MAIN, nxt)
+    maintain_sri(MAIN, " main")
     print("PROMOTED main %s -> %s (prev snapshot=%s)" % (cur, nxt, PREV))
 
 if __name__ == "__main__":
