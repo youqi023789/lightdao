@@ -1,0 +1,24 @@
+{
+  "messages": [
+    {
+      "@type": "/cosmwasm.wasm.v1.MsgMigrateContract",
+      "sender": "wasm10d07y265gmmuvt4z0w9aw880jnsr700js7zslc",
+      "contract": "wasm14axmz74pppxqxs3qhxaaf2qzl6x53pvvzm7c6p52qrycwnyh8ktsfukapt",
+      "code_id": "13",
+      "msg": {
+        "void_ids": [
+          2,
+          5,
+          6,
+          7,
+          9
+        ]
+      }
+    }
+  ],
+  "metadata": "B: migrate governance wasm14axmz74pppxqxs3qhxaaf2qzl6x53pvvzm7c6p52qrycwnyh8ktsfukapt to code_id 13 (sha256 9e0dc33866396d34e4a151d67d6e6504e1de91f27a53aad6805fd961ffcced6a), void_ids [2,5,6,7,9]. Doc MIGRATION_10-05_CHANGES.md A1-A6",
+  "deposit": "10000000ulight",
+  "title": "Migrate governance to v2 (native stake kept; execute permission, expiry, migrate-conflict guard, void list) [B: migrate]",
+  "summary": "Migrates governance to the code id observed after Part A, only after sha256(code[id])==9e0dc33866396d34e4a151d67d6e6504e1de91f27a53aad6805fd961ffcced6a is verified. void_ids applied via migrate msg.",
+  "expedited": false
+}
