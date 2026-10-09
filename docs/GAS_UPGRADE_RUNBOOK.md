@@ -72,11 +72,11 @@ a346e94e16149dcbf02cc73f12d684d252fe80d6@UK_P2P:26656
 ### 1.1 分发二进制到 7 节点
 新二进制在 SG:`/home/ubuntu/lightd`(sha256 `34d8f5317c3a177dcd0805c084bad5230dd4ff5eaf445b218b865da1e6cbd24f`,含 lightfee + v2-lightfee 升级处理器)
 
-对每个节点(IP 替换 `<IP>`,密钥替换 `<KEY>.pem`):
+对每个节点(IP 替换 `<IP>`,密钥替换 `<SSH_KEY>`):
 ```bash
 # 从 SG 跳到其他节点,或先 scp 到本地再分发。校验 sha256 一致!
-scp -i <KEY>.pem /home/ubuntu/lightd ubuntu@<IP>:/home/ubuntu/lightd.new
-ssh -i <KEY>.pem ubuntu@<IP> 'sha256sum /home/ubuntu/lightd.new'
+scp -i <SSH_KEY> /home/ubuntu/lightd ubuntu@<IP>:/home/ubuntu/lightd.new
+ssh -i <SSH_KEY> ubuntu@<IP> 'sha256sum /home/ubuntu/lightd.new'
 # 必须 == 34d8f5317c3a177dcd0805c084bad5230dd4ff5eaf445b218b865da1e6cbd24f
 ```
 > 注:SG 本身已有 `/home/ubuntu/lightd`。当前 SSH 可达 = SG(KEY_SG)+ FR(FR_ENDPOINT, KEY_FR);HK(HK_ENDPOINT)仅 RPC 可达;其余 4 台需先把本机出口 IP 加入其腾讯云安全组,或由你本人在这 4 台执行。
