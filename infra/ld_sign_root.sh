@@ -3,7 +3,7 @@
 export PATH=/usr/local/bin:/usr/bin:/bin:$PATH
 H=$HOME/.wasmd; RPC=tcp://localhost:26657; KB="--keyring-backend test"; CID=lightdao-mainnet-1
 MR=wasm173y0pgdh6ensz4gpgglz40a260www6qse4dswshc87za9du6h4fsm5r9wx
-GW=http://43.160.218.196/gw
+GW=https://lightdao.net/gw
 DAY=$(/usr/local/bin/ld_day.sh prev)
 # on-chain gating: skip if this day's root already committed (makes repeat runs safe)
 ON=$(wasmd q wasm contract-state smart "$MR" "{\"root_submitted\":{\"day\":$DAY}}" --node "$RPC" -o json 2>/dev/null | grep -aoE '"data": *(true|false)' | grep -aoE 'true|false' | head -1)
