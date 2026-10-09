@@ -1,0 +1,121 @@
+{
+  "_comment": "Canonical cron manifest for SG node. Reconciled daily by ld_cron_reconcile.py (G24). Regenerate: ld_cron_reconcile.py --gen, review, commit.",
+  "jobs": [
+    {
+      "user": "root",
+      "cmd": "/home/ubuntu/ld_backup.sh 2"
+    },
+    {
+      "user": "root",
+      "cmd": "/usr/bin/python3 /home/ubuntu/ld_monitor.py 2"
+    },
+    {
+      "user": "root",
+      "cmd": "/usr/bin/python3 /home/ubuntu/rebuild_search.py 2"
+    },
+    {
+      "user": "root",
+      "cmd": "/usr/local/bin/lightdao_oracle_feeder.sh"
+    },
+    {
+      "user": "root",
+      "cmd": "flock -xn /tmp/stargate.lock -c '/usr/local/qcloud/stargate/admin/start.sh 2 &'"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/bin/python3 /home/ubuntu/lightdao_gateway/gas_grant.py $(/usr/local/bin/ld_day.sh cur) 2"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/bin/python3 /usr/local/bin/canary_claim.py beat 2"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/bin/python3 /usr/local/bin/canary_claim.py claim 2"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/bin/python3 /usr/local/bin/canary_claim.py degraded 2"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/bin/python3 /usr/local/bin/discord_bot.py weekly 2"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/bin/python3 /usr/local/bin/ld_gov_guard.py 2"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/local/bin/ld_cfg.sh check"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/local/bin/ld_chain_params.sh check 2"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/local/bin/ld_claim_gas_watch.py 2"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/local/bin/ld_cve_watch.py 2"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/local/bin/ld_daily_discord.sh 2"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/local/bin/ld_daily_x_marketing.sh 2"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/local/bin/ld_epoch_audit.py 2"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/local/bin/ld_finalize.sh"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/local/bin/ld_observer_watch.sh 2"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/local/bin/ld_secret_scan.py 2"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/local/bin/ld_sign_root.sh 2"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/local/bin/ld_sri.sh"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/local/bin/ld_validator_watch.py 2"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/local/bin/ld_vesting_watch.sh"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/local/bin/ld_watchdog.sh"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "/usr/local/bin/qa_cross_cron.sh"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "python3 /usr/local/bin/wp_reconcile.py 2"
+    },
+    {
+      "user": "ubuntu",
+      "cmd": "wasmd tx distribution withdraw-all-rewards --from operator --home /home/ubuntu/.wasmd --keyring-backend test --chain-id lightdao-mainnet-1 --node tcp://127.0.0.1:26657 --gas 300000 --fees 90000ulight -y 2"
+    }
+  ]
+}
