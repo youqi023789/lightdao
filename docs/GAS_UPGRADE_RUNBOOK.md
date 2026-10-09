@@ -45,7 +45,7 @@ lightfee 在每块 BeginBlock 更新价格、EndBlock 转移 fee_collector 资�
 | val04-us | `KEY_US` | 待确认 | |
 | val05-hk | `KEY_HK`/`KEY_XG` | 待确认 | |
 | val06-fr | `KEY_FR` | 待确认 | |
-| val07-uk | `ayingguo.pem` | 待确认 | |
+| val07-uk | `SSH_KEY` | 待确认 | |
 
 7 个 P2P 端点(完整):
 ```
@@ -57,7 +57,7 @@ bc506d556b01cb50c4284b92b2e69b32a6b65568@SG_P2P:26656   ← SG val03
 e8a8eba0b1ac40752145b70273428ee58cc84d55@FR_P2P:26656
 a346e94e16149dcbf02cc73f12d684d252fe80d6@UK_P2P:26656
 ```
-密钥目录:`C:\Users\33635\Desktop\哈哈\*.pem`
+密钥目录:`PRIV_PATH
 
 ### 0.4 治理参数(已查)
 - `min_deposit`: 10000000 ulight
