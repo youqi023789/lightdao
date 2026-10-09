@@ -6,15 +6,15 @@
 
 | moniker | 区域 | P2P IP |
 |---|---|---|
-| val01-jp | 日本 | 47.245.63.27 |
-| val02-kr | 韩国 | 43.108.80.121 |
-| val03-sg | 新加坡 | 43.160.218.196 |
-| val04-us | 美国 | 47.85.97.63 |
-| val05-hk | 香港 | 47.82.73.162 |
-| val06-fr | 法国 | 43.165.3.88 |
-| val07-uk | 英国 | 8.208.114.196 |
+| val01-jp | 日本 | JP_ENDPOINT |
+| val02-kr | 韩国 | KR_ENDPOINT |
+| val03-sg | 新加坡 | SG_ENDPOINT |
+| val04-us | 美国 | US_ENDPOINT |
+| val05-hk | 香港 | HK_ENDPOINT |
+| val06-fr | 法国 | FR_ENDPOINT |
+| val07-uk | 英国 | UK_ENDPOINT |
 
-(+1 备用中继节点 119.28.61.143)
+(+1 备用中继节点 XG_ENDPOINT)
 
 ## 公共端点
 

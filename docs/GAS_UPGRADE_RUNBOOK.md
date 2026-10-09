@@ -39,23 +39,23 @@ lightfee 在每块 BeginBlock 更新价格、EndBlock 转移 fee_collector 资�
 
 | moniker | 推测密钥文件 | P2P IP | node_id |
 |---|---|---|---|
-| val01-jp | `ariben.pem` | 待确认 | 78f5b4b9… / 47.245.63.27 等 |
-| val02-kr | `ahanguo.pem` | 待确认 | |
-| val03-sg | `txinjiapo.pem` | **43.160.218.196** | bc506d556b01cb50c4284b92b2e69b32a6b65568 |
-| val04-us | `ameiguo.pem` | 待确认 | |
-| val05-hk | `axianggang.pem`/`txianggang.pem` | 待确认 | |
-| val06-fr | `tfaguo.pem` | 待确认 | |
+| val01-jp | `KEY_JP` | 待确认 | 78f5b4b9… / JP_ENDPOINT 等 |
+| val02-kr | `KEY_KR` | 待确认 | |
+| val03-sg | `KEY_SG` | **SG_ENDPOINT** | bc506d556b01cb50c4284b92b2e69b32a6b65568 |
+| val04-us | `KEY_US` | 待确认 | |
+| val05-hk | `KEY_HK`/`KEY_XG` | 待确认 | |
+| val06-fr | `KEY_FR` | 待确认 | |
 | val07-uk | `ayingguo.pem` | 待确认 | |
 
 7 个 P2P 端点(完整):
 ```
-78f5b4b96849a9073ac52764a9de0091cc8e461f@47.245.63.27:26656
-4ceadc027548f04ff8dd845afdc7b4726e1a2850@43.108.80.121:26656
-bc506d556b01cb50c4284b92b2e69b32a6b65568@43.160.218.196:26656   ← SG val03
-58b604661cad23798244bb5f8064b32b60457e45@47.85.97.63:26656
-83b486553b87537838fb5d74b580f44c5079050b@47.82.73.162:26656
-e8a8eba0b1ac40752145b70273428ee58cc84d55@43.165.3.88:26656
-a346e94e16149dcbf02cc73f12d684d252fe80d6@8.208.114.196:26656
+78f5b4b96849a9073ac52764a9de0091cc8e461f@JP_P2P:26656
+4ceadc027548f04ff8dd845afdc7b4726e1a2850@KR_P2P:26656
+bc506d556b01cb50c4284b92b2e69b32a6b65568@SG_P2P:26656   ← SG val03
+58b604661cad23798244bb5f8064b32b60457e45@US_P2P:26656
+83b486553b87537838fb5d74b580f44c5079050b@HK_P2P:26656
+e8a8eba0b1ac40752145b70273428ee58cc84d55@FR_P2P:26656
+a346e94e16149dcbf02cc73f12d684d252fe80d6@UK_P2P:26656
 ```
 密钥目录:`C:\Users\33635\Desktop\哈哈\*.pem`
 
@@ -79,7 +79,7 @@ scp -i <KEY>.pem /home/ubuntu/lightd ubuntu@<IP>:/home/ubuntu/lightd.new
 ssh -i <KEY>.pem ubuntu@<IP> 'sha256sum /home/ubuntu/lightd.new'
 # 必须 == 34d8f5317c3a177dcd0805c084bad5230dd4ff5eaf445b218b865da1e6cbd24f
 ```
-> 注:SG 本身已有 `/home/ubuntu/lightd`。当前 SSH 可达 = SG(txinjiapo.pem)+ FR(43.165.3.88, tfaguo.pem);HK(47.82.73.162)仅 RPC 可达;其余 4 台需先把本机出口 IP 加入其腾讯云安全组,或由你本人在这 4 台执行。
+> 注:SG 本身已有 `/home/ubuntu/lightd`。当前 SSH 可达 = SG(KEY_SG)+ FR(FR_ENDPOINT, KEY_FR);HK(HK_ENDPOINT)仅 RPC 可达;其余 4 台需先把本机出口 IP 加入其腾讯云安全组,或由你本人在这 4 台执行。
 
 ### 1.2 每台设置 lightfee 环境变量(systemd unit 或启动脚本)
 ```bash
