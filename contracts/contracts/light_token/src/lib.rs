@@ -10,7 +10,7 @@ use cw2::set_contract_version;
 use cw_storage_plus::Item;
 
 const CONTRACT_NAME: &str = "crates.io:light_token";
-const CONTRACT_VERSION: &str = "1.1.0";
+const CONTRACT_VERSION: &str = "1.0.0";
 pub const DENOM: &str = "ulight";
 
 #[cw_serde]
@@ -55,37 +55,6 @@ pub struct Config {
 }
 pub const CONFIG: Item<Config> = Item::new("lt_config");
 
-#[cw_serde]
-pub struct TokenMeta {
-    pub symbol: String,
-    pub name: String,
-}
-pub const META: Item<TokenMeta> = Item::new("lt_meta");
-
-#[cw_serde]
-pub struct MigrateMsg {
-    pub new_symbol: Option<String>,
-    pub new_name: Option<String>,
-}
-
-#[entry_point]
-pub fn migrate(deps: DepsMut, _env: Env, msg: MigrateMsg) -> StdResult<Response> {
-    // On first migration into 1.1.0, seed META with defaults, then apply overrides.
-    let mut meta = META.may_load(deps.storage)?.unwrap_or(TokenMeta {
-        symbol: "LUMDA".to_string(),
-        name: "Lumda".to_string(),
-    });
-    if let Some(s) = msg.new_symbol { meta.symbol = s; }
-    if let Some(n) = msg.new_name { meta.name = n; }
-    META.save(deps.storage, &meta)?;
-    set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
-    Ok(Response::new()
-        .add_attribute("action", "migrate")
-        .add_attribute("to_version", CONTRACT_VERSION)
-        .add_attribute("symbol", &meta.symbol)
-        .add_attribute("name", &meta.name))
-}
-
 #[entry_point]
 pub fn instantiate(deps: DepsMut, _e: Env, _i: MessageInfo, msg: InstantiateMsg) -> StdResult<Response> {
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
@@ -110,13 +79,9 @@ pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
         QueryMsg::TokenInfo {} => {
             let cfg = CONFIG.load(deps.storage)?;
             let burned = deps.querier.query_balance(env.contract.address, DENOM)?.amount;
-            let meta = META.may_load(deps.storage)?.unwrap_or(TokenMeta {
-                symbol: "LUMDA".to_string(),
-                name: "Lumda".to_string(),
-            });
             to_json_binary(&TokenInfo {
                 denom: DENOM.to_string(),
-                symbol: meta.symbol,
+                symbol: "LIGHT".to_string(),
                 decimals: cfg.decimals,
                 total_supply: cfg.total_supply,
                 burned,
