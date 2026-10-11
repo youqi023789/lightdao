@@ -14,6 +14,13 @@ LightDAO 是一个 **DePIN(去中心化物理基础设施网络)**:用户用浏�
 - **USD 锚定 Gas + 通缩**:每笔手续费 50% 销毁 / 30% 验证者 / 20% 金库(§4.5)
 - **公平发行**:2.5B LIGHT,挖矿合约按 epoch 释放,无预挖滥发
 
+## 社区 / Community
+
+- 📺 Telegram 每日链上动态: [t.me/lightdao_news](https://t.me/lightdao_news)
+- 💬 Discord: [discord.gg/9YY9X2Cdv](https://discord.gg/9YY9X2Cdv)
+- 🐦 X / Twitter: [@lightdaoproto](https://x.com/lightdaoproto)
+- 🌐 官网: [lightdao.net](https://lightdao.net)
+
 ## 仓库结构
 
 | 目录 | 内容 |
