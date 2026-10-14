@@ -1,0 +1,20 @@
+[
+  {
+    "path": "path/in/repo/qa_file.py",
+    "kind": "mnemonic-phrase",
+    "contains": "abandon abandon",
+    "reason": "REQUIRED. What this actually is and why it is harmless — e.g. 'BIP39 all-zero entropy vector, controls an empty throwaway account in the wallet-import e2e'. A reason a reviewer cannot verify is not a reason.",
+    "added": "YYYY-MM-DD",
+    "review_by": "YYYY-MM-DD",
+    "owner": "qa"
+  },
+  {
+    "path": "path/in/repo/gate_script.py",
+    "kind": "inline-secret",
+    "contains": "short-sandbox-value",
+    "reason": "REQUIRED. Credential of a throwaway instance started in a temp dir on a random loopback port, holding no keys and no funds.",
+    "added": "YYYY-MM-DD",
+    "review_by": "YYYY-MM-DD",
+    "owner": "release-eng"
+  }
+]

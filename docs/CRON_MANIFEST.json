@@ -116,6 +116,13 @@
     {
       "user": "ubuntu",
       "cmd": "wasmd tx distribution withdraw-all-rewards --from operator --home /home/ubuntu/.wasmd --keyring-backend test --chain-id lightdao-mainnet-1 --node tcp://127.0.0.1:26657 --gas 300000 --fees 90000ulight -y 2"
+    },
+    {
+      "user": "root",
+      "schedule": "15 7 * * *",
+      "cmd": "runuser -u ubuntu -- git -C /home/ubuntu/repo pull --ff-only origin main >/dev/null 2>&1; /usr/bin/python3 /usr/local/bin/repo_leak_check.py /home/ubuntu/repo >> /var/log/ld_repo_leak.log 2>&1",
+      "purpose": "public-repo leak gate (infra-IP/keys/mnemonics/webhooks/paths); findings page via ld_alerts.log",
+      "added": "2026-10-14"
     }
   ]
 }
