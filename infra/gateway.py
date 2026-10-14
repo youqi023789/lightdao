@@ -44,9 +44,23 @@ def _safe_int(v, default=None):
 
 def _bad_day(day):  # True if invalid
     return day is None or day < 0 or day > DAY_MAX
+HB_IP_LIM = int(os.environ.get("GW_RATE_HB_IP", "600"))
+HB_MINER_LIM = int(os.environ.get("GW_RATE_HB_MINER", "6"))
+
+def _miner_rate_ok(miner):
+    """Per-miner heartbeat budget (checked after the miner address is validated)."""
+    now = _time.time()
+    e = _RATE.setdefault("m:" + miner, {})
+    w = e.get("heartbeat")
+    if not w or (now - w[1]) > 60:
+        e["heartbeat"] = [1, now]
+        return True
+    w[0] += 1
+    return w[0] <= HB_MINER_LIM
+
 def _rate_ok(ip, kind):
     now = _time.time()
-    lim = _RATE_LIM.get(kind, 600)
+    lim = HB_IP_LIM if kind == "heartbeat" else _RATE_LIM.get(kind, 600)
     e = _RATE.setdefault(ip, {})
     w = e.get(kind)
     if not w or (now - w[1]) > 60:
@@ -383,6 +397,7 @@ class H(BaseHTTPRequestHandler):
         if u.path == "/v1/heartbeat":
             miner = body.get("miner"); 
             if not miner or not miner.startswith("wasm1") or len(miner) > 128: return self._send(400, {"error": "bad miner"})
+            if not _miner_rate_ok(miner): return self._send(429, {"error": "rate limited"})
             day = _safe_int(body.get("day"), current_day())
             if _bad_day(day): return self._send(400, {"error": "bad day"})
             with LOCK:
