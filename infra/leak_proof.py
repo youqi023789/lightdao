@@ -57,7 +57,9 @@ shutil.copytree(REPO, tree, symlinks=True, ignore=shutil.ignore_patterns(".git")
 with open(os.path.join(tree, "PROOF_DECOY.md"), "w", encoding="utf-8") as fh:
     fh.write(decoy)
 
-r = subprocess.run([sys.executable, GATE, tree], capture_output=True, text=True)
+# the planted findings are a self-test, not an incident: never let them reach the alert log
+r = subprocess.run([sys.executable, GATE, tree], capture_output=True, text=True,
+                   env=dict(os.environ, LD_LEAK_NO_ALERT="1"))
 print(r.stdout[-2600:])
 if r.stderr.strip():
     print("stderr:", r.stderr[-400:])

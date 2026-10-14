@@ -191,6 +191,12 @@ def main():
         print("  NOTE  %d waiver(s) expired and are no longer applied" % len(expired))
     if hits:
         print("REPO LEAK FAILS: %d" % len(hits))
+        # The reverse-direction proof deliberately plants findings; paging the operator for its own
+        # self-test would recreate exactly the alert fatigue we removed from the client-error channel
+        # this morning, so LD_LEAK_NO_ALERT=1 suppresses only the log write (exit code still 1).
+        if os.environ.get("LD_LEAK_NO_ALERT"):
+            print("(ALERT_LOG write suppressed by LD_LEAK_NO_ALERT)")
+            return 1
         try:
             if os.access(ALERT_LOG, os.W_OK):
                 with open(ALERT_LOG, "a", encoding="utf-8") as fh:
