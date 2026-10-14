@@ -150,13 +150,49 @@ pub fn daily_miner_pool(day: u64) -> Uint128 {
 }
 
 #[cw_serde]
-pub struct MigrateMsg {}
-
-#[entry_point]
-pub fn migrate(_deps: DepsMut, _env: Env, _msg: MigrateMsg) -> Result<Response, StdError> {
-    Ok(Response::new().add_attribute("action", "migrate_v4_validator_share"))
+pub struct MigrateMsg {
+    /// Optional new genesis_time (epoch alignment, 提案C 语义保留). Omitted preserves current.
+    #[serde(default)]
+    pub new_genesis_time: Option<u64>,
+    /// Optional new set of authorized root voters (A-新2: 名单此前永久冻结，无法随验证者轮换)。
+    /// Omitted preserves current list. Must be non-empty when provided.
+    #[serde(default)]
+    pub validators: Option<Vec<String>>,
+    /// Optional new N-of-M threshold. Omitted preserves current value.
+    #[serde(default)]
+    pub root_threshold: Option<u32>,
+    /// Optional new anti_fraud address. Omitted preserves current value.
+    #[serde(default)]
+    pub anti_fraud: Option<String>,
 }
 
+#[entry_point]
+pub fn migrate(deps: DepsMut, _env: Env, msg: MigrateMsg) -> Result<Response, StdError> {
+    let mut cfg = CONFIG.load(deps.storage)?;
+    if let Some(gt) = msg.new_genesis_time {
+        cfg.genesis_time = gt;
+    }
+    if let Some(vs) = msg.validators {
+        if vs.is_empty() {
+            return Err(StdError::generic_err("validators must not be empty"));
+        }
+        cfg.validators = vs.iter().map(|v| deps.api.addr_validate(v)).collect::<StdResult<Vec<_>>>()?;
+    }
+    if let Some(rt) = msg.root_threshold {
+        if rt == 0 || rt as usize > cfg.validators.len() {
+            return Err(StdError::generic_err("root_threshold must be in [1, #validators]"));
+        }
+        cfg.root_threshold = rt;
+    }
+    if let Some(af) = msg.anti_fraud {
+        cfg.anti_fraud = deps.api.addr_validate(&af)?;
+    }
+    CONFIG.save(deps.storage, &cfg)?;
+    Ok(Response::new()
+        .add_attribute("action", "migrate_v5_updatable_config")
+        .add_attribute("validators_len", cfg.validators.len().to_string())
+        .add_attribute("root_threshold", cfg.root_threshold.to_string()))
+}
 pub fn weighted_score(c: &Contribution) -> Uint128 {
     let bw = c.bandwidth * Uint128::from(40u128);
     let se = c.session * Uint128::from(30u128);

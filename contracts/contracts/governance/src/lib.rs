@@ -413,6 +413,9 @@ pub struct MigrateMsg {
     /// Optional owner permitted to manage the executor whitelist directly.
     #[serde(default)]
     pub owner: Option<String>,
+    /// Optional new minimum proposal stake (A3, WP: 5000 LIGHT). Omitted preserves current value.
+    #[serde(default)]
+    pub proposal_min_stake: Option<Uint128>,
     /// Optional initial executor whitelist (always in addition to each proposal's proposer).
     #[serde(default)]
     pub executors: Option<Vec<String>>,
@@ -423,8 +426,14 @@ pub fn migrate(deps: DepsMut, _env: Env, msg: MigrateMsg) -> StdResult<Response>
     // CONFIG.load fails loudly if this code is pointed at a foreign contract's state.
     let cfg = CONFIG.load(deps.storage)?;
     let vps = msg.voting_period_secs; // Option<u64> is Copy: no partial move of `msg`
-    if vps.is_some() {
-        CONFIG.save(deps.storage, &Config { voting_period_secs: vps, ..cfg })?;
+    // A3: apply proposal_min_stake only when provided; both fields optional, save once.
+    if vps.is_some() || msg.proposal_min_stake.is_some() {
+        let mut cfg2 = cfg;
+        cfg2.voting_period_secs = vps;
+        if let Some(ms) = msg.proposal_min_stake {
+            cfg2.proposal_min_stake = ms;
+        }
+        CONFIG.save(deps.storage, &cfg2)?;
     }
 
     let mut voided_n: u64 = 0;
