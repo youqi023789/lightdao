@@ -155,9 +155,33 @@ html.ld-v2 .btn, html.ld-v2 button.btn {
   transition: transform .2s cubic-bezier(.2, .7, .2, 1), box-shadow .2s ease;
 }
 html.ld-v2 .btn:hover { transform: translateY(-1px); box-shadow: 0 14px 38px rgba(231, 200, 135, .24); }
-html.ld-v2 .btn.g, html.ld-v2 .btn.sec {
+html.ld-v2 .btn.g, html.ld-v2 .btn.sec, html.ld-v2 .btn.ghost {
   background: transparent; color: var(--ink); border: 1px solid var(--line); box-shadow: none;
 }
+/* ⚠ 挖矿页的三个钱包按钮本来是"1 主 2 次"（btn / btn ghost），而第一版只写了 .btn.g 与 .btn.sec，
+   漏了站内真正在用的 .ghost 类名 → 三个按钮全被涂成金色，主次不分。补上。 */
+html.ld-v2 .btn.g:hover, html.ld-v2 .btn.sec:hover, html.ld-v2 .btn.ghost:hover {
+  border-color: rgba(111, 141, 255, .5); box-shadow: none; transform: translateY(-1px);
+}
+
+/* 顶栏分组：品牌在左，图标簇紧贴成一组，页面链接与语言下拉靠右，
+   不再是"⌂    ◐      子代币      节点          English"这种散点排布。 */
+html.ld-v2 header { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; }
+html.ld-v2 header .logo { margin-right: 4px; }
+html.ld-v2 header a[aria-label="home"], html.ld-v2 header a[aria-label="search"], html.ld-v2 header #themeT {
+  min-width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center;
+  padding: 0 9px; border-radius: 999px; font-size: 15px; line-height: 1;
+}
+html.ld-v2 header a[aria-label="home"] + a[aria-label="search"] { margin-left: -4px; }
+html.ld-v2 header select.lang, html.ld-v2 header .ctl { margin-left: auto; }
+/* 次级链接条：与顶栏建立视觉关系（成组 + 发丝分隔），不再像掉在页面里的几个字 */
+html.ld-v2 a.lnk { font-size: 13.5px; opacity: .82; text-decoration: none; }
+html.ld-v2 a.lnk:hover { opacity: 1; }
+html.ld-v2 div:has(> a.lnk:first-child) {
+  display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 10px 0 12px; margin-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, .06);
+}
+html.ld-v2[data-theme="light"] div:has(> a.lnk:first-child) { border-bottom-color: rgba(16, 19, 26, .10); }
 html.ld-v2 .btn.g:hover { border-color: rgba(111, 141, 255, .5); box-shadow: none; }
 
 /* 表格：去掉块状底色，只留行线；右列（LightDAO 侧）用金点出 */
