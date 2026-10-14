@@ -1,4 +1,4 @@
-window.LDBUILD="1.6.0";
+window.LDBUILD="1.6.1";
 function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
 
 window.CDN = ["/js/vendor/"];   /* LD-SAFE-GLOBALS-20261014: property write, never a parse-time redeclaration */

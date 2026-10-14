@@ -26,7 +26,7 @@ a:focus-visible,button:focus-visible{outline:2px solid #7c8cff;outline-offset:2p
 .en{display:block;color:var(--mut,#8b94ad);font-size:13px;margin-top:6px}
 h2 .en{display:inline;margin-left:8px;font-size:14px}
 </style>
-<script src="/js/contracts_1.js" integrity="sha384-fkw6S2LJHwo2aLvZJ3oTo/PTTSaBo28HoD/Lm0ORQ2EeGnbID7w7aJgXMxgWh3fG" crossorigin="anonymous"></script>
+<script src="/js/funds_1.js" integrity="sha384-fkw6S2LJHwo2aLvZJ3oTo/PTTSaBo28HoD/Lm0ORQ2EeGnbID7w7aJgXMxgWh3fG" crossorigin="anonymous"></script>
 </head>
 <body>
 <a class="skip" href="#main">跳到正文 / Skip to content</a>
@@ -76,6 +76,14 @@ h2 .en{display:inline;margin-left:8px;font-size:14px}
 </div>
 
 <div class="card">
+<h2>查你自己的解锁进度 <span class="st live">只读</span><span class="en">Check your own vesting (read-only)</span></h2>
+<p>输入你的 <code>wasm1…</code> 地址，直接读链上两个锁仓合约的 <code>schedule</code> 与 <code>vested</code>。本页不签名、不导入密钥、<b>也不提供领取按钮</b>——领取是动钱的操作，等创始人在线确认后再开放。</p>
+<p><input id="vestAddr" type="text" placeholder="wasm1…" aria-label="要查询的链上地址 / Address to look up" style="width:min(420px,100%);padding:11px 12px;border-radius:10px;border:1px solid var(--line,#232b42);background:var(--card,#141a2a);color:var(--txt,#e8ebf5);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13.5px">
+&nbsp;<button id="vestBtn" class="cp" style="border-style:solid;cursor:pointer">查询 / Query</button></p>
+<div id="vestOut"><p class="note">尚未查询。 / Nothing queried yet.</p></div>
+</div>
+
+<div class="card">
 <h2>4. 通缩三档：现在离得有多远 <span class="en">Deflation floors, honestly</span></h2>
 <p>§5.11 设定三档流通量底线：≤15 亿进入减速、≤12 亿预警、≤10 亿底线。它们指的是<b>总供应因销毁下降到的水平</b>，不是今天的解锁量。</p>
 <table>
@@ -113,7 +121,7 @@ wasmd query wasm contract-state all &lt;vesting&gt; --node http://127.0.0.1:2665
 </div>
 <script src="/js/back.js" integrity="sha384-k10pc3j5u+Uf4AVglPID79HsF0A3apdkJKm4msgtQVqES7eDFGSKLhgBGmCl6f74" crossorigin="anonymous"></script>
 <script src="/js/wfix.js" integrity="sha384-3YmhFo8XgiBYr4lDUSIT/JZpXWEYntFFBK7PFI5HXnIJWwThaEoh7ihjixezX1oh" crossorigin="anonymous"></script>
-<script src="/js/contracts_2.js" integrity="sha384-L4t2a+mzPvnGPLKY7KBLp6wIw23XRfe6ucDlB0DQrxf9joCLer50XqDEQrhWgi2I" crossorigin="anonymous"></script>
+<script src="/js/funds_2.js" integrity="sha384-zj+rGf/22+pDA3yPLX8XANJijQqlg3JYAo/5dz00E0cFQVbcfOX27wRmVSHSmpCg" crossorigin="anonymous"></script>
 <div style="text-align:center;padding:10px 8px;font-size:13px"><a href="/contracts.html">链上合约与地址</a> · <a href="/institutions.html">治理制度与权力转移</a> · <a href="/governance.html">治理</a> · <a href="/app.html">挖矿</a></div>
 <script src="/js/i18n.js" integrity="sha384-tmz+33SxrllK82aCAM8EqDxRfuEtPsPTAWAQIqE7E122SMfukDZ7RKqreWwMqnko" crossorigin="anonymous"></script>
 <script src="/js/i18n_core.js" integrity="sha384-kajQT8hf5obaZOs9dnlw0fCxxnFAN7Mgt2mpK1k7yj/5g0KA88EK0+RVB8c8E1Fq" crossorigin="anonymous"></script>
