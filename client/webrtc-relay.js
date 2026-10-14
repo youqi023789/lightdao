@@ -57,7 +57,7 @@
   }
 
   function maybeConnect(peers) {
-    const have = Object.keys(pcs).length;
+    let have = Object.keys(pcs).length;
     if (have >= MAX_PEERS) return;
     for (const p of peers) {
       if (have >= MAX_PEERS) break;

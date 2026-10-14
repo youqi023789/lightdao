@@ -1,0 +1,48 @@
+/* 合约与地址页样式。
+   ⚠ 站内 theme.css 不是"CSS 变量表"，而是按类名写的浅色覆盖
+   （[data-theme="light"] .card{...} 这种）。第一版这里用了 var(--txt,#e8ebf5)，
+   而 --txt 在内页根本不存在 → 回落成近白色，浅色主题下地址按钮文字直接看不见。
+   所以本页所有颜色都写显式值 + 一条 [data-theme="light"] 覆盖，不依赖任何未定义变量。 */
+body{background:#0b0e17;color:#e8ebf5;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif}
+.w{max-width:1080px;margin:0 auto;padding:26px 20px 70px}
+h1{font-size:clamp(26px,4.4vw,40px);line-height:1.15;margin:6px 0 14px;color:#e8ebf5}
+h2{font-size:19px;margin:0 0 14px;font-weight:600;color:#e8ebf5}
+p,li{color:#9aa3bd;line-height:1.75;font-size:15px}
+.lead{color:#dbe2f2;font-size:16.5px;max-width:74ch}
+b{color:#e8ebf5}
+a{color:#7c8cff}
+.card{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.10);border-radius:16px;padding:22px 20px;margin:20px 0}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:11px 10px;border-bottom:1px solid rgba(255,255,255,.08);vertical-align:top}
+th{color:#8b94ad;font-weight:500;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+td:first-child{white-space:nowrap;color:#8b94ad}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:rgba(124,140,190,.16);color:#dbe2f2;padding:2px 6px;border-radius:6px;word-break:break-all}
+pre{background:rgba(4,7,16,.62);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:14px 16px;overflow:auto;font-size:12.5px;line-height:1.7;color:#cfd8ee}
+.cp{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:rgba(255,255,255,.05);border:1px dashed rgba(255,255,255,.24);color:#e8ebf5;border-radius:8px;padding:5px 9px;cursor:pointer;font-size:12.5px;word-break:break-all;text-align:left;max-width:100%}
+.cp:hover{border-color:#7c8cff;border-style:solid}
+.cp.done{border-color:#39d98a;color:#39d98a}
+.pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.14);color:#9aa3bd;vertical-align:middle}
+.pill.new{border-color:rgba(255,180,84,.55);color:#ffb454}
+.note{font-size:13.5px;margin:14px 0 0}
+.foot{text-align:center;padding:18px 10px 30px;font-size:13px;color:#8b94ad}
+.foot a{margin:0 7px}
+ul{padding-left:20px}
+
+/* 浅色覆盖：与 theme.css 同一套色值，保证内页观感一致 */
+[data-theme="light"] body{background:#f5f6fa;color:#0e1428}
+[data-theme="light"] h1,[data-theme="light"] h2,[data-theme="light"] b{color:#0e1428}
+[data-theme="light"] .lead{color:#26304a}
+[data-theme="light"] p,[data-theme="light"] li,[data-theme="light"] .note{color:#4b5568}
+[data-theme="light"] a{color:#2f4bc7}
+[data-theme="light"] .card{background:#fff;border-color:rgba(12,18,45,.12);box-shadow:0 1px 0 rgba(12,18,45,.04),0 8px 22px rgba(12,18,45,.05)}
+[data-theme="light"] th,[data-theme="light"] td:first-child{color:#5b6470}
+[data-theme="light"] th,[data-theme="light"] td{border-bottom-color:rgba(12,18,45,.10)}
+[data-theme="light"] code{background:rgba(12,18,45,.06);color:#1b2338}
+[data-theme="light"] pre{background:rgba(12,18,45,.05);border-color:rgba(12,18,45,.12);color:#1b2338}
+[data-theme="light"] .cp{background:rgba(12,18,45,.04);border-color:rgba(12,18,45,.26);color:#0e1428}
+[data-theme="light"] .cp:hover{border-color:#2f4bc7}
+[data-theme="light"] .cp.done{border-color:#0f7a53;color:#0f7a53}
+[data-theme="light"] .pill{border-color:rgba(12,18,45,.16);color:#4b5568}
+[data-theme="light"] .pill.new{border-color:rgba(138,90,0,.5);color:#8a5a00}
+
+@media (max-width:720px){th,td{padding:9px 6px;font-size:13px}.cp{font-size:11.5px}}

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html class="ld-v2" lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LightDAO — 传统私募的门,链上 DAO 的票</title>
-<meta name="description" content="LightDAO:首个链上私募自治组织。浏览器即节点,零成本挖矿;投资谁、收购谁,社区投票说了算。">
+<title>LightDAO — 不靠质押生息，靠贡献分账</title>
+<meta name="description" content="LightDAO：不靠质押生息，靠贡献分账。浏览器即节点,零成本贡献带宽;投资谁、收购谁,社区提案与投票说了算,每笔资金链上实时可查。">
 <style>
 :root{--bg:#0b0e17;--bg2:#0e1322;--card:#141a2a;--line:#232b42;--mut:#8b94ad;--txt:#e8ebf5;--acc:#7c8cff;--acc2:#c86bfa;--ok:#39d98a;--warn:#ffb454}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
@@ -50,12 +50,16 @@ ul{margin:8px 0;padding-left:20px}li{margin:5px 0}
 @media(max-width:760px){.grid3{grid-template-columns:1fr}.nav a.hide-s{display:none}}
 #net{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.45}
 section,footer,header{position:relative;z-index:1}
+:focus-visible{outline:2px solid #4da3ff;outline-offset:3px;border-radius:6px}
+.skip{position:absolute;left:-9999px;top:0}.skip:focus{left:8px;top:8px;background:#4da3ff;color:#04101f;padding:8px 14px;border-radius:8px;z-index:99}
 </style>
-<script src="/js/index_1.js?v=1.3.1"></script>
-<script src="/js/go.js?v=1.3.1"></script>
-<script src="/js/wfix.js?v=1.3.1"></script>
+<script src="/js/index_1.js?v=1.6.0" integrity="sha384-g8CUZOGtmzU4wpKrUeCU75oJbwM0NbUvySZh8wAKjqt+HtPZnYgrxFxVJXkt8tc6" crossorigin="anonymous"></script>
+<script src="/js/go.js?v=1.6.0" integrity="sha384-ieH6YudAuEPKt8/oEvSkWzINqi6hSQa0TDoI1b1gKKjyioNPN/MTYTxPPRPnmUfn" crossorigin="anonymous"></script>
+<script src="/js/wfix.js?v=1.6.0" integrity="sha384-3YmhFo8XgiBYr4lDUSIT/JZpXWEYntFFBK7PFI5HXnIJWwThaEoh7ihjixezX1oh" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="/css/theme2.css?v=1.6.0" integrity="sha384-XYOL55a+wxjSaai34hhNJXHuqVDB72itTqRkU4+8alYwqQQTUHwIss6VBxvJpEGQ" crossorigin="anonymous">
 </head>
 <body>
+<a class="skip" href="#why">Skip to content</a>
 <canvas id="net" aria-hidden="true"></canvas>
 <header><div class="wrap nav">
 <span class="logo">◆ LightDAO</span>
@@ -63,10 +67,11 @@ section,footer,header{position:relative;z-index:1}
 <span class="ctl"><button id="themeT" aria-label="toggle theme">◐</button><select class="lang" id="lang" aria-label="language"></select></span>
 </div></header>
 
-<section style="border-bottom:none;padding-top:80px">
+<section class="ld-hero" style="border-bottom:none;padding-top:80px">
 <div class="wrap">
+<div class="ld-hero-l">
 <div class="k" data-i="hk">LIGHTDAO · 首个链上私募自治组织</div>
-<h1 data-i="ht">传统私募的门,<br>链上 DAO 的票。</h1>
+<h1 data-i="ht">传统私募的早期额度，<br>普通人从来拿不到。<br><em>这一次，你的浏览器就是入场券。</em></h1>
 <p class="lead" data-i="hb">浏览器即节点:挖矿 0 成本、零硬件;投资谁、收购谁,社区提案与投票说了算,每笔资金链上实时可查。</p>
 <p class="sub" data-i="hm">主网已上线:7 验证者全部 BONDED · Gas 经济已实测 · Passkey 无种子登录运行中。</p>
 <div class="btns">
@@ -76,10 +81,10 @@ section,footer,header{position:relative;z-index:1}
 <div class="badges">
 <span class="pill">✓ lightdao-mainnet-1</span><span class="pill" data-i="bg1">✓ 50% 手续费销毁</span><span class="pill" data-i="bg2">✓ Merkle 根 5/7 多签上链</span><span class="pill" data-i="bg3">✓ 开源可自验</span>
 </div>
+</div>
 <div class="stats">
 <span><b id="sH">—</b> <span data-i="stH">区块高度</span></span>
 <span><b id="sBurn">—</b> <span data-i="stBurn">已销毁</span></span>
-<span><b id="sMin">—</b> <span data-i="stMin">今日矿工</span></span>
 <span><b id="sDay">—</b> <span data-i="stDay">赛季日</span></span>
 <span><b id="sP">—</b> <span data-i="stPrice">LIGHT 价</span></span>
 <span><b id="sS">—</b> <span data-i="stSupply">总供应</span></span>
@@ -187,8 +192,8 @@ section,footer,header{position:relative;z-index:1}
 
 <footer class="foot"><div class="wrap">
 <span data-i="ftTag">浏览器即节点 · 全民可参与 · 利润按规则共享</span> · © 2026 LightDAO<br>
-<a href="/privacy.html" data-i="ftPriv">隐私</a> · <a href="/terms.html" data-i="ftTerms">条款</a> · <a href="/governance.html" data-i="ftGov">治理</a> · <a href="/nodes.html" data-i="ftNodes">节点</a> · <a href="/invest.html" data-i="ftInv">投资</a> · <a href="/season.html" data-i="ftSeason">赛季</a> · <a href="/blog.html" data-i="ftBlog">博客</a>
-</div></footer>
-<script src="/js/index_2.js?v=1.3.1"></script>
+<a href="/privacy.html" data-i="ftPriv">隐私</a> · <a href="/terms.html" data-i="ftTerms">条款</a> · <a href="/governance.html" data-i="ftGov">治理</a> · <a href="/nodes.html" data-i="ftNodes">节点</a> · <a href="/invest.html" data-i="ftInv">投资</a> · <a href="/season.html" data-i="ftSeason">赛季</a> · <a href="/blog.html" data-i="ftBlog">博客</a> · <a href="https://t.me/lightdao_news" target="_blank" rel="noopener">Telegram</a> · <a href="https://discord.gg/aBWEatEkUX" target="_blank" rel="noopener">Discord</a> · <a href="https://x.com/lightdaoproto" target="_blank" rel="noopener">X</a>
+</div> · <a href="/contracts.html">链上合约与地址</a> · <a href="/institutions.html">治理制度</a> · <a href="/funds.html">资金与释放</a></footer>
+<script src="/js/index_2.js?v=1.6.0" integrity="sha384-FpIDzmYfeRftexVZ+jqqnDL63cCtc9+kS7PpmQqRpRrdA1yByvE1d7Cwhc39SaZp" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -1,0 +1,235 @@
+/* LightDAO 视觉改版候选 v2 · 设计令牌层
+   启用方式：在 <html> 上加 class="ld-v2"（不改则完全维持现网外观）。
+   参考 usual.money 的克制取向：暗底 + 两处柔光、展示级衬线大标题、发丝描边玻璃面板、
+   大留白节奏、金色作为“价值”语义色、蓝紫作为“技术”语义色，动效只用 CSS（不引入新 JS，
+   因此不触碰任何按钮 handler 与既有测试门禁）。
+   字体全部使用系统栈：站点 CSP 只允许 self，外链字体会被拦。 */
+html.ld-v2 {
+  --bg: #05060d;
+  --bg2: #0b0f1e;
+  --ink: #f4f5fa;
+  --tx: #f4f5fa;
+  --txt: #f4f5fa;          /* 页面自带样式用的是 --txt，两个名字都要给 */
+  --panel: #0e1428;
+  --mut: #98a1bd;
+  --card: rgba(255, 255, 255, .052);
+  --line: rgba(255, 255, 255, .095);
+  --acc: #e7c887;          /* 金：价值 / 主行动 */
+  --acc2: #6f8dff;         /* 蓝：技术 / 数据 */
+  --ok: #2fd39f;
+  --warn: #ffb454;
+  --err: #ff5d73;
+  --grad: linear-gradient(120deg, #e7c887 0%, #f3e0b2 45%, #6f8dff 100%);
+  --grad-soft: linear-gradient(180deg, rgba(255, 255, 255, .062), rgba(255, 255, 255, .018));
+  --display: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Songti SC", "Noto Serif SC", "Source Han Serif SC", serif;
+  --r-lg: 26px;
+  --r-md: 18px;
+  --sp-sec: clamp(78px, 11vw, 148px);
+  --maxw: 1180px;
+  background: var(--bg);
+  color: var(--tx);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* 背景：两块柔光 + 极淡网格，替代现网的粒子画布观感（canvas 仍在，只是被压到几乎不可见） */
+html.ld-v2 body {
+  background:
+    radial-gradient(1100px 620px at 78% -8%, rgba(111, 141, 255, .16), transparent 60%),
+    radial-gradient(880px 520px at 6% 4%, rgba(231, 200, 135, .12), transparent 58%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg2) 42%, var(--bg) 100%);
+  background-attachment: fixed;
+  font-feature-settings: "tnum" 1;
+}
+html.ld-v2 #net { opacity: .28; }
+
+/* 顶栏：更薄、更静，滚动时靠模糊而非色块区分层次 */
+html.ld-v2 header {
+  backdrop-filter: blur(18px) saturate(1.35);
+  -webkit-backdrop-filter: blur(18px) saturate(1.35);
+  background: rgba(5, 6, 13, .55);
+  border-bottom: 1px solid rgba(255, 255, 255, .06);
+}
+html.ld-v2 .logo { font-family: var(--display); letter-spacing: .01em; font-size: 20px; }
+html.ld-v2 header a { opacity: .78; transition: opacity .18s ease; }
+html.ld-v2 header a:hover { opacity: 1; }
+
+/* 版式： eyebrow / 大标题 / 导语 三级层次拉开 */
+html.ld-v2 .k, html.ld-v2 .eyebrow {
+  font-family: var(--display);
+  font-size: 12px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--acc);
+  opacity: .92;
+  margin-bottom: 18px;
+}
+html.ld-v2 h1 {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(32px, 4.6vw, 56px);
+  line-height: 1.06;
+  letter-spacing: -.022em;
+  text-wrap: balance;
+  margin: 0 0 24px;
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: currentColor;
+  color: var(--ink);
+}
+html.ld-v2 h1 em { font-style: normal; color: var(--acc); }
+html.ld-v2 h2 {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(28px, 4.2vw, 48px);
+  line-height: 1.06;
+  letter-spacing: -.02em;
+  margin: 0 0 22px;
+}
+html.ld-v2 h3 { font-family: var(--display); font-weight: 500; letter-spacing: -.01em; }
+html.ld-v2 .lead { font-size: clamp(16px, 1.6vw, 19px); line-height: 1.62; color: var(--mut); max-width: 62ch; }
+html.ld-v2 .sub { color: var(--mut); opacity: .82; font-size: 14px; }
+
+/* 区块节奏：更大的呼吸，分区间用发丝线而非卡片堆叠 */
+html.ld-v2 section { padding: var(--sp-sec) 0; border-bottom: 1px solid rgba(255, 255, 255, .05); }
+html.ld-v2 .wrap { max-width: var(--maxw); }
+
+/* 面板 */
+html.ld-v2 .card, html.ld-v2 .person, html.ld-v2 .step, html.ld-v2 .stat, html.ld-v2 .pill {
+  background: var(--grad-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+html.ld-v2 .person, html.ld-v2 .step { padding: 26px 24px; transition: transform .24s cubic-bezier(.2, .7, .2, 1), border-color .24s ease; }
+html.ld-v2 .person:hover, html.ld-v2 .step:hover { transform: translateY(-3px); border-color: rgba(231, 200, 135, .34); }
+html.ld-v2 .pill {
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 12.5px;
+  letter-spacing: .02em;
+  color: var(--mut);
+  background: rgba(255, 255, 255, .035);
+}
+
+/* 数据条：衬线数字 + 发丝分隔，替代表格式罗列 */
+html.ld-v2 .stats { display: grid; gap: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 46px; border-top: 1px solid var(--line); }
+html.ld-v2 .stats > span {
+  display: block; padding: 18px 18px 18px 0; border-bottom: 1px solid rgba(255, 255, 255, .05);
+  font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--mut);
+}
+html.ld-v2 .stats b {
+  display: block; font-family: var(--display); font-size: clamp(21px, 2.4vw, 28px);
+  letter-spacing: -.01em; color: var(--ink); margin-bottom: 4px; font-variant-numeric: tabular-nums;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* 首屏：左陈述 / 右实况，两栏。usual.money 的骨架是"一句话 + 一块数据"，
+   而不是把数据横摊成一条细带。窄屏自动回落到单列。
+   左右各是一个包装元素（.ld-hero-l / .stats），不让实况面板跨行：跨行时隐式行会被
+   拉伸成等分高度，标题与导语之间就会裂出大片空白（第二版截图正是如此）。 */
+html.ld-v2 .ld-hero > .wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1.06fr) minmax(0, .94fr);
+  gap: clamp(26px, 4vw, 58px);
+  align-items: start;
+}
+html.ld-v2 .ld-hero .ld-hero-l { grid-column: 1; min-width: 0; }
+html.ld-v2 .ld-hero .stats { grid-column: 2; grid-row: 1; align-self: start; margin-top: 0; }
+html.ld-v2 .ld-hero .badges { margin-top: 26px; }
+html.ld-v2 .ld-ab-sec { padding: 0 0 clamp(40px, 6vw, 72px); }
+@media (max-width: 900px) {
+  html.ld-v2 .ld-hero > .wrap { grid-template-columns: 1fr; }
+  html.ld-v2 .ld-hero .stats { grid-column: 1; grid-row: auto; margin-top: 34px; }
+  html.ld-v2 .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* 按钮：主行动用金，次要只用描边 */
+html.ld-v2 .btn, html.ld-v2 button.btn {
+  border-radius: 999px; padding: 14px 26px; font-size: 15px; font-weight: 600; letter-spacing: .01em;
+  background: linear-gradient(120deg, #e7c887, #f1dcae); border: 0; color: #0a0a10;
+  box-shadow: 0 10px 30px rgba(231, 200, 135, .16);
+  transition: transform .2s cubic-bezier(.2, .7, .2, 1), box-shadow .2s ease;
+}
+html.ld-v2 .btn:hover { transform: translateY(-1px); box-shadow: 0 14px 38px rgba(231, 200, 135, .24); }
+html.ld-v2 .btn.g, html.ld-v2 .btn.sec {
+  background: transparent; color: var(--ink); border: 1px solid var(--line); box-shadow: none;
+}
+html.ld-v2 .btn.g:hover { border-color: rgba(111, 141, 255, .5); box-shadow: none; }
+
+/* 表格：去掉块状底色，只留行线；右列（LightDAO 侧）用金点出 */
+html.ld-v2 table { width: 100%; border-collapse: collapse; }
+html.ld-v2 th, html.ld-v2 td { padding: 17px 16px 17px 0; border: 0; border-bottom: 1px solid rgba(255, 255, 255, .06); text-align: left; }
+html.ld-v2 th { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--mut); font-weight: 500; }
+html.ld-v2 td:first-child { color: var(--mut); }
+html.ld-v2 td.good { color: var(--acc); }
+
+/* 明色主题：暖纸底 + 深金，保持同一套层次而不是简单反色。
+   ⚠ 必须同时覆盖 --txt 和 --tx：页面自带样式用的是 --txt，第一版只写了 --tx，
+   结果浅色下正文沿用深色主题的近白色 → 米底白字，整段读不出来（用户截图所见）。 */
+html.ld-v2[data-theme="light"] {
+  --bg: #f7f6f2; --bg2: #efede6; --ink: #10131a; --tx: #10131a; --txt: #10131a;
+  --mut: #4b5265; --line: rgba(16, 19, 26, .16);
+  --card: rgba(255, 255, 255, .86); --panel: #ffffff;
+  --acc: #7d5d14; --acc2: #2f4fc0;
+  --ok: #0f7a53; --warn: #9a5c05; --err: #b3213a;
+  --grad: linear-gradient(120deg, #7d5d14 0%, #a8801f 45%, #2f4fc0 100%);
+  --grad-soft: linear-gradient(180deg, rgba(255, 255, 255, .95), rgba(255, 255, 255, .74));
+}
+html.ld-v2[data-theme="light"] body {
+  background:
+    radial-gradient(1100px 620px at 78% -8%, rgba(47, 79, 208, .08), transparent 60%),
+    radial-gradient(880px 520px at 6% 4%, rgba(125, 93, 20, .08), transparent 58%),
+    linear-gradient(180deg, var(--bg), var(--bg2) 45%, var(--bg));
+  background-attachment: fixed;
+  color: var(--txt);
+}
+html.ld-v2[data-theme="light"] header { background: rgba(247, 246, 242, .82); border-bottom-color: rgba(16, 19, 26, .10); }
+html.ld-v2[data-theme="light"] section, html.ld-v2[data-theme="light"] th, html.ld-v2[data-theme="light"] td { border-color: rgba(16, 19, 26, .12); }
+html.ld-v2[data-theme="light"] .btn { color: #fdfdfb; background: linear-gradient(120deg, #10131a, #262c3d); box-shadow: 0 10px 26px rgba(16, 19, 26, .18); }
+html.ld-v2[data-theme="light"] .btn.g { color: var(--ink); background: #fff; box-shadow: none; }
+html.ld-v2[data-theme="light"] .card, html.ld-v2[data-theme="light"] .person,
+html.ld-v2[data-theme="light"] .step, html.ld-v2[data-theme="light"] .pill {
+  background: #fff; border-color: rgba(16, 19, 26, .12); box-shadow: 0 1px 0 rgba(16, 19, 26, .04), 0 8px 24px rgba(16, 19, 26, .05);
+}
+html.ld-v2[data-theme="light"] .stats { border-top-color: rgba(16, 19, 26, .14); }
+html.ld-v2[data-theme="light"] .stats > span { border-bottom-color: rgba(16, 19, 26, .08); color: var(--mut); }
+html.ld-v2[data-theme="light"] .ld-ab > div { background: rgba(125, 93, 20, .06); border-color: rgba(125, 93, 20, .42); }
+
+/* 控件（语言下拉 / 主题按钮）：首页与挖矿页共用，浅色下必须自带不透明底，
+   否则 select 会用半透明卡片底 + 系统默认文字色，等于看不见。 */
+html.ld-v2 .ctl button, html.ld-v2 .ctl select, html.ld-v2 select.lang, html.ld-v2 .lang {
+  background: var(--panel, #0e1428); color: var(--txt); border: 1px solid var(--line);
+  border-radius: 999px; padding: 6px 12px; font-size: 13px; line-height: 1.3;
+}
+html.ld-v2[data-theme="light"] .ctl button, html.ld-v2[data-theme="light"] .ctl select,
+html.ld-v2[data-theme="light"] select.lang, html.ld-v2[data-theme="light"] .lang { background: #fff; }
+html.ld-v2 .ctl button:hover, html.ld-v2 .ctl select:hover { border-color: var(--acc); }
+html.ld-v2 select option { background: var(--panel, #0e1428); color: var(--txt); }
+html.ld-v2[data-theme="light"] select option { background: #fff; color: #10131a; }
+
+/* 动效：纯 CSS。支持滚动驱动动画的浏览器逐段浮现，不支持则完全静止（不塌版）。 */
+@media (prefers-reduced-motion: no-preference) {
+  /* 滚动浮现**只动位置、不动透明度**。前两版用 opacity：起点 0 时整段内容像缺失，
+     改成 .35 后浅色主题下仍然淡到读不出来（用户原话"浅色字都看不到"）。
+     文字可读性不是动画可以付的代价。 */
+  @supports (animation-timeline: view()) {
+    html.ld-v2 section > .wrap { animation: ldRise linear both; animation-timeline: view(); animation-range: entry 0% cover 18%; }
+    @keyframes ldRise { from { transform: translateY(16px); } to { transform: none; } }
+  }
+  /* 入场只做一次、且要快：第一版用 .9s + .24s 延迟，结果截图里按钮和标签还停在
+     opacity:0（首屏像少了一块）。评审/首屏体验都不该等半秒才看到主行动。 */
+  html.ld-v2 h1, html.ld-v2 .lead, html.ld-v2 .btns, html.ld-v2 .badges { animation: ldFade .42s cubic-bezier(.2, .7, .2, 1) backwards; }
+  html.ld-v2 .lead { animation-delay: .04s; } html.ld-v2 .btns { animation-delay: .08s; } html.ld-v2 .badges { animation-delay: .12s; }
+  @keyframes ldFade { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+}
+
+/* 评审用的标语候选块（实现时删除） */
+html.ld-v2 .ld-ab { display: grid; gap: 14px; margin-top: 40px; }
+html.ld-v2 .ld-ab > div { padding: 22px 24px; border: 1px dashed rgba(231, 200, 135, .34); border-radius: var(--r-md); background: rgba(231, 200, 135, .04); }
+html.ld-v2 .ld-ab i { display: block; font-style: normal; font-size: 10.5px; letter-spacing: .24em; text-transform: uppercase; color: var(--acc); margin-bottom: 10px; }
+html.ld-v2 .ld-ab b { display: block; font-family: var(--display); font-size: clamp(20px, 2.3vw, 27px); font-weight: 500; line-height: 1.2; letter-spacing: -.02em; }
+html.ld-v2 .ld-ab span { display: block; margin-top: 9px; color: var(--mut); font-size: 13px; line-height: 1.66; max-width: 88ch; }

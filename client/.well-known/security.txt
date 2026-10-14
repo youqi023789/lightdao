@@ -1,0 +1,6 @@
+Contact: mailto:security@lightdao.net
+Contact: https://github.com/youqi023789/lightdao/security/advisories
+Preferred-Languages: en, zh
+Canonical: https://lightdao.net/.well-known/security.txt
+Policy: https://github.com/youqi023789/lightdao/blob/main/SECURITY.md
+Expires: 2027-12-31T00:00:00.000Z

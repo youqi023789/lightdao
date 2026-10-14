@@ -1,7 +1,7 @@
-window.LDBUILD="1.3.1";
+window.LDBUILD="1.6.0";
 function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
 
-const CDN = ["/js/vendor/"];
+window.CDN = ["/js/vendor/"];   /* LD-SAFE-GLOBALS-20261014: property write, never a parse-time redeclaration */
 async function loadCosmjs(){
   if(window.__c) return window.__c;
   const L=p=>"/js/vendor/-cosmjs-"+p+"-0.32.4.js?v=2";
@@ -15,7 +15,7 @@ async function loadCosmjs(){
   return null;
 }
 function contractDay(){ return Math.floor((Date.now()/1000-1789102088)/86400); }
-const PAYMASTER="wasm13c2cjh3fhkesj47tsc5a0vm6pdds39qpcmykhj";
+window.PAYMASTER="wasm13c2cjh3fhkesj47tsc5a0vm6pdds39qpcmykhj";   /* LD-SAFE-GLOBALS-20261014 */
 window.LD = null;
 (async()=>{
   const c = await loadCosmjs();

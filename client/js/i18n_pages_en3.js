@@ -1,0 +1,161 @@
+/* LightDAO 内页英文词条 · 第 3 批（新增"治理制度"与"资金与释放"两页的标签与短句）
+   长段落这两页本身带内联英文注释，这里只补表头、状态词与短标签，避免重复。 */
+(function () {
+  "use strict";
+  window.LDI18N = window.LDI18N || {};
+  function E(zh, m) {
+    var k = window.LDI18N[zh] || (window.LDI18N[zh] = {});
+    for (var p in m) { if (Object.prototype.hasOwnProperty.call(m, p)) { k[p] = m[p]; } }
+  }
+  function en(zh, v) { E(zh, { en: v }); }
+
+  /* 页名与导航 */
+  en("治理制度与权力转移 — LightDAO", "Institutions & hand-over — LightDAO");
+  en("治理制度与权力转移", "Institutions & hand-over");
+  en("资金与释放 — LightDAO", "Funds & vesting — LightDAO");
+  en("资金与释放", "Funds & vesting");
+  en("治理制度", "Institutions");
+  en("合约与地址", "Contracts & addresses");
+
+  /* 状态词 */
+  en("已上线 live", "live");
+  en("部分 partial", "partial");
+  en("未激活 planned", "planned");
+  en("已上线", "Live");
+  en("部分", "Partial");
+  en("未激活", "Not active");
+  en("未开始", "Not started");
+  en("进行中", "In progress");
+  en("未到", "Not yet due");
+  en("已实测", "Tested live");
+  en("已提案", "Proposed");
+  en("未完成", "Not done");
+  en("未开放", "Not open");
+  en("运行中", "Running");
+  en("未挂牌", "Not listed");
+  en("未建立", "Not established");
+  en("未演练", "Not rehearsed");
+  en("镜像预案未演练", "Mirror failover not rehearsed");
+  en("暂停机制未激活", "Pause mechanism not active");
+  en("参数未上链", "Parameters not on-chain");
+  en("共识层保证", "Guaranteed by consensus");
+  en("可执行", "Executable");
+  en("锁仓已上链", "Lock-up is on-chain");
+  en("领取界面未做", "No claim UI yet");
+  en("多签生效", "Multisig live");
+  en("尚无投资执行", "No investment executed yet");
+  en("尚未释放", "Not yet released");
+  en("全部系于 TGE", "Entirely gated on the TGE");
+  en("前五项已记账", "First five categories recorded");
+  en("发放等 TGE", "Distribution awaits the TGE");
+  en("尚无利润可计提", "No profit to reserve yet");
+  en("资金仍在金库多签内", "Funds still sit in the treasury multisig");
+  en("IBC 已实测", "IBC tested live");
+  en("已满足", "Met");
+  en("远未接近", "Nowhere near");
+  en("已动用", "Used");
+  en("还需销毁", "Still to be burned");
+  en("按当前速度", "At the current rate");
+
+  /* 治理制度页 */
+  en("权力转移路线图", "Hand-over roadmap");
+  en("治理委员会与影子委员会", "Governance council & shadow council");
+  en("五大安全机制", "Five safety mechanisms");
+  en("极端预案", "Contingency playbook");
+  en("防死亡螺旋的分级干预", "Anti death-spiral tiers");
+  en("代际平衡：门槛随规模自动下调", "Generational balance: thresholds fall with scale");
+  en("陪审团制度", "Jury system");
+  en("跨链与 TGE 前置", "Cross-chain & TGE prerequisites");
+  en("阶段", "Stage");
+  en("时间", "Time");
+  en("权限归属", "Authority");
+  en("投资审批", "Investment approval");
+  en("状态", "Status");
+  en("创世期", "Genesis period");
+  en("过渡期", "Transition period");
+  en("成熟期", "Maturity period");
+  en("自治期", "Self-governing period");
+  en("监护人（非资金类）", "Guardians (non-financial)");
+  en("监护人 + 社区多签 3/5", "Guardians + community multisig 3/5");
+  en("监护人 + 核心贡献者联名", "Guardians + core contributors jointly");
+  en("同上 + 核心贡献者", "As above + core contributors");
+  en("治理委员会 3/5", "Governance council 3/5");
+  en("常规双维度投票", "Regular two-dimensional voting");
+  en("全体持有者", "All holders");
+  en("同成熟期", "Same as maturity");
+  en("机制", "Mechanism");
+  en("白皮书参数", "Whitepaper parameter");
+  en("去哪验证", "Where to verify");
+  en("时间锁", "Timelock");
+  en("多签", "Multisig");
+  en("季度轮换", "Quarterly rotation");
+  en("造假罚没", "Fraud slashing");
+  en("全交易上链", "Every transaction on-chain");
+  en("72 小时，紧急提案不得豁免资金操作", "72 hours; emergency proposals cannot waive funding actions");
+  en("金库 5/7 签名", "Treasury 5/7 signatures");
+  en("单任最多 2 届", "At most 2 consecutive terms");
+  en("100% 没收 + 永久禁止", "100% confiscated + permanent ban");
+  en("无链下记账", "No off-chain bookkeeping");
+  en("情形", "Scenario");
+  en("预案", "Playbook");
+  en("市场状态", "Market regime");
+  en("触发条件", "Trigger");
+  en("触发后执行", "Action on trigger");
+  en("低波动", "Low volatility");
+  en("中波动", "Mid volatility");
+  en("高波动", "High volatility");
+  en("维度", "Dimension");
+  en("组成", "Composition");
+  en("任期", "Term");
+  en("职责", "Duties");
+  en("流程", "Process");
+  en("裁决标准", "Decision rule");
+  en("回避", "Recusal");
+  en("报酬", "Pay");
+  en("前置项", "Prerequisite");
+  en("说明", "Notes");
+
+  /* 资金与释放页 */
+  en("总量与硬顶", "Supply and hard cap");
+  en("四大资金池的链上余额", "On-chain balances of the four pools");
+  en("释放计划（链上可查的部分）", "Release schedules (the verifiable part)");
+  en("通缩三档：现在离得有多远", "Deflation floors: how far away they really are");
+  en("TGE 与初始流动性清单", "TGE and initial liquidity checklist");
+  en("项目", "Item");
+  en("池", "Pool");
+  en("释放规则（白皮书）", "Release rule (whitepaper)");
+  en("当前状态", "Current status");
+  en("链上余额（LIGHT）", "On-chain balance (LIGHT)");
+  en("白皮书额度", "Whitepaper allocation");
+  en("LIGHT 总供应（CW20 token_info）", "LIGHT total supply (CW20 token_info)");
+  en("25 亿，永不增发 ✓", "2.5 billion, never inflated ✓");
+  en("合约层已销毁字段", "Contract-level burned field");
+  en("销毁走原生 bank，不计入 CW20 burned 字段", "Burns happen at the native bank layer, not in the CW20 burned field");
+  en("死地址累计接收（真实销毁）", "Cumulative receipts at the dead address (real burn)");
+  en("见第 4 节通缩进度", "See section 4");
+  en("遗留", "Legacy");
+  en("面额存量", "residual denom balance");
+  en("genesis 误配，已停止增发；处置待治理提案（附录 C）", "Genesis misconfiguration, inflation stopped; disposal awaits a governance proposal (appendix C)");
+  en("挖矿奖励池", "Mining reward pool");
+  en("投资金库 + 生态基金", "Investment treasury + ecosystem fund");
+  en("战略运营基金", "Strategic operations fund");
+  en("保险基金", "Insurance fund");
+  en("生态基金合约", "Ecosystem fund contract");
+  en("生态基金", "Ecosystem fund");
+  en("投资金库", "Investment treasury");
+  en("挖矿 · 第一纪元", "Mining · first epoch");
+  en("当前主网高度：", "Current mainnet height:");
+  en("读取中…", "Reading…");
+  en("· 最近出块时间", "· last block time");
+  en("单位换算 1 LIGHT = 1,000,000 ulight", "1 LIGHT = 1,000,000 ulight");
+  en("第一档（减速）", "Floor 1 (slowdown)");
+  en("第二档（预警）", "Floor 2 (warning)");
+  en("第三档（底线）", "Floor 3 (bottom line)");
+  en("触发线", "Trigger level");
+  en("初始 DEX 流动性", "Initial DEX liquidity");
+  en("荷兰式拍卖定价", "Dutch auction price discovery");
+  en("种子空投", "Seed airdrop");
+  en("稳定金库（USDC）", "Stable treasury (USDC)");
+  en("上线去中心化交易所", "List on decentralised exchanges");
+  en("中心化交易所 / wLIGHT", "Centralised exchanges / wLIGHT");
+})();
