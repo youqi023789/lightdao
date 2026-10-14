@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="ld-v2" lang="zh">
 <head>
-<script src="/js/app_1.js?v=1.6.2" integrity="sha384-Dff5vYA0gM6QlHEhnyeylM3HqtsJ76gpkOxSyoRPIvlhG04MnTd4TSOS7W0DDopN" crossorigin="anonymous"></script>
+<script src="/js/app_1.js?v=1.7.3" integrity="sha384-P7klNVT9qLg8zOx+VIEAkkIgy5meQwcxBEjBfPNsEm2lZP0Wu0vGIePoUlzd0veD" crossorigin="anonymous"></script>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -21,11 +21,11 @@
 <meta name="twitter:description" content="Browser-based DePIN light-node mining on a live Cosmos L1. Passkey wallet, WebRTC relay, 50% fee burn. Mainnet live.">
 <meta name="twitter:image" content="https://lightdao.net/og.png">
 <link rel="stylesheet" href="/css/app.css" integrity="sha384-Xi7UxNb+pWl1XzlC+Ou6L8s3g02LXvGwlC+1DpI+vpo0EaOJ0Pi9RA37JzlXVs9Q" crossorigin="anonymous">
-<script src="/js/wfix.js?v=1.6.2" integrity="sha384-3YmhFo8XgiBYr4lDUSIT/JZpXWEYntFFBK7PFI5HXnIJWwThaEoh7ihjixezX1oh" crossorigin="anonymous"></script>
-<link rel="modulepreload" href="/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js?v=1.6.2" integrity="sha384-XIKfGYrqVFYeu6mkyRq2fMi20LBoADZWWkL7rwrsPsdqZCOni7U57g7lkOberWvl" crossorigin="anonymous">
-<link rel="modulepreload" href="/js/vendor/-cosmjs-proto-signing-0.32.4.js?v=1.6.2" integrity="sha384-dGM09U0FzcEPeQWkBS51TR6qfhfe8xxQLDDpEjh6bP2ES7CzCId1As7Z1J+ywh6c" crossorigin="anonymous">
-<link rel="modulepreload" href="/js/vendor/-cosmjs-stargate-0.32.4.js?v=1.6.2" integrity="sha384-r21wDv7h4b+RnEmPG5W1UaSNpVJt7beFuXvLxPrElAxm8U/++7t8GO3NThVN2DLz" crossorigin="anonymous">
-<link rel="stylesheet" href="/css/theme2.css?v=1.6.2" integrity="sha384-GA0o+bqIt0eLyeUoWavjcnr2r89P3MTyruetxpmVIbibIt7mKsXlAqpgl+ORxN7C" crossorigin="anonymous">
+<script src="/js/wfix.js?v=1.7.3" integrity="sha384-3YmhFo8XgiBYr4lDUSIT/JZpXWEYntFFBK7PFI5HXnIJWwThaEoh7ihjixezX1oh" crossorigin="anonymous"></script>
+<link rel="modulepreload" href="/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js?v=1.7.3" integrity="sha384-XIKfGYrqVFYeu6mkyRq2fMi20LBoADZWWkL7rwrsPsdqZCOni7U57g7lkOberWvl" crossorigin="anonymous">
+<link rel="modulepreload" href="/js/vendor/-cosmjs-proto-signing-0.32.4.js?v=1.7.3" integrity="sha384-dGM09U0FzcEPeQWkBS51TR6qfhfe8xxQLDDpEjh6bP2ES7CzCId1As7Z1J+ywh6c" crossorigin="anonymous">
+<link rel="modulepreload" href="/js/vendor/-cosmjs-stargate-0.32.4.js?v=1.7.3" integrity="sha384-r21wDv7h4b+RnEmPG5W1UaSNpVJt7beFuXvLxPrElAxm8U/++7t8GO3NThVN2DLz" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/theme2.css?v=1.7.3" integrity="sha384-GA0o+bqIt0eLyeUoWavjcnr2r89P3MTyruetxpmVIbibIt7mKsXlAqpgl+ORxN7C" crossorigin="anonymous">
 </head>
 <body>
 <div id="loginOverlay" style="display:none;position:fixed;inset:0;z-index:80;background:rgba(5,6,10,.72);backdrop-filter:blur(4px);align-items:center;justify-content:center;flex-direction:column;gap:14px"><div style="width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.2);border-top-color:#7c8cff;animation:ldspin 1s linear infinite"></div><div style="color:#eef1f6;font-size:15px">正在恢复登录状态,请稍候… / Restoring session…</div><div style="color:#9aa3b2;font-size:12.5px">请勿重复点击,以免误操作</div></div><style>@keyframes ldspin{to{transform:rotate(360deg)}}:focus-visible{outline:2px solid #4da3ff;outline-offset:3px;border-radius:6px}
@@ -152,15 +152,17 @@
 <div class="toast" id="toast"></div>
 
 <!-- Passkey 钱包模块(§4.9):WebAuthn PRF + AES-GCM + Shamir 社交恢复,零依赖 -->
-<script src="/passkey-wallet.js?v=1.6.2"></script>
+<script src="/passkey-wallet.js?v=1.7.3"></script>
 <!-- WebRTC 中继模块(§4.7):P2P 数据通道中继 + 真实带宽计量 -->
-<script src="/webrtc-relay.js?v=1.6.2"></script>
+<script src="/webrtc-relay.js?v=1.7.3"></script>
 <!-- ============ 钱包解锁 / 敏感操作 step-up 模块(必须在 app_2.js 之前) ============ -->
-<script src="/js/lock.js?v=1.6.2" integrity="sha384-HZ5fXX1/4aa51yg9EifFyTxlKUwOBZ1SZTonA5rE33vpig24C71CBUJhCy9AVNOP" crossorigin="anonymous"></script>
+<script src="/js/lock.js?v=1.7.3" integrity="sha384-HZ5fXX1/4aa51yg9EifFyTxlKUwOBZ1SZTonA5rE33vpig24C71CBUJhCy9AVNOP" crossorigin="anonymous"></script>
 <!-- ============ 普通脚本: UI/多语言/挖矿循环, 不依赖任何 CDN, 断网可用 ============ -->
-<script src="/js/app_2.js?v=1.6.2" integrity="sha384-e9UqJLiLCi2IOx11yxqJWhiqtYPigXdzvSmqxKmCrGxV7W7nsEDCmDftQHDHKgNg" crossorigin="anonymous"></script>
+<script src="/js/app_2.js?v=1.7.3" integrity="sha384-Dv9BkaqTr8bmGSCnRtFwf9CiT9izdb/6V26F3K8H5/Uo2VjieQHaYNGA3pHORrJe" crossorigin="anonymous"></script>
 
 <!-- ============ 模块: cosmjs 懒加载(仅钱包/领取需要), 失败优雅降级 ============ -->
-<script src="/js/app_3.js?v=1.6.2" integrity="sha384-AGHKZLs4/+Qg7T0j7kZx1JCmkpa/2UJFzE1H7QSHfVqtaM27OX/bH7hZo2nTALc9" crossorigin="anonymous"></script>
+<script src="/js/app_3.js?v=1.7.3" integrity="sha384-RRfJI7p2YuhuYGnNX8SzapNObUs4mkGNV21qv5vgZq3ApFJSwXXAqAsAzK5eSHL2" crossorigin="anonymous"></script>
+
+<div class="card" id="vestCard" style="display:none"><div class="seclabel">锁仓解锁 / Vesting</div><p class="mini" id="vestHint">连接钱包后自动读取你在两个锁仓合约里的排期。</p><div id="vestRows"></div><button class="btn" id="btnVestClaim" style="margin-top:10px" disabled>领取已归属 / Claim vested</button><p class="mini" id="vestNote"></p></div>
 </body>
 </html>

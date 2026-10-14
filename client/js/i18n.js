@@ -159,6 +159,15 @@
       // 与首页/挖矿页共用同一个键，切语言不会"进内页就退回中文"
       mountSwitcher();
       apply(cur());
+      /* 补扫：页面自己的脚本会异步重写表格/标题（innerHTML 一覆盖，翻译就丢了），
+         MutationObserver 能抓到大部分，但实测仍有节点漏网。延迟重扫几次，
+         成本极低（只遍历文本节点），换来整页语言一致。 */
+      [400, 1200, 2600, 5000].forEach(function (ms) {
+        setTimeout(function () {
+          try { if (done) { done = W.__ldI18nSeen = (typeof WeakSet === "function" ? new WeakSet() : null); }
+                seenAttr = {}; walk(document.body, cur()); } catch (e) { }
+        }, ms);
+      });
     } catch (e) { /* 语言层坏了不能影响页面本身 */ }
   }
 

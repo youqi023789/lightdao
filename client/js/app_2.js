@@ -1,4 +1,4 @@
-window.LDBUILD="1.6.2";
+window.LDBUILD="1.7.3";
 function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
 
 window.CFG = {
@@ -384,4 +384,72 @@ setInterval(refreshClaimable,60000);
     if(window.LD && window.LD.addr){ clearInterval(iv); loadValidators(); }
     if(tries > 60) clearInterval(iv); // 30s give up
   }, 500);
+})();
+
+/* ===== LD-VESTING-CLAIM: 锁仓解锁面板（只读展示 + 经 step-up 门槛的领取） =====
+   未连接钱包时一律礼貌提示，不抛异常：发布门禁会自动点击每个按钮。 */
+(function(){
+  var VAULTS=[["wasm16l8mdmawaq4538ajr89dpfxh7cyll584yw7jqnhgmp5clwp6m8fqtwkz4x","vesting"],["wasm1njjtphj6pkvvcrlu4mzf7qy3clhkl7lysu0v2xsdau6dwj4u2r6qvpvwl6","vesting-v2"]];
+  var last={};
+  function fmt(n){ return (Number(n)/1e6).toLocaleString(undefined,{maximumFractionDigits:2}); }
+  function note(s){ var el=document.getElementById("vestNote"); if(el) el.textContent=s||""; }
+  function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+  function rows(){
+    var box=document.getElementById("vestRows"); if(!box) return;
+    var keys=Object.keys(last);
+    if(!keys.length){ box.innerHTML='<p class="mini">该地址在两个锁仓合约里没有排期。 / No schedule for this address.</p>'; return; }
+    var html='<table class="mini" style="width:100%"><tr><th>合约</th><th>已归属</th><th>已领取</th><th>可领取</th></tr>';
+    keys.forEach(function(k){ var r=last[k];
+      html+='<tr><td>'+esc(r.name)+'</td><td>'+fmt(r.vested)+'</td><td>'+fmt(r.claimed)+'</td><td><b>'+fmt(r.claimable)+'</b></td></tr>'; });
+    html+='</table>';
+    box.innerHTML=html;
+    var any=keys.some(function(k){ return last[k].claimable>0; });
+    var btn=document.getElementById("btnVestClaim");
+    if(btn){ btn.disabled=!any; }
+  }
+  function load(){
+    var card=document.getElementById("vestCard"); if(!card) return;
+    var addr=window.LD&&window.LD.addr;
+    if(!addr){ card.style.display="none"; return; }
+    card.style.display="";
+    if(!window.__ldq){ note("查询组件未就绪 / query client not ready"); return; }
+    note("");
+    Promise.all(VAULTS.map(function(v){
+      return window.__ldq(v[0],{schedule:{address:addr}}).then(function(d){
+        if(!d||!d.total) return null;
+        return window.__ldq(v[0],{vested:{address:addr,at_time:Math.floor(Date.now()/1000)}}).then(function(vs){
+          var vested=Number(vs||0), claimed=Number(d.claimed||0);
+          return {key:v[1],name:v[1],total:Number(d.total),vested:vested,claimed:claimed,
+                  claimable:Math.max(0,vested-claimed),addr:v[0]};
+        });
+      }).catch(function(){ return null; });
+    })).then(function(res){
+      last={}; res.filter(Boolean).forEach(function(r){ last[r.key]=r; });
+      rows();
+    }).catch(function(e){ note("读取失败 / query failed: "+((e&&e.message)||e)); });
+  }
+  var btn=document.getElementById("btnVestClaim");
+  if(btn) btn.addEventListener("click",function(){
+    var addr=window.LD&&window.LD.addr;
+    if(!addr){ note("请先连接钱包 / connect a wallet first"); return; }          // 自动点击也不会炸
+    var pend=Object.keys(last).filter(function(k){ return last[k].claimable>0; });
+    if(!pend.length){ note("当前没有可领取的额度 / nothing claimable yet"); return; }
+    if(!window.LD||!window.LD.executeGated){ note("签名组件未就绪 / signer not ready"); return; }
+    note("提交中… / submitting…");
+    pend.reduce(function(chain,k){
+      return chain.then(function(){
+        return window.LD.executeGated(last[k].addr,{claim:{}},
+          "领取已归属锁仓 / Claim vested LIGHT "+last[k].name);
+      }).then(function(r){ return r; });
+    },Promise.resolve()).then(function(rs){
+      note("✓ 已提交领取，链上确认后刷新 / claim submitted");
+      setTimeout(load,6000);
+    }).catch(function(e){
+      var m=String((e&&e.message)||e);
+      note(m.indexOf("step-up-cancelled")>=0 ? "已取消 / cancelled" : ("领取失败 / claim failed: "+m.slice(0,120)));
+    });
+  });
+  window.__vestLoad=load;
+  var t=setInterval(function(){ if(window.LD&&window.LD.addr) load(); },30000);
+  document.addEventListener("visibilitychange",function(){ if(!document.hidden) load(); });
 })();

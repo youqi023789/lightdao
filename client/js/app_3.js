@@ -1,4 +1,4 @@
-window.LDBUILD="1.6.2";
+window.LDBUILD="1.7.3";
 function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
 
 window.CDN = ["/js/vendor/"];   /* LD-SAFE-GLOBALS-20261014: property write, never a parse-time redeclaration */
@@ -26,6 +26,7 @@ window.LD = null;
   let wallet=null, client=null;
 function pf(client, RPC){ try{ if(typeof client.getValidators!=="function") client.getValidators=async function(){ var r=await fetch(RPC+"validators?per_page=100").then(function(x){return x.json();}); return (r.result.validators||[]).map(function(v){ return {description:{moniker:(v.description&&v.description.moniker)||"?"}, status:"BOND_STATUS_BONDED", tokens:String((Number(v.voting_power)||0)*1000000), commission:{commissionRates:{rate:(v.commission&&v.commission.rate)||"0"}}, validatorAddress:v.address}; }); }; if(typeof client.getSupply!=="function") client.getSupply=async function(){ return [{denom:"ulight",amount:"2500000000000000"}]; }; if(typeof client.getDelegation!=="function") client.getDelegation=async function(a,v){ var r=await fetch(RPC+"abci_query?path=%22/custom/staking/delegation/%22").catch(function(){return null;}); return null; }; }catch(e){} return client; }
 window.__mrq=(m)=>client.queryContractSmart(CFG.miningReward,m);
+  window.__ldq=(c,m)=>client.queryContractSmart(c,m);   /* 通用只读合约查询（锁仓面板用） */
   window.LD = {
     addr:null,
     async create(){ const w=await DirectSecp256k1HdWallet.generate(12,{prefix:CFG.prefix}); this._w=w; return w.mnemonic; },
