@@ -3,7 +3,8 @@ import json, os, re
 WWW="/var/www/lightdao"
 def strip(h):
     h=re.sub(r"<script[\s\S]*?</script>"," ",h); h=re.sub(r"<style[\s\S]*?</style>"," ",h); return h
-pages=["index.html","app.html","explorer.html","governance.html","whitepaper.html","season.html","blog.html","privacy.html","terms.html","nodes.html","invest.html"]
+pages = sorted(f for f in os.listdir(WWW) if f.endswith(".html")
+               and not f.startswith("404-") and f != "search.html")  # 按目录枚举：写死清单会让新页面静默漏出索引
 idx=[]
 for p in pages:
     path=os.path.join(WWW,p)
