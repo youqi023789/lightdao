@@ -33,6 +33,17 @@ LOCK = threading.Lock()
 import time as _time
 _RATE = {}
 _RATE_LIM = {"heartbeat": int(os.environ.get("GW_RATE_HB", 60)), "get": int(os.environ.get("GW_RATE_GET", 300)), "post": int(os.environ.get("GW_RATE_POST", 120))}   # per minute per IP
+DAY_MAX = 100000  # ~274 years of epochs; anything beyond is abuse
+
+def _safe_int(v, default=None):
+    try:
+        if isinstance(v, bool): return default
+        return int(v)
+    except (TypeError, ValueError):
+        return default
+
+def _bad_day(day):  # True if invalid
+    return day is None or day < 0 or day > DAY_MAX
 def _rate_ok(ip, kind):
     now = _time.time()
     lim = _RATE_LIM.get(kind, 600)
@@ -104,10 +115,20 @@ def day_path(day): return os.path.join(DATA, f"day_{day}.json")
 def load_day(day):
     p = day_path(day)
     if os.path.exists(p):
-        with open(p) as f: return json.load(f)
+        try:
+            with open(p) as f: return json.load(f)
+        except Exception:
+            # G9: crash-mid-write survivor — quarantine corrupt file, start clean day
+            try: os.replace(p, "%s.corrupt.%d" % (p, int(time.time())))
+            except Exception: pass
+            return {"day": day, "miners": {}, "finalized": False}
     return {"day": day, "miners": {}, "finalized": False}
 def save_day(d):
-    with open(day_path(d["day"]), "w") as f: json.dump(d, f)
+    # G9: atomic write (tmp + fsync + replace) — a crash can never leave a truncated day_N.json
+    p = day_path(d["day"]); t = "%s.tmp.%d" % (p, threading.get_ident())
+    with open(t, "w") as f:
+        json.dump(d, f); f.flush(); os.fsync(f.fileno())
+    os.replace(t, p)
 CUTOVER = int(os.environ.get("GW_DAY_CUTOVER", "1790726400"))  # 2026-09-30 00:00:00 UTC; 之后日界=00:00UTC
 D_CUT = (CUTOVER - GENESIS - 1) // DAY_SECS + 1   # 截断的旧天保留其索引;首个00:00对齐天=+1,防索引碰撞
 def current_day():
@@ -250,17 +271,22 @@ class H(BaseHTTPRequestHandler):
             except Exception: pass
             return
         if u.path == "/v1/day":
-            day = int(q.get("day", [current_day()-1])[0]); d = load_day(day)
+            day = _safe_int(q.get("day", [None])[0], current_day()-1)
+            if _bad_day(day): return self._send(400, {"error": "bad day"})
+            d = load_day(day)
             return self._send(200, {"day": day, "finalized": d.get("finalized"), "root": d.get("root"),
                                     "active_miners": d.get("active_miners"), "total_score": d.get("total_score")})
         if u.path == "/v1/proof":
-            day = int(q["day"][0]); miner = q["miner"][0]; d = load_day(day)
+            day = _safe_int((q.get("day") or [None])[0]); miner = (q.get("miner") or [""])[0]
+            if _bad_day(day) or not miner or len(miner) > 128: return self._send(400, {"error": "bad params"})
+            d = load_day(day)
             if not d.get("finalized") or miner not in d.get("proofs", {}):
                 return self._send(404, {"error": "no proof"})
             return self._send(200, {"day": day, "miner": miner, "proof": d["proofs"][miner],
                                     "score": d["scores"][miner], "root": d["root"]})
         if u.path == "/v1/scores":
-            day = int((q.get("day") or [current_day()])[0])
+            day = _safe_int((q.get("day") or [None])[0], current_day())
+            if _bad_day(day): return self._send(400, {"error": "bad day"})
             d = load_day(day)
             ms = d.get("miners") or {}
             out = {}; tot = 0
@@ -345,15 +371,26 @@ class H(BaseHTTPRequestHandler):
         _u = urlparse(self.path)
         if not _rate_ok(self.client_address[0], "heartbeat" if _u.path == "/v1/heartbeat" else "post"): return self._send(429, {"error": "rate limited"})
         u = urlparse(self.path); n = int(self.headers.get("Content-Length", 0))
-        body = json.loads(self.rfile.read(n) or b"{}")
+        if n > 65536: return self._send(413, {"error": "payload too large"})
+        try:
+            body = json.loads(self.rfile.read(n) or b"{}")
+        except Exception:
+            return self._send(400, {"error": "bad json"})
+        if not isinstance(body, dict): return self._send(400, {"error": "bad body"})
         if u.path == "/v1/heartbeat":
             miner = body.get("miner"); 
-            if not miner or not miner.startswith("wasm1"): return self._send(400, {"error": "bad miner"})
-            day = int(body.get("day", current_day()))
+            if not miner or not miner.startswith("wasm1") or len(miner) > 128: return self._send(400, {"error": "bad miner"})
+            day = _safe_int(body.get("day"), current_day())
+            if _bad_day(day): return self._send(400, {"error": "bad day"})
             with LOCK:
                 d = load_day(day)
                 if d.get("finalized"): return self._send(409, {"error": "day finalized"})
-                d["miners"][miner] = {k: body.get(k, 0) for k in TARGETS}  # 客户端报当日累计
+                _mv = {}
+                for _k in TARGETS:
+                    _v = _safe_int(body.get(_k, 0), 0)
+                    _v = 0 if _v is None else _v
+                    _mv[_k] = min(max(_v, 0), 10**15)
+                d["miners"][miner] = _mv  # 客户端报当日累计(已清洗)
                 fp = (body.get("fp") or "")[:64]
                 ip = (self.headers.get("X-Forwarded-For") or self.client_address[0] or "").split(",")[0].strip()
                 d.setdefault("fps", {})[miner] = fp
@@ -363,9 +400,9 @@ class H(BaseHTTPRequestHandler):
                 if isinstance(bh, dict):
                     d.setdefault("behaviors", {})[miner] = {k: bool(bh.get(k)) for k in ("pwa", "delegated", "social", "quiz", "voted") if k in bh}
                 dlg = body.get("delegate_to")
-                if dlg and dlg.startswith("wasm1") and dlg != miner:
+                if dlg and isinstance(dlg, str) and len(dlg) <= 128 and dlg.startswith("wasm1") and dlg != miner:
                     d.setdefault("delegations", {})[miner] = dlg
-                if ref and ref.startswith("wasm1") and ref != miner:
+                if ref and isinstance(ref, str) and len(ref) <= 128 and ref.startswith("wasm1") and ref != miner:
                     d.setdefault("referrals", {})
                     if miner not in d["referrals"]:
                         d["referrals"][miner] = {"referrer": ref, "first_day": day}
@@ -382,7 +419,8 @@ class H(BaseHTTPRequestHandler):
             return self._send(200, {"ok": True})
         if u.path == "/v1/finalize":
             if self.headers.get("X-Admin") != ADMIN: return self._send(403, {"error": "forbidden"})
-            day = int(body.get("day", current_day()-1))
+            day = _safe_int(body.get("day"), current_day()-1)
+            if _bad_day(day): return self._send(400, {"error": "bad day"})
             _dd = load_day(day)
             if _dd.get("finalized"): return self._send(200, {"already": True, "day": day, "root": _dd.get("root")})
             return self._send(200, finalize_day(day))
