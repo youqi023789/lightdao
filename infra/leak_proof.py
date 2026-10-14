@@ -37,15 +37,20 @@ decoy = "\n".join([
     # and the doubled form is what shows up in escaped strings/logs.
     "open " + "C:" + chr(92) + _HOME + chr(92) + "33635" + chr(92) + _DESK + chr(92) + "keys.txt",
     "open " + "C:" + chr(92) * 2 + _HOME + chr(92) * 2 + "33635" + chr(92) * 2 + _DESK,
-    "see /" + _HOME + "/33635/" + _DESK + "/notes.txt and also " + _DESK + "/old.png",
+    "see /" + _HOME + "/33635/" + _DESK + "/notes.txt and also ~/" + _DESK + "/old.png",
     "seed: " + " ".join(["abandon"] * 11 + ["about"]) + " zebra monkey",   # 13-word shape
     "admin = " + chr(34) + "sup3r-s3cret-admin-value-42" + chr(34),
 ]) + "\n"
 
-# fixed scratch root (re-used, never a user path) so repeated proof runs do not pile up 17 MB copies
-SCRATCH = "/tmp/ld-leakproof"
+# per-user scratch root (a root-run pass and an ubuntu-run pass must not fight over ownership),
+# re-used so repeated proof runs do not pile up 17 MB copies
+SCRATCH = "/tmp/ld-leakproof-%s" % os.getuid()
 if os.path.isdir(SCRATCH):
-    shutil.rmtree(SCRATCH)
+    try:
+        shutil.rmtree(SCRATCH)
+    except OSError as e:
+        print("cannot reuse %s (%s) - rerun as the user who created it" % (SCRATCH, e))
+        sys.exit(2)
 os.makedirs(SCRATCH)
 tree = os.path.join(SCRATCH, "repo")
 shutil.copytree(REPO, tree, symlinks=True, ignore=shutil.ignore_patterns(".git"))

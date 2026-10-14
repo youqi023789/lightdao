@@ -62,11 +62,14 @@ PATTERNS = [
     # `startswith("...TOKEN=")` line, which burned the waiver budget on syntax noise.
     ("inline-secret", re.compile(_cat("(?i)(secret|token|passphrase|password|api[_-]?key)"
                                       "\\s*[:=]\\s*['\"](?![<$])[^\\s'\"]{12,}['\"]"))),
-    # `\\+` = one or more literal separators. The first version demanded a doubled separator, so the
-    # single-separator spelling of an operator path slipped through; the proof fixture now plants
-    # both spellings, which is what surfaced it.
+    # A bare  Desktop/  alternative was dropped on purpose: it fires on innocent asset names
+    # (assets/Desktop/ui.png) and it made this file and its own documentation trip the rule. The
+    # three shapes kept all require a home directory:  <drive>:\<home>\  /<home>/<user>/<desk>
+    # and  ~/<desk> . The home and desktop words are concatenated at runtime so this source cannot
+    # match itself.
     ("local-desktop-path", re.compile(_cat("(?:[A-Za-z]:\\\\+" + _HOME + "\\\\+|",
-                                           "/" + _HOME + "/\\w+/" + _DESK + "|" + _DESK + "/)"))),
+                                           "(?:/home|/" + _HOME + ")/[^/\\s\"']+/" + _DESK + "|",
+                                           "~/" + _DESK + ")"))),
     ("keyring-file", re.compile(_cat("keyring-(test|file)/.*\\.info$"))),
     ("oauth-consumer-secret", re.compile(_cat("(?i)(consumer|api)[_-]?(secret|key)\\s*[=:]\\s*"
                                               "[A-Za-z0-9]{20,}"))),
