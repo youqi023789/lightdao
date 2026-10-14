@@ -123,6 +123,13 @@
       "cmd": "runuser -u ubuntu -- git -C /home/ubuntu/repo pull --ff-only origin main >/dev/null 2>&1; /usr/bin/python3 /usr/local/bin/repo_leak_check.py /home/ubuntu/repo >> /var/log/ld_repo_leak.log 2>&1",
       "purpose": "public-repo leak gate (infra-IP/keys/mnemonics/webhooks/paths); findings page via ld_alerts.log",
       "added": "2026-10-14"
+    },
+    {
+      "user": "root",
+      "schedule": "*/30 * * * *",
+      "cmd": "/usr/bin/python3 /usr/local/bin/ld_grant_watch.py >> /home/ubuntu/ld_grant_watch.log 2>&1",
+      "purpose": "免 Gas 代付看门狗：gas_grant 心跳 >40 分钟、fee grant 数为 0、代付账户余额 <10000 LIGHT 任一即告警（签发失败会让用户领取静默失败）",
+      "added": "2026-10-15"
     }
   ]
 }

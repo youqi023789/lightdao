@@ -29,16 +29,28 @@
 
 ## 核心合约(code_id → 地址)
 
-| 合约 | 地址 |
-|---|---|
-| light_token (CW20, LIGHT) | wasm13c9t6xmar22xclseua6xevw4t4cnrampy6y5ajdydhyv5k0znrcsth555z |
-| mining_reward(挖矿池 10亿 LIGHT) | wasm173y0pgdh6ensz4gpgglz40a260www6qse4dswshc87za9du6h4fsm5r9wx |
-| governance(DAO) | wasm14axmz74pppxqxs3qhxaaf2qzl6x53pvvzm7c6p52qrycwnyh8ktsfukapt |
-| treasury_multisig(金库 5/7) | wasm192u2pm80ndmh608mmvhrzhje0sjaq0txr5md77lr70ucy0j3lfys8l633u |
-| oracle_twap(价格预言机) | wasm1f622csg2af6utlxvxgch2l9qf64ce3s4h5vseaph5ku8vzcgp6qqmsyace |
-| vesting(TGE 锁仓) | wasm16l8mdmawaq4538ajr89dpfxh7cyll584yw7jqnhgmp5clwp6m8fqtwkz4x |
+| 合约 | code_id | 地址 | 用途 |
+|---|---|---|---|
+| light_token | 1 | `wasm13c9t6xmar22xclseua6xevw4t4cnrampy6y5ajdydhyv5k0znrcsth555z` | CW20 代币 LIGHT |
+| treasury_multisig | 4 | `wasm192u2pm80ndmh608mmvhrzhje0sjaq0txr5md77lr70ucy0j3lfys8l633u` | 投资金库 5/7 多签 |
+| subtoken_factory | 5 | `wasm1uykr2f24sdj9f4la0wv78gvjuyqqnqk9r8jggcqd9ha9vxjrrkksum5x0g` | 子代币发行 |
+| oracle_twap | 6 | `wasm1f622csg2af6utlxvxgch2l9qf64ce3s4h5vseaph5ku8vzcgp6qqmsyace` | 时间加权价格预言机 |
+| anti_fraud | 7 | `wasm1klrq28c5ef4mrn8h7f5kmph48amjplvw39ajmvkgy8lfak3x093src46wr` | 反作弊与罚没联动 |
+| validator_registry | 8 | `wasm1egt8ut5swmck6xt5lqeuhkmhp44rwsv73ka8jfp7rn2kg629cdeqdlh6qf` | 验证者注册 |
+| vesting | 9 | `wasm16l8mdmawaq4538ajr89dpfxh7cyll584yw7jqnhgmp5clwp6m8fqtwkz4x` | TGE 锁仓 |
+| insurance_fund | 10 | `wasm1wj3369pug9sdn5wcqu74yr00vtcntqvwgqrmcs0k0twwnvgm8m2qu77ewf` | 保险基金 |
+| mining_reward | 12 | `wasm173y0pgdh6ensz4gpgglz40a260www6qse4dswshc87za9du6h4fsm5r9wx` | 挖矿池 10 亿 LIGHT |
+| governance | 13 | `wasm14axmz74pppxqxs3qhxaaf2qzl6x53pvvzm7c6p52qrycwnyh8ktsfukapt` | DAO 提案与投票 |
+| vesting-v2-wp54 | 16 | `wasm1njjtphj6pkvvcrlu4mzf7qy3clhkl7lysu0v2xsdau6dwj4u2r6qvpvwl6` | 锁仓 v2（工作包 54） |
+| ecosystem-fund-wp53 | 17 | `wasm1j0rhxwwcys2rewlvssylwrf24ghyvxhhzjr47nsx8q8mechp3x0qztt835` | 生态发展基金释放载体（工作包 53） |
 
-(其余:subtoken_factory、anti_fraud、validator_registry、insurance_fund,code 5/7/8/10)
+> 2026-10-15 由 `wasmd query wasm list-contract-by-code` 逐个回查生成，共 12 个实例。
+> 其中 anti_fraud(code 7)、vesting-v2(code 16)、ecosystem-fund(code 17) 的地址**此前既不在站点也不在本文档**，
+> 属于'链上活着、文档里没有'的孤儿记录，现已补齐。code 2/3/11/14/15/18/19/20 已上传代码但未实例化。
+> 另有两个常被误当合约的地址：销毁地址 `wasm1aeaty43lrlt9rmkyxujkkfuddnsfye6az4htcu`（确定性死地址，
+> 手续费 50% 烧入）与领取代付账户 `wasm13c2cjh3fhkesj47tsc5a0vm6pdds39qpcmykhj`（**普通账户，不是合约**，
+> 通过 fee grant 为用户领取交易代付 Gas；前端旧常量名 PAYMASTER 有误导性）。
+> 站点公开清单见 https://lightdao.net/contracts.html
 
 ## §4.5 Gas 经济(已上线,2026-09-24 v2-lightfee @ height 58627)
 

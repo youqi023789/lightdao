@@ -122,6 +122,38 @@ def main():
     for f in glob.glob(os.path.join(STG, "*.html")): shutil.copy(f, os.path.join(MAIN, os.path.basename(f)))
     for f in glob.glob(os.path.join(STG, "*", "index.html")): shutil.copy(f, os.path.join(MAIN, os.path.relpath(f, STG)))
     if os.path.exists(os.path.join(STG, "sw.js")): shutil.copy(os.path.join(STG, "sw.js"), os.path.join(MAIN, "sw.js"))
+
+    # LD-APPLY-ASSET-SYNC-20261015: HTML 引用的本地资源必须跟着 HTML 一起上线。promote 过去只同步 js/*.js、*.html、sw.js，
+    # css/ 以及任何新引入的本地资源都会被漏掉，而 staging 是全树 copytree，所以门禁在 staging
+    # 全绿、到主站才 404。这里按"页面实际引用什么"来同步，不再靠记住目录清单。
+    import re as _re_sync
+    refs = set()
+    for hp in glob.glob(os.path.join(MAIN, "**", "*.html"), recursive=True):
+        for r in _re_sync.findall(r'(?:src|href)="(/[^"?#]+)', io.open(hp, encoding="utf-8", errors="ignore").read()):
+            refs.add(r)
+    copied_assets, still_missing = [], []
+    for r in sorted(refs):
+        dst = os.path.join(MAIN, r.lstrip("/"))
+        # LD-APPLY-ASSET-SYNC-V2: 内容变了也要同步。只判断"存不存在"会让第二次及以后的 css/资源改动永远不上线。
+        if os.path.exists(dst):
+            try:
+                if io.open(dst, "rb").read() == io.open(os.path.join(STG, r.lstrip("/")), "rb").read():
+                    continue
+            except Exception:
+                continue
+        ssrc = os.path.join(STG, r.lstrip("/"))
+        if os.path.isfile(ssrc):  # 覆盖式同步（含内容变更）
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            shutil.copy(ssrc, dst)
+            copied_assets.append(r)
+        else:
+            still_missing.append(r)
+    if copied_assets:
+        print("[asset-sync] 补同步 " + str(len(copied_assets)) + " 个引用资源: " + ", ".join(copied_assets[:8]))
+    if still_missing:
+        # 只警告不阻断：历史遗留引用（例如未提供的图标）不该让一次发布卡死；
+        # 真正要紧的本地资源随后会被 SRI 门禁拦下（它会为本地资源注入并校验 integrity）。
+        print("[asset-sync] WARN 以下引用在主站与 staging 都不存在: " + ", ".join(still_missing[:8]))
     relabel(MAIN, nxt)
     maintain_sri(MAIN, " main")
     print("PROMOTED main %s -> %s (prev snapshot=%s)" % (cur, nxt, PREV))
