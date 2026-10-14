@@ -73,6 +73,9 @@ def main():
             fok = True
     if day and fok is False:
         st["ok"] = False; alert("finalize failed for day %s" % (day - 1))
+    elif day and fok is True and st.get("_fin_alerted"):
+        alert("RECOVERED: finalize ok for day %s" % (day - 1))
+    st["_fin_alerted"] = bool(fok is False)
     st["checks"]["finalize"] = {"ok": bool(fok), "day": (day - 1) if day else None}
     # sign root for day-1: authoritative = on-chain root_submitted
     need_sign = False
@@ -125,6 +128,10 @@ def main():
             try:
                 j = json.loads(ln)
                 if j.get("ts", 0) < cut: continue
+                # self-probe filter: our own scripts hit the gateway from loopback with
+                # Python-urllib; real browsers (including local Chrome QA) never look like this.
+                if str(j.get("ip")) in ("127.0.0.1", "::1") and "Python-urllib" in str(j.get("ua", "")):
+                    continue
                 m = str((j.get("body") or {}).get("msg", ""))
                 if any(b in m for b in BENIGN): continue
                 ce += 1

@@ -111,6 +111,9 @@ def score_miner(m):
     }
 
 # ---------- 存储 ----------
+# clienterr 路径可由 GW_CLIENTERR 覆盖；默认取 DATA 的上级目录，生产路径与历史保持一致，
+# 而沙箱实例（自定义 GW_DATA）会自动写入自己的目录，不再污染生产客户端错误指标。
+CLIENTERR = os.environ.get("GW_CLIENTERR") or os.path.join(os.path.dirname(os.path.abspath(DATA).rstrip("/")), "clienterr.log")
 def day_path(day): return os.path.join(DATA, f"day_{day}.json")
 def load_day(day):
     p = day_path(day)
@@ -190,7 +193,7 @@ def finalize_day(day):
         delegs = d.get("delegations") or {}
         for m, D in list(delegs.items()):
             if m not in scores or not D or D == m: continue
-            mv = scores[m].get("session", 0) * 0.3
+            mv = scores[m].get("session", 0) * 30 // 100   # int math: float here crashed leaf_hash (DoS via delegate_to)
             scores[m]["session"] = scores[m].get("session", 0) - mv
             if D not in scores:
                 scores[D] = {"bandwidth": 0, "session": 0, "verification": 0, "stability": 100}
@@ -412,7 +415,7 @@ class H(BaseHTTPRequestHandler):
             try:
                 ip = (self.headers.get("X-Forwarded-For") or self.client_address[0] or "").split(",")[0].strip()
                 ua = (self.headers.get("User-Agent") or "")[:300]
-                with open("/home/ubuntu/lightdao_gateway/clienterr.log", "a") as lf:
+                with open(CLIENTERR, "a") as lf:
                     lf.write(json.dumps({"ts": int(time.time()), "ip": ip, "ua": ua, "body": body}) + "\n")
             except Exception:
                 pass
