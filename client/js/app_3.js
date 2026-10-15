@@ -1,4 +1,4 @@
-window.LDBUILD="1.7.3";
+window.LDBUILD="1.8.2";
 function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
 
 window.CDN = ["/js/vendor/"];   /* LD-SAFE-GLOBALS-20261014: property write, never a parse-time redeclaration */
@@ -41,13 +41,39 @@ window.__mrq=(m)=>client.queryContractSmart(CFG.miningReward,m);
       const res=await ldBroadcast(msgs,"auto",null); /* withdraw-rewards = claim: frictionless, no step-up */
       return res.transactionHash;
     }catch(e){ throw e; } },
-    async claim(day){ try{ const h=await (await fetch(CFG.gw+"/v1/health")).json(); const d= day|| (h.current_day-1); if(d>=contractDay()){ throw new Error("第 "+d+" 天将于合约日界(每日 04:48 UTC / 北京 12:48)后开放领取,请稍后再试 / opens after 04:48 UTC"); }
-      const p=await fetch(CFG.gw+"/v1/proof?day="+d+"&miner="+this.addr).then(r=>r.ok?r.json():null);
-      if(!p){ toast(t("nothing")); return; }
-      const msg={claim:{day:d,proof:p.proof,score:{bandwidth:String(p.score.bandwidth),session:String(p.score.session),verification:String(p.score.verification),stability:String(p.score.stability)}}};
-      let res; const FEE=[["75000","300000"],["200000","400000"],["400000","400000"]]; let lastE=null; for(const [fa,ga] of FEE){ try{ res=await client.execute(this.addr,CFG.miningReward,msg,{amount:[{denom:CFG.denom,amount:fa}],gas:ga,granter:PAYMASTER}); lastE=null; break; }catch(e){ lastE=e; var em=String(e.message||e); if(em.indexOf("code 13")>=0) continue; if(em.indexOf("code 38")>=0){ try{ res=await client.execute(this.addr,CFG.miningReward,msg,"auto"); lastE=null; break; }catch(e2){ lastE=e2; continue; } } break; } } if(lastE) throw lastE;
-      toast(t("claimed")+" "+res.transactionHash.slice(0,10)+"…"); this.refresh();
-    }catch(e){ toast(terr(e)); } },
+    /* LD-CLAIM-TRUTH-20261015 返回结构化状态；already claimed 当"已到账"处理，不再抛红色错误 */
+    async claim(day){ let d=Number(day)||0, cd=0;
+      try{
+        try{ var c=await window.chainDayNow(); cd=c.day; }catch(e){}
+        const h=await (await fetch(CFG.gw+"/v1/health?ts="+Date.now(),{cache:"no-store"})).json();
+        if(!d) d = Number(h.current_day)-1;
+        if(cd && d>=cd){ return {status:"closed", day:d}; }
+        const p=await fetch(CFG.gw+"/v1/proof?day="+d+"&miner="+this.addr).then(r=>r.ok?r.json():null);
+        if(!p){ return {status:"nothing", day:d}; }
+        const msg={claim:{day:d,proof:p.proof,score:{bandwidth:String(p.score.bandwidth),session:String(p.score.session),verification:String(p.score.verification),stability:String(p.score.stability)}}};
+        let res; const FEE=[["75000","300000"],["200000","400000"],["400000","400000"]]; let lastE=null;
+        for(const [fa,ga] of FEE){ try{ res=await client.execute(this.addr,CFG.miningReward,msg,{amount:[{denom:CFG.denom,amount:fa}],gas:ga,granter:PAYMASTER}); lastE=null; break; }catch(e){ lastE=e; var em=String(e.message||e); if(em.indexOf("already claimed")>=0) break; if(em.indexOf("code 13")>=0) continue; if(em.indexOf("code 38")>=0){ try{ res=await client.execute(this.addr,CFG.miningReward,msg,"auto"); lastE=null; break; }catch(e2){ lastE=e2; continue; } } break; } }
+        if(lastE){
+          var em2=String(lastE.message||lastE);
+          if(em2.indexOf("already claimed")>=0){ try{ window.markClaimed&&window.markClaimed(d); }catch(e){}
+            try{ window.refreshClaimable&&window.refreshClaimable(); }catch(e){}
+            return {status:"already", day:d}; }
+          throw lastE;
+        }
+        try{ window.markClaimed&&window.markClaimed(d); }catch(e){}
+        toast(t("claimed")+" 第"+d+"天 "+res.transactionHash.slice(0,10)+"…"); this.refresh();
+        try{ window.refreshClaimable&&window.refreshClaimable(); }catch(e){}
+        return {status:"ok", day:d, hash:res.transactionHash};
+      }catch(e){
+        var em3=String((e&&e.message)||e);
+        if(em3.indexOf("already claimed")>=0 && d){
+          try{ window.markClaimed&&window.markClaimed(d); }catch(x){}
+          toast("第 "+d+" 天此前已到账，无需重复领取");
+          try{ window.refreshClaimable&&window.refreshClaimable(); }catch(x){}
+          return {status:"already", day:d};
+        }
+        toast(terr(e)); throw e;
+      } },
   };
 /* ---- SEC-LOCK: step-up gated signing paths --------------------------------
    Every value-moving signature (bank send, delegate/undelegate, sub-token

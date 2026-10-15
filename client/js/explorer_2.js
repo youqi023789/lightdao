@@ -34,7 +34,7 @@ client=pf(await L.st.StargateClient.connect(RPC),RPC);
   const tre=await client.getBalance(TREAS,"ulight").catch(()=>({amount:"0"}));
   const ins=await client.getBalance(INS,"ulight").catch(()=>({amount:"0"})); if(document.getElementById("insB"))document.getElementById("insB").textContent=fmt(ins.amount);
   let oracle="—"; try{ oracle=fmt(await cw.queryContractSmart(ORACLE,{external_median:{}})); }catch(e){}
-  let day="—",miners="—"; try{ const hh=await fetch(location.origin+"/gw/v1/health").then(r=>r.json()); day=hh.current_day; const dd=await fetch(location.origin+"/gw/v1/day?day="+hh.current_day).then(r=>r.json()); miners=Object.keys(dd.miners||{}).length; }catch(e){}
+  let day="—",miners="—"; try{ const hh=await fetch(location.origin+"/gw/v1/health").then(r=>r.json()); day=hh.current_day; const dd=await fetch(location.origin+"/gw/v1/day?day="+hh.current_day).then(r=>r.json()); miners=(function(){var a=Object.keys(dd.miners||dd.scores||{}).length;if(a)return a;var am=dd.active_miners;if(typeof am==="number")return am;return 0;})(); if(!miners){try{var ss=await fetch(location.origin+"/gw/v1/scores?day="+hh.current_day).then(function(r){return r.json();});miners=Object.keys((ss&&ss.scores)||{}).length||miners;}catch(e2){}} }catch(e){}
   const vals=await client.getValidators();
   document.getElementById("stats").innerHTML=`
    <div class="stat"><span>最新高度</span><b>${h}</b></div>

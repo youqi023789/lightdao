@@ -1,0 +1,23 @@
+/* nav.css — 全站吸顶导航（下滑时不动，随时能跳回客户端）
+   只用主题变量，深浅两套都必须可读（上一版浅色主题白底白字就是栽在这上面）。 */
+.ldnav{position:sticky;top:0;z-index:60;background:var(--panel,#141a2a);border-bottom:1px solid rgba(139,148,173,.24)}
+.ldnav-in{max-width:1080px;margin:0 auto;padding:8px 14px;display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap}
+.ldnav-brand{font-weight:700;letter-spacing:-.01em;text-decoration:none;color:var(--txt,var(--tx,#e8ebf5));white-space:nowrap}
+.ldnav-links{display:flex;gap:2px 12px;flex-wrap:wrap;font-size:13px}
+.ldnav-links a{color:var(--txt,var(--tx,#e8ebf5));opacity:.82;text-decoration:none;padding:3px 0;border-bottom:2px solid transparent}
+.ldnav-links a:hover{opacity:1}
+.ldnav-links a[aria-current="page"]{opacity:1;border-bottom-color:#7c8cff}
+.ldnav-back{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.ldnav-b{font:inherit;font-size:12px;line-height:1.4;padding:5px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;
+  color:var(--txt,var(--tx,#e8ebf5));border:1px solid rgba(139,148,173,.34);background:transparent;cursor:pointer}
+.ldnav-b:hover{border-color:#7c8cff}
+.ldnav-b:focus-visible{outline:2px solid #7c8cff;outline-offset:2px}
+[data-theme="light"] .ldnav-b{border-color:rgba(12,18,45,.18)}
+[data-theme="light"] .ldnav-b:focus-visible{outline-color:#2f4bc7}
+/* 老页面自带导航的（首页/落地页）不再重复列一遍链接，只留返回按钮 */
+.ldnav[data-own-nav] .ldnav-links{display:none}
+@media (max-width:640px){
+  .ldnav-in{padding:7px 10px;gap:6px 10px}
+  .ldnav-links{overflow-x:auto;flex-wrap:nowrap;max-width:100%;-webkit-overflow-scrolling:touch}
+  .ldnav-back{margin-left:0}
+}

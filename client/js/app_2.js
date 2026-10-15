@@ -1,4 +1,4 @@
-window.LDBUILD="1.7.3";
+window.LDBUILD="1.8.2";
 function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
 
 window.CFG = {
@@ -6,6 +6,7 @@ window.CFG = {
   rpc: location.origin + "/rpc/",
   chainId: "lightdao-mainnet-1", denom: "ulight", prefix: "wasm",
   miningReward: "wasm173y0pgdh6ensz4gpgglz40a260www6qse4dswshc87za9du6h4fsm5r9wx",
+  validatorRegistry: "wasm1egt8ut5swmck6xt5lqeuhkmhp44rwsv73ka8jfp7rn2kg629cdeqdlh6qf",  /* LD-CLAIM-TRUTH-20261015 主网 validator_registry */
   heartbeatSec: 20,
 };
 /* LD-SAFE-GLOBALS-20261014: these four names used to be top-level `const`/`let`.
@@ -146,7 +147,46 @@ $("btnPkSocial").onclick=async()=>{
     }catch(e){ toast(t("pkFail")+(e.message||e)); }
   }
 };
-$("btnClaim").onclick=async()=>{ if(!await ensureLD()){toast(t("walletFail"));return;} const sel=$("claimDay"); const dv=sel&&sel.value?Number(sel.value):undefined; var gd=dv||((await fetch(CFG.gw+"/v1/health").then(function(r){return r.json();})).current_day-1); if(gd>=Math.floor((Date.now()/1000-1789102088)/86400)){ claimWindowUI(); toast("第 "+gd+" 天领取将在北京 12:48 开放(合约日界);10-11 起统一为 08:00,见上方倒计时"); return; } var gs=await fetch(CFG.gw+"/v1/scores?day="+gd).then(function(r){return r.json();}).catch(function(){return null;}); if(gs&&gs.scores&&gs.scores[myAddr]&&!(gs.scores[myAddr].w>0)){ toast("本钱包第 "+gd+" 天被反女巫归零(同设备多钱包),无可领金额;见反女巫提示"); return; } await window.LD.claim(dv); };
+/* LD-CLAIM-TRUTH-20261015 一次领取全部未领日；状态不明时不发交易；already claimed 视为已到账 */
+$("btnClaim").onclick=async()=>{
+  if(!await ensureLD()){toast(t("walletFail"));return;}
+  var sel=$("claimDay"); var dv=sel&&sel.value?Number(sel.value):0;
+  var r=await scanClaimable(dv?31:7); window.__claimScan=r;
+  if(!r.ok){ toast("无法确认链上可领状态："+(r.err||"未知原因")+"；本次不发起交易，请稍后重试"); return; }
+  if(r.conflict){ toast("⚠ "+r.conflict+"，已暂停领取"); return; }
+  var list = dv ? r.days.filter(function(x){return x.d===dv;}) : r.days;
+  if(!list.length){
+    fillClaimDays(r.days); try{ refreshClaimable(); }catch(e){}
+    toast(dv ? ("第 "+dv+" 天链上显示已领取或尚未定稿，无需重复领取")
+             : "链上没有未领取的奖励（已领会自动跳过）");
+    return;
+  }
+  var btn=$("btnClaim"), ot=btn?btn.textContent:"";
+  if(btn){ btn.disabled=true; btn.textContent="领取中 0/"+list.length; }
+  var got=0, already=0, fail=0, sum=0;
+  for(var i=0;i<list.length;i++){
+    var d=list[i].d, est=list[i].est;
+    try{
+      var st=await window.LD.claim(d);
+      if(st&&st.status==="ok"){ got++; sum+=est; }
+      else if(st&&st.status==="already"){ already++; }
+    }catch(e){
+      if(String((e&&e.message)||e).indexOf("already claimed")>=0){ markClaimed(d); already++; }
+      else { fail++; toast("第 "+d+" 天失败："+terr(e));
+             if(fail>=2){ toast("连续 2 天失败，已停止后续领取（避免对同样失败的日子白扣手续费）"); break; } }
+    }
+    if(btn) btn.textContent="领取中 "+(i+1)+"/"+list.length;
+    try{ fillClaimDays(r.days.filter(function(x){return x.d!==d;})); }catch(e){}
+  }
+  if(btn){ btn.disabled=false; btn.textContent=ot; }
+  var msg=[];
+  if(got)     msg.push("已提交 "+got+" 天 ≈"+fmtNum(sum)+" LIGHT");
+  if(already) msg.push(already+" 天此前已到账");
+  if(fail)    msg.push(fail+" 天失败");
+  if(r.warn)  msg.push("（链上历史未核对，重复的已由合约挡下）");
+  toast((got||already?"✓ ":"")+(msg.join(" · ")||"没有需要领取的"));
+  try{ refreshClaimable(); }catch(e){}
+};
 /* SEC-LOCK step-up gate: exporting the seed phrase is a sensitive action */
 $("btnExportSeed").onclick=async()=>{
  if(window.LDStepUp){ const okE=await window.LDStepUp("导出助记词 / Export seed phrase"); if(!okE){ toast("已取消:未通过安全验证 / Cancelled: security check not passed"); return; } }
@@ -229,56 +269,184 @@ function ensureLD(ms){ ms=ms||8000; return new Promise(function(res){ if(window.
 
 (function(){ function up(){ fetch("/status.json?ts="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ var e=document.getElementById("sysStatusApp"); if(!e)return; var lbl=window.t?window.t(j.ok?"stOk":"stBad"):(j.ok?"正常":"异常"); if(lbl==="stOk")lbl="正常"; if(lbl==="stBad")lbl="异常"; e.textContent=lbl; e.setAttribute("data-st",j.ok?"1":"0"); e.style.color=j.ok?"var(--ok)":"var(--err,#f66)"; }).catch(function(){ var e=document.getElementById("sysStatusApp"); if(e){ e.textContent="—"; e.removeAttribute("data-st"); } }); } up(); setInterval(up,60000); document.addEventListener("visibilitychange",function(){ if(!document.hidden) up(); }); window.addEventListener("pageshow",up); window.addEventListener("focus",up); })();
 
+/* ===== %s  领取状态以链上事实为准 =====
+   修的 4 件事（都对应真实用户故障）：
+   1) tx_search 失败/分页未取完，不再被当成"没领过"（原来 catch 后 return []）
+   2) 领取成功后立刻回写已领天数并刷新数字（原来只弹提示，导致再点撞 already claimed）
+   3) 合约说 already claimed = 钱已到账，不是错误，不再红色报错
+   4) "可领取"是 7 天窗口累加，界面必须说清是几天；下拉框与"加载可领历史"按钮接真逻辑
+*/
+
 function claimedKey(){ return "ld_claimed_"+(myAddr||"x"); }
-async function claimedOnChain(addr){ try{ var q=String.fromCharCode(34)+"message.sender="+String.fromCharCode(39)+addr+String.fromCharCode(39)+String.fromCharCode(34); var u=CFG.rpc.replace(/\/$/,"")+"/tx_search?query="+encodeURIComponent(q)+"&per_page=100"; var r=await fetch(u).then(function(x){return x.json();}); var out=[]; ((r.result&&r.result.txs)||[]).forEach(function(t){ if(t.tx_result&&t.tx_result.code!==0)return; var raw=""; try{ raw=atob(t.tx); }catch(e){} var ms=raw.match(/"claim"\s*:\s*\{\s*"day"\s*:\s*(\d+)/g)||[]; ms.forEach(function(x){ var n=x.match(/(\d+)/); if(n)out.push(Number(n[1])); }); }); return out; }catch(e){ return []; } }
-async function claimedSet(){ var loc=[]; try{ loc=JSON.parse(lsGet(claimedKey())||lsGet("ld_claimed_days")||"[]"); }catch(e){} var on=await claimedOnChain(myAddr); var set={}; loc.concat(on).forEach(function(d){set[d]=1;}); var arr=Object.keys(set).map(Number); try{ lsSet(claimedKey(),JSON.stringify(arr.slice(-60))); }catch(e){} return arr; }
-function saveClaimed(done){ try{ lsSet(claimedKey(),JSON.stringify(done.slice(-60))); }catch(e){} }
-async function autoClaim(){ if(!window.LD||!myAddr)return; try{
-  var h=await fetch(CFG.gw+"/v1/health").then(function(r){return r.json();});
-  var done=await claimedSet();
-  for(var d=h.current_day-1; d>=Math.max(1,h.current_day-7); d--){
-    if(done.indexOf(d)>=0) continue;
-    var rs=await fetch(CFG.gw+"/v1/day?day="+d).then(function(r){return r.json();}).catch(function(){return null;});
-    if(!rs||!rs.finalized) continue;
-    if(d>=Math.floor((Date.now()/1000-1789102088)/86400)){ claimWindowUI(); continue; }
-    var sc=await fetch(CFG.gw+"/v1/scores?day="+d).then(function(r){return r.json();}).catch(function(){return null;});
-    if(!sc||!sc.scores||!sc.scores[myAddr]||!(sc.scores[myAddr].w>0)) continue;
-    var on=false; try{ on=await window.__mrq({root_submitted:{day:d}}); }catch(e){}
-    if(!on) continue;
-    try{ await window.LD.claim(d); done.push(d); saveClaimed(done); toast("✓ 已自动领取第 "+d+" 天奖励"); }catch(e){}
+async function claimedOnChain(addr){
+  var out=[], ok=false, err="", page=1, more=true;
+  try{
+    if(!addr) throw new Error("no address");
+    var q=String.fromCharCode(34)+"message.sender="+String.fromCharCode(39)+addr+String.fromCharCode(39)+String.fromCharCode(34);
+    while(more && page<=6){
+      var u=CFG.rpc.replace(/\/$/,"")+"/tx_search?query="+encodeURIComponent(q)+"&per_page=100&page="+page;
+      var r=await fetch(u,{cache:"no-store"}).then(function(x){ if(!x.ok) throw new Error("HTTP "+x.status); return x.json(); });
+      if(r.error) throw new Error(r.error.data || r.error.message || "rpc error");
+      var txs=(r.result&&r.result.txs)||[];
+      more = txs.length>=100;
+      txs.forEach(function(t){
+        if(t.tx_result && t.tx_result.code!==0) return;            /* 失败的交易不算已领 */
+        var raw=""; try{ raw=atob(t.tx); }catch(e){ return; }
+        (raw.match(/"claim"\s*:\s*\{\s*"day"\s*:\s*(\d+)/g)||[]).forEach(function(x){
+          var n=x.match(/(\d+)/); if(n) out.push(Number(n[1]));
+        });
+      });
+      page++;
+    }
+    ok=true;
+  }catch(e){ err=String((e&&e.message)||e).slice(0,90); }
+  return {days:out, ok:ok, err:err};
+}
+async function claimedSet(){
+  var loc=[]; try{ loc=JSON.parse(lsGet(claimedKey())||lsGet("ld_claimed_days")||"[]"); }catch(e){}
+  var on=await claimedOnChain(myAddr);
+  var set={};
+  (Array.isArray(loc)?loc:[]).forEach(function(d){ d=Number(d); if(d) set[d]=1; });
+  if(on.ok){ (on.days||[]).forEach(function(d){ if(d) set[d]=1; }); }
+  var arr=Object.keys(set).map(Number);
+  try{ lsSet(claimedKey(),JSON.stringify(arr.slice(-200))); }catch(e){}
+  return {days:arr, ok:on.ok, err:on.err};
+}
+function markClaimed(d){ var k=claimedKey(), cur=[]; d=Number(d); if(!d) return;
+  try{ cur=JSON.parse(lsGet(k)||"[]"); }catch(e){}
+  if(!Array.isArray(cur)) cur=[];
+  if(cur.indexOf(d)<0){ cur.push(d); try{ lsSet(k,JSON.stringify(cur.slice(-200))); }catch(e){} } }
+function saveClaimed(done){ try{ lsSet(claimedKey(),JSON.stringify((done||[]).slice(-200))); }catch(e){} }
+window.markClaimed=markClaimed; window.claimedSet=claimedSet;
+
+/* 链上当前第几天：优先问合约 epoch_info.day_in_epoch（不再自己拿时间戳除 86400），
+   拿不到才退回网关 current_day；两个来源打架时不静默选一个，直接暴露冲突。 */
+async function chainDayNow(){
+  var cd=0;
+  try{ var e=await window.__mrq({epoch_info:{}}); if(e&&e.day_in_epoch) cd=Number(e.day_in_epoch); }catch(x){}
+  var g=0;
+  try{ var h=await fetch(CFG.gw+"/v1/health?ts="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();});
+       g=Number(h.current_day)||0; }catch(x){}
+  var conflict=(cd&&g&&Math.abs(cd-g)>1)?("链上第"+cd+"天 / 网关第"+g+"天 不一致"):"";
+  if(!cd) cd=g;
+  return {day:cd, gw:g, conflict:conflict};
+}
+window.chainDayNow=chainDayNow;
+
+/* 扫描最近 spanDays 天：定稿 + 根已上链 + 我有分 + 未领，逐天给出估算 */
+async function scanClaimable(spanDays){
+  var res={ok:false, days:[], cd:0, conflict:"", err:"", warn:""};
+  if(!myAddr || !window.__mrq){ res.err="钱包未连接"; return res; }
+  var c=await chainDayNow(); res.cd=c.day; res.conflict=c.conflict;
+  if(!res.cd){ res.err="取不到链上日号"; return res; }
+  var cl=await claimedSet();
+  if(!cl.ok) res.warn="链上领取历史暂未核对("+cl.err+")：按本机记录判断，重复领取会被合约挡下";
+  var lo=Math.max(1, res.cd-(spanDays||7)+1);
+  for(var d=res.cd-1; d>=lo; d--){
+    if(cl.days.indexOf(d)>=0) continue;                              /* 已领 */
+    var dy=null;
+    try{ dy=await fetch(CFG.gw+"/v1/day?day="+d,{cache:"no-store"}).then(function(r){return r.ok?r.json():null;}); }catch(x){}
+    if(!dy||!dy.finalized) continue;                                  /* 未定稿 */
+    var on=false; try{ on=await window.__mrq({root_submitted:{day:d}}); }catch(x){}
+    if(!on) continue;                                                 /* 根没上链 */
+    var sc=null;
+    try{ sc=await fetch(CFG.gw+"/v1/scores?day="+d,{cache:"no-store"}).then(function(r){return r.json();}); }catch(x){}
+    if(!sc||!sc.scores||!sc.scores[myAddr]||!(sc.scores[myAddr].w>0)||!sc.total) continue;
+    var pl=null; try{ pl=await window.__mrq({daily_miner_pool:{day:d}}); }catch(x){}
+    if(pl===null||pl===undefined) continue;
+    res.days.push({d:d, est:Number(pl)/1e6*sc.scores[myAddr].w/sc.total,
+                   w:sc.scores[myAddr].w, total:sc.total});
   }
- }catch(e){} }
+  res.ok=true;
+  return res;
+}
+window.scanClaimable=scanClaimable;
+
+async function autoClaim(){ if(!window.LD||!myAddr) return;
+  if(window.__autoClaimBusy) return; window.__autoClaimBusy=1;
+  try{
+    var r=await scanClaimable(7); window.__claimScan=r;
+    if(!r.ok || r.conflict) return;                      /* 状态不明或日号冲突时不花钱发交易 */
+    for(var i=0;i<r.days.length && i<3; i++){            /* 每轮最多 3 天，限制 gas */
+      var d=r.days[i].d;
+      try{ var st=await window.LD.claim(d);
+        if(st&&st.status==="ok") toast("✓ 已自动领取第 "+d+" 天奖励");
+      }catch(e){
+        if(String((e&&e.message)||e).indexOf("already claimed")>=0) markClaimed(d);
+        else break;                                      /* 真错了就停，别连着烧 gas */
+      }
+    }
+    try{ refreshClaimable(); }catch(e){}
+  } catch(e){} finally{ window.__autoClaimBusy=0; } }
+window.autoClaim=autoClaim;
+/* 这个函数以前定义了却从没有任何地方调用它 —— "零点击自动领取"其实一直没生效 */
+(function(){ var n=0;
+  var t=setInterval(function(){ n++;
+    if(window.LD && window.LD.addr && myAddr){ clearInterval(t);
+      setTimeout(function(){ try{ autoClaim(); }catch(e){} }, 2500);
+      setInterval(function(){ try{ autoClaim(); }catch(e){} }, 10*60*1000); }
+    else if(n>180) clearInterval(t);
+  }, 1000); })();
+
 setTimeout(function(){ document.documentElement.classList.remove("ld-restoring"); }, 8000);
 
+function fmtNum(x){ try{ return Number(x).toLocaleString(undefined,{maximumFractionDigits:1}); }catch(e){ return String(x); } }
 function claimHintEl(){ var e=document.getElementById("claimHint"); if(!e){ e=document.createElement("div"); e.id="claimHint"; e.className="mini"; e.style.margin="6px 0 2px"; var b=document.getElementById("btnClaim"); if(b&&b.parentNode) b.parentNode.insertBefore(e,b); } return e; }
-function claimWindowUI(){ var el=claimHintEl(); if(!el) return; var btn=document.getElementById("btnClaim");
-  var cd=Math.floor((Date.now()/1000-1789102088)/86400);
-  if(window.__claimOpen){ if(btn) btn.disabled=false; el.textContent=""; return; }
-  var openAt=(cd+1)*86400+1789102088; var left=openAt-Math.floor(Date.now()/1000);
-  function p(n){return (n<10?"0":"")+n;}
-  if(window.__gwd && (window.__gwd-1)>=cd){ if(btn) btn.disabled=true;
-    el.textContent="结算刷新:你当地 08:00(北京) · 领取开放:北京 12:48(合约日界,临时) · 倒计时 "+p(Math.floor(left/3600))+":"+p(Math.floor(left%3600/60))+":"+p(left%60)+" · 2026-10-11 起统一为北京 08:00";
-  } else { if(btn) btn.disabled=true;
-    el.textContent="昨日已定稿,等待验证者签根上链(通常北京 13:10–13:30),完成后自动可领;领取不会过期,7 天内随时可领,更早日可用『加载可领历史』。"; } }
+function fillClaimDays(days){
+  var sel=document.getElementById("claimDay"); if(!sel) return;
+  var cur=sel.value;
+  sel.innerHTML="";
+  var o0=document.createElement("option"); o0.value="";
+  o0.textContent = days.length ? ("最近扫描到 "+days.length+" 天未领（默认一次全部领取）")
+                              : "本次扫描没有未领取的奖励";
+  sel.appendChild(o0);
+  days.forEach(function(x){ var o=document.createElement("option"); o.value=String(x.d);
+    o.textContent="第 "+x.d+" 天 · 约 "+fmtNum(x.est)+" LIGHT"; sel.appendChild(o); });
+  if(cur) sel.value=cur;
+}
+function claimWindowUI(){
+  var el=claimHintEl(); if(!el) return; var btn=document.getElementById("btnClaim");
+  if(!myAddr){ if(btn) btn.disabled=false; el.textContent=""; return; }
+  var r=window.__claimScan;
+  if(!r || !r.ok){ if(btn) btn.disabled=true; el.textContent="正在核对链上可领状态…"; return; }
+  if(r.conflict){ if(btn) btn.disabled=true; el.textContent="⚠ "+r.conflict+"：已暂停领取，避免重复扣费"; return; }
+  if(btn) btn.disabled=false;
+  el.textContent = r.days.length ? "" : "最近没有未领取的奖励（已领的会自动跳过，不会重复领取）";
+}
 setInterval(claimWindowUI,1000);
-async function refreshClaimable(){ var el=document.getElementById("claimable"); if(!el||!myAddr||!window.__mrq)return;
- try{ var h=await fetch(CFG.gw+"/v1/health").then(function(r){return r.json();});
-  var done=await claimedSet(); var sum=0;
-  for(var d=h.current_day-1; d>=Math.max(1,h.current_day-7); d--){
-   if(done.indexOf(d)>=0) continue;
-   var rs=await fetch(CFG.gw+"/v1/day?day="+d).then(function(r){return r.json();}).catch(function(){return null;});
-   if(!rs||!rs.finalized) continue;
-   var sc=await fetch(CFG.gw+"/v1/scores?day="+d).then(function(r){return r.json();}).catch(function(){return null;});
-   if(!sc||!sc.scores||!sc.scores[myAddr]||!(sc.scores[myAddr].w>0)||!sc.total) continue;
-   var on=false; try{ on=await window.__mrq({root_submitted:{day:d}}); }catch(e){}
-   if(!on) continue;
-   var pl=await window.__mrq({daily_miner_pool:{day:d}});
-   sum+=Number(pl)/1e6*sc.scores[myAddr].w/sc.total;
-  }
-  el.textContent=sum>0? sum.toLocaleString(undefined,{maximumFractionDigits:1}) : "0";
-  window.__claimOpen = sum>0; window.__gwd = h.current_day; try{ claimWindowUI(); }catch(e){}
- }catch(e){} }
+
+async function refreshClaimable(){
+  var el=document.getElementById("claimable"); if(!el||!myAddr||!window.__mrq) return;
+  try{
+    var r=await scanClaimable(7); window.__claimScan=r;
+    var sum=0; r.days.forEach(function(x){ sum+=x.est; });
+    el.textContent = r.ok ? (sum>0? fmtNum(sum) : "0") : "—";
+    window.__claimOpen = !!(r.ok && sum>0); window.__gwd=r.cd;
+    fillClaimDays(r.days);
+    if(!r.ok && el.title!==r.err){ el.title="可领取暂不可信: "+r.err; }
+    try{ claimWindowUI(); }catch(e){}
+  }catch(e){}
+}
+/* 「加载可领历史」以前是个没有 handler 的死按钮，文案却在教用户点它 —— 现在接上真扫描 */
+(function(){ var b=document.getElementById("btnScan"); if(!b) return;
+  b.onclick=async function(){
+    if(!myAddr){ toast("请先连接钱包"); return; }
+    var ot=b.textContent; b.disabled=true; b.textContent="扫描中…";
+    try{
+      var r=await scanClaimable(30); window.__claimScan=r;
+      var sum=0; r.days.forEach(function(x){ sum+=x.est; });
+      fillClaimDays(r.days);
+      var el=document.getElementById("claimable");
+      if(r.ok && el) el.textContent = sum>0? fmtNum(sum) : "0";
+      if(!r.ok)            toast("扫描失败：" + (r.err||"未知原因") + "（不会当成无可领）");
+      else if(!r.days.length) toast("第 1 天至今，链上没有你未领取的奖励");
+      else                 toast("找到 "+r.days.length+" 天未领 · 约 "+fmtNum(sum)+" LIGHT");
+    }catch(e){ toast("扫描异常："+terr(e)); }
+    b.disabled=false; b.textContent=ot;
+  };
+})();
 setInterval(refreshClaimable,60000);
+
 
 (function(){ var el=document.getElementById("dayBnd"); if(!el) return; var nb=0,srv=0,loc=0;
  function p(n){return (n<10?"0":"")+n;}
@@ -319,26 +487,66 @@ setInterval(refreshClaimable,60000);
   async function ensureLD(){ return window.LD && window.LD.addr; }
 
   // validator list for delegate dropdown
+  /* LD-CLAIM-TRUTH-20261015 验证者列表：
+     1) 绝不再硬编码 https://lightdao.net（同源就好，测试环境也能跑）
+     2) 先问网关 /v1/validators（并校验 chain_id，防止把测试网数据当主网公示）
+     3) 再退到链上 validator_registry
+     4) 两条都拿不到就如实说明原因 + 允许手动输入 operator 地址，
+        不再把真实异常吞成一句"加载验证者失败" */
   async function loadValidators(){
     var sel = document.getElementById('delVal'); if(!sel) return;
-    try {
-      var m = await import("/js/vendor/-cosmjs-cosmwasm-stargate-0.32.4.js?v=2").catch(function(){return null;});
-      var c = await m.CosmWasmClient.connect("https://lightdao.net/rpc/");
-      var vals = await c.getValidators();
-      sel.innerHTML = "";
-      (vals||[]).forEach(function(v){
-        var o = document.createElement("option");
-        o.value = v.operatorAddress;
-        o.textContent = (v.description && v.description.moniker ? v.description.moniker : v.operatorAddress.slice(0,20)) + " · " + (v.tokens/1e6).toFixed(0) + "L";
-        sel.appendChild(o);
-      });
-      var info = document.getElementById('delInfo');
-      if(info) info.textContent = "委托后可随时解除(解绑期约21天),收益自动累积,用上方「一键领取验证者/质押收益」提取。";
-    } catch(e) {
-      sel.innerHTML = "<option>加载验证者失败</option>";
+    var why=[];
+    var info=document.getElementById('delInfo');
+    function render(vs){
+      sel.innerHTML=""; sel.onchange=null;
+      vs.forEach(function(v){ var o=document.createElement('option');
+        o.value=v.operatorAddress; o.textContent=v.label; sel.appendChild(o); });
+      if(info) info.textContent="委托后可随时解除(解绑期约21天),收益自动累积,用上方「一键领取验证者/质押收益」提取。";
     }
+    function giveUp(note){
+      sel.innerHTML="";
+      var o0=document.createElement('option'); o0.value="";
+      o0.textContent="验证者列表暂不可用"; sel.appendChild(o0);
+      var o1=document.createElement('option'); o1.value="__manual__";
+      o1.textContent="✎ 手动输入验证者地址 (wasmvaloper1…)"; sel.appendChild(o1);
+      sel.onchange=function(){
+        if(sel.value!=="__manual__") return;
+        var a=window.prompt("粘贴验证者 operator 地址（wasmvaloper1 开头，请在『节点与验证者』页核对来源）:");
+        a=(a||"").trim();
+        if(!/^wasmvaloper1[02-9ac-z]{54,}$/.test(a)){
+          toast("地址格式不对：需要 wasmvaloper1 开头的 operator 地址"); loadValidators(); return; }
+        sel.innerHTML=""; sel.onchange=null;
+        var o=document.createElement('option'); o.value=a;
+        o.textContent="手动输入 "+a.slice(0,16)+"…"; sel.appendChild(o); sel.value=a;
+        if(info) info.textContent="⚠ 正在使用你手动输入的地址，请自行核对；列表接口恢复后会自动改用链上数据。";
+      };
+      if(info) info.textContent="拿不到验证者列表的真实原因："+note+"（可先手动输入地址委托）";
+    }
+    try{
+      var rr=await fetch(CFG.gw+"/v1/validators?ts="+Date.now(),{cache:"no-store"});
+      if(rr.ok){
+        var jj=await rr.json();
+        if(jj.chain_id && jj.chain_id!==CFG.chainId) throw new Error("数据源链ID="+jj.chain_id+" 与主网不符，已拒绝显示");
+        var vs=(jj.validators||[]).filter(function(v){ return v.operator_address && /^wasmvaloper1/.test(v.operator_address); });
+        if(vs.length){ render(vs.map(function(v){
+            var mon=(v.description&&v.description.moniker)||v.operator_address.slice(0,16);
+            return {operatorAddress:v.operator_address,
+                    label:mon+" · "+(Number(v.tokens||0)/1e6).toFixed(0)+"L"+(v.jailed?" · 已 jailed":"")};
+          })); return; }
+        why.push("网关返回空列表");
+      } else why.push("网关无 /v1/validators(HTTP "+rr.status+")");
+    }catch(e){ why.push("网关:"+String((e&&e.message)||e).slice(0,70)); }
+    try{
+      if(window.__ldq && CFG.validatorRegistry){
+        var av=await window.__ldq(CFG.validatorRegistry,{active_validators:{}});
+        var arr=(av&&(av.validators||av.list||av.active_validators))||[];
+        if(arr.length){ render(arr.map(function(v){ var oa=v.operator_address||v.address||v;
+            return {operatorAddress:oa, label:((v.moniker||v.name)||String(oa).slice(0,16))+" · 链上登记"}; })); return; }
+        why.push("链上登记册 active_validators 为空");
+      } else why.push("签名组件未就绪");
+    }catch(e){ why.push("登记册:"+String((e&&e.message)||e).slice(0,70)); }
+    giveUp(why.join("；"));
   }
-
   // send
   var btnSend = document.getElementById('btnSend');
   if(btnSend) btnSend.onclick = async function(){

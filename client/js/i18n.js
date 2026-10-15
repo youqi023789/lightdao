@@ -48,17 +48,36 @@
     return (typeof v === "string" && v) ? v : null;
   }
 
+  var stats = { writes: 0, skips: 0, same: 0, loopGuard: 0 };
+  W.__ldI18nStats = stats;
+  function publish() {
+    /* 把计数写进 <html> 的 data 属性：无头浏览器 --dump-dom 就能看到，
+       这样"翻译器自激循环"这类问题可以在批量测试里被抓到，而不是等用户浏览器卡死。 */
+    try {
+      var d = document.documentElement.dataset;
+      d.ldI18n = "w" + stats.writes + " s" + stats.skips + " same" + stats.same + " guard" + stats.loopGuard;
+    } catch (e) { }
+  }
+
   function trNode(n, lang) {
     var raw = n.nodeValue;
-    if (!raw) return;
+    if (raw == null) return;
+    /* 关键防循环：这个节点上一次我们看过/写过的值就是它现在的内容 → 不再处理。
+       否则「写文本 → characterData 变更 → 观察器回调 → 再写」会自激，
+       字典里的恒等译文（Stake→Stake、Txs→Txs、Pool→Pool）必然触发，页面直接卡死。 */
+    if (n.__ldv === raw) { stats.skips++; return; }
+    n.__ldv = raw;
     var key = raw.trim();
-    if (key.length < 2 || !/[\u4e00-\u9fff]/.test(key)) return;   // 没有汉字就别白跑一趟
+    if (key.length < 2 || !/[\u4e00-\u9fff]/.test(key)) return;
     var hit = lookup(key, lang);
     if (!hit) return;
-    // 保留原文前后空白，避免挤压排版
     var lead = raw.slice(0, raw.length - raw.replace(/^\s+/, "").length);
     var tail = raw.slice(raw.replace(/\s+$/, "").length);
-    n.nodeValue = lead + hit + tail;
+    var outv = lead + hit + tail;
+    if (outv === raw) { stats.same++; publish(); return; }   // 译文与原文相同：不写，避免触发 mutation
+    n.nodeValue = outv;
+    n.__ldv = outv;
+    stats.writes++;
     if (done) { try { done.add(n); } catch (e) { } }
   }
 
@@ -110,12 +129,26 @@
   function observe(lang) {
     if (typeof MutationObserver !== "function") return;
     if (obs) { try { obs.disconnect(); } catch (e) { } }
+    var burst = 0, burstAt = 0;
     obs = new MutationObserver(function (ms) {
+      /* 熔断：一批里处理量异常大 = 我们在自己触发自己。立刻停掉观察器并记账，
+         宁可少翻译一些，也绝不能把用户浏览器卡死（explorer 页就是这么挂的）。 */
+      var now = Date.now();
+      if (now - burstAt > 1000) { burst = 0; burstAt = now; }
+      burst += ms.length;
+      if (burst > 600) {
+        stats.loopGuard += ms.length;
+        publish();
+        try { obs.disconnect(); } catch (e) { }
+        obs = null;
+        return;
+      }
       for (var i = 0; i < ms.length; i++) {
         var a = ms[i];
         for (var j = 0; j < a.addedNodes.length; j++) { walk(a.addedNodes[j], lang); }
         if (a.type === "characterData" && a.target) { trNode(a.target, lang); }
       }
+      publish();
     });
     try { obs.observe(document.documentElement, { childList: true, subtree: true, characterData: true }); } catch (e) { }
   }
@@ -126,10 +159,21 @@
     // 不设 dir="rtl"：站内其它页（首页/落地页/挖矿页）都只设 lang，翻了布局会让阿拉伯语
     // 页面整片空白（实测回归）。阿拉伯语句内的右到左由浏览器 bidi 自动处理，无需翻转版式。
     try { localStorage.setItem(STORE, lang); } catch (e) { }
-    walk(document.body, lang);
-    observe(lang);
     var s = document.getElementById("ld-lang-sw");
     if (s) { s.value = lang; }
+    /* 中文是源语言：不需要任何遍历、重扫或常驻观察器。
+       之前中文用户也在付「全页 walk + 4 次重扫 + MutationObserver」的代价，收益为零 ——
+       这就是「页面没以前流畅」的直接原因（而默认语言恰恰是中文）。 */
+    if (lang === "zh") {
+      if (obs) { try { obs.disconnect(); } catch (e) { } obs = null; }
+      publish();
+      document.dispatchEvent(new CustomEvent("ldlang", { detail: { lang: lang } }));
+      return;
+    }
+    walk(document.body, lang);
+    observe(lang);
+    publish();   // 必须在这里也写一次：否则没有 mutation 的页面读不到计数，
+                 // 批量交叉测试会把"仪器没上报"误判成"翻译器没运行"。
     document.dispatchEvent(new CustomEvent("ldlang", { detail: { lang: lang } }));
   }
 
@@ -160,14 +204,17 @@
       mountSwitcher();
       apply(cur());
       /* 补扫：页面自己的脚本会异步重写表格/标题（innerHTML 一覆盖，翻译就丢了），
-         MutationObserver 能抓到大部分，但实测仍有节点漏网。延迟重扫几次，
-         成本极低（只遍历文本节点），换来整页语言一致。 */
-      [400, 1200, 2600, 5000].forEach(function (ms) {
-        setTimeout(function () {
-          try { if (done) { done = W.__ldI18nSeen = (typeof WeakSet === "function" ? new WeakSet() : null); }
-                seenAttr = {}; walk(document.body, cur()); } catch (e) { }
-        }, ms);
-      });
+         观察器能抓到大部分但实测仍有漏网，所以延迟重扫几次。
+         中文下完全跳过（源语言没有可翻内容），避免无谓的主线程占用。 */
+      if (cur() !== "zh") {
+        [500, 1800, 4000].forEach(function (ms) {
+          setTimeout(function () {
+            try { if (cur() === "zh") return;
+                  if (done) { done = W.__ldI18nSeen = (typeof WeakSet === "function" ? new WeakSet() : null); }
+                  seenAttr = {}; walk(document.body, cur()); publish(); } catch (e) { }
+          }, ms);
+        });
+      }
     } catch (e) { /* 语言层坏了不能影响页面本身 */ }
   }
 

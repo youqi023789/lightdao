@@ -6,7 +6,7 @@
    2) 根目录脚本（passkey-wallet.js / webrtc-relay.js）现在带 ?v= 版本号，按“网络优先+按完整
       URL 缓存”处理，保证离线也能拿到与页面版本号一致的那一份。
    3) 离线兜底只给“导航请求”返回首页；给 JSON/JS 请求返回 HTML 会让前端拿到一坨解析不了的文本。 */
-const CACHE = "lightdao-v173";
+const CACHE = "lightdao-v182";
 const SHELL = ["/", "/index.html", "/app.html", "/manifest.json", "/passkey-wallet.js", "/webrtc-relay.js"];
 const NET_FIRST = ["/", "/index.html", "/app.html", "/passkey-wallet.js", "/webrtc-relay.js", "/governance.html", "/explorer.html", "/season.html", "/whitepaper.html"];
 /* 实时数据：永不走缓存（宁可报错，不可撒谎） */
