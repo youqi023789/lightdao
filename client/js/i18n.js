@@ -41,11 +41,15 @@
     return SUPPORTED.indexOf(l) >= 0 ? l : "zh";
   }
 
+  /* LD-I18N-FALLBACK-20261015 缺该语种词条时回退英文，而不是把中文留给外国用户。
+     实测：?lang=fil 以及部分词条在 de 下直接把中文显示给了用户。 */
   function lookup(txt, lang) {
     var e = W.LDI18N[txt];
     if (!e) return null;
     var v = e[lang];
-    return (typeof v === "string" && v) ? v : null;
+    if (typeof v === "string" && v) return v;
+    var f = e.en;                                   /* 英文回退 */
+    return (typeof f === "string" && f) ? f : null;
   }
 
   var stats = { writes: 0, skips: 0, same: 0, loopGuard: 0 };

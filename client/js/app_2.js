@@ -1,4 +1,4 @@
-window.LDBUILD="1.8.2";
+window.LDBUILD="1.8.5";
 function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
 
 window.CFG = {
@@ -529,7 +529,7 @@ setInterval(refreshClaimable,60000);
         if(jj.chain_id && jj.chain_id!==CFG.chainId) throw new Error("数据源链ID="+jj.chain_id+" 与主网不符，已拒绝显示");
         var vs=(jj.validators||[]).filter(function(v){ return v.operator_address && /^wasmvaloper1/.test(v.operator_address); });
         if(vs.length){ render(vs.map(function(v){
-            var mon=(v.description&&v.description.moniker)||v.operator_address.slice(0,16);
+            var mon=(v.description&&v.description.moniker)||v.moniker||v.operator_address.slice(0,16);   /* 网关返回扁平 moniker，实测 val02-kr 等 */
             return {operatorAddress:v.operator_address,
                     label:mon+" · "+(Number(v.tokens||0)/1e6).toFixed(0)+"L"+(v.jailed?" · 已 jailed":"")};
           })); return; }
