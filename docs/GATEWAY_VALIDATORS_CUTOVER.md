@@ -54,3 +54,9 @@ curl -s https://lightdao.net/gw/v1/health | head -c 80
 - 停掉浸泡实例（按端口处置，勿用 `pkill -f gateway_v3_soak`——它会连执行命令的会话一起匹配杀掉，已踩过）：
   `kill $(ss -lntpH "sport = :8099" | grep -oE "pid=[0-9]+" | head -1 | cut -d= -f2)`
 - 把 `g11`/渲染巡检纳入的告警通道保持观察 24h。
+
+## 仓库推送通道现状（2026-10-15 实测）
+HK 无 GitHub 凭据，且 HK→sg-old 无互信密钥（scp 直接被拒），所以推送只能在【本机】编排：
+[1/4] HK 打 bundle（仅快进、绝不 force）。
+sg-old 于 10-18 退役，届时必须先在 HK 配好 gh auth 或 GitHub Deploy Key，否则提交推不出去。
+先前入库的  假设可在 HK 跑，是错的，已改为废弃指针脚本并在此收回。
