@@ -103,7 +103,9 @@ def live_jobs():
 
 
 def key(j):
-    return (j["user"], j["cmd"])
+    # 键必须含 schedule：同一命令跑多个调度时（线上 ld_finalize.sh 有 4 个时刻），
+    # 只按命令去重会把 4 条并成 1 条，之后删掉其中 3 个时刻对账也发现不了。
+    return (j["user"], j["cmd"], j.get("schedule", ""))
 
 
 def main():
@@ -133,7 +135,8 @@ def main():
         return 3
     want = {}
     for j in jobs:
-        want.setdefault((j.get("user"), norm_cmd(j.get("cmd") or "")), []).append(j)
+        want.setdefault((j.get("user"), norm_cmd(j.get("cmd") or ""),
+                         (j.get("schedule") or "").strip()), []).append(j)
     livek = {}
     for j in live:
         livek[key(j)] = j
@@ -146,8 +149,8 @@ def main():
           % (len(livek), "/".join(USERS), len(jobs)))
     for j in undocumented:
         print("  未登记: [%s] %s  %s" % (j["user"], j["schedule"], j["cmd"][:96]))
-    for u, c in missing:
-        print("  清单有但线上没跑: [%s] %s" % (u, c[:96]))
+    for u, c, sch in missing:
+        print("  清单有但线上没跑: [%s] %s  %s" % (u, sch, c[:88]))
     if dirty:
         print("  清单脏数据（命令尾部残留 `2`，是旧 --gen 的截断产物）%d 条，例：%s"
               % (len(dirty), dirty[0][:70]))

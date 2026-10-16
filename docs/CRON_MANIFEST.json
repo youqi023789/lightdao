@@ -27,7 +27,7 @@
    "user": "root",
    "schedule": "20 5 * * *",
    "cmd": "/usr/bin/python3 /home/ubuntu/rebuild_search.py",
-   "purpose": "重建站内搜索索引，新页面/新文档要能被搜到",
+   "purpose": "重建站内搜索索引（新页面/新文档要能被搜到）",
    "added": "2026-10-16"
   },
   {
@@ -98,6 +98,13 @@
    "schedule": "27 * * * *",
    "cmd": "/usr/bin/python3 /usr/local/bin/ld_render_all.py check --no-render",
    "purpose": "全站 18 页真机渲染巡检（L1 每小时查资源/链接/兜底冒充，L2 每 6 小时查脚本真跑起来 + 语种棘轮）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "50 7 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/ld_src_coverage.py",
+   "purpose": "敏感合约源码覆盖率棘轮：无源码数量只准降不准升，升了立即告警",
    "added": "2026-10-16"
   },
   {
@@ -235,6 +242,27 @@
   },
   {
    "user": "ubuntu",
+   "schedule": "10 0 * * *",
+   "cmd": "/usr/local/bin/ld_finalize.sh",
+   "purpose": "每日奖励根 finalize（站点结算与发分的源头）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "20 5 * * *",
+   "cmd": "/usr/local/bin/ld_finalize.sh",
+   "purpose": "每日奖励根 finalize（站点结算与发分的源头）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "30 0 * * *",
+   "cmd": "/usr/local/bin/ld_finalize.sh",
+   "purpose": "每日奖励根 finalize（站点结算与发分的源头）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
    "schedule": "*/5 * * * *",
    "cmd": "/usr/local/bin/ld_gateway_trace_watch.py",
    "purpose": "网关请求追踪看门狗：异常比例/慢请求/5xx 抬头即告警",
@@ -257,6 +285,27 @@
   {
    "user": "ubuntu",
    "schedule": "10 5 * * *",
+   "cmd": "/usr/local/bin/ld_sign_root.sh",
+   "purpose": "每日奖励根多签签发：站点结算与链上发分的源头，缺它当天没有奖励根",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "20 0 * * *",
+   "cmd": "/usr/local/bin/ld_sign_root.sh",
+   "purpose": "每日奖励根多签签发：站点结算与链上发分的源头，缺它当天没有奖励根",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "30 5 * * *",
+   "cmd": "/usr/local/bin/ld_sign_root.sh",
+   "purpose": "每日奖励根多签签发：站点结算与链上发分的源头，缺它当天没有奖励根",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "40 0 * * *",
    "cmd": "/usr/local/bin/ld_sign_root.sh",
    "purpose": "每日奖励根多签签发：站点结算与链上发分的源头，缺它当天没有奖励根",
    "added": "2026-10-16"

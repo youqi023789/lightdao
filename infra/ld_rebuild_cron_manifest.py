@@ -88,9 +88,20 @@ if os.path.exists(MAN):
         print("旧清单读取失败（不影响重建）:", e)
 
 live = []
+# 守卫：非 root 时 `crontab -l` 拿到的是 ubuntu 自己的表，会被错标成 root。
+# 这个错我犯过两次（第一次写出 45 条、第二次写出 root/ubuntu 各 27 条的假清单），
+# 所以宁可拒绝执行也不能写出错的清单。
+if os.geteuid() != 0:
+    print("FAIL 必须用 sudo 跑：非 root 时 crontab -l 读到的是 ubuntu 自己的表，"
+          "会把 ubuntu 任务标成 root，清单从此长期失真")
+    raise SystemExit(4)
 for u in ("root", "ubuntu"):
     args = ["crontab", "-l"] if u == "root" else ["crontab", "-l", "-u", u]
     r = subprocess.run(args, capture_output=True, text=True, timeout=60)
+    if r.returncode != 0 and "no crontab" not in (r.stderr or "").lower():
+        # 读不到就拒绝重建：拿半截数据写清单，等于把"文档承诺的自动化"悄悄删掉
+        print("FAIL 读不到 %s 的 crontab（%s），拒绝重建" % (u, (r.stderr or "").strip()[:120]))
+        raise SystemExit(5)
     for ln in (r.stdout or "").splitlines():
         if not ln.strip() or ln.lstrip().startswith("#"):
             continue
@@ -110,8 +121,8 @@ for u in ("root", "ubuntu"):
 
 seen = set()
 jobs = []
-for j in sorted(live, key=lambda x: (x["user"], x["cmd"])):
-    k = (j["user"], j["cmd"])
+for j in sorted(live, key=lambda x: (x["user"], x["cmd"], x.get("schedule", ""))):
+    k = (j["user"], j["cmd"], j.get("schedule", ""))
     if k in seen:
         continue
     seen.add(k)
