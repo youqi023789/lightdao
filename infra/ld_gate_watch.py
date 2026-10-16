@@ -17,8 +17,8 @@ def UTC():
 MANIFEST = sys.argv[1] if len(sys.argv) > 1 else os.environ.get(
     "GW_MANIFEST_URL",
     "https://raw.githubusercontent.com/youqi023789/lightdao/main/infra/gate_manifest.txt")
-ALERTS = "/home/ubuntu/ld_alerts.log"
-LASTFLAG = "/home/ubuntu/ld_gate_watch_last"
+ALERTS = os.environ.get("LD_ALERTS", "/home/ubuntu/ld_alerts.log")
+LASTFLAG = os.environ.get("LD_LASTFLAG", "/home/ubuntu/ld_gate_watch_last")
 
 # 部署位置：/usr/local/bin 与 /home/ubuntu 两处
 PATHS = {
@@ -108,16 +108,32 @@ def main():
     bad = bool(drift or missing or unversioned)
     prev = ""
     if os.path.exists(LASTFLAG):
-        prev = open(LASTFLAG).read().split("|", 1)[-1]
+        try:
+            prev = open(LASTFLAG).read().split("|", 1)[-1]
+        except Exception:
+            prev = ""
     sig = json.dumps({"d": sorted(drift), "m": sorted(missing), "u": sorted(unversioned)}, sort_keys=True)
-    open(LASTFLAG, "w").write("0|" + sig)
+    # LD-GATEWATCH-WRITEGUARD-20261016：LASTFLAG 与 ld_alerts.log 都是 root cron 建的
+    # root 属主文件，非 root 手工跑时 open(...,"w"/"a") 会抛 PermissionError，
+    # 崩溃点正好在"已经发现漂移"之后——结果是漂移只打在屏幕上、退出码被 traceback 吞掉。
+    # 反向验证（植入改动）时暴露出来。持久化失败必须喊出来，但绝不影响判定与退出码。
+    for path, content in ((LASTFLAG, "0|" + sig),):
+        try:
+            open(path, "w").write(content)
+        except Exception as e:
+            print("  WARN 状态文件写不进去 %s: %s（不影响判定）" % (path, e))
     if bad and sig != prev:                      # 只在状态变化时告警，避免每 6 小时刷屏
-        with open(ALERTS, "a") as f:
-            f.write("%s ALERT deploy gates drifted from repo: %d drift, %d missing, %d unversioned\n"
-                    % (UTC(), len(drift), len(missing), len(unversioned)))
-        subprocess.run(["/usr/local/bin/discord_bot.py", "send",
-                        "⚠️ 发布门禁与仓库不一致（漂移%d/缺失%d/未入库%d）：门禁本身可能被改动，见 ld_gate_watch.log"
-                        % (len(drift), len(missing), len(unversioned))], capture_output=True)
+        try:
+            with open(ALERTS, "a") as f:
+                f.write("%s ALERT deploy gates drifted from repo: %d drift, %d missing, %d unversioned\n"
+                        % (UTC(), len(drift), len(missing), len(unversioned)))
+        except Exception as e:
+            print("  WARN 告警落盘失败 %s: %s —— 漂移未通知出去，请用 root 跑或改 LD_ALERTS"
+                  % (ALERTS, e))
+        else:
+            subprocess.run(["/usr/local/bin/discord_bot.py", "send",
+                            "⚠️ 发布门禁与仓库不一致（漂移%d/缺失%d/未入库%d）：门禁本身可能被改动，见 ld_gate_watch.log"
+                            % (len(drift), len(missing), len(unversioned))], capture_output=True)
     return 1 if bad else 0
 
 
