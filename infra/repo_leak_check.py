@@ -170,11 +170,21 @@ def main():
         print("repo not found: %s" % REPO)
         return 2
     ips = load_ips()
-    if ips is None:
-        print("WARN %s missing -> infrastructure-IP scan disabled" % IP_FILE)
-        ip_rx = None
-    elif not ips:
-        print("WARN %s is empty -> infrastructure-IP scan disabled" % IP_FILE)
+    if ips is None or not ips:
+        # 2026-10-16 改成硬失败：IP 清单读不到时以前只 WARN 然后继续跑，
+        # 结果是"最要紧的那一层扫描静默失效"。当天真实触发过一次——我把
+        # /etc/lightdao 目录权限收紧成 750，ubuntu 身份的钩子就读不到清单了，
+        # 门禁只是打了句 WARN。豁免表同时失效才会碰巧拦下这次推送；
+        # 如果当时仓库里恰好没有需要豁免的历史项，就会"全绿"放行。
+        why = "missing" if ips is None else "empty"
+        if not os.environ.get("LD_LEAK_ALLOW_NO_IPLIST"):
+            print("GATE NOT IN EFFECT: %s %s -> 基础设施 IP 扫描无法执行，按失败处理"
+                  % (IP_FILE, why))
+            print("   先修可读性（属主/权限/路径）；确要在无 IP 清单下跑（如自测）"
+                  "设 LD_LEAK_ALLOW_NO_IPLIST=1")
+            return 3
+        print("WARN %s %s -> IP 扫描跳过（已由 LD_LEAK_ALLOW_NO_IPLIST 显式允许）"
+              % (IP_FILE, why))
         ip_rx = None
     else:
         ip_rx = build_ip_regex(ips)
