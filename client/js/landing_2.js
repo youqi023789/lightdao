@@ -22,7 +22,7 @@ T.zh={};document.querySelectorAll("[data-i]").forEach(function(el){T.zh[el.getAt
 function apply(c){var d=T[c]||{};var e2=T.en;document.querySelectorAll("[data-i]").forEach(function(el){var k=el.getAttribute("data-i");var v=d[k]||e2[k];if(v)el.innerHTML=v;});document.documentElement.lang=c;try{localStorage.setItem("ld_lang",c);}catch(e){}}
 sel.onchange=function(){apply(sel.value);};
 var saved="zh";try{saved=localStorage.getItem("ld_lang")||"zh";}catch(e){}
-if(!T[saved])saved="zh";
+if(!T[saved])saved=(T.en?"en":"zh");/* LD-I18N-EN-FALLBACK-20261016 词表没这个语种时回退英文：实测 ?lang=fil 因为 T.fil 不存在被判成 zh，整页 74% 汉字，等于把菲律宾用户直接切成中文 */
 sel.value=saved;apply(saved);
 (function(){var c=document.getElementById("net"),x=c.getContext("2d"),W,H,P=[];function rs(){W=c.width=c.offsetWidth;H=c.height=c.offsetHeight;P=[];for(var i=0;i<60;i++)P.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4});}rs();addEventListener("resize",rs);(function loop(){x.clearRect(0,0,W,H);for(var i=0;i<P.length;i++){var p=P[i];p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;x.fillStyle="rgba(124,140,255,.5)";x.fillRect(p.x,p.y,2,2);for(var j=i+1;j<P.length;j++){var q=P[j],dx=p.x-q.x,dy=p.y-q.y;if(dx*dx+dy*dy<9000){x.strokeStyle="rgba(124,140,255,.12)";x.beginPath();x.moveTo(p.x,p.y);x.lineTo(q.x,q.y);x.stroke();}}}requestAnimationFrame(loop);})();})();
 
@@ -37,5 +37,5 @@ async function st(){try{var h=await fetch(location.origin+"/gw/v1/health").then(
    var b=await c.getBalance("wasm1aeaty43lrlt9rmkyxujkkfuddnsfye6az4htcu","ulight").catch(function(){return null;});if(b){var e2=document.getElementById("sBurn");if(e2)e2.textContent=f(b.amount);}var sup=({find:()=>({denom:"ulight",amount:"2500000000000000"})}).catch(function(){return null;});if(sup){var ul=sup.find(function(x){return x.denom==="ulight";});var e3=document.getElementById("sS");if(e3&&ul)e3.textContent=f(ul.amount);}try{var pr=await c.queryContractSmart("wasm1f622csg2af6utlxvxgch2l9qf64ce3s4h5vseaph5ku8vzcgp6qqmsyace",{external_median:{}});var e4=document.getElementById("sP");if(e4)e4.textContent="$"+f(pr);}catch(e){}}
 }catch(e){}}
 st();setInterval(st,20000);})();
-(function(){var q=new URLSearchParams(location.search).get("lang");if(q&&T[q]){sel.value=q;apply(q);}})();
+(function(){var q=new URLSearchParams(location.search).get("lang");if(q){var c=T[q]?q:(T.en?"en":null);if(c){try{sel.value=c;}catch(_e){}apply(c);}}/* LD-I18N-QUERY-EN-FALLBACK-20261016 未收录语种回退英文而不是停在中文 */})();
 document.getElementById("themeT").onclick=function(){var c=document.documentElement.getAttribute("data-theme");var n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n);try{localStorage.setItem("ld_theme",n);}catch(e){}this.textContent=n==="light"?"◑":"◐";};

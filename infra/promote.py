@@ -78,6 +78,17 @@ def main():
     # build staging from CANDIDATE source
     if os.path.exists(STG): shutil.rmtree(STG)
     shutil.copytree(src, STG)
+    # LD-STG-STATUS-MIRROR-20261016 status.json 是运行时文件、不在源码树里，
+    # 不镜像进 staging 的话 qa_truth 的 S0 每次发布都必失败（等于把发布堵死）。
+    try:
+        _ms = os.path.join(MAIN, "status.json")
+        if os.path.isfile(_ms):
+            shutil.copy2(_ms, os.path.join(STG, "status.json"))
+            print("[staging] 已镜像运行时 status.json（供 qa_truth S0 校验）")
+        else:
+            print("[staging] WARN 主站没有 status.json，S0 将按真实缺失报错")
+    except Exception as _e:
+        print("[staging] WARN status.json 镜像失败: %s" % _e)
     relabel(STG, nxt)
     maintain_sri(STG, " staging")
     print("staging built: candidate=%s as v%s (main cur=%s)" % (src, nxt, cur))

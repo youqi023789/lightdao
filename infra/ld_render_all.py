@@ -171,6 +171,32 @@ def probe_page(path, do_render=True, fsig=None):
     return rec
 
 
+def cjk_ratio(html):
+    b = re.sub(r"(?is)<(script|style|noscript)[^>]*>.*?</\1>", " ", html)
+    t = re.sub(r"(?s)<[^>]+>", " ", b)
+    cjk = len(re.findall(r"[一-鿿]", t))
+    lat = len(re.findall(r"[A-Za-z]", t))
+    return (100.0 * cjk / (cjk + lat)) if (cjk + lat) else 0.0
+
+
+def locale_leak():
+    """语种回退棘轮（ratchet）：英文首页的汉字占比只准降不准升。
+    2026-10-16 实测：修 ?lang=fil 回退 + 导航英文显示之后，index.html?lang=en
+    从 74.3% 降到 1.6%（残留是 <title> 与语言下拉里各语种自己的名字，属正常）。
+    阈值 6%：给正文里少量专有名词留余量，但任何"整页掉回中文"必然越线。
+    只测 index.html：其余页面正文尚未翻译（funds 20.8%、governance 10.9%），
+    把它们纳入阈值会造成永久噪声——那是"方案 B 批量翻译"的活，不在这儿混。"""
+    h, err = render("/index.html?lang=en", budget=30000)
+    if h is None:
+        return "语种棘轮无法测量（渲染失败 %s）" % err      # 测不到=报问题，不静默放过
+    r = cjk_ratio(h)
+    lim = float(os.environ.get("LD_RJ_LIMIT", "6"))
+    if r > lim:
+        return "英文首页汉字占比 %.1f%% 超过棘轮 %.1f%%（有整页掉回中文的回归）" % (r, lim)
+    print("语种棘轮 OK：index.html?lang=en 汉字占比 %.1f%%（上限 %.1f%%）" % (r, lim))
+    return None
+
+
 def main():
     args = sys.argv[1:]
     mode = args[0] if args else "probe"
@@ -185,6 +211,11 @@ def main():
         print("WARN 取不到 SPA 兜底探针（canary 请求失败）——"
               "\"页面被兜底冒充\"这一判据本轮不生效，其余判据照跑")
     recs = [probe_page(p, do_render, fsig) for p in plist]
+    if do_render and not only:
+        leak = locale_leak()
+        if leak:
+            recs.append({"page": "LANG-RATCHET", "http": 200, "bytes": 0,
+                         "bad_assets": [], "render": "ratchet", "flags": [leak]})
     if mode == "probe":
         print("%-22s %-6s %-9s %-12s %s" % ("页面", "HTTP", "字节", "渲染", "问题"))
         for r in recs:

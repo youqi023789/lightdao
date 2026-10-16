@@ -130,7 +130,42 @@
       });
   }
 
-  function boot() { try { build(); } catch (e) { } btime(); setInterval(btime, 60000); }
+  /* LD-NAV-I18N-20261016 非中文语种下把导航与返回按钮换成英文。
+     实测（2026-10-16）：英文首页仍有 21 处中文可见文字，其中 14 处就是这套
+     全站共用导航——它出现在 18 个页面上，一处改完全站生效。 */
+  var NAVEN = {
+    "首页": "Home", "挖矿": "Mining", "客户端": "Client",
+    "合约与地址": "Contracts", "治理制度": "Governance", "资金与释放": "Funds & Vesting",
+    "节点与验证者": "Nodes & Validators", "治理提案": "Proposals", "浏览器": "Explorer",
+    "白皮书": "Whitepaper", "搜索": "Search",
+    "← 返回上一页": "← Back", "返回上一页": "Back",
+    "返回挖矿页": "Mining panel", "返回主客户端": "Client",
+    "语言": "Language", "出块时间": "Block time", "取不到": "n/a"
+  };
+  var NAVTIP = {
+    "没有上一页时会自动回首页（直接打开链接时历史是空的，不会点了没反应）":
+      "Goes back; falls back to the home page when there is no history",
+    "挖矿面板（客户端内 sec-main）": "Mining panel (sec-main inside the client)",
+    "主客户端": "Main client"
+  };
+  function navLang() {
+    var l = "";
+    try { l = (new URLSearchParams(location.search).get("lang") || "").toLowerCase(); } catch (e) { }
+    if (!l) { try { l = (localStorage.getItem("ld_lang") || "").toLowerCase(); } catch (e) { l = ""; } }
+    if (!l) { l = (document.documentElement.lang || "").toLowerCase(); }
+    return l;
+  }
+  function navI18n() {
+    var l = navLang();
+    if (!l || l.indexOf("zh") === 0) return;      /* 中文与"没表态"都不动 */
+    var nodes = document.querySelectorAll(".ldnav a, .ldnav button, .ldnav-b, .ldnav span, .ldnav b");
+    for (var i = 0; i < nodes.length; i++) {
+      var n = nodes[i], t = (n.textContent || "").trim();
+      if (NAVEN[t] !== undefined) n.textContent = NAVEN[t];
+      if (n.title && NAVTIP[n.title] !== undefined) n.title = NAVTIP[n.title];
+    }
+  }
+  function boot() { try { build(); navI18n(); } catch (e) { } btime(); setInterval(btime, 60000); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
 })();
