@@ -1,0 +1,33 @@
+#!/bin/bash
+# LD-REPO-LEAK-GATE pre-push — fail closed: an unreadable gate must not mean a silent pass.
+# 2026-10-16 加第二道：除了工作树，还要扫"将要推出去的提交"的新增内容。
+# 只扫工作树的话，"这一版写进去、下一版删掉再推"会全绿通过，
+# 而 GitHub 的历史 blob 公开可翻（老网关 IP 就是这么留在 9c9c239 里的）。
+REPO="$(git rev-parse --show-toplevel)"
+BASE="$(git rev-parse --verify -q origin/main || true)"
+if [ -z "$BASE" ]; then
+  echo "PUSH BLOCKED: 找不到 origin/main 基线，无法确定待推范围（宁可拦下也不放过）"
+  exit 1
+fi
+
+OUT="$(/usr/bin/python3 /usr/local/bin/repo_leak_check.py "$REPO" 2>&1)"
+RC=$?
+if [ $RC -ne 0 ]; then
+  echo "PUSH BLOCKED by repo_leak_check (exit $RC):"
+  echo "$OUT" | sed 's/^/    /'
+  echo "  Fix the finding, or add a waiver with a reason and a review_by date to"
+  echo "  /etc/lightdao/leak_allow.json (see docs/SECURITY-LEAK-GATE.md)."
+  exit 1
+fi
+
+HOUT="$(/usr/bin/python3 /usr/local/bin/repo_leak_history.py "$REPO" "$BASE..HEAD" 2>&1)"
+HRC=$?
+if [ $HRC -ne 0 ]; then
+  echo "PUSH BLOCKED by repo_leak_history (exit $HRC):"
+  echo "$HOUT" | sed 's/^/    /'
+  echo "  历史维度命中：请把内容改掉后重新提交（amend 或新提交均可，只要待推范围里不再有禁止项）。"
+  exit 1
+fi
+
+echo "repo-leak-check: OK ($(echo "$OUT" | grep -o 'waived_hits=[0-9]*'); $(echo "$HOUT" | tail -1)) — pushing"
+exit 0
