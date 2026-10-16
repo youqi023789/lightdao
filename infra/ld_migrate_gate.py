@@ -155,10 +155,37 @@ def verify(cid, target=None, quiet=False, sums=None, blog=None):
     repro = (rec or {}).get("reproducible", "").strip().lower()
     until = (rec or {}).get("until", "").strip()
     if repro == "yes":
+        sc = (rec or {}).get("source_commit", "").strip()
+        if sc in ("", "unknown", "-"):
+            print("FAIL code %-4s 声明 reproducible=yes 却没写 source_commit —— "
+                  "没有提交号的【可复现】等于没有证据，不接受" % cid)
+            return 1, False
+        # 光"写了个提交号"不算：随手编一个字符串就能声称可复现。必须能在仓库里解析出来。
+        # （这条是反向验证时我自己问出来的：当时填 deadbeef 被放行了。）
+        v = subprocess.run(["git", "-C", REPO, "rev-parse", "--verify", "--quiet",
+                            sc + "^{commit}"], capture_output=True, timeout=30)
+        if v.returncode != 0:
+            print("FAIL code %-4s 声明 reproducible=yes，但 source_commit=%r 在仓库里"
+                  "不是有效提交（不能拿编造的提交号声称可复现）" % (cid, sc))
+            return 1, False
         print("OK   code %-4s 校验和 %s… 产物 %s，构建记录：源码 %s / 工具链 %s"
-              % (cid, chk[:16], src, (rec or {}).get("source_commit", "?"),
-                 (rec or {}).get("toolchain", "?")))
+              % (cid, chk[:16], src, sc[:12], (rec or {}).get("toolchain", "?")))
         return 0, False
+    # LD-GATE-FUTURE-CODE-20261016：历史 code（<=LEGACY_MAX）已经既成事实，给"带解除日期的
+    # 跟踪例外"；但比它新的每一次上传都必须是可复现的——否则"先编后补源码"这个老毛病
+    # 会带着 6 周宽限期一直续下去。阈值可用 LD_LEGACY_MAX_CODE 覆盖（反向验证要用）。
+    legacy_max = int(os.environ.get("LD_LEGACY_MAX_CODE", "20"))
+    try:
+        is_future = int(cid) > legacy_max
+    except (TypeError, ValueError):
+        is_future = True          # 认不出编号就按新上传处理，不给宽限期
+    if is_future:
+        print("FAIL code %-4s 是新上传的 code（>%d），必须可复现：BUILDLOG 里 "
+              "reproducible 要为 yes 且写明 source_commit 与 toolchain。"
+              "做法：先跑 GitHub Actions 的 wasm-repro 工作流拿 sha256，"
+              "把产物+台账一起提交，再 store，核对链上校验和一致后才提 migrate"
+              % (cid, legacy_max))
+        return 1, False
     # 有字节码但没构建记录 = 只能核对"是不是这一份"，不能证明"能从源码编出来"
     if until and datetime.date.today() <= datetime.date.fromisoformat(until):
         print("WARN code %-4s 校验和 %s… 已登记产物 %s，但【无构建记录、不可复现】"

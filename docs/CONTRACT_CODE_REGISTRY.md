@@ -120,6 +120,27 @@ CosmWasm 的 `store code` 只要把字节码丢上链就会拿到一个 `code_id
 4. **孤儿 code 6 个**（2、3、11、14、15、18）：链上没人用但永久占着状态。清理需要治理
    决定（本链无 `forget_code` 类操作），暂不处理，只登记。
 
+### 10-16 追加的两条硬约束（已进门禁，不再只是文档）
+
+1. **比 code 20 更新的每一次上传都必须可复现**：`ld_migrate_gate.py` 现在按
+   `LD_LEGACY_MAX_CODE`（默认 20）划线——历史 code 1-20 继续吃"带解除日期的跟踪例外"，
+   但 code 21 及以后若在 `BUILDLOG.tsv` 里没有 `reproducible=yes` + 真实 `source_commit`，
+   门禁直接硬失败（不再给 6 周宽限期）。否则"先编译后补源码"这个老毛病会一直续期。
+2. **`reproducible=yes` 必须配一个仓库里真实存在的提交号**：门禁会跑
+   `git rev-parse --verify <sha>^{commit}` 校验。这条是反向验证时问出来的——
+   当时我在台账里随手填了 `deadbeef` 当提交号，门禁竟然放行了；
+   只"写个字段"不校验，等于给假声明开了门。
+
+反向验证（四档，全部按预期，root 跑）：
+
+| 场景 | 期望 | 实测 |
+|---|---|---|
+| 历史阈值压到 10（19/20 变成"新上传"） | 跟踪例外升级为硬失败、rc=1、写告警 | rc=1，告警日志 +1 行 |
+| `reproducible=yes` + `source_commit=unknown` | FAIL | rc=1 |
+| `reproducible=yes` + `source_commit=deadbeef`（编造） | FAIL | rc=1，点名"不是有效提交" |
+| `reproducible=yes` + 真实 HEAD 提交号 | OK | rc=0 |
+| 全部复位后 | 回到 2 条跟踪例外、rc=0 | rc=0 |
+
 ## 以后新增/迁移合约的硬流程
 
 1. 在**有工具链的机器**上按 `contracts/scripts/build_normalize.sh` 构建；
