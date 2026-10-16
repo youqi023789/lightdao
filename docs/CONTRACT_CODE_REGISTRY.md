@@ -65,13 +65,22 @@ CosmWasm 的 `store code` 只要把字节码丢上链就会拿到一个 `code_id
 
 ## 还没解决的部分（诚实记录）
 
-1. **不可复现**：所有 20 个 code 的 `reproducible=no`。构建配方在
-   `contracts/scripts/build_normalize.sh`（rustc 1.85 + `wasm-opt --mvp-features -O3`），
-   但它要求的源码树 `/home/ubuntu/lightdao-chain` 与工具链目录在网关上都不存在，
-   网关也没有 `cargo`/`rustup`——构建是在另一台机器上做的，那台机器上的源码快照
-   和依赖版本已经取不回来。仓库里也没有 `Cargo.lock`（`Cargo.toml` 写 `cosmwasm-std = "2.1.3"`，
-   而二进制里嵌的是 `cosmwasm-std-2.3.6`），所以第三方无法从源码重跑出同样的 sha256。
-   现在能做到的只是"字节码本身可核对、可与源码逐字符串比对"，做不到"逐字节复现"。
+1. **不可复现——已用 CI 实测坐实（不再是推断）**：2026-10-16 起仓库带一条
+   `.github/workflows/wasm-repro.yml`，用当年同一套配方（rustc 1.85.0 +
+   `wasm32-unknown-unknown` + `wasm-opt --mvp-features -O3`）在 GitHub 托管 runner 上
+   重新构建全部合约，再由 `infra/ci_wasm_compare.py` 与"链上归档字节码"逐字节比对。
+   第一次实测结果：**比对 20 项，一致 0、不一致 18、未产出 2**（未产出的两项就是下面第 2 条
+   说的 code 16/17 没有源码 crate）。也就是说包括正在投票的 #17 目标 code 19/20 在内，
+   **链上跑的每一份合约代码目前都无法从仓库源码重跑出同样的 sha256**。
+   结论可公开复核：`curl -s https://api.github.com/repos/youqi023789/lightdao/actions/runs?per_page=1`
+   取最新 run，再读它的 `/jobs` 与 `/check-runs/{job_id}/annotations`（公开仓库无需凭据）。
+   为什么这样也还是不一致：仓库没有 `Cargo.lock`（`Cargo.toml` 写 `cosmwasm-std = "2.1.3"`，
+   而链上二进制里嵌的是 `cosmwasm-std-2.3.6`），且当年那台构建机的 rustc/wasm-opt 小版本
+   与主机路径已随退订无法追回。CI 每次会把本次生成的 `Cargo.lock` 作为构件保留 30 天。
+   **下一步口径**：以后任何新 store 之前先跑这条 workflow，把它产出的 sha256 写进
+   `SHA256SUMS` 与 `BUILDLOG.tsv`（`reproducible=yes` + `source_commit` + `toolchain`），
+   再核对链上校验和一致才提 migrate；比对脚本对"声称 yes 却复现不出"直接判红。
+
 2. **code 16 / 17 的源码归属**：仓库里没有 `vesting-v2` 与 `ecosystem_fund` 两个 crate，
    它们与 `vesting` crate 只命中 1/3 长句。这两个合约 admin 为空＝永久不可改，
    其中 17 号是生态基金（管钱）。需要补出对应的源码目录，或把"它由 vesting 源码加什么

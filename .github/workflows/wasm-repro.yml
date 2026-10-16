@@ -49,6 +49,18 @@ jobs:
       - name: 与仓库里归档的链上产物逐字节比对（结论写进 annotations 与 summary）
         run: python3 infra/ci_wasm_compare.py
 
+      - name: 报出依赖解析版本（用来区分差异来自依赖还是工具链）
+        if: always()
+        run: |
+          set -euo pipefail
+          if [ -f contracts/Cargo.lock ]; then
+            V=$(grep -A1 '^name = "cosmwasm-std"$' contracts/Cargo.lock | grep '^version' | head -1 | cut -d'"' -f2)
+            L=$(sha256sum contracts/Cargo.lock | cut -c1-16)
+            echo "::notice title=依赖解析::cosmwasm-std=$V；Cargo.lock sha256 前16=$L（链上二进制里嵌的是 2.3.6）"
+          else
+            echo "::warning title=依赖解析::本次没生成 contracts/Cargo.lock，说明构建没真正跑起来"
+          fi
+
       - name: 保留本次构建产物与依赖锁定，供人工核对
         if: always()
         uses: actions/upload-artifact@v4
