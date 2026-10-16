@@ -1,6 +1,6 @@
-# 收紧评分网关监听地址（8080 明文口）——待批准，未执行
+# 收紧评分网关监听地址（8080 明文口）——已于 2026-10-16 11:07 UTC 执行
 
-日期：2026-10-16　提出：自动巡检　状态：**只测量完，没动生产**
+日期：2026-10-16　提出：自动巡检　状态：**已执行并外部复核**（合并了管理员口令轮换）
 
 ## 现状与证据（全部实测，非推断）
 
@@ -47,3 +47,25 @@ ThreadingHTTPServer((os.environ.get("GW_BIND", "127.0.0.1"), PORT), H).serve_for
 处置建议：按轮换处理——生成新口令、写入 systemd 覆盖片段、同步改调用方（每日 finalize 的脚本/定时任务），
 并复核 `X-Admin` 的比对方式（当前是明文相等比较，建议改成 `hmac.compare_digest` 防时序侧信道）。
 轮换同样需要重启网关，因此与上面的收紧动作合并成一次变更更省。
+
+
+## 执行记录（2026-10-16 11:07 UTC，与口令轮换合并为一次变更）
+
+执行脚本 `infra/gw_harden.sh`（每步失败自动还原备份并重启回旧状态）。
+
+| 项 | 结果 |
+|---|---|
+| 监听地址 | `ss -ltn` 显示 `127.0.0.1:8080`，`0.0.0.0:8080` 计数 0 |
+| 外部复核 | 从公网 `curl http://lightdao.net:8080/v1/health` → 连不上（HTTP 000）；`https://lightdao.net/gw/v1/health` → 200 |
+| 口令轮换 | 新口令由 `openssl rand -hex 32` 生成，只落在 `/etc/lightdao/gw_admin.env`（root:ubuntu 640）；systemd 单元改用 `EnvironmentFile`，`systemctl cat` 里已无 `GW_ADMIN_SECRET=`（计数 0） |
+| 重复口令文件 | `/home/ubuntu/lightdao_gateway/admin_secret`（原本 ubuntu:ubuntu **664，同机任意进程可读**）已退役进 `/root/gw_hardening_*`（700） |
+| 常量时间比对 | `X-Admin` 改 `hmac.compare_digest` |
+| 结算链路 | 新口令调 `/v1/finalize` 返回 `{"already": true, "day": 34, "root": "48730c36…"}`；错口令返回 403；`ld_finalize.sh` 实跑同样拿到该 JSON |
+| 矿工影响 | `/gw/v1/heartbeat` 每分钟请求数在重启前后稳定在 6-10 次（10:52-11:08），没有断流 |
+
+过程中的两次自我纠错（都是量具/补丁自身的问题，不是生产问题）：
+
+1. 第一版补丁把行尾注释插在 `.serve_forever()` **之前**，等于把"开始服务"注释掉了——进程建好对象就正常退出（退出码 0、无 traceback）。验收里的 `is-active` 探测撞上 systemd `RestartSec=5` 的空档先触发了回滚，才没让坏版本留在生产上；随后查日志确认了真实原因，并把补丁改成整行替换 + 加"serve_forever 不能被注释吞掉"的自检。
+2. 第二版验收里 `X-Admin: 明显错误的口令` 用了中文，curl 直接拒发请求返回 `000`，被误判成"网关没拒绝错口令"；结算脚本的验收又取了日志里的 echo 行而不是 JSON 响应行。两处都是判据写错，修正后全绿。
+
+结论：口令轮换 + 端口收紧 + 常量时间比对已生效；旧单元/旧脚本/旧口令备份在 `/root/gw_hardening_20261016T110743Z`（700），确认稳定后可删。
