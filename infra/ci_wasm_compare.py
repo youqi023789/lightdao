@@ -54,7 +54,10 @@ def main():
     lines.append("|---|---|---|---|---|")
     hard_fail = 0
     n_match = n_diff = n_missing = 0
-    for r in rows:
+    # 从新到旧：annotation 有 10 条上限，最新迁移的 code（提案正在用的那些）必须优先被看见
+    rows_sorted = sorted(rows, key=lambda r: -(int(r.get("code_id") or 0)
+                                               if (r.get("code_id") or "").isdigit() else 0))
+    for r in rows_sorted:
         cid = (r.get("code_id") or "").strip()
         art = (r.get("artifact") or "").strip()
         if not cid or not art or not os.path.exists(art):
@@ -93,6 +96,10 @@ def main():
               "读法：`不一致` 意味着第三方只能核对【链上跑的是这一份字节码】，"
               "无法从仓库源码重跑出同样的 sha256 —— 依赖未锁定（仓库无 Cargo.lock，"
               "本次 CI 生成的已作为构件上传）、工具链版本与当年构建机不一致都会导致字节差异。"]
+    # GitHub 每个 check run 只保留 10 条 annotation：先报一条总判定（保证机器一定读得到结论），
+    # 明细按 code 从新到旧排（最新迁移的那几个最该被看见），否则会被静默截断。
+    print("::notice title=可复现性总判定::比对 %d 项：一致 %d、不一致 %d、未产出 %d"
+          % (n_match + n_diff + n_missing, n_match, n_diff, n_missing))
     summary = os.environ.get("GITHUB_STEP_SUMMARY")
     if summary:
         with io.open(summary, "a", encoding="utf-8") as f:
