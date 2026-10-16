@@ -33,6 +33,8 @@ CHROME = next((c for c in ["/usr/bin/google-chrome", "/usr/bin/google-chrome-sta
                            "/usr/bin/chromium-browser"] if os.path.exists(c)), None)
 BAD_TOKENS = ["[object Object]", "undefined is not", "NaN%", "Infinity LIGHT"]
 PLACEHOLDER = ["{{", "TODO:", "FIXME", "占位待填"]
+# 快照日期形态：完整 YYYY-MM-DD 或简写 10-14（后面不能紧跟冒号，避免误吃时间）
+DATE_RE = re.compile(r"20\d{2}-\d{2}-\d{2}|\d{1,2}-\d{2}(?![\d:])")
 # 允许停在占位的页面（本来就没有异步取数）
 RENDER_STALL_OK = ("/privacy.html", "/terms.html", "/blog.html", "/quiz.html",
                    "/search.html", "/audit_logic.html",
@@ -151,6 +153,15 @@ def probe_page(path, do_render=True, fsig=None):
     for tok in PLACEHOLDER:
         if tok in html:
             rec["flags"].append("模板占位 %s" % tok)
+    # LD-STATIC-BALANCE-DATE-20261016：静态 HTML 里"带两位小数的余额格"必须标快照日期。
+    # 起因：funds.html 有一张 10-14 手工快照表，金库那行一直停在 1,242,000,092.38
+    # （4 亿 10-15 已转出，实际 842,000,094.14），生态基金行还写着 0（实际 4 亿）。
+    # 同一事实有两份表达时，静态那份必然冒充现状——所以要么实时渲染，要么写明日期。
+    for m in re.finditer(r'<td class="num">([^<]*\d+\.\d\d[^<]*)</td>', html):
+        ctx = html[max(0, m.start() - 300):m.end() + 80]
+        if not DATE_RE.search(ctx):
+            rec["flags"].append("静态余额数字未标快照日期: %s"
+                                % re.sub(r"<[^>]+>", " ", m.group(0)).strip()[:44])
     if do_render:
         h, err = render(path)
         if h is None:
@@ -237,7 +248,10 @@ def main():
             prev = json.load(open(STATE))
         except Exception:
             pass
-    sig = json.dumps([r["page"] for r in bad], sort_keys=True)
+    # 签名必须含"问题内容"，只按页面名算的话：同一页从"文件不存在"变成"余额没标日期"
+    # 会被当成同一状态、不再重复告警（反向验证时暴露出来的）。
+    sig = json.dumps([[r["page"], sorted(r["flags"] + r["bad_assets"])] for r in bad],
+                     sort_keys=True, ensure_ascii=False)
     if bad:
         n = int(prev.get("fail", 0)) + 1 if prev.get("sig") == sig else 1
         json.dump({"fail": n, "sig": sig, "msg": bad[0]["page"], "ts": int(time.time())},

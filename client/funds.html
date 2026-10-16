@@ -56,22 +56,22 @@ h2 .en{display:inline;margin-left:8px;font-size:14px}
 <tr><th>项目</th><th>链上实测</th><th>白皮书</th></tr>
 <tr><td>LIGHT 总供应（CW20 token_info）</td><td class="num"><b class="big">2,500,000,000</b> LIGHT</td><td>25 亿，永不增发 ✓</td></tr>
 <tr><td>合约层已销毁字段</td><td class="num">0 LIGHT</td><td>销毁走原生 bank，不计入 CW20 burned 字段</td></tr>
-<tr><td>死地址累计接收（真实销毁）</td><td class="num">230.96 LIGHT</td><td>见第 4 节通缩进度</td></tr>
+<tr><td>死地址累计接收（真实销毁）</td><td class="num">230.96 LIGHT（截至 2026-10-14 快照，此后每日增长）</td><td>见第 4 节通缩进度</td></tr>
 <tr><td>遗留 <code>stake</code> 面额存量</td><td class="num">2,559,559,805,368</td><td>genesis 误配，已停止增发；处置待治理提案（附录 C）</td></tr>
 </table>
 <span class="en">The CW20 burned field reads zero because burns happen at the native bank layer — we show both so nobody reads the wrong one as "nothing was burned".</span>
 </div>
 
 <div class="card">
-<h2>2. 四大资金池的链上余额 <span class="st part">快照 2026-10-14</span> <span class="en">Where the tokens actually sit</span></h2>
-<p class="note">⚠ 本表是 10-14 的手工快照。<b>第 2 行"投资金库＋生态基金 1,242,000,092.38"已不成立</b>：4 亿已于 10-15 转入独立的生态基金合约，金库多签当前实收余额见第 0 节。<span class="en">This table is a 10-14 snapshot; the treasury row is stale — see section 0 for live values.</span></p>
+<h2>2. 四大资金池 <span class="st live">余额实时</span> <span class="en">Where the tokens actually sit</span></h2>
+<p class="note">本节<b>不再放手工快照余额</b>。以前这里有一张 2026-10-14 的静态表，与下方实时表构成<b>同一事实的两份表达</b>，结果静态那份一直停在错误数字：金库多签写着 <code>1,242,000,092.38</code>（4 亿已于 10-15 转出，实测 <code>842,000,094.14</code>），生态基金合约写着 <code>0</code>（实测 <code>400,000,000.00</code>）。现在余额只在下方的实时表出现一次，取不到数会明确显示取数失败，不会拿旧数字冒充现状。 <span class="en">Stale hand-made snapshot removed; balances are rendered live from the chain only once.</span></p>
 <table>
-<tr><th>资金池</th><th>链上余额（LIGHT）</th><th>白皮书额度</th><th>已动用</th></tr>
-<tr><td>挖矿奖励池 <a href="/contracts.html">mining_reward</a></td><td class="num">990,394,202.64</td><td>1,000,000,000（40%）</td><td class="num">9,605,797.36（0.96%）</td></tr>
-<tr><td>投资金库 + 生态基金 <a href="/contracts.html">treasury_multisig</a></td><td class="num">1,242,000,092.38</td><td>850,000,000 + 400,000,000 = 1,250,000,000</td><td class="num">≈7,999,907.62（0.64%）</td></tr>
-<tr><td>战略运营基金 <a href="/contracts.html">vesting</a> + <a href="/contracts.html">vesting-v2</a></td><td class="num">175,000,000 + 75,000,000 = 250,000,000</td><td>250,000,000（10%）</td><td class="num">0（尚未释放）</td></tr>
-<tr><td>保险基金 <a href="/contracts.html">insurance_fund</a></td><td class="num">0</td><td>利润 10% 计提</td><td class="num">尚无利润可计提</td></tr>
-<tr><td>生态基金合约 <a href="/contracts.html">ecosystem-fund</a></td><td class="num">0</td><td>400,000,000 的释放载体</td><td class="num">资金仍在金库多签内</td></tr>
+<tr><th>资金池</th><th>白皮书额度</th><th>说明</th></tr>
+<tr><td>挖矿奖励池 <a href="/contracts.html">mining_reward</a></td><td>1,000,000,000（40%）</td><td>每日按贡献分账，验证者份额 5% 已启用</td></tr>
+<tr><td>投资金库 <a href="/contracts.html">treasury_multisig</a></td><td>850,000,000（34%）</td><td>3/5 多签 + 72 小时时间锁；余额见下方实时表</td></tr>
+<tr><td>生态基金 <a href="/contracts.html">ecosystem_fund</a></td><td>400,000,000（16%）</td><td>10-15 起为独立合约持有，TGE 释放 30% 立即可用</td></tr>
+<tr><td>战略运营基金 <a href="/contracts.html">vesting</a> + <a href="/contracts.html">vesting-v2</a></td><td>250,000,000（10%）</td><td>服务换代币 1.25 亿 / 战略融资 7500 万 / 核心贡献者 5000 万，均 12 个月 cliff</td></tr>
+<tr><td>保险基金 <a href="/contracts.html">insurance_fund</a></td><td>利润 10% 计提</td><td>尚无利润可计提</td></tr>
 </table>
 <p class="note"><b>需要说明的一处对账疑点（不藏）：</b>白皮书把投资金库（8.5 亿）与生态基金（4 亿）分列，但链上只有一个 <code>treasury_multisig</code> 地址持有 12.42 亿，与两者之和 12.5 亿相差约 800 万。差额可能来自已发生的销毁与支出，也可能是两个池子共用一个多签地址。<b>金库多签的内部账本现已可读</b>（本页第 0 节实时列出全部动账提案；提案记录字段为 id/recipient/amount/approvals/queued_at/executed）。据此可确认：10-15 之前这 12.42 亿确实同时充当投资金库与生态基金两个池子；10-15 08:05 北京时，4 亿通过 1 号提案转入独立的 ecosystem_fund 合约，剩余部分留在多签内。与白皮书 12.5 亿之间约 800 万的差额，账本中只有 1 笔提案，说明其余差额不是提案支出造成的，更可能来自创世分配口径与手续费/销毁，<b>仍在审计清单上，本页不下结论</b>——这条差异本身已记入待审计清单（GAP_LEDGER_WP）。</p>
 <span class="en">One honest caveat: the treasury holds 1.242B against a documented 1.25B combined allocation. We flag the ~8M gap rather than explaining it away; the precise split requires reading the multisig's internal ledger and is on the audit list.</span>
