@@ -55,7 +55,7 @@ async function refreshBal(){
 }
 async function refreshProps(){
   try{
-    /* LD-GOV-STATE-CLASSIFY-20261016 active_proposals 会连同"已作废/已过期"的提案一起返回（链上实测
+    /* LD-GOV-STATE-CLASSIFY-20261016 active_proposals 会连同"${GOVL.voided}"的提案一起返回（链上实测
        proposal_state: voided=true, expired=true），旧代码把它们一律显示成"进行中"，
        还给了可点击的投票/执行按钮。这里逐个查状态后分组显示：不隐藏任何提案，
        只如实标注，并禁用已结束提案的按钮。 */
@@ -81,8 +81,8 @@ async function refreshProps(){
       d.innerHTML=`<h3>#${p.id} ${esc(p.title)} <span class="mut">[${p.ptype}]</span>${off?' <span class="err">已作废/已过期</span>':(ended?' <span class="err">已结束</span>':"")}</h3>
         <div class="mut" class="fs12">${esc(p.description).slice(0,120)}</div>
         <div class="bar"><i class="y" data-w="${yp}"></i><i class="n" data-w="${np}"></i><i class="a" data-w="${ap}"></i></div>
-        <div class="mut" class="fs11">赞成 ${yp}%(${p.yes_addrs}人) · 反对 ${np}%(${p.no_addrs}人) · 弃权 ${ap}% · ${endLeft>0?endLeft+"h 后截止":"已截止"} ${p.executed?'· <span class="ok">已执行</span>':''}</div>
-        <button class="btn sm" data-v="yes" data-id="${p.id}"${dis}>赞成</button><button class="btn ghost sm" data-v="no" data-id="${p.id}"${dis}>反对</button><button class="btn ghost sm" data-v="abstain" data-id="${p.id}"${dis}>弃权</button><button class="btn ghost sm" data-e="1" data-id="${p.id}"${dis}>执行</button>`;
+        <div class="mut" class="fs11">${govTally(yp, np, ap, p.yes_addrs, p.no_addrs, endLeft > 0 ? endLeft + GOVL.dueIn : GOVL.closed)}</div>
+        <button class="btn sm" data-v="yes" data-id="${p.id}"${dis}>${GOVL.yes}</button><button class="btn ghost sm" data-v="no" data-id="${p.id}"${dis}>${GOVL.no}</button><button class="btn ghost sm" data-v="abstain" data-id="${p.id}"${dis}>${GOVL.abstain}</button><button class="btn ghost sm" data-e="1" data-id="${p.id}"${dis}>${GOVL.exec}</button>`;
       if(off){ d.style.opacity=".55"; }
       el.appendChild(d);
     }
@@ -90,7 +90,7 @@ async function refreshProps(){
     ps.forEach(p=>renderCard(p,false));
     if(dead.length){
       const tip=document.createElement("p"); tip.className="mut"; tip.style.marginTop="10px";
-      tip.textContent="以下 "+dead.length+" 个提案已作废或已过期，不计入进行中，也不可再操作：";
+      tip.textContent = GOVL.tip(dead.length);
       el.appendChild(tip);
       dead.forEach(x=>renderCard(x.p,true));
     }
@@ -98,7 +98,48 @@ async function refreshProps(){
     el.querySelectorAll("[data-e]").forEach(b=>b.onclick=()=>exec(b.dataset.id));
   }catch(e){$("props").innerHTML='<span class="err">加载失败 '+e.message+'</span>';}
 }
-function esc(s){return String(s||"").replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));}
+/* LD-GOV-L10N-20261017 运行时文案标签表：这些句子是 JS 拼出来的（票数/百分比/剩余小时每次都变），
+     词典按整句精确匹配命中不了，只能在这里本地化。语种只认真正有译值的
+     zh/es/pt/id/vi，其余英文兜底（与站内 ?lang 兜底策略一致）。 */
+  var GOVL = (function () {
+    var l = "";
+    try { l = (new URLSearchParams(location.search).get("lang") || "").toLowerCase(); } catch (e) { }
+    if (!l) { try { l = (localStorage.getItem("ld_lang") || "").toLowerCase(); } catch (e) { l = ""; } }
+    if (!l) { l = (document.documentElement.lang || "").toLowerCase(); }
+    if (!l) { l = String(navigator.language || "").toLowerCase(); }
+    l = l.slice(0, 2);
+    var M = {
+      zh: { yes: "赞成", no: "反对", abstain: "弃权", exec: "执行", unit: "人",
+            dueIn: "h 后截止", closed: "已截止", voided: "已作废/已过期",
+            tip: function (n) { return "以下 " + n + " 个提案已作废或已过期，不计入进行中，也不可再操作："; } },
+      es: { yes: "A favor", no: "En contra", abstain: "Abstención", exec: "Ejecutar", unit: "dir.",
+            dueIn: " h para cerrar", closed: "Cerrado", voided: "Anulada/vencida",
+            tip: function (n) { return n + " propuestas anuladas o vencidas: no cuentan como activas ni admiten acciones."; } },
+      pt: { yes: "A favor", no: "Contra", abstain: "Abstenção", exec: "Executar", unit: "pess.",
+            dueIn: " h para encerrar", closed: "Encerrado", voided: "Anulada/vencida",
+            tip: function (n) { return n + " propostas anuladas ou vencidas: não contam como ativas nem aceitam ações."; } },
+      id: { yes: "Setuju", no: "Tolak", abstain: "Abstain", exec: "Jalankan", unit: "orang",
+            dueIn: " jam lagi", closed: "Ditutup", voided: "Batal/kedaluwarsa",
+            tip: function (n) { return n + " usulan dibatalkan/kedaluwarsa: tidak dihitung aktif, tidak bisa dijalankan."; } },
+      vi: { yes: "Đồng ý", no: "Phản đối", abstain: "Bỏ phiếu trắng", exec: "Thực thi", unit: "người",
+            dueIn: " giờ nữa", closed: "Đã đóng", voided: "Hủy/hết hạn",
+            tip: function (n) { return n + " đề xuất đã hủy/hết hạn: không tính là đang mở, không thao tác được."; } },
+      en: { yes: "Yes", no: "No", abstain: "Abstain", exec: "Execute", unit: "voters",
+            dueIn: "h left", closed: "Closed", voided: "Voided/expired",
+            tip: function (n) { return n + " proposals voided or expired — not counted as active, actions disabled."; } },
+    };
+    var t = M[l] || M.en;
+    t._lang = (M[l] ? l : "en");
+    return t;
+  })();
+  function govTally(yp, np, ap, ya, na, tail) {
+    if (GOVL._lang === "zh") {
+      return "赞成 " + yp + "%(" + ya + "人) · 反对 " + np + "%(" + na + "人) · 弃权 " + ap + "% · " + tail;
+    }
+    return GOVL.yes + " " + yp + "% (" + ya + " " + GOVL.unit + ") · " + GOVL.no + " " + np
+      + "% (" + na + ") · " + GOVL.abstain + " " + ap + "% · " + tail;
+  }
+  function esc(s){return String(s||"").replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));}
 async function vote(id,opt){
   if(!client){log("先连接钱包","err");return;}
   try{ const sb=await (client||ro).queryContractSmart(GOV,{staked_balance:{address:addr}});
