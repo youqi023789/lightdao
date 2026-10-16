@@ -34,7 +34,7 @@
 | 27 | 可领取=链上真相 | (UX/真相) | ✅ | tx_search 排除已领 1.1.6 | qa_truth | 信标 | e2e | — |
 | 28 | 显示==真相(徽章/状态) | (UX/真相) | ✅ | JS 驱动+truth-probe | qa_truth+monitor | 每小时 | e2e | — |
 | 29 | 结算 SLA(定稿≤边界+2h) | (运维) | ⚠️ | cron UTC+ld_day | monitor SLA | Discord/ld_alerts | — | cron 已重启生效;SLA 公式已修 |
-| 30 | 密钥托管安全 | (安全) | ❌ | keyring test 明文 | 文件完整性(待加) | 待加 | runbook 演练过 | S1:10-06 窗口;含 strat2/3/signer1-5 |
+| 30 | 密钥托管安全 | (安全) | 🟡 | 金库 5 把签名钥 10-16 已从网关摘除（全盘明文=0），唯一备份=所有者持有密文+分离口令；deployer/operator 等运维钥匙仍在网关 test 钥匙环（明文等价） | `ld_treasury_keywatch.sh`（每小时 4 条不变量，植入明文文件反向验证会报） | ld_alerts.log | 已加（仅覆盖金库签名钥） | 缺口：运维钥匙未覆盖；5 把备份只有单份+单口令，需分发到独立主机/硬件（排期见 docs/TREASURY_KEY_OPERATIONS.md 的下一步） |
 | 31 | 传输/响应安全头 | (安全) | ✅ | nginx snippet CSP/HSTS/XFO | 头复验+月审 | — | — | 09-29 恢复 |
 | 32 | 供应链(SRI/固定版本) | (安全) | ✅ | vendor+SRI 152 | sri_verify 每日 | Discord ⚠️ | — | jsdelivr 回退无签名(F7)→移除/自托管排期 |
 | 33 | 隐私(指纹/IP 留存) | (合规) | ⚠️ | 网关存储 | — | — | — | 留存期+删除路径(S6)10月 |

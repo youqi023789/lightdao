@@ -90,6 +90,48 @@ wasmd q bank balances wasm1j0rhxwwcys2rewlvssylwrf24ghyvxhhzjr47nsx8q8mechp3x0qz
 导致"加密备份"实际可被同机直接读取。已新增不变量检测 `ld_treasury_keywatch.sh`（每小时，双向验证过）。
 资金无变动：金库 842,000,093.16 LIGHT / 生态基金 400,000,000.00 LIGHT。详见 docs/TREASURY_KEY_OPERATIONS.md。
 
+## 2026-10-11 vesting v2 资金重锁：75M LIGHT（本次补记，此前只存在于调度任务记录里）
+
+**为什么现在才记**：这笔钱在 10-11 就动过，但台账里没有条目——只在 QwenWork 的一次性
+定时任务（`a6feffd3` vesting v2 instantiate+资金迁移，10-11 17:00Z 执行，状态 ok）里留了
+过程记录。按本项目纪律"任何资金归属变动必须写进本台账，不得做了没人知道"，这是一条欠账，
+今天回头查旧任务时才发现。
+
+### 链上事实（2026-10-16 实测，非记忆）
+
+| 项 | 值 |
+|---|---|
+| 新 vesting v2 合约 | `wasm1njjtphj6pkvvcrlu4mzf7qy3clhkl7lysu0v2xsdau6dwj4u2r6qvpvwl6`（label `vesting-v2-wp54`，code 16，**admin 为空＝永久不可迁移**，owner＝治理合约） |
+| 新合约余额 | **75,000,000.00 LIGHT** |
+| 三条解锁计划 | services 125M / strategic 75M / contributor 50M，均 `cliff_secs=31536000`（12 个月）+ 线性期，`start=1791738037`（2026-10-11 17:00:37 UTC），`claimed=0` |
+| 旧 vesting 合约 | `wasm16l8mdmawaq4538ajr89dpfxh7cyll584yw7jqnhgmp5clwp6m8fqtwkz4x`（code 9），余额 **175,000,000.00 LIGHT**（strat2 100M cliff 至 2027-09、strat3 75M cliff 至 2028-09） |
+| 守恒核对 | 75M + 175M = 250M，与迁移前旧库总额一致，无遗漏 |
+| 经手钥匙 | `deployer` = `wasm13c2cjh3fhkesj47tsc5a0vm6pdds39qpcmykhj`（claim 与转账都由它签） |
+| deployer 当前余额 | 499,421.32 LIGHT（运维手续费余量，**不再持有可立即领取的巨款**） |
+
+### 这次动作的实际安全含义
+
+10-01 记录的那条"活风险"是：deployer 名下有一份 `cliff=0`、随时可领的 75M，而 deployer
+私钥以 test 后端（明文等价）放在网关钥匙环里。10-11 把这笔钱 claim 出来**再存入带 12 个月
+cliff、owner=治理、无 admin 的新 vesting 合约**，等于把"钥匙一丢就能瞬间提走 75M"降级成
+"最多动走 deployer 手上约 50 万 LIGHT 的运维余额"。风险显著下降，但当时没有任何书面记录。
+
+### 复现命令（任何能连主网的人都能自查）
+
+```bash
+V2=wasm1njjtphj6pkvvcrlu4mzf7qy3clhkl7lysu0v2xsdau6dwj4u2r6qvpvwl6
+V1=wasm16l8mdmawaq4538ajr89dpfxh7cyll584yw7jqnhgmp5clwp6m8fqtwkz4x
+wasmd q bank balances $V2 --node tcp://127.0.0.1:26657 -o json   # 应为 75000000000000 ulight
+wasmd q bank balances $V1 --node tcp://127.0.0.1:26657 -o json   # 应为 175000000000000 ulight
+wasmd q wasm contract-state smart $V2 '{"all_schedules":{}}' --node tcp://127.0.0.1:26657 -o json
+wasmd q wasm contract $V2 --node tcp://127.0.0.1:26657 -o json   # code_id=16, admin 为空
+```
+
+### 待办（写进排期，不留口头）
+
+- 台账里可能还有类似"只存在于定时任务记录、没进台账"的资金动作。已把"资金类一次性任务
+  执行完必须回写台账"作为一条检查项加进每小时自走执行器与月度审计的清单。
+
 ## 2026-10-16 治理升级异常：提案 #14 / #15 目标代码不可审计
 
 链上事实（`wasmd q gov proposal 15` / `q wasm code-info`）：
