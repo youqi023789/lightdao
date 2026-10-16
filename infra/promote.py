@@ -92,7 +92,8 @@ def main():
              ("g3_weight", ["python3", "/usr/local/bin/g3_weight_check.py", STG]),
              ("g4_sw", ["python3", "/usr/local/bin/g4_sw_check.py", STG]),
              ("g7_fuzz", ["python3", "/usr/local/bin/g7_fuzz_check.py"]),
-             ("g9_day_atomic", ["python3", "/usr/local/bin/g9_day_atomic_check.py"])]
+             ("g9_day_atomic", ["python3", "/usr/local/bin/g9_day_atomic_check.py"]),
+             ("g11_scripts", ["python3", "/usr/local/bin/g11_script_lint.py", STG])]
     for name, cmd in gates:
         rc, out = run(cmd, env)
         last = [l for l in out.strip().splitlines() if l.strip()][-3:]

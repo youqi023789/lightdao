@@ -11,6 +11,8 @@ PORT=sys.argv[1] if len(sys.argv)>1 else "443"
 ORIGIN=("https://lightdao.net:"+PORT) if PORT!="443" else "https://lightdao.net"
 BASE=ORIGIN+"/app.html"
 R=[]
+DASH = "\u2014"  # LD-TRUTH-STATE-20261014: offline label
+
 def rec(n,ok,d=""):
     R.append((n,ok)); print(("PASS " if ok else "FAIL ")+n+(" | "+d if d else ""))
 def get(u):
@@ -48,6 +50,22 @@ def static_checks():
     ORI="https://127.0.0.1:"+PORT
     a1=g(ORI+"/js/app_1.js"); a2=g(ORI+"/js/app_2.js"); a3=g(ORI+"/js/app_3.js"); ah=g(ORI+"/app.html")
     rec("static status fetch cache-busted", ('/status.json?ts=' in a2 and 'no-store' in a2))
+    # LD-STATUS-SCAN-20261014: the cache-bust invariant must hold for every served script, not just
+    # app_2 -- index_2.js used to fetch a bare /status.json which the service worker answered
+    # cache-first, so the landing page displayed a stale health state as if it were live.
+    import glob as _glob, io as _io, os as _os, re as _re
+    _root = _os.environ.get("LD_WEB_ROOT", "/var/www/lightdao")
+    _bare = []
+    for _jp in sorted(_glob.glob(_os.path.join(_root, "js", "*.js"))):
+        _txt = _io.open(_jp, encoding="utf-8", errors="replace").read()
+        # LD-SCAN-STRIP-FIXED-20261014: drop /* */ prose (a comment may quote the bad call). Line comments are left
+        # alone on purpose: stripping // would let an "https://" inside a string truncate the line
+        # and hide a real violation, which is the one failure mode this gate must never have.
+        _txt = _re.sub(r"/\*.*?\*/", "", _txt, flags=_re.S)
+        for _mm in _re.finditer(r'''fetch\(\s*["']/status\.json([^"']*)["']''', _txt):
+            if "?ts=" not in _mm.group(1):
+                _bare.append(_os.path.basename(_jp))
+    rec("static status fetch cache-busted (all js)", not _bare, "bare=" + (",".join(sorted(set(_bare)))[:80] or "none"))
     rec("static resume listeners", all(k in a2 for k in ("visibilitychange","pageshow","focus")))
     rec("static per-version self-heal sentinel", ("done!==String(j.v)" in a1))
     rec("static badge driven by LDBUILD", ('ld-build' in a1 and 'textContent=window.LDBUILD' in a1))
@@ -69,9 +87,13 @@ async def browser_checks():
         badge=await pg.ev("document.getElementById('ld-build')&&document.getElementById('ld-build').textContent")
         ldb=await pg.ev("window.LDBUILD")
         rec("S0 badge==LDBUILD", badge==ldb, f"{badge}/{ldb}")
-        st=await pg.ev("document.getElementById('sysStatusApp')&&document.getElementById('sysStatusApp').textContent")
-        stj=await pg.ev("(async()=>{try{const j=await fetch('/status.json?ts='+Date.now(),{cache:'no-store'}).then(r=>r.json());return j.ok?'正常':'异常';}catch(e){return '—';}})()",True)
-        rec("S0 status badge==status.json", st==stj, f"badge={st} status.json={stj}")
+        st=await pg.ev("(function(){var e=document.getElementById('sysStatusApp');return e?((e.getAttribute('data-st')||'NONE')+'|'+e.textContent):'MISSING'})()")
+        stj=await pg.ev("(async()=>{try{const j=await fetch('/status.json?ts='+Date.now(),{cache:'no-store'}).then(r=>r.json());return j.ok?'1':'0';}catch(e){return 'ERR';}})()",True)
+        # LD-TRUTH-STATE-20261014: compare the semantic state the page wrote (data-st), never a hardcoded word --
+        # a localized page legitimately shows "Normal" (the old string compare called that a lie) and a stale
+        # label used to pass. A raw untranslated key leaking into the UI also fails here.
+        lbl = st.split('|', 1)[1] if '|' in st else ''
+        rec("S0 status state==status.json (locale-proof)", st.split('|')[0] == stj and lbl not in ('', 'stOk', 'stBad'), f"shown={st} status.json.ok={stj}")
         bnd=await pg.ev("document.getElementById('dayBnd')&&document.getElementById('dayBnd').textContent")
         rec("S0 countdown present", bool(bnd) and "倒计时" in (bnd or ""), str(bnd)[:50])
         rec("S0 no exceptions", len(pg.errors)==0)
@@ -80,9 +102,16 @@ async def browser_checks():
         pg,tid=await new_page(ws)
         await pg.send("Page.navigate",{"url":BASE}); await asyncio.sleep(4)
         await pg.send("Network.emulateNetworkConditions",{"offline":True,"latency":0,"downloadThroughput":0,"uploadThroughput":0})
-        await asyncio.sleep(2)
-        stt=await pg.ev("document.getElementById('sysStatusApp')&&document.getElementById('sysStatusApp').textContent")
-        rec("S5 offline graceful", stt in ("—","正常","异常"), f"{stt}")
+        # LD-TRUTH-STATE-20261014: force the refetch, then wait for the real offline label. The old code slept 2s
+        # against a 60s timer and accepted the *pre-offline* word as a pass, so the degrade path was never run.
+        await pg.ev("window.dispatchEvent(new Event('focus'))")
+        stt = ''
+        for _ in range(16):
+            await asyncio.sleep(0.5)
+            stt = await pg.ev("(function(){var e=document.getElementById('sysStatusApp');return e?String(e.textContent):'MISSING'})()")
+            if stt == DASH:
+                break
+        rec("S5 offline graceful", stt == DASH, f"{stt}")
         await pg.send("Network.emulateNetworkConditions",{"offline":False,"latency":0,"downloadThroughput":10000000,"uploadThroughput":10000000})
         await pg.send("Target.closeTarget",{"targetId":tid})
         # S6 clock-skew +6h

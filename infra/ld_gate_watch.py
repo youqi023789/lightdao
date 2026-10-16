@@ -30,10 +30,25 @@ PATHS = {
     "g4_sw_check.py": "/usr/local/bin/g4_sw_check.py",
     "g7_fuzz_check.py": "/usr/local/bin/g7_fuzz_check.py",
     "g9_day_atomic_check.py": "/usr/local/bin/g9_day_atomic_check.py",
+    "g11_script_lint.py": "/usr/local/bin/g11_script_lint.py",
     "qa_site.py": "/home/ubuntu/qa_site.py",
     "qa_extra.py": "/home/ubuntu/qa_extra.py",
     "site_audit.py": "/home/ubuntu/site_audit.py",
     "qa_truth.py": "/home/ubuntu/qa_truth.py",
+    # LD-GATE-COVERAGE-20261016：这一批是"钱与共识"侧的门禁，之前完全没人盯它们本身。
+    # 2026-10-14 那次发现的正是同类问题（5 个发布门禁不在版本库），当时只补了发布侧。
+    # 事实核对：promote.py 与 qa_truth.py 的线上版本比仓库新（g11 挂进流水线、
+    # status 缓存失效不变量），也就是说一旦按仓库重建机器，这两处防护会静默消失。
+    "repo_leak_check.py": "/usr/local/bin/repo_leak_check.py",
+    "ld_migrate_gate.py": "/usr/local/bin/ld_migrate_gate.py",
+    "ld_cfg.sh": "/usr/local/bin/ld_cfg.sh",
+    "ld_chain_params.sh": "/usr/local/bin/ld_chain_params.sh",
+    "ld_treasury_keywatch.sh": "/usr/local/bin/ld_treasury_keywatch.sh",
+    "ld_gov_fail_watch.py": "/usr/local/bin/ld_gov_fail_watch.py",
+    # ld_code_audit.py 只在仓库里（一次性对账工具，没部署到主机），不进监控清单：
+    # 2026-10-16 同步时发现 PATHS 里有它会导致"MISSING"噪声。
+    # 看门狗自己也进清单：改它本身就会表现为哈希漂移（清单在仓库里，改仓库要走 commit）
+    "ld_gate_watch.py": "/usr/local/bin/ld_gate_watch.py",
 }
 
 
@@ -46,7 +61,10 @@ def sha(p):
 
 def main():
     try:
-        raw = urllib.request.urlopen(MANIFEST, timeout=25).read().decode()
+        if MANIFEST.startswith(("http://", "https://")):
+            raw = urllib.request.urlopen(MANIFEST, timeout=25).read().decode()
+        else:
+            raw = open(MANIFEST).read()
     except Exception as e:
         # 拉不到清单只连续失败多次才告警（避免网络抖动刷屏）
         n = 0

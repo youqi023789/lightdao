@@ -15,6 +15,11 @@ if [ "$(id -u)" != "0" ] && [ -z "${LD_CFG_ROOTED:-}" ]; then
   exec sudo -E "$0" "$@"
 fi
 B=/home/ubuntu/cfg_baseline.txt; S=/home/ubuntu/cfg_baseline.sha; ACK=/home/ubuntu/cfg_ack
+# LD-NOBASELINE-GUARD-20261015 基线缺失绝不能算"通过"
+if [ "${1:-}" = "check" ] && { [ ! -s "$B" ] || [ ! -s "$S" ]; }; then
+  echo "NO-BASELINE: 漂移门禁未生效（缺 $B 或 $S）——请先运行 $0 snap 重建基线"
+  exit 1
+fi
 gen() {
   { echo "--UBUNTUCRON--"; crontab -l -u ubuntu 2>/dev/null | grep -v "^CRON_TZ" | sort
     echo "--ROOTCRON--";   crontab -l -u root   2>/dev/null | grep -v "^CRON_TZ" | sort
