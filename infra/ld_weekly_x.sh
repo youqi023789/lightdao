@@ -6,7 +6,7 @@ DAY=$(curl -s http://127.0.0.1:8080/v1/health | python3 -c "import sys,json;prin
 MIN=$(curl -s "http://127.0.0.1:8080/v1/scores?day=$DAY" | python3 -c "import sys,json;print(len(json.load(sys.stdin).get('scores',{})))")
 BURN=$(wasmd q bank balances wasm1aeaty43lrlt9rmkyxujkkfuddnsfye6az4htcu --node tcp://127.0.0.1:26657 -o json 2>/dev/null | python3 -c "import sys,json;b=json.load(sys.stdin).get('balances');print(round(int(b[0]['amount'])/1e6,1) if b else 0)")
 TRE=$(wasmd q bank balances wasm192u2pm80ndmh608mmvhrzhje0sjaq0txr5md77lr70ucy0j3lfys8l633u --node tcp://127.0.0.1:26657 -o json 2>/dev/null | python3 -c "import sys,json;b=json.load(sys.stdin).get('balances');print(round(int(b[0]['amount'])/1e6,1) if b else 0)")
-VAL=$(wasmd q staking validators --node tcp://127.0.0.1:26657 -o json 2>/dev/null | python3 -c "import sys,json;v=json.load(sys.stdin)['validators'];print(sum(1 for x in v if x['status']=='BOND_STATUS_BONDED'), sum(1 for x in v if x['jailed']))")
+VAL=$(wasmd q staking validators --node tcp://127.0.0.1:26657 -o json 2>/dev/null | python3 -c "import sys,json;v=json.load(sys.stdin)['validators'];print(sum(1 for x in v if x['status']=='BOND_STATUS_BONDED'), sum(1 for x in v if x.get('jailed',False)))")
 W=$(python3 -c "import datetime;print(int(datetime.date.today().isocalendar()[1]))")
 cat > /home/ubuntu/weekly.json <<JSON
 [

@@ -7,7 +7,7 @@ import json, os, sys, urllib.request, subprocess
 SEEN = "/home/ubuntu/engage_seen.json"
 XENV = "/etc/lightdao/x_api.env"
 DENV = "/etc/lightdao/discord_bot.env"
-CHANS = {"general": "1553595031670095952", "mining-help": "1553595102004252712"}
+CHANS = {"general": "1547262760457470032", "mining-help": "1547263195473780796"}
 
 def load():
     try: return json.load(open(SEEN))

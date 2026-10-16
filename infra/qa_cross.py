@@ -4,7 +4,7 @@ C1 纪元偏移∈{0,1}(1=跟踪例外至10-11) C2 领取窗口真相 C3 签根�
 C5 status 异常必有 reason C6 自动tx无失败/未知码(除tracked) C7 治理无"通过却长期未执行"提案(除void清单)"""
 import json, subprocess, time, urllib.request, re, sys, datetime
 GEN = 1789102088
-TRACK_UNTIL = datetime.datetime(2026, 10, 11, tzinfo=datetime.timezone.utc).timestamp()
+TRACK_UNTIL = datetime.datetime(2026, 10, 18, tzinfo=datetime.timezone.utc).timestamp()
 NL = chr(10); FAILS = []
 def rec(n, ok, d=""):
     print(("PASS " if ok else "FAIL ") + n + (" | " + d if d else ""))

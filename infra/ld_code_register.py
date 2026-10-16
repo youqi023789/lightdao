@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""LD 合约字节码登记 v2：回捞 + 校验 + 用"源码长句命中率"给每个 code 定名。
-命名优先级：敏感合约地址表 > 实例 label > 最匹配的源码 crate（至少命中 1 条长句）
-> 无实例=orphan > unmatched。
-写盘前把旧的 code*.wasm 移到 contracts/wasm/_pre_regen_<日期>/（不删除）。"""
-import datetime
+"""LD 合约字节码全量登记（取代只查"存不存在"的旧脚本）：
+1) 列出链上全部 code（id / 校验和 / 上传者）
+2) 从节点 wasm 存储回捞对应字节码文件，逐个 sha256 反算核对（文件哈希==链上校验和）
+3) 用 list-contract-by-code + contract-info 的 label 反查"这个 code 被哪个合约在用"
+4) 与仓库已归档产物比对，指出"链上在跑但仓库没有"与"仓库有但链上没在用"
+5) 把核对通过的字节码补档进 contracts/wasm/ 并重写 SHA256SUMS
+默认只看不动（--apply 才写文件）。"""
 import hashlib
 import json
 import os
 import re
-import shutil
 import subprocess
 import sys
 
 REPO = "/home/ubuntu/repo"
-W = os.path.join(REPO, "contracts/wasm")
-SUMS = os.path.join(W, "SHA256SUMS")
+WDIR = os.path.join(REPO, "contracts/wasm")
+SUMS = os.path.join(WDIR, "SHA256SUMS")
 RPC = "http://127.0.0.1:26657"
 STORES = ["/home/ubuntu/.wasmd/wasm", "/home/ubuntu/.wasmd/data"]
-APPLY = "--apply" in sys.argv
 SENSITIVE = {
     "wasm14axmz74pppxqxs3qhxaaf2qzl6x53pvvzm7c6p52qrycwnyh8ktsfukapt": "governance",
     "wasm192u2pm80ndmh608mmvhrzhje0sjaq0txr5md77lr70ucy0j3lfys8l633u": "treasury_multisig",
@@ -29,8 +29,7 @@ SENSITIVE = {
     "wasm1j0rhxwwcys2rewlvssylwrf24ghyvxhhzjr47nsx8q8mechp3x0qztt835": "ecosystem_fund",
     "wasm1wj3369pug9sdn5wcqu74yr00vtcntqvwgqrmcs0k0twwnvgm8m2qu77ewf": "insurance_fund",
 }
-CRATES = sorted(os.listdir(os.path.join(REPO, "contracts/contracts"))) \
-    if os.path.isdir(os.path.join(REPO, "contracts/contracts")) else []
+APPLY = "--apply" in sys.argv
 
 
 def jq(args):
@@ -45,36 +44,6 @@ def jq(args):
         return None
 
 
-def src_lits(crate):
-    base = os.path.join(REPO, "contracts/contracts", crate, "src")
-    lits = set()
-    for dirpath, _d, files in os.walk(base):
-        for fn in files:
-            if fn.endswith(".rs"):
-                t = open(os.path.join(dirpath, fn), encoding="utf-8",
-                         errors="replace").read()
-                for m in re.finditer(r'"([^"\\\n]{18,90})"', t):
-                    s = m.group(1)
-                    if re.search(r"[a-z]{4,} [a-z]{4,}", s) and "{}" not in s:
-                        lits.add(s)
-    return lits
-
-
-CRIT = {c: src_lits(c) for c in CRATES if os.path.isdir(
-    os.path.join(REPO, "contracts/contracts", c, "src"))}
-
-
-def best_crate(blob_text):
-    crate, hits, tot = "", 0, 0
-    for name, lits in CRIT.items():
-        if not lits:
-            continue
-        h = sum(1 for l in lits if l in blob_text)
-        if h > hits:
-            crate, hits, tot = name, h, len(lits)
-    return crate, hits, tot
-
-
 def find_file(chk):
     for root in STORES:
         if not os.path.isdir(root):
@@ -86,56 +55,78 @@ def find_file(chk):
     return None
 
 
+def consumers(cid):
+    d = jq(["wasmd", "q", "wasm", "list-contract-by-code", str(cid),
+            "--node", RPC, "-o", "json"]) or {}
+    addrs = d.get("contracts") or []
+    names = []
+    for a in addrs[:6]:
+        lab = ""
+        ci = jq(["wasmd", "q", "wasm", "contract-info", a, "--node", RPC, "-o", "json"]) or {}
+        infos = ci.get("contract_infos") or [{}]
+        lab = (infos[0].get("label") or "").strip()
+        names.append(SENSITIVE.get(a) or lab or (a[:12] + "…"))
+    if len(addrs) > 6:
+        names.append("等 %d 个实例" % len(addrs))
+    return names
+
+
 codes = (jq(["wasmd", "q", "wasm", "list-code", "--node", RPC, "-o", "json"])
          or {}).get("code_infos") or []
-print("链上 code %d 个；%s" % (len(codes), "会写盘" if APPLY else "只查不写"))
+print("链上 code 共 %d 个（%s 写盘）" % (len(codes), "会" if APPLY else "只查不"))
 
-if APPLY:
-    bak = os.path.join(W, "_pre_regen_%s" % datetime.date.today().isoformat())
-    os.makedirs(bak, exist_ok=True)
-    for fn in sorted(os.listdir(W)):
-        if fn.startswith("code") and fn.endswith(".wasm"):
-            shutil.move(os.path.join(W, fn), os.path.join(bak, fn))
-    print("旧 code*.wasm 已移到 %s" % os.path.relpath(bak, REPO))
+arch = {}
+if os.path.exists(SUMS):
+    for ln in open(SUMS, encoding="utf-8"):
+        ps = ln.split()
+        if len(ps) >= 2:
+            arch[ps[0].lower()] = ps[-1]
 
-table = []
-for c in sorted(codes, key=lambda x: int(x["code_id"])):
-    cid, chk = c["code_id"], (c.get("data_hash") or "").lower()
+rows, n_ok, n_miss, n_orphan = [], 0, 0, 0
+for c in sorted(codes, key=lambda x: int(x.get("code_id") or 0)):
+    cid = c.get("code_id")
+    chk = (c.get("data_hash") or c.get("checksum") or "").lower()
+    creator = c.get("creator") or ""
     f = find_file(chk)
     if not f:
-        table.append((cid, chk[:16], 0, "-", "-", "字节码不在节点存储"))
-        continue
-    raw = open(f, "rb").read()
-    if hashlib.sha256(raw).hexdigest() != chk:
-        table.append((cid, chk[:16], 0, "-", "-", "FAIL 哈希与链上不符"))
-        continue
-    d = jq(["wasmd", "q", "wasm", "list-contract-by-code", cid, "--node", RPC,
-            "-o", "json"]) or {}
-    addrs = d.get("contracts") or []
-    name = SENSITIVE.get(addrs[0] if addrs else "", "")
-    crate, hits, tot = best_crate(raw.decode("latin1"))
-    if not name:
-        name = crate if (crate and hits) else ("orphan" if not addrs else "unmatched")
-    if APPLY:
-        out = os.path.join(W, "code%s_%s.wasm" % (cid, re.sub(r"[^A-Za-z0-9_.\-]", "_", name)))
-        open(out, "wb").write(raw)
-    table.append((cid, chk[:16], len(addrs), name, "%d/%d" % (hits, tot),
-                  ("源码命中 %d/%d" % (hits, tot)) if tot else "无长句可比对"))
+        verdict = "字节码不在节点存储里（无法核验）"
+        n_miss += 1
+        cons = []
+    else:
+        h = hashlib.sha256(open(f, "rb").read()).hexdigest()
+        if h != chk:
+            verdict = "FAIL 文件哈希与链上不符（%s≠%s）" % (h[:12], chk[:12])
+            n_miss += 1
+            cons = []
+        else:
+            cons = consumers(cid)
+            have = chk in arch
+            verdict = ("已归档" if have else "仓库缺此产物 → 需补档")
+            if not have:
+                n_orphan += 1
+            n_ok += 1
+            if not APPLY:
+                pass
+            else:
+                safe = re.sub(r"[^A-Za-z0-9_.\-]", "_",
+                              (cons[0] if cons else "unknown"))
+                dst = "contracts/wasm/code%s_%s.wasm" % (cid, safe)
+                p = os.path.join(REPO, dst)
+                if not os.path.exists(p):
+                    open(p, "wb").write(open(f, "rb").read())
+                arch[chk] = dst
+    rows.append((cid, chk[:16], creator[:20], ";".join(cons)[:44], verdict))
 
-print("%-5s %-17s %-7s %-22s %-8s %s" % ("code", "校验和前16", "实例", "定名", "长句命中", "备注"))
-print("-" * 96)
-for r in table:
-    print("%-5s %-17s %-7s %-22s %-8s %s" % tuple(str(x)[:24] for x in r))
+print("%-4s %-17s %-21s %-45s %s" % ("code", "校验和前16", "上传者", "在用它的是", "判定"))
+print("-" * 112)
+for r in rows:
+    print("%-4s %-17s %-21s %-45s %s" % r)
+print("-" * 112)
+print("哈希核验通过 %d / 取不到或不符 %d / 仓库缺产物 %d" % (n_ok, n_miss, n_orphan))
 
 if APPLY:
-    lines = []
-    for fn in sorted(os.listdir(W)):
-        if fn.endswith(".wasm"):
-            p = os.path.join(W, fn)
-            lines.append((hashlib.sha256(open(p, "rb").read()).hexdigest(),
-                          "contracts/wasm/" + fn))
+    legacy = [v for k, v in arch.items()]
     with open(SUMS, "w", encoding="utf-8") as s:
-        for sha, rel in sorted(lines, key=lambda x: x[1]):
-            s.write("%s  %s\n" % (sha, rel))
-    print("-" * 96)
-    print("SHA256SUMS 重写 %d 行（全部按文件实际 sha256 反算）" % len(lines))
+        for k in sorted(arch, key=lambda x: arch[x].lower()):
+            s.write("%s  %s\n" % (k, arch[k]))
+    print("SHA256SUMS 重写为 %d 行" % len(arch))

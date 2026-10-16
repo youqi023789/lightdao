@@ -57,3 +57,22 @@ echo
 echo "BLOB=$BLOB"
 echo "PASSFILE=$PASSFILE"
 echo "NEXT: 用链上 signers 逐条核对上面 5 个地址，全部一致才允许考虑从网关摘除明文"
+
+# ===== LD-BACKUP-CLEANUP-20261016 =====
+# 缺陷修复：本脚本原先把明文 keyring 与 verify 解包目录留在备份目录里，
+# 等于在"加密备份"旁边摆着明文私钥（2026-10-16 发现，机器上 15 个残留已清除）。
+# 收尾强制粉碎一切明文，并调用不变量检测自检。
+echo "[收尾] 清除备份目录内的明文私钥残留"
+find "$WORK" -name '*.info' -type f -exec shred -u {} + 2>/dev/null || true
+find /tmp -maxdepth 1 -name 'verify-restore-*' -type d 2>/dev/null | while read -r d; do
+  find "$d" -type f -exec shred -u {} + 2>/dev/null || true
+done
+left=$(find "$WORK" -name '*.info' 2>/dev/null | wc -l)
+if [ "$left" != "0" ]; then echo "FAIL 备份目录仍有 $left 个明文私钥"; exit 5; fi
+if [ -f "$WORK/passphrase.once" ]; then
+  echo "提醒：口令与密文同机存放。交付给用户后必须 shred 该口令文件，否则加密无意义。"
+fi
+if command -v /usr/local/bin/ld_treasury_keywatch.sh >/dev/null 2>&1; then
+  sudo /usr/local/bin/ld_treasury_keywatch.sh || { echo "FAIL 金库密钥不变量检测未通过"; exit 6; }
+fi
+echo "BACKUP_CLEANUP_OK 备份目录只剩密文"

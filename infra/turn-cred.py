@@ -13,7 +13,6 @@ SECRET = os.environ.get("TURN_SECRET", "").strip()
 PORT = int(os.environ.get("TURN_CRED_PORT", "8091"))
 TTL = int(os.environ.get("TURN_TTL", "86400"))
 # 8 个 TURN/STUN 节点域名(§4.7 验证者分布式中继)
-# 与线上一致：只下发仍在服务的 4 台 UCloud 中继（turn-kr/hk/fr/8 属退役机器，勿加回）
 KEEP = ['turn-sg.lightdao.net', 'turn-jp.lightdao.net', 'turn-us.lightdao.net', 'turn-uk.lightdao.net']
 TURN_HOSTS = KEEP
 

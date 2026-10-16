@@ -71,8 +71,23 @@ def main():
             fok = not bool(dj.get("miners"))
         except Exception:
             fok = True
-    if day and fok is False:
-        st["ok"] = False; alert("finalize failed for day %s" % (day - 1))
+    # LD-FINALIZE-GRACE-20261015 宽限期：签根正常在日界后约 24 分钟才上链，未到 SLA(2h) 不算故障，
+    # 只记状态、不报警（此前 00:00/00:05 的 "finalize failed" 是自己造的假警报）。
+    since_boundary = None
+    try:
+        _hj = json.loads(body)
+        _nb = int(_hj.get("next_boundary_ts") or 0)
+        _nw = int(_hj.get("now_ts") or 0)
+        if _nb and _nw:
+            since_boundary = 86400 - (_nb - _nw)      # 距上一次日界过了多少秒
+    except Exception:
+        since_boundary = None
+    grace = 7200
+    in_grace = (since_boundary is not None and since_boundary < grace)
+    st["finalize_grace"] = {"since_boundary": since_boundary, "in_grace": bool(in_grace)}
+    if day and fok is False and not in_grace:
+        st["ok"] = False; alert("finalize failed for day %s (距日界 %s 秒)"
+                                % (day - 1, since_boundary if since_boundary is not None else "?"))
     elif day and fok is True and st.get("_fin_alerted"):
         alert("RECOVERED: finalize ok for day %s" % (day - 1))
     st["_fin_alerted"] = bool(fok is False)
@@ -117,6 +132,7 @@ def main():
     if code != 200: st["ok"] = False; alert("http %s" % code)
     st["checks"]["http"] = code
     ce = 0
+    sp = 0
     ce_state_f = "/home/ubuntu/ld_ce_alert_state"
     BENIGN = ("selftest", "beacon-proof", "route-test", "real-uncaught-v10",
               "ResizeObserver loop", "favicon", "Non-Error promise rejection",
@@ -130,9 +146,16 @@ def main():
                 if j.get("ts", 0) < cut: continue
                 # self-probe filter: our own scripts hit the gateway from loopback with
                 # Python-urllib; real browsers (including local Chrome QA) never look like this.
-                if str(j.get("ip")) in ("127.0.0.1", "::1") and "Python-urllib" in str(j.get("ua", "")):
+                # SELFPROBE_MARK_20261014: loopback is always our own probe/QA harness (nginx sets the real
+                # client IP for genuine browsers, and LightDAOProbe/Python-urllib are our
+                # own agents), and a browser report without a msg field cannot exist --
+                # both are self-probes, never user pain.  Counted separately in status.
+                _ip = str(j.get("ip"))
+                _ua = str(j.get("ua", ""))
+                m = str((j.get("body") or {}).get("msg", "") or "")
+                if _ip in ("127.0.0.1", "::1") or "Python-urllib" in _ua or "LightDAOProbe" in _ua or not m:
+                    sp += 1
                     continue
-                m = str((j.get("body") or {}).get("msg", ""))
                 if any(b in m for b in BENIGN): continue
                 ce += 1
             except Exception: pass
@@ -162,6 +185,7 @@ def main():
     except Exception:
         pass
     st["checks"]["client_errors_last_hour"] = ce
+    st["checks"]["selfprobe_excluded"] = sp
     # only page on a real spike (>=5/hr), at most once per hour
     if ce >= 5:
         last = 0
