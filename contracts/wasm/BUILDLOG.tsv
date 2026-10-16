@@ -1,0 +1,33 @@
+# LD 合约字节码构建台账（门禁 infra/ld_migrate_gate.py 读取本文件）
+# reproducible=yes 必须同时给出 source_commit 与 toolchain；no 的条目按跟踪例外处理，解除日前只提示不阻断。
+code_id	sha256_16	artifact	source_commit	toolchain	reproducible	until	note
+1	df2d24ac8fbdddef	contracts/wasm/code1_light_token.wasm	unknown	unknown	no	2026-11-30	字节码于 2026-10-16 从节点 wasm 存储回捞，sha256 与链上校验和双向核对一致；构建主机与工具链无记录（网关无 cargo/rustup），暂不可复现
+2	b3dc4f63d5b1923d	contracts/wasm/code2_mining_reward.wasm	unknown	unknown	no	2026-11-30	字节码于 2026-10-16 从节点 wasm 存储回捞，sha256 与链上校验和双向核对一致；构建主机与工具链无记录（网关无 cargo/rustup），暂不可复现
+3	9a1468d4b4ef3028	contracts/wasm/code3_governance.wasm	unknown	unknown	no	2026-11-30	字节码于 2026-10-16 从节点 wasm 存储回捞，sha256 与链上校验和双向核对一致；构建主机与工具链无记录（网关无 cargo/rustup），暂不可复现
+4	b79e9b665668204b	contracts/wasm/code4_treasury_multisig.wasm	unknown	unknown	no	2026-11-30	字节码于 2026-10-16 从节点 wasm 存储回捞，sha256 与链上校验和双向核对一致；构建主机与工具链无记录（网关无 cargo/rustup），暂不可复现
+5	d8288c6f2b17034e	contracts/wasm/code5_subtoken_factory.wasm	unknown	unknown	no	2026-11-30	字节码于 2026-10-16 从节点 wasm 存储回捞，sha256 与链上校验和双向核对一致；构建主机与工具链无记录（网关无 cargo/rustup），暂不可复现
+6	6c3625ab3e6feda2	contracts/wasm/code6_oracle_twap.wasm	unknown	unknown	no	2026-11-30	字节码于 2026-10-16 从节点 wasm 存储回捞，sha256 与链上校验和双向核对一致；构建主机与工具链无记录（网关无 cargo/rustup），暂不可复现
+7	601bdfc4d776f19c	contracts/wasm/code7_anti_fraud.wasm	unknown	unknown	no	2026-11-30	字节码于 2026-10-16 从节点 wasm 存储回捞，sha256 与链上校验和双向核对一致；构建主机与工具链无记录（网关无 cargo/rustup），暂不可复现
+8	ce5cc58335f6a8a3	contracts/wasm/code8_validator_registry.wasm	unknown	unknown	no	2026-11-30	字节码于 2026-10-16 从节点 wasm 存储回捞，sha256 与链上校验和双向核对一致；构建主机与工具链无记录（网关无 cargo/rustup），暂不可复现
+9	9fa3f6653a731311	contracts/wasm/code9_vesting.wasm	unknown	unknown	no	2026-11-30	字节码于 2026-10-16 从节点 wasm 存储回捞，sha256 与链上校验和双向核对一致；构建主机与工具链无记录（网关无 cargo/rustup），暂不可复现
+10	88ed714c0d0ff3b2	contracts/wasm/code10_insurance_fund.wasm	unknown	unknown	no	2026-11-30	字节码于 2026-10-16 从节点 wasm 存储回捞，sha256 与链上校验和双向核对一致；构建主机与工具链无记录（网关无 cargo/rustup），暂不可复现
+11	a01df600327fe496	contracts/wasm/code11_governance.wasm	unknown	unknown	no	2026-11-30	字节码于 2026-10-16 从节点 wasm 存储回捞，sha256 与链上校验和双向核对一致；构建主机与工具链无记录（网关无 cargo/rustup），暂不可复现
+12	fc8c84ae0d8e6b8b	contracts/wasm/code12_mining_reward.wasm	unknown	unknown	no	2026-11-30	字节码于 2026-10-16 从节点 wasm 存储回捞，sha256 与链上校验和双向核对一致；构建主机与工具链无记录（网关无 cargo/rustup），暂不可复现
+13	9e0dc33866396d34	contracts/wasm/code13_governance.wasm	unknown	unknown	no	2026-11-30	字节码于 2026-10-16 从节点 wasm 存储回捞，sha256 与链上校验和双向核对一致；构建主机与工具链无记录（网关无 cargo/rustup），暂不可复现
+13	9e0dc33866396d34	contracts/wasm/governance.wasm	bd07923	unknown	no	2026-11-30	随源码同仓归档；缺工具链版本与依赖锁定（无 Cargo.lock），无法逐字节复现
+14	5e6cb2b64f875b95	contracts/wasm/code14_governance.wasm	unknown	unknown	no	2026-11-30	字节码于 2026-10-16 从节点 wasm 存储回捞，sha256 与链上校验和双向核对一致；构建主机与工具链无记录（网关无 cargo/rustup），暂不可复现
+15	977d0444fca52c5c	contracts/wasm/code15_mining_reward.wasm	unknown	unknown	no	2026-11-30	字节码于 2026-10-16 从节点 wasm 存储回捞，sha256 与链上校验和双向核对一致；构建主机与工具链无记录（网关无 cargo/rustup），暂不可复现
+16	c63053fe1c84c778	contracts/wasm/code16_vesting-v2.wasm	unknown	unknown	no	2026-11-30	字节码于 2026-10-16 从节点 wasm 存储回捞，sha256 与链上校验和双向核对一致；构建主机与工具链无记录（网关无 cargo/rustup），暂不可复现
+17	8fab37d1c7c03427	contracts/wasm/code17_ecosystem_fund.wasm	unknown	unknown	no	2026-11-30	字节码于 2026-10-16 从节点 wasm 存储回捞，sha256 与链上校验和双向核对一致；构建主机与工具链无记录（网关无 cargo/rustup），暂不可复现
+18	fb7c999f916ccbf9	contracts/wasm/code18_governance.wasm	unknown	unknown	no	2026-11-30	字节码于 2026-10-16 从节点 wasm 存储回捞，sha256 与链上校验和双向核对一致；构建主机与工具链无记录（网关无 cargo/rustup），暂不可复现
+19	cb4522ae96a971f4	contracts/wasm/code19_governance.wasm	unknown	unknown	no	2026-11-30	字节码于 2026-10-16 从节点 wasm 存储回捞，sha256 与链上校验和双向核对一致；构建主机与工具链无记录（网关无 cargo/rustup），暂不可复现
+20	6a200b474ab2c647	contracts/wasm/code20_mining_reward.wasm	unknown	unknown	no	2026-11-30	字节码于 2026-10-16 从节点 wasm 存储回捞，sha256 与链上校验和双向核对一致；构建主机与工具链无记录（网关无 cargo/rustup），暂不可复现
+	6038d94034d768b8	contracts/wasm/anti_fraud.wasm	9c9c239	unknown	no	2026-11-30	随源码同仓归档；缺工具链版本与依赖锁定（无 Cargo.lock），无法逐字节复现
+	fb0cf554ca70483a	contracts/wasm/insurance_fund.wasm	9c9c239	unknown	no	2026-11-30	随源码同仓归档；缺工具链版本与依赖锁定（无 Cargo.lock），无法逐字节复现
+	6a53b8a1e5ba9fcd	contracts/wasm/light_token.wasm	9c9c239	unknown	no	2026-11-30	随源码同仓归档；缺工具链版本与依赖锁定（无 Cargo.lock），无法逐字节复现
+	73c60fb788020634	contracts/wasm/mining_reward.wasm	9c9c239	unknown	no	2026-11-30	随源码同仓归档；缺工具链版本与依赖锁定（无 Cargo.lock），无法逐字节复现
+	3f2b93562603582a	contracts/wasm/oracle_twap.wasm	9c9c239	unknown	no	2026-11-30	随源码同仓归档；缺工具链版本与依赖锁定（无 Cargo.lock），无法逐字节复现
+	c269ca527c6d58ff	contracts/wasm/subtoken_factory.wasm	9c9c239	unknown	no	2026-11-30	随源码同仓归档；缺工具链版本与依赖锁定（无 Cargo.lock），无法逐字节复现
+	7befbeaa619f3f05	contracts/wasm/treasury_multisig.wasm	9c9c239	unknown	no	2026-11-30	随源码同仓归档；缺工具链版本与依赖锁定（无 Cargo.lock），无法逐字节复现
+	e84e49591ad3c69a	contracts/wasm/validator_registry.wasm	9c9c239	unknown	no	2026-11-30	随源码同仓归档；缺工具链版本与依赖锁定（无 Cargo.lock），无法逐字节复现
+	e9ebfd49d2f63114	contracts/wasm/vesting.wasm	9c9c239	unknown	no	2026-11-30	随源码同仓归档；缺工具链版本与依赖锁定（无 Cargo.lock），无法逐字节复现
