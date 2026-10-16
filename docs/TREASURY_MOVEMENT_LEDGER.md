@@ -75,3 +75,10 @@ curl -s http://127.0.0.1:26657/block?height=366304 | head -c 400
 wasmd q bank balances wasm192u2pm80ndmh608mmvhrzhje0sjaq0txr5md77lr70ucy0j3lfys8l633u -o json
 wasmd q bank balances wasm1j0rhxwwcys2rewlvssylwrf24ghyvxhhzjr47nsx8q8mechp3x0qztt835 -o json
 ```
+
+## 2026-10-16 密钥管理变更（已执行）
+
+网关上的 5 把金库明文私钥已摘除，改为加密冷备份 + 所有者离线口令；
+链上 3/5 审批与 72h 时间锁不变。操作流程见 。
+摘除前闸门：解密还原 5 地址与链上 signers 逐一比对通过；摘除后复核：金库 842,000,093.15 LIGHT、
+生态基金 400,000,000.00 LIGHT、7 个 voter 账户完好、无待执行提案。
