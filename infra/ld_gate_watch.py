@@ -8,7 +8,7 @@
 用法: ld_gate_watch.py [manifest_url]
 退出码: 0 一致 / 1 有漂移或缺文件
 """
-import hashlib, json, os, subprocess, sys, time, urllib.request
+import hashlib, json, os, re, subprocess, sys, time, urllib.request
 
 
 def UTC():
@@ -19,6 +19,7 @@ MANIFEST = sys.argv[1] if len(sys.argv) > 1 else os.environ.get(
     "https://raw.githubusercontent.com/youqi023789/lightdao/main/infra/gate_manifest.txt")
 ALERTS = os.environ.get("LD_ALERTS", "/home/ubuntu/ld_alerts.log")
 LASTFLAG = os.environ.get("LD_LASTFLAG", "/home/ubuntu/ld_gate_watch_last")
+SRC_KIND = "?"          # 本次清单是从 api / raw / local 哪条路取到的（raw 有 CDN 陈旧缓存）
 
 # 部署位置：/usr/local/bin 与 /home/ubuntu 两处
 PATHS = {
@@ -59,12 +60,42 @@ def sha(p):
         return None
 
 
+def fetch_manifest():
+    """清单必须拿"权威最新"的那份。
+    2026-10-16 实测：raw.githubusercontent.com 会发**陈旧缓存**（我 6e0ab76 已把
+    ld_gate_watch.py 的哈希改成 f509c23e…，raw 仍返回上一版 299ee54a…，
+    加 ?ts= 穿透参数也一样），于是刚推上去就报了一条假 DRIFT。
+    api.github.com 的 contents 接口不吃这层缓存，优先用它；拿不到再退回 raw。"""
+    errs = []
+    if MANIFEST.startswith(("http://", "https://")):
+        m = re.match(r"https?://raw\.githubusercontent\.com/([^/]+)/([^/]+)/([^/]+)/(.+)",
+                     MANIFEST)
+        cands = []
+        if m:
+            owner, repo, ref, path = m.groups()
+            cands.append(("api", "https://api.github.com/repos/%s/%s/contents/%s?ref=%s"
+                          % (owner, repo, path, ref),
+                          {"Accept": "application/vnd.github.raw"}))
+        cands.append(("raw", MANIFEST, {}))
+        for kind, url, hdrs in cands:
+            try:
+                req = urllib.request.Request(url, headers=hdrs)
+                raw = urllib.request.urlopen(req, timeout=25).read().decode()
+                n_valid = sum(1 for l in raw.splitlines()
+                              if re.match(r"^[0-9a-f]{64}\s+\S+$", l.strip()))
+                if n_valid >= 3:
+                    return raw, kind
+                errs.append("%s: 只有 %d 行像清单条目，判为内容不对" % (kind, n_valid))
+            except Exception as e:
+                errs.append("%s: %s" % (kind, e))
+        raise RuntimeError("; ".join(errs)[:200])
+    return open(MANIFEST).read(), "local"
+
+
 def main():
+    global SRC_KIND
     try:
-        if MANIFEST.startswith(("http://", "https://")):
-            raw = urllib.request.urlopen(MANIFEST, timeout=25).read().decode()
-        else:
-            raw = open(MANIFEST).read()
+        raw, SRC_KIND = fetch_manifest()
     except Exception as e:
         # 拉不到清单只连续失败多次才告警（避免网络抖动刷屏）
         n = 0
@@ -72,7 +103,10 @@ def main():
             try: n = int(open(LASTFLAG).read().split("|")[0])
             except Exception: n = 0
         n += 1
-        open(LASTFLAG, "w").write("%d|manifest-unreachable" % n)
+        try:
+            open(LASTFLAG, "w").write("%d|manifest-unreachable" % n)
+        except Exception as e2:
+            print("  WARN 状态文件写不进去 %s: %s" % (LASTFLAG, e2))
         if n == 6:
             with open(ALERTS, "a") as f:
                 f.write("%s ALERT gate-watch cannot fetch manifest 6x: %s\n"
@@ -98,8 +132,8 @@ def main():
             drift.append("%s not listed in manifest" % name)
 
     unversioned = [n for n in PATHS if n not in want]
-    msg = "gate-watch: checked=%d drift=%d missing_on_host=%d unversioned=%d" % (
-        len(PATHS), len(drift), len(missing), len(unversioned))
+    msg = "gate-watch: checked=%d drift=%d missing_on_host=%d unversioned=%d manifest_via=%s" % (
+        len(PATHS), len(drift), len(missing), len(unversioned), SRC_KIND)
     print(msg)
     for d in drift: print("  DRIFT", d)
     for m in missing: print("  MISSING", m)
