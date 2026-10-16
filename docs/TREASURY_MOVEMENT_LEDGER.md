@@ -89,3 +89,33 @@ wasmd q bank balances wasm1j0rhxwwcys2rewlvssylwrf24ghyvxhhzjr47nsx8q8mechp3x0qz
 过程中发现并修复我自己的缺陷：上一版冷备份把明文私钥留在同一备份目录内（15 个文件，已全部粉碎），
 导致"加密备份"实际可被同机直接读取。已新增不变量检测 `ld_treasury_keywatch.sh`（每小时，双向验证过）。
 资金无变动：金库 842,000,093.16 LIGHT / 生态基金 400,000,000.00 LIGHT。详见 docs/TREASURY_KEY_OPERATIONS.md。
+
+## 2026-10-16 治理升级异常：提案 #14 / #15 目标代码不可审计
+
+链上事实（`wasmd q gov proposal 15` / `q wasm code-info`）：
+
+| 项 | 值 |
+|---|---|
+| 提案 15 | `wasm/MsgMigrateContract` → governance 合约 `wasm14axmz74…`，目标 **code_id 18**，msg `{"void_ids":[2,5,6,7,9]}` |
+| 投票 | yes=3,500,000，**通过** |
+| 执行 | `PROPOSAL_STATUS_FAILED` |
+| 提案 14 | 同类迁移，同样失败（#15 的 metadata 自述 "Retry of failed #14"） |
+| governance 现状 | 仍在 **code_id 13**，checksum `9E0DC33866396D34…` |
+| 仓库 `contracts/wasm/governance.wasm` | sha256 `9e0dc33866396d34…` = **与 code 13 一致** |
+| code 18 | checksum `FB7C999F916CCBF9…`，**本机与仓库中无任何 wasm 产物匹配该值** |
+
+结论：两次迁移的目标代码**没有可核对的源码与构建产物**（很可能由已退役的旧机器上传，产物未入库）。
+这类"链上跑着无法复现的代码"本身就是审计缺口；执行失败反而避免了把一个不可审计的构建推上治理合约。
+
+因此**不要重试原提案**。正确顺序（两段式，符合既有纪律）：
+
+1. 从仓库源码重新构建 governance，记录产物 sha256；
+2. 先提 **store code** 提案上传，上传后核对链上 `code-info.checksum` 与本地 sha256 **逐字节一致**；
+3. 再提 **migrate** 提案，msg 最小化并经复核（`void_ids` 等参数先在本地 unit 验证）；
+4. 新增门禁：任何指向 governance/金库合约的 migrate 提案，其目标 code_id 的 checksum
+   必须能在仓库产物清单（`contracts/wasm/SHA256SUMS`）中找到，否则直接 FAIL ——
+   这条门禁本可以在投票前就拦下 #14/#15。
+
+附带发现：`void_ids` 在 code 13 上那次"成功的 MIGRATE"并未真正生效 ——
+提案 2/5/6/7/9 至今仍列在 `active_proposals` 中且 `executed=false`，
+最早一条 2026-09-22 就到期。这既是一个合约逻辑缺陷，也让网站"活跃提案"计数虚高。
