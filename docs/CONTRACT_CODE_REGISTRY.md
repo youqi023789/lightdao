@@ -74,9 +74,18 @@ CosmWasm 的 `store code` 只要把字节码丢上链就会拿到一个 `code_id
    **链上跑的每一份合约代码目前都无法从仓库源码重跑出同样的 sha256**。
    结论可公开复核：`curl -s https://api.github.com/repos/youqi023789/lightdao/actions/runs?per_page=1`
    取最新 run，再读它的 `/jobs` 与 `/check-runs/{job_id}/annotations`（公开仓库无需凭据）。
-   为什么这样也还是不一致：仓库没有 `Cargo.lock`（`Cargo.toml` 写 `cosmwasm-std = "2.1.3"`，
-   而链上二进制里嵌的是 `cosmwasm-std-2.3.6`），且当年那台构建机的 rustc/wasm-opt 小版本
-   与主机路径已随退订无法追回。CI 每次会把本次生成的 `Cargo.lock` 作为构件保留 30 天。
+   差异到底来自哪里（10-16 CI 实测，已排除一个常见猜测）：本次 CI 解析出的依赖版本是
+   `cosmwasm-std=2.3.6`，**与链上二进制里嵌的版本完全一致**，所以字节差异不是【依赖没锁定】造成的
+   （没有 `Cargo.lock` 仍然是要补的隐患，但它不是本次不一致的原因）。剩下的可能只有两类：
+   ① 工具链差异（当年构建机的 rustc patch 版与 binaryen/wasm-opt 版本已随机器退订无法追回）；
+   ② **仓库源码与当年编出这些字节的那份源码不是同一状态**——这条嫌疑最大，因为 code 19/20 是
+   10-13/10-14 在另一台机器上编的，而引入 `migrate_v5_updatable_config`、`validators must not be
+   empty` 等字面量的提交 `b01987c` 时间是 10-14 05:47Z，晚于 code 20 的上链时刻 10-14 03:12Z：
+   先编、后提交，源码快照与产物之间没有可核对的绑定关系。
+   因此本台账的口径改为：**历史 code 1-20 一律按【无法从仓库源码复现】处理**（不再归因于依赖），
+   可复现性只对【以后】负责——以后必须先跑 workflow 拿到 sha256、把 source_commit 与 toolchain
+   一起写进 BUILDLOG 并核对链上校验和一致，才允许提 migrate。CI 每次把生成的 `Cargo.lock`
+   作为构件保留 30 天，锁定依赖这件事照做，只是不再把它当成本次差异的解释。
    **下一步口径**：以后任何新 store 之前先跑这条 workflow，把它产出的 sha256 写进
    `SHA256SUMS` 与 `BUILDLOG.tsv`（`reproducible=yes` + `source_commit` + `toolchain`），
    再核对链上校验和一致才提 migrate；比对脚本对"声称 yes 却复现不出"直接判红。
