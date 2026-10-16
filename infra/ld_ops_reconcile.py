@@ -84,3 +84,39 @@ if APPLY:
             shutil.copy2(src, os.path.join(REPO, "infra", b))
             n += 1
     print("\n已回填 %d 个文件（线上为准）" % n)
+
+# ---- 门禁模式：漂移或未入库的 cron 脚本 = 非零退出 + 告警 ----
+# 为什么值得当门禁：机器一旦重建，仓库里有的那套才是"真相"。线上有、仓库没有的
+# 监控脚本会直接消失；线上比仓库新的脚本会被旧版覆盖掉（2026-10-16 实测：
+# 73 个一致，10 个漂移，103 个仓库没有、其中 10 个正被 cron 调用）。
+if "--gate" in sys.argv:
+    _seen = set()
+    hard = []
+    for x in [d for d in drift if d[4]] + [m for m in missing if m[2]]:
+        b = x[0]
+        if b in _seen:
+            continue          # 同一个脚本在 /usr/local/bin 和 /home/ubuntu 各有一份时，
+        _seen.add(b)          # 只算一条，否则"2 个问题"其实是 1 件事，会把人带偏
+        hard.append(x)
+    line = ("ops-reconcile: 逐字节一致=%d 漂移=%d(cron在用=%d) 未入库=%d(cron在用=%d)"
+            % (same, len(drift), sum(1 for x in drift if x[4]),
+               len(missing), sum(1 for x in missing if x[2])))
+    print(line)
+    if hard:
+        names = ", ".join(x[0] for x in hard[:8])
+        msg = "ALERT [ops-reconcile] %d 个 cron 在用脚本与仓库不一致或未入库: %s" % (len(hard), names)
+        print(msg)
+        try:
+            with open("/home/ubuntu/ld_alerts.log", "a") as f:
+                import time as _t
+                f.write("%s %s\n" % (_t.strftime("%Y-%m-%dT%H:%M:%SZ", _t.gmtime()), msg))
+        except Exception as e:
+            print("WARN 告警没落盘: %s（内容见上）" % e)
+        sys.exit(1)
+    # 非 cron 的漂移只提示不阻断：一次性脚本改过没回填属正常噪声，
+    # 但列出来，别让它悄悄积累成"下次重建机器才发现"。
+    if drift:
+        print("提示（不阻断）：%d 个非 cron 脚本与仓库不同: %s"
+              % (len(drift), ", ".join(x[0] for x in drift[:8])))
+    print("OPS RECONCILE OK：cron 在用的脚本全部在库且逐字节一致")
+    sys.exit(0)
