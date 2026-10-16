@@ -90,10 +90,31 @@ CosmWasm 的 `store code` 只要把字节码丢上链就会拿到一个 `code_id
    `SHA256SUMS` 与 `BUILDLOG.tsv`（`reproducible=yes` + `source_commit` + `toolchain`），
    再核对链上校验和一致才提 migrate；比对脚本对"声称 yes 却复现不出"直接判红。
 
-2. **code 16 / 17 的源码归属**：仓库里没有 `vesting-v2` 与 `ecosystem_fund` 两个 crate，
-   它们与 `vesting` crate 只命中 1/3 长句。这两个合约 admin 为空＝永久不可改，
-   其中 17 号是生态基金（管钱）。需要补出对应的源码目录，或把"它由 vesting 源码加什么
-   改动而来"写清楚。
+2. **code 16 / 17 的源码归属——已实测定性（10-16），比"没进仓库"更具体**：
+   两条证据一起看：① CI 把仓库里所有 crate 都编了一遍，**没有**叫 `vesting-v2` 或
+   `ecosystem_fund` 的产物；② git 全历史（含被删文件）里从未出现过这两个 crate 的路径，
+   所以不是"提交过又被删"，是**从没提交**。再看二进制自己的指纹（整词匹配 data 段，
+   不是子串）：
+   - **code 17 = 独立 crate `ecosystem_fund`**：二进制里有 `ecosystem_fund`、
+     `instantiate_ecosystem_fund`、`eco_config`、`fund` 等标识，且活合约能答
+     `{"unlocked":{}}`（返回 120,000,000 LIGHT，即白皮书 TGE 30% 立即可用那笔），
+     而仓库 `vesting` 源码根本没有 `unlocked` 这个查询。它管着 **4 亿 LIGHT**。
+   - **code 16 = `vesting` 的改造版**：与线上 code 9 的词集交集 568、code 16 独有 31，
+     独有部分是 `all_schedules`、`category`、`beneficiary`、`cliff` 这类字段；
+     活合约能答 `all_schedules`（三条计划 services 125M / strategic 75M / contributor 50M）
+     与 `config`，而仓库 `vesting` 源码声明的查询只有 `config`/`schedule`/`vested`。
+     它管着 **7500 万 LIGHT**。
+   - 对照：线上 **code 9（旧 vesting，175M）与仓库 `vesting` 源码接口一致**——
+     `{"schedule":{"address":…}}` 正常返回该地址的解锁计划（beneficiary/total/cliff/linear/start），
+     与源码声明对得上。所以缺口精确地只在 16/17 这两个新合约上。
+   影响：这两个合约 owner 都是治理合约、可被迁移，但**没人能审它们的代码**，
+   也谈不上"重新构建验证"。合计 **4.75 亿 LIGHT** 存放在两份无源码的字节码里。
+   补救口径（按可行性排序）：① 找回当年那台机器上的源码（机器已退订，基本无望）；
+   ② 依据二进制反推 + 行为实测，重写这两个 crate 的等价源码，让 CI 能编出接口一致、
+   行为一致的版本，今后要迁移时用**新 code 走 CI 先产 sha256 再 store** 的流程替换掉无源码的旧码；
+   ③ 在此之前，把"4.75 亿 LIGHT 存在无源码合约里"作为已知风险记在这里，
+   不因为它没报错就当不存在。
+
 3. **light_token（code 1）无法用长句比对**：该 crate 源码里没有 ≥18 字符的英文字面量，
    命中 0/0 不等于对得上，也不等于对不上——需要正式复现构建才能判。
 4. **孤儿 code 6 个**（2、3、11、14、15、18）：链上没人用但永久占着状态。清理需要治理
