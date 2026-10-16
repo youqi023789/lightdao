@@ -1,0 +1,61 @@
+name: wasm-reproducible-build
+# 目的：把"链上跑的字节码能不能从仓库源码重跑出来"从一句"我说不行"变成实测结论。
+# 配方对齐 contracts/scripts/build_normalize.sh（rustc 1.85 + wasm32-unknown-unknown +
+# wasm-opt --mvp-features -O3），因为当年那台构建机已退订、它用的就是这套。
+# 公开仓库的 GitHub 托管 runner 免费，零成本；不写任何凭据、不碰主网。
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'contracts/**'
+      - '.github/workflows/wasm-repro.yml'
+      - 'infra/ci_wasm_compare.py'
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 装工具链（rustc 1.85 + wasm32 目标 + binaryen）
+        run: |
+          set -euo pipefail
+          curl -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.85.0 \
+            --target wasm32-unknown-unknown --profile minimal
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq binaryen
+          rustc --version
+          wasm-opt --version
+
+      - name: 构建全部合约（release / wasm32-unknown-unknown）
+        working-directory: contracts
+        run: |
+          set -euo pipefail
+          cargo build --release --target wasm32-unknown-unknown
+          mkdir -p ../ci_out
+          for c in $(cargo metadata --no-deps --format-version 1 \
+                     | python3 -c "import json,sys;print(' '.join(p['name'] for p in json.load(sys.stdin)['packages']))"); do
+            f="target/wasm32-unknown-unknown/release/$c.wasm"
+            if [ -f "$f" ]; then
+              wasm-opt --mvp-features -O3 "$f" -o "../ci_out/$c.wasm"
+            fi
+          done
+          sha256sum ../ci_out/*.wasm || true
+
+      - name: 与仓库里归档的链上产物逐字节比对（结论写进 annotations 与 summary）
+        run: python3 infra/ci_wasm_compare.py
+
+      - name: 保留本次构建产物与依赖锁定，供人工核对
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasm-ci-build
+          path: |
+            ci_out/
+            contracts/Cargo.lock
+          if-no-files-found: warn
+          retention-days: 30
