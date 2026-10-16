@@ -25,7 +25,8 @@ HOST = "lightdao.net"
 STATE = "/home/ubuntu/ld_render_watch_state.json"
 ALERTS = "/home/ubuntu/ld_alerts.log"
 PAGES = {"/index.html": ["R1", "R2", "R3"],
-         "/funds.html": ["R1", "R2", "R4", "R5"]}
+         "/funds.html": ["R1", "R2", "R4", "R5"],
+         "/governance.html": ["R6", "R7"]}
 CHROME = next((c for c in ["/usr/bin/google-chrome", "/usr/bin/google-chrome-stable",
                            "/usr/bin/chromium-browser"] if os.path.exists(c)), None)
 
@@ -125,6 +126,32 @@ def check_funds(h):
     return f
 
 
+def check_gov(h):
+    """R6/R7：治理页两个真实缺陷的回归判据。
+    R6 未连钱包也必须读到公开提案（曾经永远停在"加载中…"）；
+    R7 已作废/过期提案必须分组标注并禁用按钮（曾经混在"进行中"里可点击）。"""
+    f = []
+    body = re.sub(r"(?is)<(script|style)[^>]*>.*?</\1>", " ", h)
+    text = re.sub(r"(?s)<[^>]+>", " ", body)
+    text = re.sub(r"\s+", " ", text)
+    i = text.find("进行中的提案")
+    seg = text[i:i + 140] if i >= 0 else ""
+    if i < 0:
+        f.append("R6 找不到『进行中的提案』区块（页面结构变了？）")
+    elif "加载中" in seg:
+        f.append("R6 未连钱包读不到提案，仍停在『加载中…』")
+    cards = len(re.findall(r'class="prop"', h))
+    dis = len(re.findall(r"<button[^>]*disabled", h))
+    grouped = ("不计入进行中" in text) or ("暂无可投票的进行中提案" in text)
+    if cards == 0 and not grouped:
+        f.append("R6 既无提案卡片也无空状态提示")
+    if "已作废/已过期" in text and dis == 0:
+        f.append("R7 标了已作废/过期但按钮没禁用（点了必然报错）")
+    if "已作废/已过期" in text and not grouped:
+        f.append("R7 死提案未与进行中分组")
+    return f
+
+
 def main():
     if not CHROME:
         log("FATAL 本机没有 chrome/chromium，无法做真机渲染巡检")
@@ -138,6 +165,8 @@ def main():
             continue
         if path == "/index.html":
             fs = check_index(h)
+        elif path == "/governance.html":
+            fs = check_gov(h)
         else:
             fs = check_funds(h)
         for x in fs:
