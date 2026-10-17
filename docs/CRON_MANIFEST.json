@@ -365,6 +365,13 @@
    "cmd": "wasmd tx distribution withdraw-all-rewards --from operator --home /home/ubuntu/.wasmd --keyring-backend test --chain-id lightdao-mainnet-1 --node tcp://127.0.0.1:26657 --gas 300000 --fees 90000ulight -y",
    "purpose": "每周提取验证者佣金到运营账户（不提取=收益躺在分配池里不动）",
    "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "55 7 * * *",
+   "cmd": "/usr/bin/node /usr/local/bin/ld_lang_coverage.js",
+   "purpose": "语种覆盖率棘轮：下拉承诺语种的实际内容必须达标，恶化即告警",
+   "added": "2026-10-16"
   }
  ]
 }
