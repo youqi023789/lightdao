@@ -104,7 +104,11 @@ def main():
              ("g4_sw", ["python3", "/usr/local/bin/g4_sw_check.py", STG]),
              ("g7_fuzz", ["python3", "/usr/local/bin/g7_fuzz_check.py"]),
              ("g9_day_atomic", ["python3", "/usr/local/bin/g9_day_atomic_check.py"]),
-             ("g11_scripts", ["python3", "/usr/local/bin/g11_script_lint.py", STG])]
+             ("g11_scripts", ["python3", "/usr/local/bin/g11_script_lint.py", STG]),
+             # g12：i18n 词条结构校验（列数/语种码白名单/占位符一致性）。
+             # 之前这个校验器只存在于仓库里、从没接进流水线=等于没有这道门。
+             ("g12_i18n_validate", ["node", "/usr/local/bin/ld_i18n_validate.js",
+                                    os.path.join(STG, "js")])]
     for name, cmd in gates:
         rc, out = run(cmd, env)
         last = [l for l in out.strip().splitlines() if l.strip()][-3:]

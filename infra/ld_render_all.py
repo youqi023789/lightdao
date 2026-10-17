@@ -25,8 +25,11 @@ import time
 import urllib.error
 import urllib.request
 
-BASE = "https://lightdao.net"
-ROOT = "/var/www/lightdao"
+BASE = os.environ.get("LD_BASE", "https://lightdao.net")
+ROOT = os.environ.get("LD_ROOT", "/var/www/lightdao")
+# LD-TESTABLE-TARGET-20261017 允许把巡检指到 staging：门禁要能被"植入假故障"验证，
+# 就不能只能拿线上站点做靶子。默认值等于原行为，cron 不受影响。
+RESOLVE = os.environ.get("LD_RESOLVE", "")
 STATE = os.environ.get("LD_RSTATE", "/home/ubuntu/ld_render_all_state.json")
 ALERTS = os.environ.get("LD_ALERTS", "/home/ubuntu/ld_alerts.log")
 CHROME = next((c for c in ["/usr/bin/google-chrome", "/usr/bin/google-chrome-stable",
@@ -79,7 +82,10 @@ def render(path, budget=45000, timeout=90):
         return None, "no-chrome"
     cmd = [CHROME, "--headless=new", "--disable-gpu", "--no-sandbox",
            "--ignore-certificate-errors", "--virtual-time-budget=%d" % budget,
-           "--user-agent=LDRenderAll/1.0", "--dump-dom", BASE + path]
+           "--user-agent=LDRenderAll/1.0"]
+    if RESOLVE:
+        cmd += ["--host-resolver-rules=MAP lightdao.net %s" % RESOLVE]
+    cmd += ["--dump-dom", BASE + path]
     try:
         p = subprocess.run(cmd, capture_output=True, timeout=timeout)
         h = p.stdout.decode("utf-8", "replace")
@@ -177,6 +183,15 @@ def probe_page(path, do_render=True, fsig=None):
             for tok in BAD_TOKENS:
                 if tok in txt:
                     rec["flags"].append("可见文本含 %s" % tok)
+            # LD-RUNTIME-I18N-GAPS-20261017 运行时取词的两种降级都必须为 0。
+            # 硬缺词=外国用户看到中文；回落英文=看着像有翻译、其实该语种没词条，
+            # 后者最难被发现（本轮治理页赞成/反对按钮在 de/ar/ja 下一直是英文就是它）。
+            # 计数由 i18n.js 的 __ldT 写进 <html> 的 data-ld-tgaps / data-ld-tgap-fb。
+            for attr, label in (("ld-tgaps", "运行时词条缺失(显示中文)"),
+                                ("ld-tgap-fb", "运行时词条回落英文")):
+                gm = re.search(r'data-%s="(\d+)"' % attr, h)
+                if gm and gm.group(1) != "0":
+                    rec["flags"].append("%s %s 处" % (label, gm.group(1)))
             if path not in RENDER_STALL_OK and re.search(r"加载中…|加载中\.\.\.|首次同步中", txt):
                 rec["flags"].append("停在加载占位")
     return rec

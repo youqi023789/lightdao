@@ -52,6 +52,60 @@
     return (typeof f === "string" && f) ? f : null;
   }
 
+  /* LD-I18N-RUNTIME-20261017 运行时取词：专门服务 JS 现拼的文案（票数/百分比/剩余小时
+     每次都变，DOM 遍历那种"整句精确匹配"命中不了）。治理页过去因此在网件里自带一张
+     只覆盖 zh/es/pt/id/vi 的小表，成为第二份译文事实源——实测 de/ar/ja 下页面本地化了、
+     按钮还是英文。现在取词与 DOM 遍历共用同一份 window.LDI18N。
+     两种降级分开登记，因为危害不同：
+       __ldTgaps   该语种与英文都没有 → 用户看到中文（硬缺词）
+       __ldTgapFb  该语种没有、英文顶上 → 用户看到英文（静默降级，最容易被忽略）
+     两者都写进 <html> 的 data-ld-tgaps / data-ld-tgap-fb，由真机渲染巡检取走报警。
+     绝不用机翻凑一个可能错的句子冒充翻译。 */
+  function countKeys(o) {
+    var n = 0;
+    for (var k in o) { if (Object.prototype.hasOwnProperty.call(o, k)) n++; }
+    return n;
+  }
+  function publishGaps() {
+    try {
+      var d = document.documentElement.dataset;
+      d.ldTgaps = String(countKeys(W.__ldTgaps || {}));
+      d.ldTgapFb = String(countKeys(W.__ldTgapFb || {}));
+    } catch (e) { }
+  }
+  W.__ldT = function (zh, vars) {
+    var out = zh;
+    try {
+      var lang = W.__ldLang || cur();
+      if (lang && lang !== "zh") {
+        var e = (W.LDI18N || {})[zh];
+        var v = e && e[lang];
+        if (typeof v === "string" && v) {
+          out = v;
+        } else {
+          var gk = lang + "|" + zh;
+          if (e && typeof e.en === "string" && e.en) {
+            out = e.en;
+            W.__ldTgapFb = W.__ldTgapFb || {};
+            W.__ldTgapFb[gk] = (W.__ldTgapFb[gk] || 0) + 1;
+          } else {
+            W.__ldTgaps = W.__ldTgaps || {};
+            W.__ldTgaps[gk] = (W.__ldTgaps[gk] || 0) + 1;
+          }
+          publishGaps();
+        }
+      }
+    } catch (er) { /* 取词异常绝不能打断渲染 */ }
+    if (vars) {
+      for (var k in vars) {
+        if (Object.prototype.hasOwnProperty.call(vars, k)) {
+          out = out.split("{" + k + "}").join(String(vars[k]));
+        }
+      }
+    }
+    return out;
+  };
+
   var stats = { writes: 0, skips: 0, same: 0, loopGuard: 0 };
   W.__ldI18nStats = stats;
   function publish() {
