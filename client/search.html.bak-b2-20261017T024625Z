@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Search — LightDAO</title>
+<meta name="description" content="LightDAO 站内搜索：检索白皮书、文档与链上数据。">
+<link rel="stylesheet" href="/css/search.css" integrity="sha384-VxfYmgxsuDF7fvvH5jcRZd8B8Wzc+KrR4n0zQRojZcKWOsZ0gjCq8vqcoTj9M+rl" crossorigin="anonymous">
+<script src="/js/search_1.js?v=1.8.7" integrity="sha384-g8CUZOGtmzU4wpKrUeCU75oJbwM0NbUvySZh8wAKjqt+HtPZnYgrxFxVJXkt8tc6" crossorigin="anonymous"></script>
+<script src="/js/search_2.js?v=1.8.7" integrity="sha384-g8CUZOGtmzU4wpKrUeCU75oJbwM0NbUvySZh8wAKjqt+HtPZnYgrxFxVJXkt8tc6" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="/theme.css">
+<script src="/js/back.js?v=1.8.7" integrity="sha384-k10pc3j5u+Uf4AVglPID79HsF0A3apdkJKm4msgtQVqES7eDFGSKLhgBGmCl6f74" crossorigin="anonymous"></script>
+<script src="/js/wfix.js?v=1.8.7" integrity="sha384-3YmhFo8XgiBYr4lDUSIT/JZpXWEYntFFBK7PFI5HXnIJWwThaEoh7ihjixezX1oh" crossorigin="anonymous"></script>
+<style>:focus-visible{outline:2px solid #4da3ff;outline-offset:3px;border-radius:6px}
+.skip{position:absolute;left:-9999px;top:0}.skip:focus{left:8px;top:8px;background:#4da3ff;color:#04101f;padding:8px 14px;border-radius:8px;z-index:99}
+</style>
+<link rel="stylesheet" href="/css/nav.css" integrity="sha384-x0yd8R3lq+N5LPy4WV93TEve8XvJ6nm0LvNOSkVwIGcgn3tyNbBfWuZaPvZyF1P8" crossorigin="anonymous">
+</head><body>
+<a class="skip" href="#content">Skip to content</a>
+<span id="content"></span><div class="w">
+<p><a href="/" class="uf12390">← 返回首页 / Home</a> · <a href="#" data-back="1" class="uf12390">← 返回上一页 / Back</a> <button id="themeT" aria-label="toggle theme" class="u061c29">◐</button></p>
+<h1 class="uf08844">站内搜索 / Site search</h1>
+<input id="q" placeholder="搜索:挖矿 / 治理 / vesting / gas / Passkey …" autofocus>
+<div id="res"></div>
+<script src="/js/search_3.js?v=1.8.7" integrity="sha384-IK7D3QEKDBomHM/0R30vehO5l5s2r5+VSQQdEwaCPOyDEHmFYKI/ocAtOimXbDje" crossorigin="anonymous"></script></div><script src="/js/search_4.js?v=1.8.7" integrity="sha384-j7Ahu4vxJZPZkpj+mQ1qmcEVw825FSzKQUBgnySwICEBsjYYIVtRx4R8vDndZCSV" crossorigin="anonymous"></script><div style="text-align:center;padding:14px 8px;font-size:13px;color:#9aa3b2;border-top:1px solid #1c2733;margin-top:24px">Telegram <a href="https://t.me/lightdao_news" target="_blank" rel="noopener" style="color:#4da3ff">@lightdao_news</a> · Discord <a href="https://discord.gg/aBWEatEkUX" target="_blank" rel="noopener" style="color:#4da3ff">LightDAO</a> · X <a href="https://x.com/lightdaoproto" target="_blank" rel="noopener" style="color:#4da3ff">@lightdaoproto</a></div>
+<div style="text-align:center;padding:10px 8px;font-size:13px"><a href="/contracts.html">链上合约与地址</a></div>
+<script src="/js/i18n.js" integrity="sha384-hUfjsROYM/GQB0Vwr470gmWMTElJGQ1sVLGFmEGFRMk6yRQ9C8V6EW02sd2kWF//" crossorigin="anonymous"></script>
+<script src="/js/i18n_core.js" integrity="sha384-kajQT8hf5obaZOs9dnlw0fCxxnFAN7Mgt2mpK1k7yj/5g0KA88EK0+RVB8c8E1Fq" crossorigin="anonymous"></script>
+<script src="/js/i18n_pages_en.js" integrity="sha384-y4vthz8ynIiZm78/rQsAdf36uM7iy3mW7rSPM4ph02op+yqVj4sIWdqu0hbuRQkt" crossorigin="anonymous"></script>
+<script src="/js/i18n_pages_en2.js" integrity="sha384-0xH+8mdD0672lZiYmBTv/snwFKP5rHTB2RT+1HN4UERh1exOpQw+J4+0SLQfYCrY" crossorigin="anonymous"></script>
+<div style="text-align:center;padding:10px 8px;font-size:13px"><a href="/institutions.html">治理制度</a> · <a href="/funds.html">资金与释放</a></div>
+<script src="/js/i18n_lat.js" integrity="sha384-JksXJXgpYzsPQqCnIGTBK+PT4ErCeqKkTwapaabgeoI+00BbvqvksFGDuXIFOg3J" crossorigin="anonymous"></script>
+<script src="/js/i18n_more.js"></script>
+
+<script src="/js/nav.js" defer integrity="sha384-FHmNZ5VY95aiiY740DjIiq7jVkslwwUcrcG85QFfqrU2qJHlEqaEsl4anaxub8cu" crossorigin="anonymous"></script>
+</body></html>

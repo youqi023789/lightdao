@@ -38,12 +38,16 @@ for u in ("root", "ubuntu"):
     p = subprocess.run(["crontab", "-l", "-u", u] if u != "root" else ["crontab", "-l"],
                        capture_output=True)
     cron_txt += p.stdout.decode("utf-8", "replace")
-cron_names = set(re.findall(r"/(?:usr/local/bin|home/ubuntu)/([A-Za-z0-9_.-]+\.(?:py|sh))",
+cron_names = set(re.findall(r"/(?:usr/local/bin|home/ubuntu)/([A-Za-z0-9_.-]+\.(?:py|sh|js))",
                             cron_txt))
 
-drift, missing, same = [], [], 0
+drift, missing, same, unreadable = [], [], 0, []
 for d in DIRS:
-    for pat in ("*.py", "*.sh"):
+    # LD-RECON-JS-20261017 这里原本只有 py/sh：.js 的运维脚本（语种覆盖率、i18n 校验器）
+    # 因此完全不在对账范围内，实测线上与仓库副本差 43 行跑了三周无人发现。
+    # .js 只对 /usr/local/bin 生效——/home/ubuntu 下全是手搓工作副本，纳入只会噪声。
+    pats = ("*.py", "*.sh", "*.js") if d == "/usr/local/bin" else ("*.py", "*.sh")
+    for pat in pats:
         for f in sorted(glob.glob(os.path.join(d, pat))):
             b = os.path.basename(f)
             if b.startswith("._") or b == "run_chrome.sh":
@@ -53,16 +57,32 @@ for d in DIRS:
             if not cands:
                 missing.append((b, os.path.getsize(f), b in cron_names))
                 continue
-            if any(sha(c) == hs for c in cands):
+            # LD-RECON-UNREADABLE-20261017 读不到≠不一致，也≠一致。
+            # 之前 None 会参与比较：被扫文件读不到→假"内容不同"；
+            # 仓库副本读不到→两边都是 None→假"一致"（真漂移被吞，更危险）。
+            if hs is None:
+                unreadable.append((b, f, "被测文件读不到（多半是权限，请用真实运行身份跑）"))
+                continue
+            rh = [(c, sha(c)) for c in cands]
+            if any(h is None for _c, h in rh):
+                unreadable.append((b, f, "有仓库副本读不到，无法判定，不算一致"))
+                continue
+            if any(h == hs for _c, h in rh):
                 same += 1
             else:
                 drift.append((b, f, cands[0], os.path.getsize(f), b in cron_names))
 
 print("逐字节一致 %d 个" % same)
+if unreadable:
+    print("\n== 读不到、无法判定（%d 个）==" % len(unreadable))
+    for b, f, why in unreadable:
+        print("   %-30s %s  （%s）" % (b, f, why))
 print("\n== 线上与仓库内容不同（%d 个）==" % len(drift))
 for b, f, r, sz, in_cron in drift:
-    print("   %-30s %8dB  cron在用=%s   仓库副本 %s" % (b, sz, "是" if in_cron else "否",
-                                                  r.replace(REPO + "/", "")))
+    # 必须印出"漂移的是哪一份"：同名脚本在 /usr/local/bin 与 /home/ubuntu 各有一份时，
+    # 只印仓库路径会让人对着好的那份查半天（本轮真实发生过）。
+    print("   %-30s %8dB  cron在用=%s\n      扫描到 %s\n      仓库副本 %s"
+          % (b, sz, "是" if in_cron else "否", f, r.replace(REPO + "/", "")))
 print("\n== 仓库里完全没有（%d 个，标 * 的是 cron 正在用的，必须先入库）==" % len(missing))
 for b, sz, in_cron in sorted(missing, key=lambda x: (not x[2], -x[1])):
     print("   %s%-32s %8dB" % ("*" if in_cron else " ", b, sz))

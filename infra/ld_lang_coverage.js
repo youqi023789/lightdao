@@ -8,9 +8,36 @@
 const fs = require("fs");
 const vm = require("vm");
 
-const ROOT = "/var/www/lightdao/js";
-const ORDER = ["i18n.js", "i18n_core.js", "i18n_pages_en.js", "i18n_pages_en2.js",
-               "i18n_pages_en3.js", "i18n_lat.js"];
+// 可指向候选目录（默认线上）：发布前就该能量候选的覆盖率，而不是只能量已上线的。
+const ROOT = process.env.LD_JS_ROOT || "/var/www/lightdao/js";
+// 加载顺序必须来自页面里真实的 script 顺序，不能在工具里再写死一份：
+// 写死的那份不会随新语种文件加入而更新，结果就是"文件已上线、监控仍报 10%"
+// （本次加 i18n_more.js 时正好撞上）。
+function orderFromHtml() {
+  const cands = [require("path").join(ROOT, "..", "funds.html"),
+                 require("path").join(ROOT, "..", "governance.html"),
+                 require("path").join(ROOT, "..", "contracts.html")];
+  for (const p of cands) {
+    try {
+      const h = fs.readFileSync(p, "utf8");
+      const seq = [...h.matchAll(/src="[^"]*\/(i18n[a-zA-Z0-9_.-]*\.js)/g)].map(m => m[1]);
+      const uniq = [...new Set(seq)];
+      if (uniq.length >= 2) {
+        /* LD-COV-ORDER-20261017 这里原本还要把 lat/more 重排到"最后"，理由是
+           "展开器依赖前面已填好的 en"——这个前提是错的，而且后果静默：
+           __ldExpandLangs 定义在 i18n_lat.js 末尾，lat 被排到最后时
+           i18n_more.js / i18n_b2.js 加载时展开器还不存在，它们的守卫触发、
+           一条都不落地，监控于是永远报"9 语种 20%"。
+           实测：真页面顺序 de=204/551，重排后 de=110/551。
+           顺序的唯一真值就是页面里的顺序，工具没有资格再改一遍。 */
+        return uniq;
+      }
+    } catch (e) { }
+  }
+  return ["i18n.js", "i18n_core.js", "i18n_pages_en.js", "i18n_pages_en2.js",
+          "i18n_pages_en3.js", "i18n_lat.js", "i18n_more.js"];   // 兜底：读不到页面时
+}
+const ORDER = orderFromHtml();
 const ALERTS = process.env.LD_ALERTS || "/home/ubuntu/ld_alerts.log";
 const STATE = process.env.LD_LANG_STATE || "/var/lib/ld_lang_coverage/state.json";
 const LIMIT = parseFloat(process.env.LD_LANG_LIMIT || "50");
@@ -32,6 +59,22 @@ for (const f of ORDER) {
 }
 const D = sb.LDI18N || sb.window.LDI18N || {};
 const keys = Object.keys(D);
+/* LD-COV-STATS-20261017 加载顺序坏了的时候，词典照样"非空"、覆盖率照样能算出个数，
+   所以必须直接看展开器自己的回执：expander-missing 或 missing>0 都说明
+   有一批译文根本没落地。以前这里什么都不看，才让"20%"演了三周。 */
+const tblStats = ["__ldLatStats", "__ldMoreStats", "__ldB2Stats"]
+  .filter(k => sb[k]).map(k => k + "=" + JSON.stringify({
+    applied: sb[k].applied, missing: sb[k].missing, already: sb[k].already, error: sb[k].error }));
+for (const k of ["__ldLatStats", "__ldMoreStats", "__ldB2Stats"]) {
+  if (sb[k] && sb[k].error) {
+    const msg = "ALERT [lang-coverage] " + k + " 报 " + sb[k].error
+      + "：展开器没就位，本文件译文一条都没生效（顺序或挂载点错了）";
+    console.log(msg);
+    try { fs.appendFileSync(ALERTS, new Date().toISOString() + " " + msg + "\n"); } catch (e) { }
+    process.exit(6);
+  }
+}
+console.log("展开器回执：" + (tblStats.join("  ") || "（无表式文件）"));
 if (!keys.length) {
   const msg = "ALERT [lang-coverage] 词典为空或加载失败，本次判定作废（不是【没问题】）";
   console.log(msg);

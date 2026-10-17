@@ -40,7 +40,7 @@
     "At the current rate": "Al ritmo actual|Ao ritmo atual|Pada laju saat ini|Với tốc độ hiện tại",
     "Authority": "Autoridad|Autoridade|Kewenangan|Thẩm quyền",
     "Awaiting signatures": "Esperando firmas|Aguardando assinaturas|Menunggu tanda tangan|Đang chờ ký",
-    "Back to main app": "Volver a la aplicación|Voltar ao aplicativo|Kembali ke aplikasi|Về ứng dụng chính",
+    /* LD-B2-DEADROW-20261017 这里原本是 "Back to main app": 四语译文。站内没有任何中文键的最终 en 等于它（「返回主客户端」实际登记为 "Back to app"，本文件下方已有该行且生效），所以它永不命中=死行，被 g12 门抓出后摘除。不要再加回来：要改这个按钮的四语，改 "Back to app" 那一行。 */
     "Bandwidth 40 / uptime 30 / verification 20 / stability 10": "Ancho de banda 40 / tiempo en línea 30 / verificación 20 / estabilidad 10|Banda 40 / uptime 30 / verificação 20 / estabilidade 10|Bandwidth 40 / uptime 30 / verifikasi 20 / stabilitas 10|Băng thông 40 / thời gian trực tuyến 30 / xác minh 20 / ổn định 10",
     "Bandwidth only": "Solo ancho de banda|Só banda|Hanya bandwidth|Chỉ băng thông",
     "Bandwidth relay 40%": "Relé de ancho de banda 40%|Relé de banda 40%|Relay bandwidth 40%|Chuyển tiếp băng thông 40%",
@@ -115,7 +115,8 @@
     "Full address copied": "Dirección completa copiada|Endereço completo copiado|Alamat lengkap disalin|Đã sao chép địa chỉ đầy đủ",
     "Funds & vesting": "Fondos y vesting|Fundos e vesting|Dana & vesting|Quỹ & vesting",
     "Funds still sit in the treasury multisig": "Los fondos aún están en el multisig del tesoro|Os fundos ainda estão no multisig do tesouro|Dana masih ada di multisig perbendaharaan|Quỹ vẫn nằm trong multisig kho bạc",
-    "Gateway heartbeat had no rate limit": "El heartbeat de la puerta no tenía límite de tasa|O heartbeat do gateway não tinha limite de taxa|Heartbeat gateway tidak punya batas laju|Heartway gateway không có giới hạn tốc độ",
+    /* LD-B2-DUPKEY-20261017 这一行与下面第 380 行的键完全相同（Gateway heartbeat had no rate limit），
+       JS 对象后者覆盖前者；且本行越南语 Heartway 是错字。保留后面的正确行，这里只留说明。 */
     "Generational balance: thresholds fall with scale": "Equilibrio generacional: umbrales bajan con la escala|Equilíbrio geracional: limites caem com a escala|Keseimbangan antargenerasi: ambang turun seiring skala|Cân bằng thế hệ: ngưỡng giảm theo quy mô",
     "Generic DAO action (call contract / migrate)": "Acción DAO genérica (llamar contrato / migrar)|Ação DAO genérica (chamar contrato / migrar)|Aksi DAO generik (panggil kontrak / migrasi)|Hành động DAO chung (gọi hợp đồng / migrate)",
     "Genesis period": "Período génesis|Período de gênese|Periode genesis|Giai đoạn khởi sinh",
@@ -155,7 +156,7 @@
     "Item": "Ítem|Item|Butir|Mục",
     "Jury system": "Sistema de jurado|Sistema de júri|Sistem juri|Hệ thống bồi thẩm",
     "Just open the page": "Solo abre la página|Basta abrir a página|Cukup buka halaman|Chỉ cần mở trang",
-    "Key custody": "Custodia de claves|Custódia de chaves|Kustodi kunci|Lưu giữ khóa",
+    /* LD-B2-DUPKEY-20261017 Key custody 在本文件里写过两遍（内容相同），保留后面那条，这里只留说明；键重复会被后者静默覆盖。 */
     "LIGHT balance": "Saldo LIGHT|Saldo LIGHT|Saldo LIGHT|Số dư LIGHT",
     "Latest blocks": "Últimos bloques|Últimos blocos|Blok terbaru|Khối mới nhất",
     "Learn-to-Earn quiz": "Cuestionario Learn-to-Earn|Quiz Learn-to-Earn|Kuis Learn-to-Earn|Trắc nghiệm Learn-to-Earn",
@@ -422,25 +423,42 @@
   if (typeof window.__ldExpandLangs !== "function") {
     window.__ldExpandLangs = function (langs, table) {
       var dict = window.LDI18N || (window.LDI18N = {});
-      var applied = 0, missing = 0;
+      var applied = 0, missing = 0, missingKeys = [], already = 0;
       for (var en in table) {
         if (!Object.prototype.hasOwnProperty.call(table, en)) continue;
         var parts = String(table[en]).split("|");
         var hit = 0;
+        var ZH = { has: false };   /* 本行的键在词典里是否存在 */
         for (var zh in dict) {
           /* 必须用 hasOwnProperty：for-in 会把原型链上的键也带进来（旧注释里就写过
              所以看起来"部分生效"） */
           if (!Object.prototype.hasOwnProperty.call(dict, zh)) continue;
           var e = dict[zh] && dict[zh].en;
-          if (!e) continue;
-          if (e !== en && String(e).trim() !== en) continue;
+          /* LD-B2-ZHKEY-20261017 表键允许直接就是中文源串（精确同名即命中）。
+             英文作键会把两个不同含义的中文并成一个错译：实测 "Live" 同时来自
+             「即时」与「已上线」、"No." 来自「不需要。」、"Pay" 来自「报酬」。
+             中文键不会串味；代价是手打中文可能写错，由"回填不中即死行"抓。 */
+          var matched = false;
+          if (zh === en) matched = true;              /* 中文键直配 */
+          else if (e) { const t = String(e).trim(); if (e === en || t === en) matched = true; }
+          if (!matched) continue;
+          /* 只要键在词典里存在（不论英文回指还是中文直配）就置位：
+             后面"一个语种都没写进去"时才有办法区分"已完成"与"死行"。 */
+          ZH.has = true;
           for (var k = 0; k < langs.length && k < parts.length; k++) {
             if (!dict[zh][langs[k]] && parts[k]) { dict[zh][langs[k]] = parts[k]; hit++; }
           }
         }
-        if (hit) applied++; else missing++;
+        if (hit) applied++;
+        /* 一个都没写进不等于"死行"：该键的语种值可能已被前一个文件填满，那是正常完成。
+           混在一起报会让门禁指错方向（本轮 __ldB2Stats.missing=1 就是这种假死行），
+           所以按"键是否存在"分成 already 与 missing 两个数。 */
+        else if (ZH.has) already++;
+        else { missing++; if (missingKeys.length < 25) missingKeys.push(en); }
       }
-      return { applied: applied, missing: missing };
+      /* missingKeys 是给门禁看的：只报"有几条死行"没法修，必须能点名。 */
+      return { applied: applied, missing: missing, already: already,
+               missingKeys: missingKeys };
     };
   }
   var stats = window.__ldExpandLangs(L, T);

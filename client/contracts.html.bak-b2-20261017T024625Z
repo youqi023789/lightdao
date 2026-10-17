@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>链上合约与地址 — LightDAO</title>
+<meta name="description" content="LightDAO 主网 lightdao-mainnet-1 上全部已实例化合约的 code_id、地址与用途，附自查命令。On-chain contract registry with self-verification commands.">
+<link rel="stylesheet" href="/theme.css">
+<link rel="stylesheet" href="/css/contracts.css" integrity="sha384-INj5mPWCpjW50h92O3iOyv3vjDMDgkXOzaPErcLbiV9d6e9AnnLPb9Wd+iQbKgxw" crossorigin="anonymous">
+<style>
+/* 键盘可达基线（与其它内页一致：站内无障碍门禁要求写在页面内，外链样式表不算） */
+a:focus-visible,button:focus-visible,.cp:focus-visible{outline:2px solid #7c8cff;outline-offset:2px;border-radius:8px}
+[data-theme="light"] a:focus-visible,[data-theme="light"] button:focus-visible,[data-theme="light"] .cp:focus-visible{outline-color:#2f4bc7}
+.skip{position:absolute;left:-9999px;top:0}
+.skip:focus{left:12px;top:12px;z-index:99;background:#141a2a;color:#e8ebf5;padding:8px 12px;border-radius:8px;border:1px solid #232b42}
+[data-theme="light"] .skip:focus{background:#fff;color:#0e1428;border-color:rgba(12,18,45,.18)}
+</style>
+<script src="/js/contracts_1.js" integrity="sha384-fkw6S2LJHwo2aLvZJ3oTo/PTTSaBo28HoD/Lm0ORQ2EeGnbID7w7aJgXMxgWh3fG" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="/css/nav.css" integrity="sha384-x0yd8R3lq+N5LPy4WV93TEve8XvJ6nm0LvNOSkVwIGcgn3tyNbBfWuZaPvZyF1P8" crossorigin="anonymous">
+</head>
+<body>
+<a class="skip" href="#main">跳到正文 / Skip to content</a>
+<div class="w" id="main">
+<p><a href="/index.html" data-back>← 返回 / Back</a></p>
+<h1>链上合约与地址 / On-chain contracts</h1>
+<p class="lead">这一页存在的理由只有一条：<b>不要相信我们，自己去查。</b>下面每个地址都可以在节点上直接验证，命令就写在页面底部。所有数据于 2026-10-15 由主网 <code>lightdao-mainnet-1</code> 查询生成。</p>
+<p class="note">当前主网高度：<b id="ldHeight">读取中…</b> · 最近出块时间 <b id="ldTime">—</b>（本页地址是静态快照，这一行是实时的）</p>
+
+<div class="card">
+<h2>已实例化合约（12）</h2>
+<table>
+<tr><th>code_id</th><th>合约 / 标签</th><th>地址（点击复制）</th><th>用途</th></tr>
+<tr><td>1</td><td>light_token</td><td><button class="cp" data-a="wasm13c9t6xmar22xclseua6xevw4t4cnrampy6y5ajdydhyv5k0znrcsth555z" aria-label="复制 light_token 地址">wasm13c9t6…h555z</button></td><td>CW20 代币 LIGHT，总量 25 亿枚、永不增发</td></tr>
+<tr><td>4</td><td>treasury_multisig</td><td><button class="cp" data-a="wasm192u2pm80ndmh608mmvhrzhje0sjaq0txr5md77lr70ucy0j3lfys8l633u" aria-label="复制 treasury_multisig 地址">wasm192u2p…ys8l633u</button></td><td>投资金库，5/7 多签；治理决议才能动</td></tr>
+<tr><td>5</td><td>subtoken_factory</td><td><button class="cp" data-a="wasm1uykr2f24sdj9f4la0wv78gvjuyqqnqk9r8jggcqd9ha9vxjrrkksum5x0g" aria-label="复制 subtoken_factory 地址">wasm1uykr2…kksum5x0g</button></td><td>每完成一笔投资发行的子代币（份额凭证）</td></tr>
+<tr><td>6</td><td>oracle_twap</td><td><button class="cp" data-a="wasm1f622csg2af6utlxvxgch2l9qf64ce3s4h5vseaph5ku8vzcgp6qqmsyace" aria-label="复制 oracle_twap 地址">wasm1f622c…cgp6qqmsyace</button></td><td>时间加权价格预言机，Gas 费按美元锚定的依据</td></tr>
+<tr><td>7</td><td>anti_fraud <span class="pill new">此前未记入文档</span></td><td><button class="cp" data-a="wasm1klrq28c5ef4mrn8h7f5kmph48amjplvw39ajmvkgy8lfak3x093src46wr" aria-label="复制 anti_fraud 地址">wasm1klrq2…93src46wr</button></td><td>挑战-应答反作弊与罚没联动（白皮书 §4.8/§6.6）</td></tr>
+<tr><td>8</td><td>validator_registry</td><td><button class="cp" data-a="wasm1egt8ut5swmck6xt5lqeuhkmhp44rwsv73ka8jfp7rn2kg629cdeqdlh6qf" aria-label="复制 validator_registry 地址">wasm1egt8u…29cdeqdlh6qf</button></td><td>验证者注册（CW20 质押 + owner 门限罚没）</td></tr>
+<tr><td>9</td><td>vesting</td><td><button class="cp" data-a="wasm16l8mdmawaq4538ajr89dpfxh7cyll584yw7jqnhgmp5clwp6m8fqtwkz4x" aria-label="复制 vesting 地址">wasm16l8md…p6m8fqtwkz4x</button></td><td>TGE 锁仓：2.5 亿枚，3 条独立释放计划</td></tr>
+<tr><td>10</td><td>insurance_fund</td><td><button class="cp" data-a="wasm1wj3369pug9sdn5wcqu74yr00vtcntqvwgqrmcs0k0twwnvgm8m2qu77ewf" aria-label="复制 insurance_fund 地址">wasm1wj336…gm8m2qu77ewf</button></td><td>保险基金：利润 10% 计提（白皮书 §8.2）</td></tr>
+<tr><td>12</td><td>mining_reward</td><td><button class="cp" data-a="wasm173y0pgdh6ensz4gpgglz40a260www6qse4dswshc87za9du6h4fsm5r9wx" aria-label="复制 mining_reward 地址">wasm173y0p…u6h4fsm5r9wx</button></td><td>挖矿池 10 亿枚；每日根需 7 个授权账户中 5 个签名才可领取</td></tr>
+<tr><td>13</td><td>governance</td><td><button class="cp" data-a="wasm14axmz74pppxqxs3qhxaaf2qzl6x53pvvzm7c6p52qrycwnyh8ktsfukapt" aria-label="复制 governance 地址">wasm14axmz…yh8ktsfukapt</button></td><td>DAO 提案与双维度投票（持币权重 + 地址数）</td></tr>
+<tr><td>16</td><td>vesting-v2-wp54 <span class="pill new">此前未记入文档</span></td><td><button class="cp" data-a="wasm1njjtphj6pkvvcrlu4mzf7qy3clhkl7lysu0v2xsdau6dwj4u2r6qvpvwl6" aria-label="复制 vesting-v2 地址">wasm1njjtp…j4u2r6qvpvwl6</button></td><td>锁仓 v2（工作包 54 交付）</td></tr>
+<tr><td>17</td><td>ecosystem-fund-wp53 <span class="pill new">此前未记入文档</span></td><td><button class="cp" data-a="wasm1j0rhxwwcys2rewlvssylwrf24ghyvxhhzjr47nsx8q8mechp3x0qztt835" aria-label="复制 ecosystem-fund 地址">wasm1j0rhx…chp3x0qztt835</button></td><td>生态发展基金 4 亿枚的释放载体（白皮书 §5.3）</td></tr>
+</table>
+<p class="note">另有 code 2、3、11、14、15、18、19、20 已上传链上代码但<b>尚未实例化</b>（多为升级候选或占位），列在这里是为了让"12 个合约"这个数字可被复核，而不是只挑好看的报。</p>
+</div>
+
+<div class="card">
+<h2>两个容易被误当成合约的地址</h2>
+<table>
+<tr><th>类型</th><th>地址（点击复制）</th><th>说明</th></tr>
+<tr><td>销毁地址</td><td><button class="cp" data-a="wasm1aeaty43lrlt9rmkyxujkkfuddnsfye6az4htcu" aria-label="复制销毁地址">wasm1aeaty…z4htcu</button></td><td>确定性死地址，手续费 50% 烧到这里，任何私钥都花不掉</td></tr>
+<tr><td>代付账户<br>（<b>不是合约</b>）</td><td><button class="cp" data-a="wasm13c2cjh3fhkesj47tsc5a0vm6pdds39qpcmykhj" aria-label="复制代付账户地址">wasm13c2cj…qpcmykhj</button></td><td>普通账户，通过 fee grant 为用户领取交易代付 Gas。代码里旧称 PAYMASTER，容易让人误以为是合约——它不是，链上查它会返回 no such contract。</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h2>服务端点 / Endpoints</h2>
+<table>
+<tr><th>服务</th><th>地址</th></tr>
+<tr><td>网页客户端（PWA）</td><td><code>https://lightdao.net</code></td></tr>
+<tr><td>CometBFT RPC</td><td><code>https://lightdao.net/rpc/</code></td></tr>
+<tr><td>打分网关</td><td><code>https://lightdao.net/gw/</code></td></tr>
+<tr><td>WebRTC 信令（WSS）</td><td><code>wss://lightdao.net/signal</code></td></tr>
+<tr><td>TURN 中继</td><td><code>turn-{jp,kr,sg,us,hk,fr,uk,8}.lightdao.net</code> :3478 / :5349</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h2>自己验 / Verify it yourself</h2>
+<p>任选一个地址，用任意一台能连主网的节点执行：</p>
+<pre>wasmd query wasm contract &lt;地址&gt; --node http://127.0.0.1:26657 --output json
+wasmd query wasm list-contract-by-code &lt;code_id&gt; --node http://127.0.0.1:26657
+wasmd query wasm contract-state all &lt;地址&gt; --node http://127.0.0.1:26657 --output json</pre>
+<p class="note">第三条能把合约的<b>全部状态</b>倒出来，比如金库持币量、锁仓计划、挖矿池余额——不需要相信本页任何一句话。</p>
+</div>
+
+<div class="card">
+<h2>本页的诚实声明</h2>
+<ul>
+<li>anti_fraud、vesting-v2、ecosystem-fund 三个合约的地址<b>此前既不在站点也不在仓库文档里</b>，是 2026-10-15 从链上查回来的。教训已写进发布门禁：地址清单必须由链上查询生成，不能靠人抄。</li>
+<li>白皮书 §4.11 承诺"核心合约 TGE 前须完成形式化验证"——<b>尚未完成</b>，此项挂在审计计划里，不在这里冒充已做。</li>
+<li>合约地址不会自动刷新（本页是静态快照）。要实时数据请用上面的命令或站内浏览器页。</li>
+</ul>
+</div>
+
+</div>
+<script src="/js/back.js" integrity="sha384-k10pc3j5u+Uf4AVglPID79HsF0A3apdkJKm4msgtQVqES7eDFGSKLhgBGmCl6f74" crossorigin="anonymous"></script>
+<script src="/js/wfix.js" integrity="sha384-3YmhFo8XgiBYr4lDUSIT/JZpXWEYntFFBK7PFI5HXnIJWwThaEoh7ihjixezX1oh" crossorigin="anonymous"></script>
+<script src="/js/contracts_2.js" integrity="sha384-L4t2a+mzPvnGPLKY7KBLp6wIw23XRfe6ucDlB0DQrxf9joCLer50XqDEQrhWgi2I" crossorigin="anonymous"></script>
+<div class="foot"><a href="/whitepaper.html">白皮书</a> · <a href="/explorer.html">区块浏览器</a> · <a href="/audit_logic.html">安全与逻辑审计</a> · <a href="/app.html">挖矿</a></div>
+<script src="/js/i18n.js" integrity="sha384-hUfjsROYM/GQB0Vwr470gmWMTElJGQ1sVLGFmEGFRMk6yRQ9C8V6EW02sd2kWF//" crossorigin="anonymous"></script>
+<script src="/js/i18n_core.js" integrity="sha384-kajQT8hf5obaZOs9dnlw0fCxxnFAN7Mgt2mpK1k7yj/5g0KA88EK0+RVB8c8E1Fq" crossorigin="anonymous"></script>
+<script src="/js/i18n_pages_en.js" integrity="sha384-y4vthz8ynIiZm78/rQsAdf36uM7iy3mW7rSPM4ph02op+yqVj4sIWdqu0hbuRQkt" crossorigin="anonymous"></script>
+<script src="/js/i18n_pages_en2.js" integrity="sha384-0xH+8mdD0672lZiYmBTv/snwFKP5rHTB2RT+1HN4UERh1exOpQw+J4+0SLQfYCrY" crossorigin="anonymous"></script>
+<div style="text-align:center;padding:10px 8px;font-size:13px"><a href="/institutions.html">治理制度</a> · <a href="/funds.html">资金与释放</a></div>
+<script src="/js/i18n_lat.js" integrity="sha384-JksXJXgpYzsPQqCnIGTBK+PT4ErCeqKkTwapaabgeoI+00BbvqvksFGDuXIFOg3J" crossorigin="anonymous"></script>
+<script src="/js/i18n_more.js"></script>
+
+<script src="/js/nav.js" defer integrity="sha384-FHmNZ5VY95aiiY740DjIiq7jVkslwwUcrcG85QFfqrU2qJHlEqaEsl4anaxub8cu" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Privacy — LightDAO</title>
+<meta name="description" content="LightDAO 隐私政策：数据收集范围、钱包锁加密方案与用户权利。">
+<link rel="stylesheet" href="/css/privacy.css" integrity="sha384-E0a5Nz/KSb4PzqTmUR/hFBGkUb0THmJVFho/MxjViEZWLxQj1j0ACxJoDccM3tOX" crossorigin="anonymous"><script src="/js/privacy_1.js?v=1.8.7" integrity="sha384-g8CUZOGtmzU4wpKrUeCU75oJbwM0NbUvySZh8wAKjqt+HtPZnYgrxFxVJXkt8tc6" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="/theme.css">
+<script src="/js/back.js?v=1.8.7" integrity="sha384-k10pc3j5u+Uf4AVglPID79HsF0A3apdkJKm4msgtQVqES7eDFGSKLhgBGmCl6f74" crossorigin="anonymous"></script>
+<script src="/js/wfix.js?v=1.8.7" integrity="sha384-3YmhFo8XgiBYr4lDUSIT/JZpXWEYntFFBK7PFI5HXnIJWwThaEoh7ihjixezX1oh" crossorigin="anonymous"></script>
+<style>:focus-visible{outline:2px solid #4da3ff;outline-offset:3px;border-radius:6px}
+.skip{position:absolute;left:-9999px;top:0}.skip:focus{left:8px;top:8px;background:#4da3ff;color:#04101f;padding:8px 14px;border-radius:8px;z-index:99}
+</style>
+<link rel="stylesheet" href="/css/nav.css" integrity="sha384-x0yd8R3lq+N5LPy4WV93TEve8XvJ6nm0LvNOSkVwIGcgn3tyNbBfWuZaPvZyF1P8" crossorigin="anonymous">
+</head><body>
+<a class="skip" href="#content">Skip to content</a>
+<span id="content"></span>
+<div class="u3efb04"><a href="#" data-back="1" class="u59fa2b">← 返回上一页 / Back</a><a href="/" class="u59fa2b">⌂ 返回首页 / Home</a><button id="themeT" aria-label="toggle theme" class="u6b0f12">◐</button></div>
+<div class="w">
+<p><a href="/">← LightDAO</a></p><h1>Privacy Policy 隐私政策</h1>
+<p>LightDAO is a self-custodial, browser-native protocol. We minimize data by design.</p>
+<h2>What we do NOT collect</h2><ul><li>No accounts, no emails required to mine (newsletter is opt-in).</li><li>No private keys, seeds, or Passkey credentials ever leave your device.</li><li>No third-party ad trackers or analytics beacons on the client.</li></ul>
+<h2>What the network necessarily sees</h2><ul><li>Your wallet address and on-chain transactions (public by nature of a blockchain).</li><li>Mining contribution metrics you broadcast (bandwidth/uptime/verification/stability) and an anti-sybil device fingerprint hash + IP, used only to score contribution and prevent fraud.</li><li>Standard server access logs (IP, UA) for security and rate-limiting.</li></ul>
+<h2>Your controls</h2><ul><li>Stop mining any time; contribution broadcasting stops.</li><li>Clear browser storage to remove local wallet session & referral data.</li><li>Request log deletion: privacy@lightdao.net.</li></ul>
+<h2>Cookies / local storage</h2><p>We use localStorage/sessionStorage for wallet session, language, and referral attribution only. No cross-site cookies.</p>
+<p class="u062d4a">Effective 2026-09-26 · privacy@lightdao.net</p></div><script src="/js/privacy_2.js?v=1.8.7" integrity="sha384-j7Ahu4vxJZPZkpj+mQ1qmcEVw825FSzKQUBgnySwICEBsjYYIVtRx4R8vDndZCSV" crossorigin="anonymous"></script>
+<div style="text-align:center;padding:14px 8px;font-size:13px;color:#9aa3b2;border-top:1px solid #1c2733;margin-top:24px">Telegram <a href="https://t.me/lightdao_news" target="_blank" rel="noopener" style="color:#4da3ff">@lightdao_news</a> · Discord <a href="https://discord.gg/aBWEatEkUX" target="_blank" rel="noopener" style="color:#4da3ff">LightDAO</a> · X <a href="https://x.com/lightdaoproto" target="_blank" rel="noopener" style="color:#4da3ff">@lightdaoproto</a></div>
+<div style="text-align:center;padding:10px 8px;font-size:13px"><a href="/contracts.html">链上合约与地址</a></div>
+<script src="/js/i18n.js" integrity="sha384-hUfjsROYM/GQB0Vwr470gmWMTElJGQ1sVLGFmEGFRMk6yRQ9C8V6EW02sd2kWF//" crossorigin="anonymous"></script>
+<script src="/js/i18n_core.js" integrity="sha384-kajQT8hf5obaZOs9dnlw0fCxxnFAN7Mgt2mpK1k7yj/5g0KA88EK0+RVB8c8E1Fq" crossorigin="anonymous"></script>
+<script src="/js/i18n_pages_en.js" integrity="sha384-y4vthz8ynIiZm78/rQsAdf36uM7iy3mW7rSPM4ph02op+yqVj4sIWdqu0hbuRQkt" crossorigin="anonymous"></script>
+<script src="/js/i18n_pages_en2.js" integrity="sha384-0xH+8mdD0672lZiYmBTv/snwFKP5rHTB2RT+1HN4UERh1exOpQw+J4+0SLQfYCrY" crossorigin="anonymous"></script>
+<div style="text-align:center;padding:10px 8px;font-size:13px"><a href="/institutions.html">治理制度</a> · <a href="/funds.html">资金与释放</a></div>
+<script src="/js/i18n_lat.js" integrity="sha384-JksXJXgpYzsPQqCnIGTBK+PT4ErCeqKkTwapaabgeoI+00BbvqvksFGDuXIFOg3J" crossorigin="anonymous"></script>
+<script src="/js/i18n_more.js"></script>
+
+<script src="/js/nav.js" defer integrity="sha384-FHmNZ5VY95aiiY740DjIiq7jVkslwwUcrcG85QFfqrU2qJHlEqaEsl4anaxub8cu" crossorigin="anonymous"></script>
+</body></html>

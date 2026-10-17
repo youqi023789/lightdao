@@ -42,6 +42,91 @@ function sameSet(a, b) {
 
 const allFiles = fs.readdirSync(ROOT).filter(f => /^i18n.*\.js$/.test(f)).sort();
 
+/* ---------- 文字/脚本判据：抓住"手打错字"这类只有门禁能发现的问题 ----------
+   本轮实测我自己就打错两处：ar 值里冒出汉字（مused用的）和拉丁字母
+   （المفاتيh）。这类错误在页面上极难看，只能靠"值里必须有本语种文字、
+   且不得混进别的文字"来拦。 */
+const BLOCK = {
+  cyr: new RegExp("[\\u0400-\\u04ff]"),      // 西里尔
+  arab: new RegExp("[\\u0600-\\u06ff]"),     // 阿拉伯
+  deva: new RegExp("[\\u0900-\\u097f]"),     // 天城（印地）
+  /* 韩文必须精确到音节/字母区。曾用 [\\u3130-\\ud7bf] 是错的：
+     这一大段把汉字区 U+4E00-U+9FFF 整个包了进去，于是 ja 的「終了」被判成
+     "混进韩文"、一次假警报 97 条。范围写宽了的判据比没有判据更有害。 */
+  hangul: new RegExp("[\\uac00-\\ud7af]|[\\u3130-\\u318f]|[\\u1100-\\u11ff]"),
+  kana: new RegExp("[\\u3040-\\u30ff]"),     // 日文假名（平假名+片假名）
+  cjk: new RegExp("[\\u4e00-\\u9fff]")       // 汉字
+};
+const OWN = { ru: ["cyr"], ar: ["arab"], hi: ["deva"], ko: ["hangul"], ja: ["kana", "cjk"] };
+const FORBID = {
+  ar: ["cyr", "deva", "hangul", "cjk", "kana"],
+  ru: ["arab", "deva", "hangul", "cjk", "kana"],
+  hi: ["arab", "cyr", "hangul", "cjk", "kana"],
+  ko: ["arab", "cyr", "deva", "cjk", "kana"],
+  ja: ["arab", "cyr", "deva", "hangul"],
+};
+function scriptIssue(loc, v) {
+  const own = OWN[loc];
+  if (own && !own.some(b => BLOCK[b].test(v))) return "值里没有本语种(" + loc + ")文字";
+  for (const b of (FORBID[loc] || [])) if (BLOCK[b].test(v)) return "值里混进了其它文字 " + b + "(" + loc + ")";
+  return null;
+}
+
+/* ---------- 站内真实存在的源串集合（判断表式行是不是"死行"的唯一依据） ----------
+   表式文件的键要么就是中文源串（批次 2 起用中文键），要么是某个中文键的 en 值
+   （lat/more 的旧写法）。两种都对不上号 = 这条译文永远不会被用上，必须点名。
+   中文源串集合来自所有【词条式】文件在 vm 里跑完后的落地结果，不靠正则猜。 */
+const ZH = new Map();     // 中文键 → {locale: value}
+const ENSET = new Set();  // 能被表式英文键回指的 en 值集合
+(function buildZhUniverse() {
+  const sb = { console: { log() { }, error() { } },
+               document: { documentElement: { dataset: {}, lang: "" }, addEventListener() { }, readyState: "complete" },
+               localStorage: { getItem() { return null; }, setItem() { } },
+               location: { search: "", pathname: "/", origin: "https://lightdao.net" },
+               navigator: { language: "en" }, setTimeout() { return 0; },
+               URLSearchParams: function () { this.get = () => null; },
+               WeakSet: function () { this.add = () => { }; this.has = () => false; },
+               MutationObserver: function () { this.observe = () => { }; this.disconnect = () => { }; } };
+  sb.window = sb;
+  const ctx = vm.createContext(sb);
+  const isE = (f) => {
+    try { const s = fs.readFileSync(ROOT + "/" + f, "utf8");
+          return /function\s+E\s*\(/.test(s) && !/var T\s*=\s*\{/.test(s); }
+    catch (e) { return false; }
+  };
+  /* 加载顺序必须与浏览器一致（后者覆盖前者），所以从页面 <script> 标签实测推导，
+     而不是按文件名字母序——字母序会把 i18n_pages_en3.js 排到 lat/more 之后，
+     与真实覆盖顺序不同，en 集合就会算错。 */
+  let efiles;
+  try {
+    const h = fs.readFileSync("/var/www/lightdao/governance.html", "utf8");
+    const seq = [], re = /<script[^>]+\bsrc="\/js\/(i18n[^"?]+\.js)"/g;
+    let m2; while ((m2 = re.exec(h)) !== null) if (!seq.includes(m2[1])) seq.push(m2[1]);
+    efiles = seq.filter(isE);
+    const extra = allFiles.filter(f => isE(f) && !efiles.includes(f));
+    if (extra.length) { console.log("注意：" + extra.join(",") + " 没出现在页面脚本顺序里，按字母序追加"); efiles = efiles.concat(extra.sort()); }
+  } catch (e) {
+    console.log("注意：读不到页面脚本顺序（" + e.message + "），退回字母序");
+    efiles = allFiles.filter(isE);
+  }
+  for (const f of efiles) {
+    try { vm.runInContext(fs.readFileSync(ROOT + "/" + f, "utf8"), ctx, { filename: f }); }
+    catch (e) { console.log("FAIL 源串集合加载 " + f + " 抛错: " + String(e.message).slice(0, 90)); bad++; }
+  }
+  const D = sb.LDI18N || {};
+  /* 合并语义必须与浏览器里一致：后加载覆盖先加载。
+     这里曾写成"先到先得"，于是同一个中文键在 pages_en 里是
+     "Back to main app"、在后面的文件里被改成 "Back to app" 时，
+     门禁看到的 en 集合与线上不一致——判据本身失真比没判据更危险。 */
+  for (const zh of Object.keys(D)) {
+    if (!ZH.has(zh)) ZH.set(zh, Object.assign({}, D[zh]));
+    else Object.assign(ZH.get(zh), D[zh]);
+  }
+  for (const [, e] of ZH) { const en = String(e.en || "").trim(); if (en) ENSET.add(en); }
+})();
+const CJK_RE = new RegExp("[\\u4e00-\\u9fff]");
+console.log("站内源串：中文键 " + ZH.size + " 个，可被表式英文键回指的 en 值 " + ENSET.size + " 个");
+
 /* ---------------- A) 竖线表式 ---------------- */
 for (const f of allFiles) {
   const p = ROOT + "/" + f;
@@ -69,9 +154,24 @@ for (const f of allFiles) {
     console.log("FAIL " + f + " 语法不通过: " + String(chk.stderr || "").split("\n")[0].slice(0, 100));
     bad++;
   }
+  /* 同一个表里键重复 = JS 对象后者静默覆盖前者，少一条译文且毫无报错 */
+  const keyHits = new Map();
+  for (const [en] of rows) keyHits.set(en, (keyHits.get(en) || 0) + 1);
+  for (const [k, v] of keyHits) if (v > 1) {
+    console.log("FAIL [表式] " + f + " 键 [" + k.slice(0, 34) + "] 重复 " + v + " 次 —— 后者静默覆盖前者");
+    bad++;
+  }
   console.log("== [表式] " + f + "：声明语种 " + L.length + " 个，解析到 " + rows.length + " 行");
   for (const [en, val] of rows) {
     checkedA++;
+    /* 死行检查：键必须是站内真实存在的源串（中文键），或某个中文键的 en 值。
+       对不上号 = 这条译文永远不会被用上；批次 2 起键是手打的中文，
+       打错一个字就会静默失效，必须由门禁点名。 */
+    if (CJK_RE.test(en)) {
+      if (!ZH.has(en)) { console.log("   死行 [" + en.slice(0, 30) + "] 不是站内已有的中文源串 —— 键打错了，译文永远不会生效"); bad++; }
+    } else if (!ENSET.has(en.trim())) {
+      console.log("   死行 [" + en.slice(0, 30) + "] 没有任何中文键的 en 等于它 —— 译文永远不会生效"); bad++;
+    }
     const parts = val.split("|");
     if (parts.length !== L.length) {
       console.log("   行 [" + en.slice(0, 30) + "] 列数 " + parts.length + " ≠ " + L.length + " —— 会整体错位，必须修");
@@ -79,10 +179,9 @@ for (const f of allFiles) {
       bad++; continue;
     }
     for (let i = 0; i < parts.length; i++) {
-      if (!parts[i].trim()) { console.log("   行 [" + en.slice(0, 28) + "] 第 " + (i + 1) + " 列(" + L[i] + ") 为空 —— 会回落英文"); bad++; }
-      /* 这里不加"译文等于英文原串即判错"：Status→Status、Normal→Normal 这类
-         在印尼语/西班牙语里本来就是同一个词，加了就是一堆假阳性，
-         还会把真正的问题淹掉。表式文件用中文键做基准判不了，故不做。 */
+      if (!parts[i].trim()) { console.log("   行 [" + en.slice(0, 28) + "] 第 " + (i + 1) + " 列(" + L[i] + ") 为空 —— 会回落英文"); bad++; continue; }
+      const si = scriptIssue(L[i], parts[i]);
+      if (si) { console.log("   行 [" + en.slice(0, 28) + "] 第 " + (i + 1) + " 列 " + si + "：" + parts[i].slice(0, 34)); bad++; }
     }
   }
 }
@@ -125,7 +224,9 @@ for (const f of allFiles) {
          线上 5 条"问题"全是这种。改成按字符判定"值里是否仍含汉字"，并且完全放过 ja
          （ja 与中文共用汉字，任何判据都会真假难分）——宁可少判一类，也不要用假警报
          把真问题淹掉。 */
-      if (loc !== "ja" && /[\u4e00-\u9fff]/.test(v)) { console.log("   键 [" + zh.slice(0, 26) + "] 的 " + loc + " 值里仍含中文 —— 等于没译"); bad++; continue; }
+      if (loc !== "ja" && CJK_RE.test(v)) { console.log("   键 [" + zh.slice(0, 26) + "] 的 " + loc + " 值里仍含中文 —— 等于没译"); bad++; continue; }
+      const si = scriptIssue(loc, v);
+      if (si) { console.log("   键 [" + zh.slice(0, 26) + "] " + si + "：" + String(v).slice(0, 34)); bad++; }
       if (!sameSet(phSet(zh), phSet(v))) {
         console.log("   键 [" + zh.slice(0, 26) + "] 的 " + loc + " 占位符与中文键不一致（会把 {x} 显示给用户或漏掉数字）");
         console.log("      键: " + zh.slice(0, 60) + "\n      值: " + String(v).slice(0, 60));
