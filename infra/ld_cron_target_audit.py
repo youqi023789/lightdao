@@ -22,6 +22,9 @@ for user in ("root", "ubuntu"):
         body = re.sub(r"^(@(daily|hourly|weekly|monthly|reboot)\s+)", "", body)
         body = re.sub(r"^\d+[\d*/,\-]*\s+\S+\s+\S+\s+\S+\s+\S+\s+", "", body)
         for tok in re.findall(r"(/(?:usr|home|etc|var)[^\s;|&]+)", body):
+            # 去掉收尾的引号/括号：`bash -c '/usr/local/bin/x.sh'` 抽出来的 token
+            # 会带上结尾单引号，直接判存在就变成假 MISSING（首跑就这么报了一条）。
+            tok = tok.rstrip("'\"),;")
             if tok.endswith((">", "2>&1", ".log", ".out")) or ">>" in tok: continue
             targets.add(tok); per_line.append((user, i, tok))
         for tok in re.findall(r"([a-z0-9_./-]+\.py|[a-z0-9_./-]+\.sh|[a-z0-9_./-]+\.js)", body):
