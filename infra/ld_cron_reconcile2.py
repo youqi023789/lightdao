@@ -72,6 +72,12 @@ def norm(line):
         parts = parts[1:]
     else:
         parts = parts[5:]
+    # LD-RECON-NORMSYM-20261017 调度字段之后还可能出现"行内环境变量"
+    # （cron 是用 /bin/sh 跑命令行的，`30 4 * * * DRY_RUN=1 bash -c ...` 合法），
+    # 上面那次剥环境发生在时间字段前面，剥不到它，于是与清单侧的 norm_cmd 不对称，
+    # 同一条命令被判成两个键 → 误报"未登记"和"清单有但线上没跑"。这里补剥一次。
+    while parts and re.match(r"^[A-Z_][A-Z0-9_]*=", parts[0]):
+        parts = parts[1:]
     return _strip_redir(" ".join(parts))
 
 

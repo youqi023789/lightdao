@@ -60,6 +60,13 @@
     "Vested": "Acquis|Erworben|Приобретено|権利確定|권리 확정|مُستحق|वस्टेड|Kazanılmış|Naka-vest",
     "Claimed": "Réclamé|Abgeholt|Заявлено|請求済み|청구됨|تم استلامه|दावा किया|Talep edildi|Na-claim"
   };
+  /* 自带登记（不依赖别处先定义好任何东西）：boot() 会统一补展开，
+     所以"这张表排在哪"不再决定用户看不看得到本语种。 */
+  (function () {
+    var t = (window.__ldTables = window.__ldTables || []);
+    for (var i = 0; i < t.length; i++) { if (t[i][1] === T) return; }
+    t.push([L, T]);
+  })();
   if (typeof window.__ldExpandLangs !== "function") {
     window.__ldMoreStats = { error: "expander-missing" };
     try { console.error("[i18n_more] 展开器缺失：i18n_lat.js 必须先于本文件加载"); } catch (e) { }

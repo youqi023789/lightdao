@@ -64,12 +64,24 @@ const BLOCK = {
   cjk: new RegExp("[\\u4e00-\\u9fff]")       // 汉字
 };
 const OWN = { ru: ["cyr"], ar: ["arab"], hi: ["deva"], ko: ["hangul"], ja: ["kana", "cjk"] };
+/* 拉丁语种也要检查"混进别的文字"。之前只查 ru/ar/hi/ko/ja，结果批次 3 里
+   de 值中的中文"增发"、fr 值中的"上传"全都漏过——错字不分语种，
+   混进拉丁文一样会让用户看到一行乱码般的中文。 */
 const FORBID = {
   ar: ["cyr", "deva", "hangul", "cjk", "kana"],
   ru: ["arab", "deva", "hangul", "cjk", "kana"],
   hi: ["arab", "cyr", "hangul", "cjk", "kana"],
   ko: ["arab", "cyr", "deva", "cjk", "kana"],
   ja: ["arab", "cyr", "deva", "hangul"],
+  fr: ["cyr", "arab", "deva", "hangul", "cjk", "kana"],
+  de: ["cyr", "arab", "deva", "hangul", "cjk", "kana"],
+  es: ["cyr", "arab", "deva", "hangul", "cjk", "kana"],
+  pt: ["cyr", "arab", "deva", "hangul", "cjk", "kana"],
+  tr: ["cyr", "arab", "deva", "hangul", "cjk", "kana"],
+  vi: ["cyr", "arab", "deva", "hangul", "cjk", "kana"],
+  id: ["cyr", "arab", "deva", "hangul", "cjk", "kana"],
+  fil: ["cyr", "arab", "deva", "hangul", "cjk", "kana"],
+  en: ["cyr", "arab", "deva", "hangul", "cjk", "kana"],
 };
 function scriptIssue(loc, v) {
   const own = OWN[loc];
@@ -159,6 +171,17 @@ for (const f of allFiles) {
   if (chk.status !== 0) {
     console.log("FAIL " + f + " 语法不通过: " + String(chk.stderr || "").split("\n")[0].slice(0, 100));
     bad++;
+  }
+  /* 量具自查：严格行正则"解析不到"是静默的——上一版 i18n_b3.js 行尾带了 // 注释，
+     77 行一条都没进检查，而总问题数照样报 0（列数、同形字全没跑）。
+     现在用宽松计数对比：差得多就判 FAIL，绝不允许"解析 0 行"被当成通过。 */
+  {
+    const loose = (src.slice(ti).match(/^\s*"(?:[^"\\]|\\.)*"\s*:\s*"(?:[^"\\]|\\.)*"/gm) || []).length;
+    if (loose > 0 && rows.length < loose * 0.9) {
+      console.log("FAIL [表式] " + f + " 宽松数到 " + loose + " 行、严格只解析 " + rows.length +
+        " 行 —— 行格式让检查静默跳过（不是没问题）");
+      bad++;
+    }
   }
   /* 同一个表里键重复 = JS 对象后者静默覆盖前者，少一条译文且毫无报错 */
   const keyHits = new Map();
@@ -265,5 +288,55 @@ if (checkedA + checkedB === 0) {
   console.log("FAIL 一个词条都没解析到——量具自己坏了，不接受“0 问题”当成通过");
   bad++;
 }
+
+/* ---------------- C) 顺序无关性：换一种加载顺序，覆盖数必须一模一样 ----------------
+   为什么这一节必须存在：语种表靠"加载时展开"回填到中文键上，一旦某个表文件排在
+   词典文件前面（或排在展开器定义文件前面），那批译文就静默不生效。
+   本轮实测：按字母序加载时九语全齐从 465 掉到 121，而生产页面顺序恰好没踩到——
+   "现在没出事"不等于"有门禁"，所以拿两种顺序各量一遍，不一致就是真问题。 */
+(function orderIndependence() {
+  const NEW9 = ["fr", "de", "ru", "ja", "ko", "ar", "hi", "tr", "fil"];
+  const all = allFiles.filter(f => {
+    try { return fs.statSync(ROOT + "/" + f).isFile(); } catch (e) { return false; }
+  });
+  function kindOf(f) {
+    const s = fs.readFileSync(ROOT + "/" + f, "utf8");
+    if (/var T\s*=\s*\{/.test(s) && /var L\s*=/.test(s)) return "table";
+    if (/function\s+E\s*\(/.test(s)) return "entry";
+    return "core";
+  }
+  function coverage(order) {
+    const sb = { console: { log() { }, error() { } },
+      document: { documentElement: { dataset: {}, lang: "" }, querySelectorAll: () => [], addEventListener() { },
+        createTextNode: () => ({}), readyState: "loading" },
+      localStorage: { getItem: () => null, setItem() { } }, navigator: { language: "en" },
+      location: { search: "", origin: "https://lightdao.net" },
+      MutationObserver: function () { this.observe = () => { }; this.disconnect = () => { }; },
+      setTimeout: () => 0, setInterval: () => 0, clearTimeout() { } };
+    sb.window = sb; sb.globalThis = sb;
+    const ctx = vm.createContext(sb);
+    for (const f of order) {
+      try { vm.runInContext(fs.readFileSync(ROOT + "/" + f, "utf8"), ctx, { filename: f }); } catch (e) { }
+    }
+    try { vm.runInContext("window.__ldExpandAll && window.__ldExpandAll()", ctx); } catch (e) { }
+    const D = sb.LDI18N || {}, ks = Object.keys(D);
+    const sig = NEW9.map(l => ks.filter(k => D[k] && typeof D[k][l] === "string" && D[k][l].trim()).length).join("/");
+    return { keys: ks.length, sig };
+  }
+  const byKind = f => ({ core: 0, entry: 1, table: 2 }[kindOf(f)]);
+  const O1 = all.slice().sort((a, b) => byKind(a) - byKind(b) || a.localeCompare(b));  // 词条在前
+  const O2 = all.slice().sort((a, b) => byKind(b) - byKind(a) || a.localeCompare(b));  // 表在前（最坏情况）
+  let r1, r2;
+  try { r1 = coverage(O1); r2 = coverage(O2); }
+  catch (e) { console.log("FAIL [顺序] 量具自己抛错：" + e.message); bad++; return; }
+  if (r1.keys === 0) { console.log("FAIL [顺序] 词典为空，无法判定顺序无关性"); bad++; return; }
+  const same = r1.keys === r2.keys && r1.sig === r2.sig;
+  console.log("[顺序] 词条在前 keys=" + r1.keys + " 覆盖" + r1.sig +
+    "  |  表在前 keys=" + r2.keys + " 覆盖" + r2.sig + "  →  " + (same ? "一致 ✅" : "不一致 ❌"));
+  if (!same) {
+    console.log("   换一种加载顺序，译文数量就变了：说明某张表在某个顺序下根本没生效");
+    bad++;
+  }
+})();
 console.log("I18N-VALIDATE FAILS: " + bad);
 process.exit(bad ? 1 : 0);

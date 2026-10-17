@@ -400,6 +400,13 @@
     "——依据白皮书 §4.6 / §4.7。": "— selon les §4.6 / §4.7 du livre blanc.|— gemäß Whitepaper §4.6 / §4.7.|— согласно §4.6 / §4.7 вайтпейпера.|— ホワイトペーパー §4.6 / §4.7 に基づく。|— 백서 §4.6 / §4.7 근거.|— وفق §4.6 / §4.7 من الورقة البيضاء.|— व्हाइटपेपर §4.6 / §4.7 के अनुसार.|— whitepaper §4.6 / §4.7 uyarınca.|— ayon sa whitepaper §4.6 / §4.7.",
     "，此项挂在审计计划里，不在这里冒充已做。": ", ce point figure au plan d'audit ; cette page ne le présente pas comme fait|, dieser Punkt steht im Auditplan und wird hier nicht als erledigt ausgegeben|, этот пункт числится в плане аудита и не выдаётся за выполненный|、この項目は監査計画に留めており、ここで実施済みとは偽らない|, 이 항목은 감사 계획에 있으며 여기서 완료된 척하지 않습니다|, هذا البند مدرج في خطة التدقيق ولا نقدّمه هنا كأنه مُنجز|, यह मद लेखा योजना में है और इसे यहाँ पूर्ण नहीं दिखाया जाता|, bu madde denetim planında duruyor; burada yapılmış gibi göstermiyoruz|, ang aytem na ito ay nasa audit plan; hindi namin itong ipakita bilang tapos na",
   };
+  /* 自带登记（不依赖别处先定义好任何东西）：boot() 会统一补展开，
+     所以"这张表排在哪"不再决定用户看不看得到本语种。 */
+  (function () {
+    var t = (window.__ldTables = window.__ldTables || []);
+    for (var i = 0; i < t.length; i++) { if (t[i][1] === T) return; }
+    t.push([L, T]);
+  })();
   if (typeof window.__ldExpandLangs !== "function") {
     window.__ldB2Stats = { error: "expander-missing" };
     try { console.error("[i18n_b2] 展开器缺失：i18n_lat.js 必须先于本文件加载"); } catch (e) { }

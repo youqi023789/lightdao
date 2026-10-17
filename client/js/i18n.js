@@ -21,6 +21,19 @@
 
   W.LDI18N = W.LDI18N || {};          // { "中文原文": { en: "...", ... } }
 
+  /* LD-REGISTER-TABLES-20261017 语种表的登记处放在这里（第一个加载的 i18n 脚本），
+     而不是放在展开器内部：展开器定义在 i18n_lat.js，若某个表文件排在它前面加载，
+     旧写法会让那张表既没展开、也没登记，__ldExpandAll 后来无从补跑——
+     实测按字母序加载时 i18n_b2.js 的 360 行译文整批丢失（121/562 vs 465/551）。
+     登记与展开解耦之后，页面怎么写 <script> 顺序都不丢译文。 */
+  W.__ldTables = W.__ldTables || [];
+  W.__ldRegisterTable = function (langs, table) {
+    var t = W.__ldTables;
+    for (var i = 0; i < t.length; i++) { if (t[i][1] === table) return false; }
+    t.push([langs, table]);
+    return true;
+  };
+
   function urlLang() {
     // ?lang=en 之类的分享链接直达指定语言，并记住它（内页与外页共用同一个键）
     try {
@@ -263,6 +276,10 @@
 
   function boot() {
     try {
+      /* LD-EXPAND-ALL-20261017 此刻所有同步脚本都执行完了，中文键集合已完整。
+         统一把所有已登记的语种表再展开一遍，页面之间的覆盖度就不再依赖
+         <script> 的先后顺序（治理页曾比资金页少 145 条译文，且门禁看不见）。 */
+      try { if (W.__ldExpandAll) { W.__ldExpandAll(); } } catch (e) { }
       // 与首页/挖矿页共用同一个键，切语言不会"进内页就退回中文"
       mountSwitcher();
       apply(cur());

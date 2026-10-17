@@ -196,7 +196,7 @@
     "No profit to reserve yet": "Aún no hay lucro que reservar|Ainda não há lucro a reservar|Belum ada laba untuk dicadangkan|Chưa có lợi nhuận để trích",
     "No.": "No.|Não.|Tidak.|Không.",
     "Nodes & validators": "Nodos y validadores|Nós e validadores|Node & validator|Nút & validator",
-    "Non-custodial: the server stores no private keys or plaintext seeds": "Sin custodia: el servidor no guarda claves ni semillas en claro|Sem custódia: o servidor não guarda chaves nem seeds em texto|Non-kustodial: server tidak menyimpan kunci atau seed teks|Không lưu ký: máy chủ không giữ khóa hay cụm明文",
+    "Non-custodial: the server stores no private keys or plaintext seeds": "Sin custodia: el servidor no guarda claves ni semillas en claro|Sem custódia: o servidor não guarda chaves nem seeds em texto|Non-kustodial: server tidak menyimpan kunci atau seed teks|Không lưu ký: máy chủ không giữ khóa hay seed dạng văn bản rõ",
     "Not active": "No activo|Não ativo|Tidak aktif|Không hoạt động",
     "Not application-free": "No exento de solicitud|Não isento de candidatura|Tidak bebas pendaftaran|Không phải không cần đăng ký",
     "Not done": "No hecho|Não feito|Belum selesai|Chưa làm",
@@ -327,7 +327,7 @@
     "Validators 34.2k + miners 650.7k": "Validadores 34,2k + mineros 650,7k|Validadores 34,2k + miner 650,7k|Validator 34,2k + penambang 650,7k|Validator 34,2k + thợ đào 650,7k",
     "Validators: how to apply / run": "Validadores: cómo postularse / operar|Validadores: como se candidatar / operar|Validator: cara mendaftar / menjalankan|Validator: cách ứng cử / vận hành",
     "Verify it yourself": "Verifícalo tú mismo|Verifique você mesmo|Verifikasi sendiri|Tự bạn kiểm chứng",
-    "Vested": "Adquirido|Vestido|Hak vested|Đã归属",
+    "Vested": "Adquirido|Vestido|Hak vested|Đã thuộc về",
     "Vesting (three TGE schedules)": "Vesting (tres cronogramas TGE)|Vesting (três cronogramas TGE)|Vesting (tiga jadwal TGE)|Vesting (ba lịch TGE)",
     "Vesting v2 (work package 54)": "Vesting v2 (paquete de trabajo 54)|Vesting v2 (pacote de trabalho 54)|Vesting v2 (paket kerja 54)|Vesting v2 (gói công việc 54)",
     "Vote #": "Voto #|Voto #|Vote #|Bỏ phiếu #",
@@ -423,6 +423,21 @@
   if (typeof window.__ldExpandLangs !== "function") {
     window.__ldExpandLangs = function (langs, table) {
       var dict = window.LDI18N || (window.LDI18N = {});
+      /* LD-EXPAND-ALL-20261017 把"这张表"登记下来，供 i18n.js 在所有脚本加载完之后
+         统一再展开一次。只靠加载时那一次展开，等于让 18 个页面的 <script> 先后顺序
+         决定用户能不能看到本语种——实测 governance 页就因此比 funds 页少 145 条译文。 */
+      window.__ldTables = window.__ldTables || [];
+      /* 登记统一走 i18n.js 的 __ldRegisterTable（按表对象身份去重）。
+         保留本地兜底是为了单测/独立加载时也不炸；两处都必须去重，
+         否则 __ldExpandAll 会边遍历边加长 → 死循环（上一版真实踩过，验证超时暴露）。 */
+      if (typeof window.__ldRegisterTable === "function") window.__ldRegisterTable(langs, table);
+      else {
+        var reg = false;
+        for (var q = 0; q < window.__ldTables.length; q++) {
+          if (window.__ldTables[q][1] === table) { reg = true; break; }
+        }
+        if (!reg) window.__ldTables.push([langs, table]);
+      }
       var applied = 0, missing = 0, missingKeys = [], already = 0;
       for (var en in table) {
         if (!Object.prototype.hasOwnProperty.call(table, en)) continue;
@@ -461,6 +476,25 @@
                missingKeys: missingKeys };
     };
   }
+  /* 统一重跑：展开器只写空位，跑多次是幂等的，成本约 460 行 × 560 键。 */
+  if (typeof window.__ldExpandAll !== "function") {
+    window.__ldExpandAll = function () {
+      var t = window.__ldTables || [], out = { passes: 0, applied: 0, missing: 0, already: 0 };
+      for (var i = 0; i < t.length; i++) {
+        var s = window.__ldExpandLangs(t[i][0], t[i][1]);
+        out.passes++;
+        out.applied += s.applied; out.missing += s.missing; out.already += (s.already || 0);
+      }
+      return out;
+    };
+  }
+  /* 自带登记（不依赖别处先定义好任何东西）：boot() 会统一补展开，
+     所以"这张表排在哪"不再决定用户看不看得到本语种。 */
+  (function () {
+    var t = (window.__ldTables = window.__ldTables || []);
+    for (var i = 0; i < t.length; i++) { if (t[i][1] === T) return; }
+    t.push([L, T]);
+  })();
   var stats = window.__ldExpandLangs(L, T);
   window.__ldLatStats = stats;
 })();
