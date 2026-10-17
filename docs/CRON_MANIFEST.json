@@ -379,6 +379,27 @@
    "cmd": "/usr/bin/python3 /usr/local/bin/ld_cron_target_audit.py",
    "purpose": "体检 crontab 里每个脚本【及其内部调用的绝对路径】是否真的存在——检测点自己坏了必须比被测系统先被发现（SRI 门空转三天的直接教训）",
    "added": "2026-10-17"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "0 16 * * *",
+   "cmd": "/usr/local/bin/ld_daily_telegram.sh pm",
+   "purpose": "每日 Telegram 播报(晚班,与早班不同文案,统一内容源 daily_unified.json;对外发布,脚本化自动发)",
+   "added": "2026-10-17"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "0 16 * * *",
+   "cmd": "/usr/local/bin/ld_daily_discord.sh pm",
+   "purpose": "每日 Discord 播报(晚班,与早班不同文案,统一内容源)",
+   "added": "2026-10-17"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "30 16 * * *",
+   "cmd": "/usr/local/bin/ld_daily_x_marketing.sh pm",
+   "purpose": "每日 X 营销发布(晚班,与早班不同文案,统一内容源+同海报;按 280 字门禁裁剪)",
+   "added": "2026-10-17"
   }
  ]
 }
