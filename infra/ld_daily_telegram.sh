@@ -1,14 +1,15 @@
 #!/bin/bash
-# ld_daily_telegram.sh — 每日 Telegram 频道日更(营销轮换+带图),与 X/Discord 同步同内容。
-# 内容源 /home/ubuntu/marketing/discord_daily.json(与 Discord 共用10条轮换);
-# DRY_RUN=1 只打印不发帖。
+# ld_daily_telegram.sh — 每日 Telegram 频道日更(统一内容源+带图,支持 am/pm 两班),与 X/Discord 同步同内容。
+# 用法: ld_daily_telegram.sh [am|pm]  默认 am。内容源 /home/ubuntu/marketing/daily_unified.json;DRY_RUN=1 只打印不发。
 export PATH=/usr/local/bin:/usr/bin:/bin:$PATH
-SRC=/home/ubuntu/marketing/discord_daily.json
+SRC=/home/ubuntu/marketing/daily_unified.json
 [ -f "$SRC" ] || { echo "missing $SRC"; exit 2; }
-IDX=$(( $(date -u +%j) % 10 ))
+SLOT="${1:-am}"
+BASE=$(( $(date -u +%j) % 10 ))
+if [ "$SLOT" = "pm" ]; then IDX=$(( (BASE+5) % 10 )); else IDX=$BASE; fi
 N=$((IDX+1))
 T=$(python3 -c "import json;print(json.load(open('$SRC'))[$IDX])")
-echo "[$(date -u +%FT%TZ)] day-index=$IDX posting Telegram $N/10"
+echo "[$(date -u +%FT%TZ)] slot=$SLOT day-index=$IDX posting Telegram $N/10"
 POSTER="/home/ubuntu/marketing/posters/poster_$N.jpg"
 [ -f "$POSTER" ] || POSTER=""
 if [ "$DRY_RUN" = "1" ]; then echo "DRY: $T"; echo "DRY media: ${POSTER:-none}"; exit 0; fi
