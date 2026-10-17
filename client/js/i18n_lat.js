@@ -417,22 +417,32 @@
   "One honest caveat (not hidden)": "Una salvedad honesta (no oculta)|Uma ressalva honesta (não oculta)|Satu catatan jujur (tidak disembunyikan)|Một lưu ý trung thực (không giấu)",
   };
 
-  var dict = window.LDI18N || (window.LDI18N = {});
-  var applied = 0;
-  for (var zh in dict) {
-    /* 上一版这里写成 hasOwnProperty.call(dict[zh]) —— 少传属性名，恒为 false，
-       于是每一轮都 continue，整张四语种表一条也没生效（core 的译文是文件自带的，
-       所以看起来"部分生效"）。必须是 hasOwnProperty.call(dict, zh)。 */
-    if (!Object.prototype.hasOwnProperty.call(dict, zh)) continue;
-    var e = dict[zh] && dict[zh].en;
-    if (!e) continue;
-    var row = T[e];
-    if (!row) continue;
-    var parts = String(row).split("|");
-    for (var i = 0; i < L.length && i < parts.length; i++) {
-      if (!dict[zh][L[i]]) { dict[zh][L[i]] = parts[i]; }
-    }
-    applied++;
+  /* 共享展开器：按"英文原串"回填到每个中文键上。
+     返回 {applied, missing} 供监控判断是否真的生效（applied=0 就是白干）。 */
+  if (typeof window.__ldExpandLangs !== "function") {
+    window.__ldExpandLangs = function (langs, table) {
+      var dict = window.LDI18N || (window.LDI18N = {});
+      var applied = 0, missing = 0;
+      for (var en in table) {
+        if (!Object.prototype.hasOwnProperty.call(table, en)) continue;
+        var parts = String(table[en]).split("|");
+        var hit = 0;
+        for (var zh in dict) {
+          /* 必须用 hasOwnProperty：for-in 会把原型链上的键也带进来（旧注释里就写过
+             所以看起来"部分生效"） */
+          if (!Object.prototype.hasOwnProperty.call(dict, zh)) continue;
+          var e = dict[zh] && dict[zh].en;
+          if (!e) continue;
+          if (e !== en && String(e).trim() !== en) continue;
+          for (var k = 0; k < langs.length && k < parts.length; k++) {
+            if (!dict[zh][langs[k]] && parts[k]) { dict[zh][langs[k]] = parts[k]; hit++; }
+          }
+        }
+        if (hit) applied++; else missing++;
+      }
+      return { applied: applied, missing: missing };
+    };
   }
-  window.__ldLatStats = { applied: applied };
+  var stats = window.__ldExpandLangs(L, T);
+  window.__ldLatStats = stats;
 })();
