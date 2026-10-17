@@ -228,6 +228,11 @@
       document.dispatchEvent(new CustomEvent("ldlang", { detail: { lang: lang } }));
       return;
     }
+    /* LD-TITLE-I18N-20261017 head 也要翻：<title> 在 head 里，只 walk body 的话
+       正文翻好了、浏览器标签页仍是中文（实测 ?lang=de 的 contracts 页 w65 但标题未翻）。
+       标签页是用户第一眼看到的东西，不能漏。trNode 只对含汉字的文本生效，
+       所以 head 里的 meta/script 不受影响。 */
+    walk(document.head, lang);
     walk(document.body, lang);
     observe(lang);
     publish();   // 必须在这里也写一次：否则没有 mutation 的页面读不到计数，
@@ -269,7 +274,7 @@
           setTimeout(function () {
             try { if (cur() === "zh") return;
                   if (done) { done = W.__ldI18nSeen = (typeof WeakSet === "function" ? new WeakSet() : null); }
-                  seenAttr = {}; walk(document.body, cur()); publish(); } catch (e) { }
+                  seenAttr = {}; walk(document.head, cur()); walk(document.body, cur()); publish(); } catch (e) { }
           }, ms);
         });
       }

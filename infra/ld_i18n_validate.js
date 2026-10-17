@@ -39,6 +39,12 @@ function sameSet(a, b) {
   for (const x of a) if (!b.has(x)) return false;
   return true;
 }
+/* 源码里的 \" 与 \\ 必须先还原成真实字符再去比对键名。
+   不还原的后果是假"死行"：站内真实键 前端"预计奖励" 与
+   文件里写的 前端\"预计奖励\" 被当成两个不同的键（本轮真的踩到）。 */
+function unesc(s) {
+  return String(s).replace(/\\(["'\\/])/g, "$1").replace(/\\n/g, "\n").replace(/\\t/g, "\t");
+}
 
 const allFiles = fs.readdirSync(ROOT).filter(f => /^i18n.*\.js$/.test(f)).sort();
 
@@ -148,7 +154,7 @@ for (const f of allFiles) {
   const rows = [];
   const re = /^\s{4}"((?:[^"\\]|\\.)+)"\s*:\s*"((?:[^"\\]|\\.)*)"\s*,?\s*$/gm;
   let m;
-  while ((m = re.exec(src.slice(ti))) !== null) rows.push([m[1], m[2]]);
+  while ((m = re.exec(src.slice(ti))) !== null) rows.push([unesc(m[1]), unesc(m[2])]);
   const chk = cp.spawnSync("node", ["--check", p], { encoding: "utf8" });
   if (chk.status !== 0) {
     console.log("FAIL " + f + " 语法不通过: " + String(chk.stderr || "").split("\n")[0].slice(0, 100));
