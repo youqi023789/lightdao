@@ -372,6 +372,13 @@
    "cmd": "/usr/bin/node /usr/local/bin/ld_lang_coverage.js",
    "purpose": "语种覆盖率棘轮：下拉承诺语种的实际内容必须达标，恶化即告警",
    "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "5 8 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/ld_cron_target_audit.py",
+   "purpose": "体检 crontab 里每个脚本【及其内部调用的绝对路径】是否真的存在——检测点自己坏了必须比被测系统先被发现（SRI 门空转三天的直接教训）",
+   "added": "2026-10-17"
   }
  ]
 }
