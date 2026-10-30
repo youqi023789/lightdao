@@ -1,0 +1,14 @@
+[Unit]
+Description=LightDAO Scoring Gateway
+After=network-online.target
+[Service]
+User=ubuntu
+Environment=GW_PORT=8080
+Environment=GW_GENESIS=1789102088
+EnvironmentFile=/etc/lightdao/gw_admin.env
+Environment=GW_DATA=/home/ubuntu/lightdao_gateway/data
+ExecStart=/usr/bin/python3 /home/ubuntu/gateway.py
+Restart=always
+RestartSec=5
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,13 @@
+[Unit]
+Description=LightDAO TURN credential endpoint
+After=network.target
+[Service]
+Type=simple
+User=ubuntu
+Environment=TURN_SECRET=__REDACTED_USE_ETC_LIGHTDAO_ENVFILE__
+Environment=TURN_CRED_PORT=8091
+ExecStart=/usr/bin/python3 /home/ubuntu/turn-cred.py
+Restart=always
+RestartSec=5
+[Install]
+WantedBy=multi-user.target
