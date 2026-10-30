@@ -29,9 +29,12 @@ if [ ! -f "$TOOL" ]; then
   alert "SRI-TOOL-BAD" "🚨 SRI 校验没法跑：$TOOL 不存在（这条不变量当前无执行点）"
   exit 2
 fi
-if ! $PY -c "import py_compile,sys;py_compile.compile('$TOOL',cfile='/tmp/ld_sri_check.pyc',doraise=True)" 2>>"$LOG"; then
+# 自检只做"纯读语法解析"：原来用 py_compile 写 /tmp/ld_sri_check.pyc 固定名，
+# root 与 ubuntu 两种身份跑就会因为粘滞位 /tmp 不让覆盖对方的文件而失败——
+# 失败被判成"检测工具坏了"，于是每天误报 SRI-TOOL-BAD，而真校验是过的。
+if ! $PY -c "import ast,sys;ast.parse(open(sys.argv[1],encoding='utf-8').read())" "$TOOL" 2>>"$LOG"; then
   echo "$(date -u +%FT%TZ) SRI-TOOL-BAD $TOOL 语法不过" >> "$LOG"
-  alert "SRI-TOOL-BAD" "🚨 SRI 校验工具本身编译不过：$TOOL"
+  alert "SRI-TOOL-BAD" "🚨 SRI 校验工具本身语法不过：$TOOL"
   exit 2
 fi
 

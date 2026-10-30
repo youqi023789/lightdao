@@ -400,6 +400,13 @@
    "cmd": "DRY_RUN=1 bash -c '/usr/local/bin/ld_daily_x_marketing.sh pm'",
    "purpose": "每日 X 内容槽（晚班 16:30 UTC，与早班不同文案，280 字加权门禁裁剪）。同为 DRY_RUN=1 草稿模式，理由同早班：对外发言需逐次授权。",
    "added": "2026-10-17"
+  },
+  {
+   "user": "root",
+   "schedule": "40 8 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/gas_renew.py --check",
+   "purpose": "每天体检矿工 x/feegrant 代付授权：有矿工授权过期又付不起 gas 就报警（gas_grant.py 授予后不再续期，30 天到期即静默卡住领取）。只报警不广播，续期需用户同意：gas_renew.py --apply",
+   "added": "2026-10-30"
   }
  ]
 }
