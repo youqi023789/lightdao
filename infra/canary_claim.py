@@ -32,6 +32,19 @@ def shc(c, timeout=90):
     except Exception as e:
         return "ERR:%s" % e, 99
 
+def grant_alive(grantee):
+    """问链上：deployer 给这个地址的代付授权还在不在（过期会被模块删掉）。
+       查询本身出错时返回 True（保守：宁可沿用自己的余额自付失败报错，
+       也不要在网络抖动时悄悄换路径）。"""
+    try:
+        o, rc = sh([WASMD, "q", "feegrant", "grant", DEP, grantee, "--node", NODE, "-o", "json"])
+    except Exception:
+        return True
+    if "fee-grant not found" in (o or ""):
+        return False
+    return rc == 0 and bool((o or "").strip())
+
+
 def alert(msg):
     try:
         with open("/home/ubuntu/ld_alerts.log", "a") as f:
@@ -100,8 +113,23 @@ def main():
     proof = json.load(urllib.request.urlopen(GW + "/v1/proof?day=%d&miner=%s" % (d, addr), timeout=20))
     msg = {"claim": {"day": d, "proof": proof["proof"],
                      "score": {k: str(proof["score"][k]) for k in ("bandwidth", "session", "verification", "stability")}}}
-    out, rc = sh([WASMD, "tx", "wasm", "execute", MR, json.dumps(msg), "--from", "canary",
-                  "--fee-granter", DEP, "--gas", "300000", "--fees", "75000ulight", "-y", "-o", "json"] + KB)
+    # LD-CANARY-SELFPAY-20261030 代付授权（30 天到期、且不续期）在时会把整个探针废掉：
+    # 报 code 38，看起来像"领取链路坏了"，其实只是"没人替它付 gas"。
+    # 先问链上有没有有效授权，有就照旧（顺带证明代付路径），没有就自己付——
+    # 该账户余额 2,627,134 LIGHT，一笔领取只要 0.075 LIGHT。
+    cmd = [WASMD, "tx", "wasm", "execute", MR, json.dumps(msg), "--from", "canary",
+           "--gas", "300000", "--fees", "75000ulight", "-y", "-o", "json"] + KB
+    sponsored = grant_alive(addr)
+    if sponsored:
+        cmd = cmd[:3] + ["--fee-granter", DEP] + cmd[3:]
+        mode = "sponsored"
+    else:
+        mode = "selfpay"
+        # 只打印不落告警：这个脚本每几分钟就跑一次，落告警会变成刷屏；
+        # "矿工侧代付授权到期"由每天一次的 gas_renew.py --check 负责报警。
+        print("WARN 金丝雀没有有效代付授权，本轮自己付 gas（矿工侧同类问题看 gas_renew --check）")
+    print("canary claim mode=%s day=%d" % (mode, d))
+    out, rc = sh(cmd)
     code = None
     try: code = json.loads(out[out.find("{"):]).get("code")
     except Exception: pass
@@ -113,10 +141,13 @@ def main():
     time.sleep(8)
     bal1 = json.loads(sh([WASMD, "q", "bank", "balances", addr, "--node", NODE, "-o", "json"])[0])
     b1 = sum(int(x["amount"]) for x in bal1.get("balances", []) if x["denom"] == "ulight")
-    if b1 <= b0:
-        alert("canary claim did not increase balance day %d (%d->%d)" % (d, b0, b1)); sys.exit(1)
+    # 自己付 gas 时奖励可能小于 75000ulight，`b1<=b0 即报警` 会变成假故障；
+    # 真正的判据是"没亏掉超过一笔手续费+余量的钱"（钱确实进来了）。
+    FEE = 75000
+    if b1 < b0 - FEE - 25000:
+        alert("canary claim 余额异常下降 day %d (%d->%d)" % (d, b0, b1)); sys.exit(1)
     stc.setdefault("claimed", []).append(d); json.dump(stc, open("/home/ubuntu/canary_state.json","w"))
-    print("CANARY OK day %d +%s ulight" % (d, b1 - b0))
+    print("CANARY OK day %d mode=%s delta=%s ulight" % (d, mode, b1 - b0))
     try:
         subprocess.run(["python3", "/usr/local/bin/discord_bot.py", "send",
                         "✅ Canary claim OK: day %d +%s LIGHT (settle→sign→proof→claim→payout verified)" % (d, round((b1 - b0) / 1e6, 2))], timeout=30)

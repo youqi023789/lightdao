@@ -404,8 +404,15 @@
   {
    "user": "root",
    "schedule": "40 8 * * *",
-   "cmd": "/usr/bin/python3 /usr/local/bin/gas_renew.py --check",
-   "purpose": "每天体检矿工 x/feegrant 代付授权：有矿工授权过期又付不起 gas 就报警（gas_grant.py 授予后不再续期，30 天到期即静默卡住领取）。只报警不广播，续期需用户同意：gas_renew.py --apply",
+   "cmd": "/usr/bin/python3 /usr/local/bin/gas_renew.py --apply --active-only --back 7",
+   "purpose": "每天自动续期矿工代付授权（x/feegrant）：只给近 7 天仍在名单里的矿工续 30 天，不活跃的不续（避免被当长期补贴刷）；续完仍无效的才报警。起因：gas_grant.py 授予过一次就永不续，30 天到期后 8 个矿工安静地领不了。",
+   "added": "2026-10-30"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "33 */6 * * *",
+   "cmd": "/usr/local/bin/ld_sri.sh",
+   "purpose": "网页脚本指纹（SRI）每 6 小时再核一次：HTML 里的 integrity 与实际文件字节不符时浏览器会拒绝加载脚本=白屏，所以除了每日 03:30 那次，白天也要核。同一条 cron 之前只存在于 crontab、没登记，被对账工具抓出来补录。",
    "added": "2026-10-30"
   }
  ]
