@@ -86,16 +86,33 @@
   async function onOffer(m) {
     const pc = newPC(m.from);
     pc.ondatachannel = e => wireDC(m.from, e.channel);
-    await pc.setRemoteDescription(m.sdp);
-    flush(m.from);
+    try {
+      await pc.setRemoteDescription(m.sdp);
+      pcs[m.from].remoteSet = true;
+      flush(m.from);
+    } catch (err) {
+      log("offer 应用失败，丢弃该对等连接：" + (err && err.name));
+      dropPeer(m.from);
+      return;
+    }
     const a = await pc.createAnswer();
     await pc.setLocalDescription(a);
     ws.send(JSON.stringify({ type: "answer", to: m.from, sdp: pc.localDescription }));
   }
+  /* LD-WEBRTC-DUP-20261030 同一个 pc 只应吃一次 answer：重复或迟到的 answer 会让
+     setRemoteDescription 抛 "Called in wrong state: stable"（24h 实测 4 条、3 个 IP）。
+     newPC() 里的 remoteSet 字段本来就是这个用途，只是没人读它。 */
   async function onAnswer(m) {
     const e = pcs[m.from]; if (!e) return;
-    await e.pc.setRemoteDescription(m.sdp);
-    flush(m.from);
+    if (e.remoteSet) { log("忽略重复/迟到 answer ← " + m.from); return; }
+    try {
+      await e.pc.setRemoteDescription(m.sdp);
+      e.remoteSet = true;
+      flush(m.from);
+    } catch (err) {
+      log("answer 应用失败，丢弃该对等连接：" + (err && err.name));
+      dropPeer(m.from);          // 让上层重新发起一次干净的会话
+    }
   }
   function wireDC(toId, dc) {
     const e = pcs[toId]; if (e) e.dc = dc;

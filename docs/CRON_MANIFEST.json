@@ -414,6 +414,13 @@
    "cmd": "/usr/local/bin/ld_sri.sh",
    "purpose": "网页脚本指纹（SRI）每 6 小时再核一次：HTML 里的 integrity 与实际文件字节不符时浏览器会拒绝加载脚本=白屏，所以除了每日 03:30 那次，白天也要核。同一条 cron 之前只存在于 crontab、没登记，被对账工具抓出来补录。",
    "added": "2026-10-30"
+  },
+  {
+   "user": "root",
+   "schedule": "10 */6 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/webrt_check.py",
+   "purpose": "盯 WebRTC 信令签名错误（setRemoteDescription wrong state）是否真的停下来：v1.10.2 补了重复 answer 防护，判据用被改对象自己的证据（客户端错误日志近 24h 条数），不是看代码改没改，防止\"改了就当修好了\"。",
+   "added": "2026-10-31"
   }
  ]
 }
