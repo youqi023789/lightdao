@@ -2,7 +2,7 @@
 # ld_daily_discord.sh — Discord 日更(统一内容源+带图,支持 am/pm 两班)。DRY_RUN=1 只打印不发帖。
 # 用法: ld_daily_discord.sh [am|pm]   默认 am。三平台共用 /home/ubuntu/marketing/daily_unified.json 与同一海报。
 export PATH=/usr/local/bin:/usr/bin:/bin:$PATH
-SRC=/home/ubuntu/marketing/daily_unified.json
+SRC=/home/ubuntu/repo/infra/marketing/daily_unified.json
 [ -f "$SRC" ] || { echo "missing $SRC"; exit 2; }
 SLOT="${1:-am}"
 BASE=$(( $(date -u +%j) % 10 ))

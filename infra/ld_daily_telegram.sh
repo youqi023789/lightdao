@@ -2,7 +2,7 @@
 # ld_daily_telegram.sh — 每日 Telegram 频道日更(统一内容源+带图,支持 am/pm 两班),与 X/Discord 同步同内容。
 # 用法: ld_daily_telegram.sh [am|pm]  默认 am。内容源 /home/ubuntu/marketing/daily_unified.json;DRY_RUN=1 只打印不发。
 export PATH=/usr/local/bin:/usr/bin:/bin:$PATH
-SRC=/home/ubuntu/marketing/daily_unified.json
+SRC=/home/ubuntu/repo/infra/marketing/daily_unified.json
 [ -f "$SRC" ] || { echo "missing $SRC"; exit 2; }
 SLOT="${1:-am}"
 BASE=$(( $(date -u +%j) % 10 ))

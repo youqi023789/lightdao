@@ -442,6 +442,13 @@
       "cmd": "/usr/bin/python3 /usr/local/bin/ld_render_truth.py render",
       "purpose": "同一看门狗的渲染档：无头 chrome 跑完 JS 之后按**可见文本**核对 7 条多语言说法（en/zh/de/ja/ru/fr），用来证明词典的“译值”也跟着事实改了——2026-10-31 上一轮我只改了词典的键与中英文，13 个语种的译值还写着 5/7，页面中文说“5 个签名人”而德/俄/日等仍在说“5/7 signatures”，缺的就是这一层。反向验证已实测两次：LD_FAKE_BONDED=3 必须 FAIL；把临时站根里的文案改回“7 验证者”必须 FAIL。",
       "added": "2026-10-31"
+    },
+    {
+      "user": "root",
+      "schedule": "50 3,15 * * *",
+      "cmd": "/usr/bin/python3 /usr/local/bin/ld_x_cred_probe.py",
+      "purpose": "X 每日发帖的凭据预检（事前响）：不发帖、只把生产发帖用的同一把 OAuth1.0a user-context 打一次 GET /2/users/me，非 200 就写 X-CRED-FAIL 告警并非零退出。背景：10-24 起每日帖一直在 DRY 分支空转、没人发现；发帖失败告警（X-POST-FAIL）今天也已补上并反向验证。反向验证实测：LD_X_CRED_FAKE=1 用坏 token → rc=1 且告警落盘。",
+      "added": "2026-10-31"
     }
   ]
 }
