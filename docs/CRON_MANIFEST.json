@@ -403,9 +403,9 @@
   },
   {
    "user": "root",
-   "schedule": "40 8 * * *",
+   "schedule": "20 */6 * * *",
    "cmd": "/usr/bin/python3 /usr/local/bin/gas_renew.py --apply --active-only --back 7",
-   "purpose": "每天自动续期矿工代付授权（x/feegrant）：只给近 7 天仍在名单里的矿工续 30 天，不活跃的不续（避免被当长期补贴刷）；续完仍无效的才报警。起因：gas_grant.py 授予过一次就永不续，30 天到期后 8 个矿工安静地领不了。",
+   "purpose": "每 6 小时自动续期矿工代付授权（x/feegrant）：只给近 7 天仍活跃的矿工续 30 天；判据同时看过期与剩余额度（<20% 就补），因为额度用完一样会撞 code 38。节奏从每天一次改为每 6 小时，回归矿工最坏等 6 小时而不是隔天。",
    "added": "2026-10-30"
   },
   {
@@ -420,6 +420,13 @@
    "schedule": "10 */6 * * *",
    "cmd": "/usr/bin/python3 /usr/local/bin/webrt_check.py",
    "purpose": "盯 WebRTC 信令签名错误（setRemoteDescription wrong state）是否真的停下来：v1.10.2 补了重复 answer 防护，判据用被改对象自己的证据（客户端错误日志近 24h 条数），不是看代码改没改，防止\"改了就当修好了\"。",
+   "added": "2026-10-31"
+  },
+  {
+   "user": "root",
+   "schedule": "25 9 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/probe_share.py",
+   "purpose": "盯测试探针在真实矿工奖励里的占比（阈值 6%）：探针已降载到平日极小足迹、每周一次满强度以覆盖 ≥4h 会话发空投那条路径；占比爬回去就等于真实矿工少拿钱，必须机器先发现。判据照抄网关自己的 norm/WEIGHTS，不另写公式。",
    "added": "2026-10-31"
   }
  ]

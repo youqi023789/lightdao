@@ -30,6 +30,8 @@ DAYS = 30
 ALERTS = "/home/ubuntu/ld_alerts.log"
 STATE = os.environ.get("LD_GASRENEW_STATE", "/home/ubuntu/ld_gas_renew_state.json")
 CLAIM_FEE_ULIGHT = 75000
+SPEND_LIMIT_ULIGHT = 5000000      # 与 gas_grant.py 的 --spend-limit 对齐
+LOW_RATIO = 0.2                   # 剩余额度低于 20% 就提前补满
 # 探针地址：它有自己的余额（2,627,134 LIGHT），不该占用矿工代付额度
 CANARY_PROBE = "wasm1ar9mg3ls3xw3ac44j29dvptnls0zgdhy8aghc3"
 
@@ -190,10 +192,17 @@ def classify(cands, now, warn_days, granted):
         missing = (st == "none")
         soon = bool(exp and exp - now < warn_days * 86400)
         expired = bool(exp and exp < now)
-        if missing or soon:
+        # 5 LIGHT 消费上限用完同样会撞 code 38（原来只看过期，漏了这一道）
+        rem = (al or {}).get("remaining")
+        low_quota = bool(rem is not None and SPEND_LIMIT_ULIGHT
+                           and rem < SPEND_LIMIT_ULIGHT * LOW_RATIO)
+        if missing or soon or low_quota:
             can_self = balance_ulight(m) >= CLAIM_FEE_ULIGHT
             why = ("无授权" if missing else
-                   ("已过期 %d 天" % ((now - exp) // 86400) if expired else "剩 %d 天" % ((exp - now) // 86400)))
+                   ("已过期 %d 天" % ((now - exp) // 86400) if expired else
+                    ("额度剩 %.0f%%" % (100.0 * rem / SPEND_LIMIT_ULIGHT)
+                     if (low_quota and not soon) else
+                     "剩 %d 天" % ((exp - now) // 86400))))
             row = (m, why, "能自付" if can_self else "不能自付")
             (broken if (missing or expired) and not can_self else plan).append(row)
     return plan, broken, unknown

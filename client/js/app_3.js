@@ -1,5 +1,21 @@
 window.LDBUILD="1.8.7";
-function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
+function terr(e){
+  var raw = String((e && e.message) || e || "");
+  /* LD-UX-ERR-20261031 链上原文对新人等于一堵墙：先翻成"发生了什么 + 现在该怎么办"，
+     再把原文留在括号里给排查用。 */
+  var hint = "";
+  if (/does not allow to pay fee|code 38/i.test(raw)) {
+    hint = "免手续费授权已过期，且钱包余额不够自付本次手续费（约 0.075 LIGHT）。系统会自动补授权，请在数小时后重试。";
+  } else if (/insufficient fee|too small gas fee|insufficient funds/i.test(raw)) {
+    hint = "余额不足以支付本次链上手续费，请先取得 LIGHT 或等待免手续费授权续期。";
+  } else if (/already claimed/i.test(raw)) {
+    hint = "这一天此前已经领过了，无需重复领取。";
+  } else if (/closed|not finalized|no such root|proof/i.test(raw)) {
+    hint = "这一天的结算还没完成（每日 00:00 UTC 之后才开放领取），稍后再试。";
+  }
+  var tail = hint ? ("\n" + hint) : "";
+  return "[" + window.LDBUILD + "] " + raw.slice(0, 180) + tail;
+}
 
 window.CDN = ["/js/vendor/"];   /* LD-SAFE-GLOBALS-20261014: property write, never a parse-time redeclaration */
 async function loadCosmjs(){

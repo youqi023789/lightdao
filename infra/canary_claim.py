@@ -63,9 +63,24 @@ def canary_addr():
         return out.strip()
     return CANARY_ADDR
 
-def heartbeat(addr, day_sess):
-    body = json.dumps({"miner": addr, "bandwidth_kbps": 3000, "session_secs": day_sess,
-                       "verification_tasks": 20, "stability_pct": 100, "fp": FP,
+FULL_WEEKLY = (7,)          # day % 7 == 0 的那几天走满强度，覆盖 WP 5.7 的 ≥4h 空投路径
+
+
+def profile(day):
+    """平日只留"最小可证明"的足迹，每周一次满强度。
+       理由见文件头：探针的价值在于把整条链路跑通，不在于挣到分数。"""
+    try:
+        full = (int(day) % 7) == 0
+    except Exception:
+        full = False
+    if full:
+        return {"bw": 3000, "cap": 14400, "step": 1800, "verif": 20, "mode": "full"}
+    return {"bw": 200, "cap": 300, "step": 60, "verif": 1, "mode": "minimal"}
+
+
+def heartbeat(addr, day_sess, bw=3000, verif=20):
+    body = json.dumps({"miner": addr, "bandwidth_kbps": bw, "session_secs": day_sess,
+                       "verification_tasks": verif, "stability_pct": 100, "fp": FP,
                        "behaviors": {"pwa": True}}).encode()
     req = urllib.request.Request(GW + "/v1/heartbeat", data=body, headers={"Content-Type": "application/json"})
     urllib.request.urlopen(req, timeout=20).read()
@@ -84,11 +99,12 @@ def main():
         st = {}
         try: st = json.load(open("/home/ubuntu/canary_state.json"))
         except Exception: pass
-        sess = min(14400, st.get(str(day), 0) + 1800)
+        pf = profile(day)
+        sess = min(pf["cap"], st.get(str(day), 0) + pf["step"])
         st[str(day)] = sess
         json.dump(st, open("/home/ubuntu/canary_state.json", "w"))
-        heartbeat(addr, sess)
-        print("canary beat day", day, "sess", sess, "addr", addr)
+        heartbeat(addr, sess, bw=pf["bw"], verif=pf["verif"])
+        print("canary beat day", day, "sess", sess, "profile", pf["mode"], "addr", addr)
         return
     # claim mode: claim yesterday if finalized+signed and canary has score
     h = json.load(urllib.request.urlopen(GW + "/v1/health", timeout=20))

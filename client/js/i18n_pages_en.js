@@ -389,4 +389,13 @@
   en("分配 / 出口", "Allocation / exit");
   en("Passkey 解锁", "Unlock with Passkey");
   en("✓ 已达成", "✓ Met");
+
+  /* 批次 4 新增（LD-I18N-B4）：领取提示的人话化与结算口径 */
+  en("每日 00:00 UTC（北京时间 08:00）结算前一天，结算完成后这里会出现可领金额", "The previous day settles at 00:00 UTC (08:00 Beijing); once settled, the claimable amount shows up here");
+  en("暂无可领奖励：每日 00:00 UTC（北京时间 08:00）结算前一天，今天的奖励明天这时开放", "Nothing to claim yet: each day settles the previous day at 00:00 UTC (08:00 Beijing); today's reward opens then tomorrow");
+  en("第 {d} 天（已结算） · 约 {n} LIGHT", "Day {d} (settled) · about {n} LIGHT");
+  en("免手续费授权已过期，且钱包余额不够自付本次手续费（约 0.075 LIGHT）。系统会自动补授权，请在数小时后重试。", "The free-gas allowance for your first claims has expired and your balance cannot cover the fee (about 0.075 LIGHT). It is renewed automatically - try again in a few hours.");
+  en("余额不足以支付本次链上手续费，请先取得 LIGHT 或等待免手续费授权续期。", "The balance cannot pay this on-chain fee. Get some LIGHT first, or wait for the free-gas renewal.");
+  en("这一天此前已经领过了，无需重复领取。", "This day was already claimed earlier — no need to claim again.");
+  en("这一天的结算还没完成（每日 00:00 UTC 之后才开放领取），稍后再试。", "That day is not settled yet (settlement opens daily after 00:00 UTC). Try again later.");
 })();

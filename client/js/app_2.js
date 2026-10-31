@@ -1,5 +1,21 @@
 window.LDBUILD="1.8.7";
-function terr(e){ return "[" + window.LDBUILD + "] " + String(e.message||e).slice(0,300); }
+function terr(e){
+  var raw = String((e && e.message) || e || "");
+  /* LD-UX-ERR-20261031 链上原文对新人等于一堵墙：先翻成"发生了什么 + 现在该怎么办"，
+     再把原文留在括号里给排查用。 */
+  var hint = "";
+  if (/does not allow to pay fee|code 38/i.test(raw)) {
+    hint = "免手续费授权已过期，且钱包余额不够自付本次手续费（约 0.075 LIGHT）。系统会自动补授权，请在数小时后重试。";
+  } else if (/insufficient fee|too small gas fee|insufficient funds/i.test(raw)) {
+    hint = "余额不足以支付本次链上手续费，请先取得 LIGHT 或等待免手续费授权续期。";
+  } else if (/already claimed/i.test(raw)) {
+    hint = "这一天此前已经领过了，无需重复领取。";
+  } else if (/closed|not finalized|no such root|proof/i.test(raw)) {
+    hint = "这一天的结算还没完成（每日 00:00 UTC 之后才开放领取），稍后再试。";
+  }
+  var tail = hint ? ("\n" + hint) : "";
+  return "[" + window.LDBUILD + "] " + raw.slice(0, 180) + tail;
+}
 
 window.CFG = {
   gw: location.origin + "/gw",
@@ -401,7 +417,9 @@ function fillClaimDays(days){
                               : "本次扫描没有未领取的奖励";
   sel.appendChild(o0);
   days.forEach(function(x){ var o=document.createElement("option"); o.value=String(x.d);
-    o.textContent="第 "+x.d+" 天 · 约 "+fmtNum(x.est)+" LIGHT"; sel.appendChild(o); });
+    o.textContent=(window.__ldT
+    ? window.__ldT("第 {d} 天（已结算） · 约 {n} LIGHT", { d: x.d, n: fmtNum(x.est) })
+    : ("第 "+x.d+" 天（已结算） · 约 "+fmtNum(x.est)+" LIGHT")); sel.appendChild(o); });
   if(cur) sel.value=cur;
 }
 function claimWindowUI(){
@@ -411,9 +429,9 @@ function claimWindowUI(){
   if(!r || !r.ok){ if(btn) btn.disabled=true; el.textContent="正在核对链上可领状态…"; return; }
   if(r.conflict){ if(btn) btn.disabled=true; el.textContent="⚠ "+r.conflict+"：已暂停领取，避免重复扣费"; return; }
   if(btn) btn.disabled=false;
-  el.textContent = r.days.length ? "" : "最近没有未领取的奖励（已领的会自动跳过，不会重复领取）";
+  el.textContent = r.days.length ? "每日 00:00 UTC（北京时间 08:00）结算前一天，结算完成后这里会出现可领金额" : "暂无可领奖励：每日 00:00 UTC（北京时间 08:00）结算前一天，今天的奖励明天这时开放";
 }
-setInterval(claimWindowUI,1000);
+setInterval(claimWindowUI,1000); /* LD-UX-SETTLE 结算口径写进界面文案 */
 
 async function refreshClaimable(){
   var el=document.getElementById("claimable"); if(!el||!myAddr||!window.__mrq) return;
