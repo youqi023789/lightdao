@@ -56,6 +56,13 @@ rec("C6 auto-tx receipts", not bad, "; ".join(bad[:2]) if bad else "no failed au
 voided = set()
 try: voided = set(int(x) for x in open("/home/ubuntu/ld_void_ids").read().replace(",", " ").split())
 except Exception: voided = {2, 5, 6, 7, 9}
+DECIDED_F = "/home/ubuntu/ld_proposal_decided"
+# LD-PROPOSAL-DECIDED-20261031 "已通过但有人明确决定不执行"的提案：另开一份清单，
+# 不复用 ld_void_ids——那一份的语义是"已作废"，混填会让后面读它的人得到错结论。
+# 有记录的沉默可以放行；没记录的沉默必须报警。
+decided = set()
+try: decided = set(int(x) for x in open(DECIDED_F).read().replace(",", " ").split())
+except Exception: decided = set()
 stale = []
 try:
     GOV = "wasm14axmz74pppxqxs3qhxaaf2qzl6x53pvvzm7c6p52qrycwnyh8ktsfukapt"
@@ -63,9 +70,11 @@ try:
     for p in ap:
         if p.get("executed"): continue
         if int(p["id"]) in voided: continue
+        if int(p["id"]) in decided: continue   # 已登记决定，见 docs/PROPOSAL_DECISIONS.md
         if int(p.get("end", 0)) < now - 3 * 86400: stale.append(p["id"])
 except Exception as e:
     stale = ["query-err"]
-rec("C7 no stale passed-unexecuted proposals", not stale, "stale=%s void=%s" % (stale, sorted(voided)))
+rec("C7 no stale passed-unexecuted proposals", not stale,
+    "stale=%s void=%s decided=%s" % (stale, sorted(voided), sorted(decided)))
 print("CROSS FAILS: %d" % len(FAILS))
 sys.exit(1 if FAILS else 0)

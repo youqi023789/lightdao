@@ -24,7 +24,7 @@
 
 <h2>一、奖励数学(对照白皮书 §奖励/§5)</h2>
 <table><tr><th>项</th><th>白皮书</th><th>链上实测</th><th>结论</th></tr>
-<tr><td>每日总释放</td><td>验证者 3.42万 + 矿工 65.07万</td><td>daily_release=684,931.5 LIGHT</td><td class="ok">一致</td></tr>
+<tr><td>每日总释放</td><td>验证者 3.42万 LIGHT + 矿工 65.07万 LIGHT（每日）</td><td>daily_release=684,931.5 LIGHT</td><td class="ok">一致</td></tr>
 <tr><td>矿工池/验证者</td><td>95% / 5%</td><td>miner_pool=650,684.9(95%)</td><td class="ok">一致</td></tr>
 <tr><td>分配方式</td><td>按加权贡献占比</td><td>gateway total_score=Σ加权;claim 凭 Merkle proof</td><td class="ok">一致</td></tr>
 <tr><td>前端"预计奖励"</td><td>应为池×占比</td><td>原为固定×650(错,约1000×)</td><td class="fix">已修为按池×实时占比;历史表加"应得LIGHT"列(定稿日用 total_score 精确计算)</td></tr>

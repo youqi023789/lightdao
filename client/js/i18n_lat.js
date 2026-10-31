@@ -324,7 +324,7 @@
     "Unstake failed:": "Unstake fallido:|Unstake falhou:|Unstake gagal:|Unstake thất bại:",
     "Used": "Usado|Usado|Dipakai|Đã dùng",
     "Validator candidate registry (read-only on-chain)": "Registro de candidatos a validador (solo lectura)|Registro de candidatos (somente leitura)|Registry kandidat validator (hanya baca)|Sổ bộ ứng viên validator (chỉ đọc)",
-    "Validators 34.2k + miners 650.7k": "Validadores 34,2k + mineros 650,7k|Validadores 34,2k + miner 650,7k|Validator 34,2k + penambang 650,7k|Validator 34,2k + thợ đào 650,7k",
+    "Validators 34.2k LIGHT + miners 650.7k LIGHT (daily)": "Validadores 34,2k + mineros 650,7k LIGHT|Validadores 34,2k + miner 650,7k LIGHT|Validator 34,2k + penambang 650,7k LIGHT|Validator 34,2k + thợ đào 650,7k LIGHT",
     "Validators: how to apply / run": "Validadores: cómo postularse / operar|Validadores: como se candidatar / operar|Validator: cara mendaftar / menjalankan|Validator: cách ứng cử / vận hành",
     "Verify it yourself": "Verifícalo tú mismo|Verifique você mesmo|Verifikasi sendiri|Tự bạn kiểm chứng",
     "Vested": "Adquirido|Vestido|Hak vested|Đã thuộc về",

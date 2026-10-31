@@ -242,7 +242,7 @@
   en("链上实测", "On-chain measurement");
   en("结论", "Conclusion");
   en("每日总释放", "Total daily emission");
-  en("验证者 3.42万 + 矿工 65.07万", "Validators 34.2k + miners 650.7k");
+  en("验证者 3.42万 LIGHT + 矿工 65.07万 LIGHT（每日）", "Validators 34.2k LIGHT + miners 650.7k LIGHT (daily)");
   en("矿工池/验证者", "Miner pool / validators");
   en("分配方式", "Distribution method");
   en("按加权贡献占比", "Pro-rata by weighted contribution");
