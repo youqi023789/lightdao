@@ -157,4 +157,6 @@
     },
     isStarted() { return started; },
   };
-})(typeof window !== "undefined" ? window : globalThis);
+})(typeof window !== "undefined" ? window
+   : typeof self !== "undefined" ? self
+   : this);   // LD-ES5ROOT-20261030 不用那个 ES2020 标识符：旧浏览器没有它

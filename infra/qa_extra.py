@@ -14,9 +14,17 @@ MODERN = [("?.", "optional-chaining"), ("??", "nullish"), ("catch{", "optional-c
 
 def es_compat():
     fails = []
-    for f in sorted(glob.glob(WWW + "/js/*.js")):
+    # LD-ES-GATE-ROOT-20261030 原来只扫 /js/*.js，站点根级脚本（passkey-wallet.js、
+    # webrtc-relay.js）完全不在范围内——今天用户报的 SyntaxError 就在根级文件里，
+    # 门禁全绿。把根级 *.js 一并纳入（vendor 的排除在循环体里已有，不重复写）。
+    for f in sorted(glob.glob(WWW + "/js/*.js")) + sorted(glob.glob(WWW + "/*.js")):
         if "/vendor/" in f: continue
         s = open(f, encoding="utf-8").read()
+        # LD-ES-COMMENT-20261030 只扫代码行：注释里出现同名标记（例如解释
+        # "为什么不能用某个语法"的说明）不是兼容性问题。原实现拿整份文本硬扫，
+        # 结果我自己写的注释被判成违规——那种判据只会逼人删掉注释。
+        s = "\n".join(l for l in s.splitlines()
+                       if not re.match(r"^\s*(//|/\*|\*|<!--)", l))
         for pat, name in MODERN:
             if pat in s:
                 fails.append((os.path.basename(f), name))

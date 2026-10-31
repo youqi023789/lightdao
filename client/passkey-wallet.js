@@ -236,7 +236,7 @@
 
     isAvailable() {
       return typeof navigator !== "undefined" && !!navigator.credentials &&
-        typeof global.PublicKeyCredential !== "undefined" && !!crypto?.subtle;
+        typeof global.PublicKeyCredential !== "undefined" && typeof crypto !== "undefined" && !!crypto.subtle;
     },
     hasWallet() { return !!load(); },
 
@@ -322,4 +322,6 @@
   };
 
   global.LDPasskey = LDPasskey;
-})(typeof window !== "undefined" ? window : globalThis);
+})(typeof window !== "undefined" ? window
+   : typeof self !== "undefined" ? self
+   : this);   // LD-ES5ROOT-20261030 不用 ES2020 标识符，旧引擎没有它
