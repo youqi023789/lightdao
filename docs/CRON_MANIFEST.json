@@ -222,8 +222,8 @@
   {
    "user": "ubuntu",
    "schedule": "30 4 * * *",
-   "cmd": "DRY_RUN=1 bash -c '/usr/local/bin/ld_daily_x_marketing.sh'",
-   "purpose": "每日 X 内容槽（04:30 UTC）。按硬规矩\"以用户身份公开发言每次都要单独授权\"，当前为 DRY_RUN=1 草稿模式：只产出内容、不发帖。曾因清单写着要授权而脚本却真发（10-17 04:30 发出 tweet 2111313767594361302）而被纠正。要恢复自动发帖须用户明确逐次授权，去掉 DRY_RUN=1 前缀即可（crontab 快照在 /home/ubuntu/crontab_ubuntu.before-xdry-20261017T063039Z）。",
+   "cmd": "/usr/local/bin/ld_daily_x_marketing.sh",
+   "purpose": "X 日更（晚班 16:30 UTC）。2026-10-31 创始人明确授权「每天自动发」，恢复直发；授权范围仅限内容源轮换的两条/天，改口径、回应他人、涉及金库或价格的表述仍需逐次确认。发帖前必过内容合规门禁 ld_x_compliance.py（禁收益承诺/价格暗示/风险淡化，必须带区块高度与官网锚点），不通过则不发帖并报警（退出码 3）。",
    "added": "2026-10-16"
   },
   {
@@ -397,8 +397,8 @@
   {
    "user": "ubuntu",
    "schedule": "30 16 * * *",
-   "cmd": "DRY_RUN=1 bash -c '/usr/local/bin/ld_daily_x_marketing.sh pm'",
-   "purpose": "每日 X 内容槽（晚班 16:30 UTC，与早班不同文案，280 字加权门禁裁剪）。同为 DRY_RUN=1 草稿模式，理由同早班：对外发言需逐次授权。",
+   "cmd": "/usr/local/bin/ld_daily_x_marketing.sh pm",
+   "purpose": "X 日更（晚班 16:30 UTC）。2026-10-31 创始人明确授权「每天自动发」，恢复直发；授权范围仅限内容源轮换的两条/天，改口径、回应他人、涉及金库或价格的表述仍需逐次确认。发帖前必过内容合规门禁 ld_x_compliance.py（禁收益承诺/价格暗示/风险淡化，必须带区块高度与官网锚点），不通过则不发帖并报警（退出码 3）。",
    "added": "2026-10-17"
   },
   {
