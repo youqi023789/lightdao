@@ -92,7 +92,7 @@
   en("造假罚没", "Fraud slashing");
   en("全交易上链", "Every transaction on-chain");
   en("72 小时，紧急提案不得豁免资金操作", "72 hours; emergency proposals cannot waive funding actions");
-  en("金库 5/7 签名", "Treasury 5/7 signatures");
+  en("金库多签：链上 5 个签名人（阈值未开放公开查询）", "Treasury multisig: 5 signers on-chain (threshold not publicly queryable)");
   en("单任最多 2 届", "At most 2 consecutive terms");
   en("100% 没收 + 永久禁止", "100% confiscated + permanent ban");
   en("无链下记账", "No off-chain bookkeeping");

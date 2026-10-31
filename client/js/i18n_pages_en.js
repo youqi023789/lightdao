@@ -47,7 +47,7 @@
   en("Emergency(75%,1天)", "Emergency (75%, 1 day)");
   en("通用 DAO 动作(调合约/迁移)", "Generic DAO action (call contract / migrate)");
   en("投资(铸造子代币)", "Investment (mint sub-token)");
-  en("金库(treasury_multisig 5/7)", "Treasury (treasury_multisig 5/7)");
+  en("金库(treasury_multisig · 链上 5 个签名人)", "Treasury (treasury_multisig · 5 on-chain signers)");
   en("查询金库", "Query treasury");
   en("返回主客户端", "Back to main app");
   en("12/24 词助记词(点助记词导入后用)", "12/24-word seed (after importing via seed phrase)");
@@ -150,7 +150,7 @@
   en("在开放席位时提交", "When seats open, submit a");
   en("候选治理提案", "candidate governance proposal");
   en("硬性底线:", "Hard floor:");
-  en("(f≤1 单点故障即全链停摆)。当前 7/7 BONDED。", "(f≤1 — one failure would halt the chain). Currently 7/7 BONDED.");
+  en("(f≤1 单点故障即全链停摆)。当前 10/10 BONDED。", "(f≤1 — one failure would halt the chain). Currently 10/10 BONDED.");
   en("提交候选提案 →", "Submit a candidate proposal →");
   en("白皮书 §4.6 →", "Whitepaper §4.6 →");
   en("运行文档 →", "Operations guide →");
@@ -193,7 +193,7 @@
   en("打开", "Open");
   en(",Passkey 创建钱包(指纹/面容,无助记词)", ", create a Passkey wallet (fingerprint/face, no seed phrase)");
   en("点「开始挖矿」:浏览器自动贡献带宽中继(WebRTC)+区块头验证+在线时长", "Click Start mining: the browser contributes bandwidth relay (WebRTC) + block-header verification + uptime automatically");
-  en("贡献分每日 Merkle 根上链(5/7 验证者多签),可自证", "Contribution scores are committed to chain daily as a Merkle root (5/7 validator multisig) so you can verify them yourself");
+  en("贡献分每日 Merkle 根上链(5 个授权账户签名),可自证", "Contribution scores are committed to chain daily as a Merkle root (5-signature multisig, verifiable on-chain) so you can verify them yourself");
   en("赛季结束按贡献分比例瓜分", "At season end the pool is split pro-rata by contribution score");
   en("赛季池(生态基金)", "Season pool (ecosystem fund)");
   en("邀请裂变 · 额外 +10%", "Referrals · an extra +10%");
@@ -299,14 +299,14 @@
   en("地址（点击复制）", "Address (tap to copy)");
   en("用途", "Purpose");
   en("CW20 代币 LIGHT，总量 25 亿枚、永不增发", "CW20 LIGHT token, fixed supply of 2.5 billion, no inflation");
-  en("投资金库，5/7 多签；治理决议才能动", "Investment treasury, 5/7 multisig; only governance decisions can move it");
+  en("投资金库：链上 5 个签名人；须治理决议才能动", "Investment treasury: 5 on-chain signers; only a governance decision can move it");
   en("每完成一笔投资发行的子代币（份额凭证）", "Issues a sub-token (share certificate) for each completed investment");
   en("时间加权价格预言机，Gas 费按美元锚定的依据", "Time-weighted price oracle — the basis for USD-anchored gas fees");
   en("挑战-应答反作弊与罚没联动（白皮书 §4.8/§6.6）", "Challenge-response anti-fraud linked to slashing (whitepaper §4.8/§6.6)");
   en("验证者注册（CW20 质押 + owner 门限罚没）", "Validator registry (CW20 staking + owner-gated slashing)");
   en("TGE 锁仓：2.5 亿枚，3 条独立释放计划", "TGE vesting: 250 million across 3 independent schedules");
   en("保险基金：利润 10% 计提（白皮书 §8.2）", "Insurance fund: 10% of profit reserved (whitepaper §8.2)");
-  en("挖矿池 10 亿枚；每日根需 7 个授权账户中 5 个签名才可领取", "Mining pool of 1 billion; the daily root needs 5 of 7 authorised accounts before anything can be claimed");
+  en("挖矿池 10 亿枚；每日根需 5 个授权账户签名才可领取", "Mining pool of 1 billion; the daily root needs 5 signatures from authorised accounts before anything can be claimed");
   en("DAO 提案与双维度投票（持币权重 + 地址数）", "DAO proposals with two-dimensional voting (token weight + address count)");
   en("锁仓 v2（工作包 54 交付）", "Vesting v2 (work package 54)");
   en("生态发展基金 4 亿枚的释放载体（白皮书 §5.3）", "Release vehicle for the 400 million ecosystem fund (whitepaper §5.3)");

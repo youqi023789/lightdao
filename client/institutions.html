@@ -56,7 +56,7 @@ h2 .en{display:inline;margin-left:8px;font-size:14px}
 <table>
 <tr><th>机制</th><th>白皮书参数</th><th>去哪验证</th></tr>
 <tr><td>时间锁</td><td>72 小时，紧急提案不得豁免资金操作</td><td>治理合约参数 + 提案详情倒计时</td></tr>
-<tr><td>多签</td><td>金库 5/7 签名</td><td><a href="/contracts.html">treasury_multisig 地址</a> + 链上签署人列表</td></tr>
+<tr><td>多签</td><td>金库多签：链上 5 个签名人（阈值未开放公开查询）</td><td><a href="/contracts.html">treasury_multisig 地址</a> + 链上签署人列表</td></tr>
 <tr><td>季度轮换</td><td>单任最多 2 届</td><td>验证者注册表（链上只读）</td></tr>
 <tr><td>造假罚没</td><td>100% 没收 + 永久禁止</td><td>anti_fraud 合约（<a href="/contracts.html">地址</a>）</td></tr>
 <tr><td>全交易上链</td><td>无链下记账</td><td><a href="/explorer.html">区块浏览器</a></td></tr>
@@ -117,7 +117,7 @@ h2 .en{display:inline;margin-left:8px;font-size:14px}
 <h2>8. 跨链与 TGE 前置 <span class="st part">部分</span><span class="en">IBC &amp; TGE prerequisites</span></h2>
 <table>
 <tr><th>前置项</th><th>状态</th><th>说明</th></tr>
-<tr><td>验证者 ≥7（白皮书硬性底线）</td><td><span class="st live">已满足</span></td><td>7/7 BONDED</td></tr>
+<tr><td>验证者 ≥7（白皮书硬性底线）</td><td><span class="st live">已满足</span></td><td>10/10 BONDED</td></tr>
 <tr><td>IBC 双向 transfer 实测</td><td><span class="st live">已实测</span></td><td>与 Osmosis 互通，回流按 IBC 前缀回退为原生面额</td></tr>
 <tr><td>解绑期与轻客户端信任期匹配</td><td><span class="st live">已提案</span></td><td>21 天解绑期（提案 #16），07-tendermint 信任期须 < 2/3</td></tr>
 <tr><td>核心合约形式化验证（§4.11）</td><td><span class="st plan">未完成</span></td><td>挂在审计计划，见<a href="/contracts.html">合约页</a>的诚实声明</td></tr>
