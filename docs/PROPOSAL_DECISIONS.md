@@ -334,3 +334,53 @@ docs 里 10-16 的实测是 842,000,093.16 LIGHT。在短语里放一个当天�
 ② `ld_render_truth.py static` 的"线上 whitepaper.md 与仓库一致"判据（反向验证：塞一份内容不同的白皮书 → FAIL 并打印两个哈希）。
 也就是说：漂移会被每天最多两次的检查抓到，且抓到就报警，不再是"没人知道"。
 真要改 `promote.py`，先给它补一个可注入的执行点（像 `LD_X_POSTER` 那样）再动，这是下一步的顺序。
+---
+
+## 2026-11-04（同日续 3）A3 门槛迁移重提：走对了那条路，提案 #12 已进入投票期
+
+**先纠正一个流传了 18 天的误判**：我一直按记忆说"原生提案 #17 是过期未执行"。
+链上实测它 **`PROPOSAL_STATUS_FAILED`**，而且 `final_tally = yes_count 3,500,000,000,000 / no 0`
+→ 投票**通过**了，是**执行阶段失败**。原因链上就能看出来：
+
+    wasmd q wasm contract <governance>  → admin = 该合约自己（label=governance）
+    wasmd q wasm contract <mining_reward> → admin = governance 合约
+    #17 里 MsgMigrateContract 的 sender = wasm10d07y…（x/gov 模块账户）
+
+**gov 模块账户不是这两个合约的 admin**，所以合约必然拒绝迁移 → 原生路线结构上做不到，
+照抄只会再失败一次。历史上真正执行成功的迁移（#8 governance→code 11、#10 v4 验证者份额）
+走的都是 **DAO 合约自己的 create_proposal**。所以这次改用那条路。
+
+顺带纠正我自己另外两处量具错（都写进脚本注释，防止再犯）：
+- `wasmd q gov proposals --status voting_period` 与 `--page-size` 在这个构建里**都不存在**，
+  命令直接报错；我却把"命令失败"读成"返回 0 条"，差点得出"没有进行中提案"的假结论。
+- 数投票权重时字段是 `yes_count` 不是 `yes`；写成 `yes` 会读到 0，把"投票通过"误判成"没人投票"。
+
+### 已提交（所有者 2026-11-04 明确批准"重提提案"）
+
+| 项 | 值 |
+|---|---|
+| 提案号 | DAO 治理合约 **#12**（`next_id` 12→13 实测） |
+| 类型 / 标题 | `major` / A3: self-migrate governance to code 19 (threshold 5000) |
+| 内容 | 目标=治理合约自身，`migrate_code_id=19`，迁移 msg=`{"void_ids": [], "proposal_min_stake": "5000000000"}` |
+| 为什么可信 | 链上 code 19 的 checksum `CB4522AE…19B71EC16` 与仓库 `contracts/wasm/code19_governance.wasm` 的 sha256 **逐字节一致**（防"序号顶移"）；MigrateMsg 的字段在仓库源码 lib.rs:403 起可查（void_ids/voting_period_secs/owner/proposal_min_stake，缺省保留原值） |
+| 提交交易 | `141CB07C65497B271BF4A59A83F39F42DDAA20920FAF169D6AE745B9980C822E`（height 681762，code 0） |
+| 投票 | deployer（治理合约质押 7,000 LIGHT）投 yes：`29DE3CD1FDD5481D2FE09D5D29FAED3F4376A08292A38C1FA660A3AB213E5BD9`（height 681776） |
+| 当前计票 | yes_weight=7,000,000,000、yes_addrs=1、executed=false |
+| 投票期 | 2026-11-04 14:00:06Z → **2026-11-11 14:00:06Z**（7 天，major 默认；`ptype=major` 需 66% 且**持币权重与地址数两个维度都要过**） |
+| 过期窗口 | 通过后 14 天内须执行（`permissions.expiry_secs=1209600`）；**这个合约不会自动执行**，到期不 `ExecuteProposal` 就重蹈 #11/#17 的覆辙——qa_cross C7 会报警 |
+
+### 被白烧的一笔（如实记）
+
+第一次提交用了 `migrate_code_id: "19"`（字符串），合约字段是 `Option<u64>` →
+`code 5 Error parsing into type governance::ExecuteMsg: Invalid type`，只花了 gas、没改状态；
+改成数字 `19` 后成功。**这类错本可以在提交前用源码类型核对挡住**，已把类型抄进脚本注释。
+
+### 下一步（顺序不能反）
+
+1. 11-11 14:00Z 投票期满后，**必须有人调 `ExecuteProposal(12)`**；治理合约迁移到 code 19 后，
+   提案门槛才按白皮书升到 5,000 LIGHT，同时治理合约自身获得后续治理能力。
+2. 之后再提第二笔：`target=mining_reward, migrate_code_id=20`，给挖矿合约装上"可治理更新签名人名单/阈值/反作弊地址"的能力——
+   装上之后才能把每日结算的签名人从**实测 5 席**补到白皮书设计的 7 席，消除"少一把当天全体领不到"的零冗余。
+   （这个合约 `create_proposal` 只允许一个 target + 一个 migrate_code_id，所以"合并成一笔"在它这里做不到，
+   与 #17 用原生提案打包两条消息的做法不同——这也是我必须先说清楚的一处偏差。）
+3. 门槛升到 5,000 之后，站内"链上现行 1,000 LIGHT；白皮书资格线 5,000"那句要同步改口（已记在待办）。
