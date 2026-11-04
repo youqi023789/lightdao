@@ -471,7 +471,7 @@ setInterval(refreshClaimable,60000);
  function cd(sec){ sec=Math.max(0,sec|0); return p((sec/3600)|0)+":"+p(((sec%3600)/60)|0)+":"+p(sec%60); }
  function tick(){ if(!nb||!srv) return; var elapsed=Date.now()/1000-loc; var left=Math.floor(nb-(srv+elapsed)); var d=new Date(nb*1000);
    var lt=d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}); var ld=d.toLocaleDateString([],{month:"2-digit",day:"2-digit"});
-   el.textContent="每日结算刷新:你当地 "+ld+" "+lt+" · 倒计时 "+cd(left); }
+   el.textContent=(window.__ldT?window.__ldT("每日结算刷新:你当地 {t} · 倒计时 {cd}",{t:ld+" "+lt,cd:cd(left)}):"每日结算刷新:你当地 "+ld+" "+lt+" · 倒计时 "+cd(left)); }
  function pull(){ fetch(CFG.gw+"/v1/health").then(function(r){return r.json();}).then(function(hh){ if(hh&&hh.next_boundary_ts&&hh.now_ts){ nb=hh.next_boundary_ts; srv=hh.now_ts; loc=Date.now()/1000; tick(); } }).catch(function(){}); }
  pull(); setInterval(tick,1000); setInterval(pull,60000); })();
 (function(){ /* LD-TRUTH-AUDIT-20261014: compare the semantic state the renderer wrote
