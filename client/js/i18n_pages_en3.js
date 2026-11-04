@@ -10,6 +10,11 @@
   function en(zh, v) { E(zh, { en: v }); }
 
   /* 页名与导航 */
+  en("LightDAO — 不靠质押生息，靠贡献分账", "LightDAO — rewards come from contribution, not staking");
+  en("圣保罗退休教师", "retired teacher in São Paulo");
+  en("拉各斯网约车司机", "ride-hailing driver in Lagos");
+  en("马尼拉外卖骑手", "food-delivery rider in Manila");
+  en("链上合约与地址", "On-chain contracts & addresses");
   en("治理制度与权力转移 — LightDAO", "Institutions & hand-over — LightDAO");
   en("治理制度与权力转移", "Institutions & hand-over");
   en("资金与释放 — LightDAO", "Funds & vesting — LightDAO");

@@ -87,6 +87,11 @@ CASES = [
     ("/governance.html?lang=ja", ["（treasury_multisig · 3/5）"], ["5/7"]),
     # 首页 pills：挖矿根那句必须回到"5 签"，不能带着金库的 3/5（今天的误伤已回滚）
     ("/index.html?lang=en", ["Merkle roots 5-signature multisig"], ["Merkle roots 3/5", "Merkle roots 5/7"]),
+    # IBC：链上实测主网 0 个客户端（`wasmd q ibc client states` total=0），
+    # 而 institutions/funds 两页曾写成"已实测/live and tested"。v1.10.11 起必须说"主网未开通"。
+    ("/institutions.html", ["IBC 双向 transfer 实测", "主网未开通"], ["与 Osmosis 互通，回流按 IBC 前缀回退"]),
+    ("/funds.html?lang=en", ["IBC not live on mainnet"], ["live and tested", "IBC tested live"]),
+    ("/institutions.html?lang=de", ["Auf dem Mainnet nicht offen"], ["5/7"]),
 ]
 
 

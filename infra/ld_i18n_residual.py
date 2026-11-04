@@ -37,9 +37,17 @@ for loc in LOCALES:
             p = subprocess.run([CHROME, "--headless=new", "--disable-gpu", "--no-sandbox",
                                 "--ignore-certificate-errors", "--virtual-time-budget=" + budget,
                                 "--dump-dom", url], capture_output=True, timeout=140)
+            html = p.stdout.decode("utf-8", "replace")
+            if not html.strip():
+                # 空 DOM 不一定是页面问题：本项目的页里有 setInterval/动画，
+                # --virtual-time-budget 会让 chrome 在这类页上吐空壳（10-16 就栽过同类坑）。
+                # 所以空结果要**去掉 virtual-time 再量一次**，两次都空才算 FAIL。
+                p = subprocess.run([CHROME, "--headless=new", "--disable-gpu", "--no-sandbox",
+                                    "--ignore-certificate-errors", "--dump-dom", url],
+                                   capture_output=True, timeout=140)
+                html = p.stdout.decode("utf-8", "replace")
         except Exception as e:
             print("FAIL %s %s 渲染异常 %s" % (loc, pg, e)); total += 1; continue
-        html = p.stdout.decode("utf-8", "replace")
         if not html.strip():
             print("FAIL %s %s 空 DOM（rc=%s）→ 不算通过" % (loc, pg, p.returncode)); total += 1; continue
         vis = html
