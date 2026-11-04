@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """qa_cross.py v2 — 跨层一致性门(每小时 + 灰度第5门)。
 C1 纪元偏移∈{0,1}(1=跟踪例外至10-11) C2 领取窗口真相 C3 签根日志真实(基线后) C4 TZ/cron
-C5 status 异常必有 reason C6 自动tx无失败/未知码(除tracked) C7 治理无"通过却长期未执行"提案(除void清单)"""
-import json, subprocess, time, urllib.request, re, sys, datetime
+C5 status 异常必有 reason C6 自动tx无失败/未知码(除tracked) C7 治理无"通过却长期未执行"提案(除void清单)
+C8 本地 HEAD 已推到 origin（仓库是访客"自验"的入口，落后=承诺失效；取不到远端也报警）"""
+import json, subprocess, time, urllib.request, re, sys, datetime, os
 GEN = 1789102088
 TRACK_UNTIL = datetime.datetime(2026, 10, 18, tzinfo=datetime.timezone.utc).timestamp()
 NL = chr(10); FAILS = []
@@ -76,5 +77,22 @@ except Exception as e:
     stale = ["query-err"]
 rec("C7 no stale passed-unexecuted proposals", not stale,
     "stale=%s void=%s decided=%s" % (stale, sorted(voided), sorted(decided)))
+
+# C8 LD-REPO-GAP-20261104  本地 HEAD 必须已经推到 origin/main。
+# 为什么现在加：站内承诺"合约开源、可自验"，访客是照着 GitHub 仓库核对的；
+# 只要提交停在本机，"可自验"就变成一句空话，而且没人会发现（今天推送就遇到过一次
+# 瞬时鉴权失败：git ls-remote 报 Permission denied，几分钟后又正常——那种抖动如果
+# 发生在没人盯的时候，仓库会悄悄落后好几天）。
+# 取不到远端一律算 FAIL：本项目铁律"查不到 ≠ 没问题"。
+gap = None
+try:
+    REPO_DIR = os.environ.get("LD_REPO_DIR", "/home/ubuntu/repo")
+    REF = os.environ.get("LD_REPO_REF", "refs/heads/main")
+    sh("git -C %s fetch --quiet origin %s" % (REPO_DIR, REF))
+    out = sh("git -C %s rev-list --count FETCH_HEAD..HEAD" % REPO_DIR)
+    gap = int(out) if re.match(r"^\d+$", out) else None
+except Exception as e:
+    gap = None
+rec("C8 local HEAD pushed to origin", gap == 0, "未推送提交=%s（取不到远端也算失败）" % gap)
 print("CROSS FAILS: %d" % len(FAILS))
 sys.exit(1 if FAILS else 0)
