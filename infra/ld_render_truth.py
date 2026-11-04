@@ -241,6 +241,10 @@ def render_mode():
             fails.append("%s 渲染输出为空 rc=%s" % (path, p.returncode)); continue
         vis = re.sub(r"(?is)<(script|style|noscript|template)[^>]*>.*?</\1>", " ", html)
         vis = re.sub(r"(?s)<[^>]+>", " ", vis)
+        # 按"浏览器看到的文本"比较：HTML 会把连续空白折叠成一个空格。
+        # 不做这一步的话，源码里 "validators  all"（删掉括号串留下的双空格）会让门禁误报，
+        # 而真实渲染是正常的——误报同样有害：它会把人训练成忽略告警。
+        vis = re.sub(r"\s+", " ", vis)
         miss = [m for m in musts if m not in vis]
         leak = [n for n in mustnots if n in vis]
         if miss or leak:
