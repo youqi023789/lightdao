@@ -48,7 +48,7 @@
   en("Emergency(75%,1天)", "Emergency (75%, 1 day)");
   en("通用 DAO 动作(调合约/迁移)", "Generic DAO action (call contract / migrate)");
   en("投资(铸造子代币)", "Investment (mint sub-token)");
-  en("金库(treasury_multisig · 链上 5 个签名人)", "Treasury (treasury_multisig · 5 on-chain signers)");
+  en("金库(treasury_multisig · 3/5 · 链上 5 个签名人)", "Treasury (treasury_multisig · 3/5 · 5 on-chain signers)");
   en("查询金库", "Query treasury");
   en("返回主客户端", "Back to main app");
   en("12/24 词助记词(点助记词导入后用)", "12/24-word seed (after importing via seed phrase)");
@@ -299,7 +299,7 @@
   en("地址（点击复制）", "Address (tap to copy)");
   en("用途", "Purpose");
   en("CW20 代币 LIGHT，总量 25 亿枚、永不增发", "CW20 LIGHT token, fixed supply of 2.5 billion, no inflation");
-  en("投资金库：链上 5 个签名人；须治理决议才能动", "Investment treasury: 5 on-chain signers; only a governance decision can move it");
+  en("投资金库：3/5 多签 · 链上 5 个签名人；须治理决议才能动", "Investment treasury: 3/3/5 multisig, 5 on-chain signers; only a governance decision can move it");
   en("每完成一笔投资发行的子代币（份额凭证）", "Issues a sub-token (share certificate) for each completed investment");
   en("时间加权价格预言机，Gas 费按美元锚定的依据", "Time-weighted price oracle — the basis for USD-anchored gas fees");
   en("挑战-应答反作弊与罚没联动（白皮书 §4.8/§6.6）", "Challenge-response anti-fraud linked to slashing (whitepaper §4.8/§6.6)");

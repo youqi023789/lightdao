@@ -56,7 +56,7 @@ h2 .en{display:inline;margin-left:8px;font-size:14px}
 <table>
 <tr><th>机制</th><th>白皮书参数</th><th>去哪验证</th></tr>
 <tr><td>时间锁</td><td>72 小时，紧急提案不得豁免资金操作</td><td>治理合约参数 + 提案详情倒计时</td></tr>
-<tr><td>多签</td><td>金库多签：链上 5 个签名人（阈值未开放公开查询）</td><td><a href="/contracts.html">treasury_multisig 地址</a> + 链上签署人列表</td></tr>
+<tr><td>多签</td><td>金库多签 3/5（白皮书 §8.1）· 链上 5 个签名人可查，阈值本身不在查询接口内</td><td><a href="/contracts.html">treasury_multisig 地址</a> + 链上签署人列表</td></tr>
 <tr><td>季度轮换</td><td>单任最多 2 届</td><td>验证者注册表（链上只读）</td></tr>
 <tr><td>造假罚没</td><td>100% 没收 + 永久禁止</td><td>anti_fraud 合约（<a href="/contracts.html">地址</a>）</td></tr>
 <tr><td>全交易上链</td><td>无链下记账</td><td><a href="/explorer.html">区块浏览器</a></td></tr>

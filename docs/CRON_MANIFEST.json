@@ -449,6 +449,13 @@
       "cmd": "/usr/bin/python3 /usr/local/bin/ld_x_cred_probe.py",
       "purpose": "X 每日发帖的凭据预检（事前响）：不发帖、只把生产发帖用的同一把 OAuth1.0a user-context 打一次 GET /2/users/me，非 200 就写 X-CRED-FAIL 告警并非零退出。背景：10-24 起每日帖一直在 DRY 分支空转、没人发现；发帖失败告警（X-POST-FAIL）今天也已补上并反向验证。反向验证实测：LD_X_CRED_FAKE=1 用坏 token → rc=1 且告警落盘。",
       "added": "2026-10-31"
+    },
+    {
+      "user": "root",
+      "schedule": "45 5 * * *",
+      "cmd": "/usr/local/bin/ld_asset_sync.sh",
+      "purpose": "把 promote 不负责的静态资产（当前只有 whitepaper.md）按内容比对从仓库同步到线上。起因：11-04 给白皮书加勘误后才发现线上仍是旧版——promote 只复制 *.html 与 js/*.js，白皮书一直靠手工 cp，属于典型\"两份表达\"漂移且无人报警。口径：白名单不用通配（线上 html/js 带 SRI 注入，必须走门禁，不能被这个脚本绕过覆盖）；只在 md5 不同才复制；复制后回读比对；源文件读不到=失败并报警，绝不把看不见当没问题。反向验证实测：源目录不存在 → rc=5 且 ASSET-SYNC-FAIL 落盘；临时空目标 → 真复制并校验一致；已一致 → 不动作。",
+      "added": "2026-11-04"
     }
   ]
 }

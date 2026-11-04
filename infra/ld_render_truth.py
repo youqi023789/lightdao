@@ -28,6 +28,7 @@
 import json, os, re, subprocess, sys, hashlib, datetime
 
 WWW = os.environ.get("LD_WWW", "/var/www/lightdao")
+REPO_CLIENT = os.environ.get("LD_REPO_CLIENT", "/home/ubuntu/repo/client")
 NODE = os.environ.get("LD_NODE", "http://127.0.0.1:26657")
 ALERTS = "/home/ubuntu/ld_alerts.log"
 STATE = "/home/ubuntu/.ld_render_truth_state"
@@ -77,6 +78,15 @@ CASES = [
     ("/season.html?lang=en", ["days · Epoch 1 · mining is running"], ["2026-10-29 (4 weeks)", "governance proposal #4"]),
     ("/season.html?lang=ko", ["일 · 에포크 1 · 마이닝 진행 중"], ["규칙을 이 페이지에 공개", "5/7"]),
     ("/season.html?lang=de", ["Tage · Epoche 1 · Mining läuft"], ["5/7", "2026-10-29 (4 Wochen)"]),
+    # 金库阈值按所有者裁定"以白皮书为准"= 3/5（白皮书正文 §7/§8.1 与链上 5 名签名人自洽；
+    # 附录那句 5/7 与两者都冲突，已勘误）。渲染层只锁**语言中立的 3/5**，
+    # 各语种词形由 apply_treasury_35.py 的正向校验逐段核对，不在这堆用例里重复。
+    ("/institutions.html", ["金库多签 3/5（白皮书 §8.1）"], ["5/7", "阈值未开放公开查询"]),
+    ("/institutions.html?lang=de", ["Tresor 3/5 · 5 Signaturen"], ["5/7"]),
+    ("/contracts.html?lang=ru", ["Казна инвестиций, мультисиг 3/5"], ["5/7"]),
+    ("/governance.html?lang=ja", ["（treasury_multisig · 3/5）"], ["5/7"]),
+    # 首页 pills：挖矿根那句必须回到"5 签"，不能带着金库的 3/5（今天的误伤已回滚）
+    ("/index.html?lang=en", ["Merkle roots 5-signature multisig"], ["Merkle roots 3/5", "Merkle roots 5/7"]),
 ]
 
 
@@ -195,6 +205,45 @@ def check_gov_citations():
     return ["所有 governance 候选地址都查不到（%s）→ 无法核实站内提案引用" % addrs]
 
 
+def check_treasury_vs_root():
+    """按行核对两个阈值别互相串台（今天我自己把这条规则写宽过，误伤在次已记录）：
+      · 金库阈值 = 3/5（所有者 2026-11-04 裁定"以白皮书为准"；链上可自证的只有 5 名签名人）；
+      · 每日挖矿根阈值 = 5（115 笔 submit_root 事件实测 threshold 全部为 5），与 3/5 无关。
+    所以：键里说"Merkle 根/挖矿根"的行，任何语种的值都不许出现 3/5；
+          键里说"金库/treasury"的三行，值必须都带 3/5。
+    窗口判据不可靠——一行几 KB，±80 字经常看不到中文键，只有按行判断才算数。"""
+    out = []
+    row = re.compile('^    "((?:[^"\\\\]|\\\\.)+)": "((?:[^"\\\\]|\\\\.)*)",?$')
+    need35 = ("金库多签 3/5", "金库(treasury_multisig · 3/5", "投资金库：3/5 多签")
+    for dirpath, dirs, files in os.walk(WWW):
+        dirs[:] = [d for d in dirs if d not in (".git", "vendor")]
+        for fn in sorted(files):
+            if not fn.endswith(".js"):
+                continue
+            p = os.path.join(dirpath, fn)
+            try:
+                lines = open(p, encoding="utf-8", errors="replace").read().split("\n")
+            except Exception as e:
+                return ["读不到 %s（%s）→ 不算通过" % (p, e)]
+            for line in lines:
+                m = row.match(line)
+                if not m:
+                    continue
+                k, vals = m.group(1), m.group(2).split("|")
+                is_root = ("Merkle" in k or "挖矿根" in k or "根上链" in k) and "金库" not in k
+                if is_root:
+                    for i, v in enumerate(vals):
+                        if "3/5" in v:
+                            out.append("根行的第%d段值串进了金库阈值 3/5：%s…（键=%s…）"
+                                       % (i, v[:50], k[:22]))
+                for key in need35:
+                    if k.startswith(key[:18]):
+                        lack = [i for i, v in enumerate(vals) if "3/5" not in v]
+                        if lack:
+                            out.append("金库行缺 3/5 的语种=%s（键=%s…）" % (lack, k[:22]))
+    return out
+
+
 def static_mode():
     fails = []
     for root, dirs, fns in os.walk(WWW):
@@ -228,6 +277,24 @@ def static_mode():
                     fails.append("站内 %s 写 %s 个，链上 BONDED=%s" % (rel, n, bonded))
     # 3) 站内"提案 #N"引用必须对应链上真实提案（今天抓到两处编造引用）
     fails += check_gov_citations()
+    # 3b) 金库阈值 3/5 与挖矿根阈值 5 不得互相串台（我自己今天写宽规则误伤过一次）
+    fails += check_treasury_vs_root()
+    # 4) 非 html/js 的静态资产：线上与仓库必须一致（今天实测到白皮书线上是旧版——
+    #    promote.py 只复制 *.html 与 js/*.js，白皮书 .md 一直是手工 cp，属于典型"两份表达"漂移。
+    #    这里按内容比对；读不到任何一个就 FAIL，绝不"看不见=没问题"。）
+    import hashlib
+    for rel in ("whitepaper.md",):
+        livep = os.path.join(WWW, rel)
+        repop = os.path.join(REPO_CLIENT, rel)
+        try:
+            a = hashlib.md5(open(livep, "rb").read()).hexdigest()
+            b = hashlib.md5(open(repop, "rb").read()).hexdigest()
+        except Exception as e:
+            fails.append("白皮书一致性无法核对（%s）：%s" % (rel, e))
+            continue
+        if a != b:
+            fails.append("线上 %s 与仓库不一致（live=%s repo=%s）→ 需要 cp 并由 promote 带上" % (rel, a[:8], b[:8]))
+
     return fails, ("bonded=%s" % bonded if bonded is not None else "bonded=UNKNOWN")
 
 

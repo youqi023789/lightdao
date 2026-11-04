@@ -3,6 +3,7 @@
 > 本版在 V2.0 设计稿基础上,前置「主网部署实况」与「版本变更」,并附录已验证的链上参数。正文(第一~十二章)保持 V2.0 设计不变;凡与实况有偏差处,以本节前注与附录为准。
 
 ## 版本变更(V2.0 → V2.4)
+- 2026-11-04 勘误（不改版本号，仍为 V2.4）：附录《主网已验证参数与地址》原写金库 `treasury_multisig` 为 5/7 多签，与正文 §7.2/§7.3/§8.1 的 3/5 冲突，也与链上实测冲突（`{"signers":{}}` 返回 5 个地址，不存在 7 名签名人）；已按正文统一为 3/5，并标明阈值本身不在合约查询接口内、只能由部署记录佐证。同节原写挖矿根为「5/7 验证者多签」，实测可证的只有阈值 5（115 笔 `submit_root` 事件 threshold 全部为 5，实际签名账户恰好 5 个），7 席授权是设计目标、当前无链上证据，已改为相应措辞。
 
 1. **§4.5 Gas 经济:已主网部署并验证**。USD 锚定动态 min-gas-price 与 50% 销毁 / 30% 验证者 / 20% 金库分配于 2026-09-24 经治理提案(v2-lightfee)在高度 58627 上线,7 验证者协调切换、测试网端到端彩排后执行。主网实测:不足额 fee 被拒、足额 fee 按 50/30/20 精确分配。
 2. **原生 denom 厘清**:质押/治理/Gas 均为 `ulight`(LIGHT,6 位小数,总供应 25 亿)。genesis 误配的 `stake` 通胀已于 2026-09-24 经治理提案归零(mint inflation=0),LIGHT 发行完全由 mining_reward 合约承担,杜绝双重发行;存量 stake 为待处置的遗留 denom(见附录 C)。
@@ -15,7 +16,7 @@
 
 - 链 `lightdao-mainnet-1`,7 验证者(JP/KR/SG/US/HK/FR/UK)全部 BONDED、无 jailed;满足 §4.7「验证者<7 不得 TGE」的硬性底线
 - 客户端 https://lightdao.net(PWA):Passkey 钱包 + 挖矿 + WebRTC 中继 + 领取,多语言(中/英/西)
-- 挖矿闭环:浏览器贡献 → 网关每日定稿 → Merkle 根 5/7 多签上链 → 矿工凭 proof 领取;每日根持续提交
+- 挖矿闭环:浏览器贡献 → 网关每日定稿 → Merkle 根 5 签上链(阈值 5,链上可查) → 矿工凭 proof 领取;每日根持续提交
 - 升级治理:v2-lightfee(已应用 @58627)、mint 归零(已应用)、v3-lightfee(全票通过,高度 118055 自动切换)
 - 完整端点/合约地址/升级历史见仓库 `docs/MAINNET_STATUS.md`
 
@@ -784,7 +785,7 @@ SimHash>80%取消资格；AI内容须补充说明；缺席质询扣20%得票。�
 
 ### 8.1 五大安全机制
 
-时间锁72h（紧急提案不可豁免资金操作）；多签5/3；季度轮换≤2届；造假罚没100%；全交易上链。
+时间锁72h（紧急提案不可豁免资金操作）；多签3/5；季度轮换≤2届；造假罚没100%；全交易上链。
 
 ### 8.2 保险基金
 
@@ -1129,7 +1130,7 @@ SimHash>80%取消资格；AI内容须补充说明；缺席质询扣20%得票。�
 - min-gas-price 公式:`(TransferUsdTarget / UsdPerLight) × 10^6 / RefTransferGas`;当前 TransferUsdTarget=$0.001、UsdPerLight=$0.05、RefTransferGas=100000 → **0.2 ulight/gas**
 - 分配实测(总 fee 300000 ulight):销毁 150000(50%)/ 金库 60000(20%)/ 验证者 90000(30%),精确匹配
 - 销毁地址:`wasm1aeaty43lrlt9rmkyxujkkfuddnsfye6az4htcu`(确定性死地址)
-- 金库:`treasury_multisig` 合约(5/7 多签)
+- 金库:`treasury_multisig` 合约(3/5 多签;链上 `signers` 查询返回 5 名签名人,阈值本身不在查询接口内)
 
 ## B. 核心合约地址
 见仓库 `docs/MAINNET_STATUS.md`(light_token / mining_reward / governance / treasury_multisig / oracle_twap / vesting 等 10 合约)。
@@ -1143,4 +1144,4 @@ vault 250,000,000 LIGHT,3 个独立 schedule:75M(cliff 0)/ 100M(cliff 1 年)/ 75
 ## E. 安全实践
 - 主网升级为 x/upgrade 治理 + 全节点同块高协调 + auto-swap 看门狗,测试网端到端彩排后执行
 - Passkey 种子仅密文存储;Shamir 分片本地不保存
-- 合约挖矿根提交为 5/7 验证者多签;反女巫/反作弊见 §4.8
+- 合约挖矿根提交阈值 5(链上每笔 `submit_root` 事件实测 threshold=5;当前 5 个授权账户在签,7 席为设计目标);反女巫/反作弊见 §4.8
