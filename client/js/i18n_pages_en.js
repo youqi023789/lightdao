@@ -188,7 +188,7 @@
 
   /* ---------- 赛季页 ---------- */
   en("⛏ LightDAO Season 1 · 贡献挖矿赛季", "⛏ LightDAO Season 1 · contribution mining season");
-  en("2026-10-01 → 2026-10-29(4 周)· 治理提案 #4 已通过", "2026-10-01 → 2026-10-29 (4 weeks) · governance proposal #4 passed");
+  en("2026-10-01 → 2026-10-29(4 周)· 规则由项目方设定并在本页公示", "2026-10-01 → 2026-10-29 (4 weeks) · rules set by the project and published on this page");
   en("怎么玩", "How it works");
   en("打开", "Open");
   en(",Passkey 创建钱包(指纹/面容,无助记词)", ", create a Passkey wallet (fingerprint/face, no seed phrase)");
@@ -206,7 +206,7 @@
   en("网络稳定 10%", "Network stability 10%");
   en("反女巫:验证者随机挑战 + 8-16 对等体互证取中位数 + 每区块 Merkle 聚合(§4.8)。", "Anti-Sybil: random validator challenges + median of 8–16 peer attestations + per-block Merkle aggregation (§4.8).");
   en("立即开始挖矿 →", "Start mining now →");
-  en("测试阶段无真实价值 · 规则以治理提案 #4 为准 ·", "Testnet phase, no real value · rules per governance proposal #4 ·");
+  en("测试阶段无真实价值 · 规则以本页与 GitHub 源码公示为准 ·", "Testnet phase, no real value · rules as published on this page and in the GitHub source ·");
 
   /* ---------- 测验页 ---------- */
   en("Learn-to-Earn 测验 — LightDAO", "Learn-to-Earn quiz — LightDAO");

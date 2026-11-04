@@ -65,6 +65,12 @@ CASES = [
     ("/contracts.html?lang=ru", ["5 подписей авторизованных счетов"], ["5/7", "из 7"]),
     ("/contracts.html?lang=fr", ["5 signatures de comptes autorisés"], ["5/7", "sur 7"]),
     ("/season.html?lang=fr", ["multisig de 5 comptes autorisés"], ["5/7", "sur 7"]),
+    # 治理引用改口（v1.10.6）：链上提案 #4 是 TGE 解锁分期、没有任何提案定义赛季，
+    # 所以页面不能说"治理提案 #4 已通过/为准"；#16 在链上不存在，21 天解绑期改用可查参数。
+    ("/season.html", ["规则由项目方设定并在本页公示"], ["治理提案 #4", "提案 #4"]),
+    ("/season.html?lang=ja", ["ルールは本ページに公示"], ["ガバナンス提案 #4"]),
+    ("/season.html?lang=ko", ["규칙을 이 페이지에 공개"], ["거버넌스 제안 #4"]),
+    ("/institutions.html", ["unbonding_time=504h"], ["提案 #16"]),
 ]
 
 
@@ -108,9 +114,83 @@ def site_numbers():
     return out, ""
 
 
+GOV_TOKENS = (r"(?:治理提案|提案|governance proposal|предложение управления|ガバナンス提案|"
+              r"거버넌스 제안|शासन प्रस्ताव|yönetim önerisi|Yönetim Önerisi|"
+              r"proposition de gouvernance|Governance-Antrag|مقترح الحوكمة)")
+CITE = re.compile(GOV_TOKENS + r"\s*(?:#|№|رقم)\s*(\d{1,3})")
+
+
+def live_files():
+    out = []
+    for root, dirs, fns in os.walk(WWW):
+        dirs[:] = [d for d in dirs if d not in (".git", "vendor")]
+        for fn in fns:
+            if fn.endswith((".html", ".js", ".json")) and "vendor" not in fn:
+                out.append(os.path.join(root, fn))
+    return out
+
+
+def gov_addresses():
+    """从站内 JS 里取 governance 合约地址——写死会在地址变更时让门禁自证失败。"""
+    cand = set()
+    for p in live_files():
+        try:
+            t = open(p, encoding="utf-8", errors="replace").read()
+        except Exception:
+            continue
+        for m in re.finditer(r"governance['\"]?\s*[:=]\s*['\"](wasm1[a-z0-9]{20,60})", t):
+            cand.add(m.group(1))
+        for m in re.finditer(r"wasm1[a-z0-9]{58,62}", t):
+            pass
+    return sorted(cand)
+
+
+def check_gov_citations():
+    """站内任何"提案 #N"的引用，必须能在链上 governance 合约查得到；查不到就是编造/过期引用。
+    今天的实测教训：season.html 说"治理提案 #4 已通过"，链上 #4 是 TGE 解锁分期提案；
+    institutions.html 说"提案 #16"，链上提案最大只到 #11。两处都属于"页面在替社区做未做过的决定"。"""
+    cites = set()
+    for p in live_files():
+        try:
+            t = open(p, encoding="utf-8", errors="replace").read()
+        except Exception as e:
+            return ["读不到 %s（%s）→ 不算通过" % (p, e)]
+        for m in CITE.finditer(t):
+            cites.add(int(m.group(1)))
+    if not cites:
+        return []
+    addrs = gov_addresses()
+    if not addrs:
+        return ["站内引用提案编号 %s，但找不到 governance 合约地址 → 无法核实（不算通过）" % sorted(cites)]
+    for a in addrs:
+        probe = sh(["wasmd", "q", "wasm", "contract-state", "smart", a, '{"permissions":{}}',
+                    "--node", NODE, "-o", "json"])
+        if probe.returncode != 0:
+            continue
+        bad = []
+        for n in sorted(cites):
+            r = sh(["wasmd", "q", "wasm", "contract-state", "smart", a,
+                    json.dumps({"proposal": {"id": n}}), "--node", NODE, "-o", "json"])
+            ok = False
+            title = ""
+            if r.returncode == 0:
+                try:
+                    d = json.loads(r.stdout).get("data")
+                    if isinstance(d, dict) and (d.get("title") or d.get("id")):
+                        ok = True
+                        title = str(d.get("title", ""))[:40]
+                except Exception:
+                    ok = False
+            if not ok:
+                bad.append("提案 #%s 在链上查不到" % n)
+            else:
+                print("   链上提案 #%s 标题=%s" % (n, title))
+        return bad if bad else []
+    return ["所有 governance 候选地址都查不到（%s）→ 无法核实站内提案引用" % addrs]
+
+
 def static_mode():
     fails = []
-    # 1) 禁用串残留
     for root, dirs, fns in os.walk(WWW):
         dirs[:] = [x for x in dirs if x not in (".git", "vendor")]
         for fn in sorted(fns):
@@ -140,6 +220,8 @@ def static_mode():
             for rel, n in nums:
                 if n != bonded:
                     fails.append("站内 %s 写 %s 个，链上 BONDED=%s" % (rel, n, bonded))
+    # 3) 站内"提案 #N"引用必须对应链上真实提案（今天抓到两处编造引用）
+    fails += check_gov_citations()
     return fails, ("bonded=%s" % bonded if bonded is not None else "bonded=UNKNOWN")
 
 
