@@ -1,0 +1,16 @@
+[Unit]
+Description=LightDAO IBC counterpart testnet (chain B)
+After=network-online.target
+
+[Service]
+User=ubuntu
+ExecStart=/home/ubuntu/lightd.testnet.bin start --home /home/ubuntu/.lightd-testnet-b --rpc.laddr tcp://0.0.0.0:26957 --p2p.laddr tcp://0.0.0.0:26958
+Environment=LIGHTDAO_DENOM=stake
+Environment=LIGHTDAO_STATIC_PRICE_USD=0.05
+Environment=LIGHTDAO_TRANSFER_USD=0.001
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target
