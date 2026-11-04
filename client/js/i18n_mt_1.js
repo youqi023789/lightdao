@@ -22,7 +22,10 @@
       d.id = 'ldMtBadge';
       d.setAttribute('role', 'note');
       d.style.cssText = 'position:fixed;right:10px;bottom:10px;z-index:9999;background:#1c2230;color:#cfd6e4;border:1px solid #3a465c;border-radius:8px;padding:6px 9px;font:12px/1.5 system-ui;cursor:pointer;opacity:.92';
-      d.textContent = '\u{1F916} ' + '机器翻译 · 未人工校对（点此看中文）';
+      var KEY = "机器翻译 · 未人工校对（点此看中文）";
+      var lab = KEY;
+      try { if (window.__ldT) { var t = window.__ldT(KEY); if (t && t !== KEY) lab = t; } } catch (e) { }
+      d.textContent = '\u{1F916} ' + lab;
       d.title = 'Machine-translated text, not human-reviewed. Click for the Chinese source.';
       d.onclick = function () {
         try { localStorage.setItem('ld_lang', 'zh'); } catch (e) { }

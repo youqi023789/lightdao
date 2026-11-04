@@ -30,6 +30,7 @@
     "移除本机登录信息 / Remove this device's login": "Retirer la connexion de cet appareil|Login dieses Geräts entfernen|Удалить вход с этого устройства|この端末のログイン情報を削除|이 기기 로그인 정보 삭제|إزالة تسجيل الدخول لهذا الجهاز|इस डिवाइस का लॉगिन हटाएँ|Bu cihazın girişini kaldır|Alisin ang login ng device na ito",
     "我的安全与邀请 / My security & referrals": "Ma sécurité et mes parrainages|Meine Sicherheit und Empfehlungen|Моя безопасность и рефералы|自分の安全と紹介|내 보안 및 추천|أمانتي وإحالاتي|मेरी सुरक्षा और रेफरल|Güvenliğim ve davetlerim|Aking seguridad at mga referral",
     "正在恢复登录状态,请稍候… / Restoring session…": "Restauration de la session…|Sitzung wird wiederhergestellt…|Восстановление сессии…|ログイン状態を復元中…|세션 복원 중…|جارٍ استعادة الجلسة…|सत्र बहाल हो रहा…|Oturum geri yükleniyor…|Ipinapawi ang session…",
+    "机器翻译 · 未人工校对（点此看中文）": "Traduction automatique · non relue (cliquer pour le chinois)|Maschinell übersetzt · ungeprüft (Klick für Chinesisch)|Машинный перевод · без вычитки (нажмите для китайского)|機械翻訳 · 未人手校閲（クリックで中国語）|기계 번역 · 사람 검수 없음 (중국어 보기)|ترجمة آلية · غير مدقّقة (اضغط للصينية)|मशीनी अनुवाद · बिना मानव समीक्षा (चीनी देखें)|Otomatik çeviri · insan onayı yok (Çince için tıklayın)|Machine translation · hindi na-review (i-click para sa Chinese)",
     "资金池": "Pool du trésor|Treasury-Pool|Пул казны|資金プール|자금 풀|خزنة الأموال|कोष पूल|Hazine havuzu|Pool ng yaman",
   };
   if (typeof window.__ldExpandLangs !== "function") {

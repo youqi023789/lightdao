@@ -29,6 +29,7 @@
     "Remove this device's login": "Quitar el inicio de sesión de este dispositivo|Remover o login deste dispositivo|Hapus login perangkat ini|Xóa đăng nhập thiết bị này",
     "My security & referrals": "Mi seguridad y referidos|Minha segurança e referências|Keamanan dan referral saya|Bảo mật và giới thiệu của tôi",
     "Restoring session…": "Restaurando sesión…|Restaurando sessão…|Memulihkan sesi…|Đang khôi phục phiên…",
+    "Machine translation · not human-reviewed (click for Chinese)": "Traducción automática · sin revisión humana (clic para chino)|Tradução automática · não revisada (clique para o chinês)|Terjemahan mesin · belum ditinjau (klik untuk bahasa Mandarin)|Dịch máy · chưa người duyệt (bấm để xem tiếng Trung)",
     "Treasury pool": "Fondo del tesoro|Fundo do tesouro|Pool kas|Hồ sơ quỹ",
   };
   if (typeof window.__ldExpandLangs !== "function") {

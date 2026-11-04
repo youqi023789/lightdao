@@ -31,5 +31,6 @@
   en("移除本机登录信息 / Remove this device's login", "Remove this device's login");
   en("我的安全与邀请 / My security & referrals", "My security & referrals");
   en("正在恢复登录状态,请稍候… / Restoring session…", "Restoring session…");
+  en("机器翻译 · 未人工校对（点此看中文）", "Machine translation · not human-reviewed (click for Chinese)");
   en("资金池", "Treasury pool");
 })();
