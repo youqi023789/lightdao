@@ -50,7 +50,9 @@
   en("发放等 TGE", "Distribution awaits the TGE");
   en("尚无利润可计提", "No profit to reserve yet");
   en("资金仍在金库多签内", "Funds still sit in the treasury multisig");
-  en("IBC 已实测", "IBC tested live");
+  en("主网未开通", "Not live on mainnet");
+  en("测试网与 Osmosis 测试网（osmo-test-5）双向 transfer 已实测通过；主网当前没有 IBC 客户端（链上实测 `wasmd q ibc client states` 返回 total=0），建好客户端/连接/通道后才算开通", "Bidirectional transfers were tested on the testnet against Osmosis' testnet (osmo-test-5). The mainnet currently has no IBC client (on-chain query `wasmd q ibc client states` returns total=0); it counts as live only once a client, connection and channel exist.");
+  en("IBC 主网未开通", "IBC not live on mainnet");
   en("已满足", "Met");
   en("远未接近", "Nowhere near");
   en("已动用", "Used");

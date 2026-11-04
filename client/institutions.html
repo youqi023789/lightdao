@@ -118,7 +118,7 @@ h2 .en{display:inline;margin-left:8px;font-size:14px}
 <table>
 <tr><th>前置项</th><th>状态</th><th>说明</th></tr>
 <tr><td>验证者 ≥7（白皮书硬性底线）</td><td><span class="st live">已满足</span></td><td>10/10 BONDED</td></tr>
-<tr><td>IBC 双向 transfer 实测</td><td><span class="st live">已实测</span></td><td>与 Osmosis 互通，回流按 IBC 前缀回退为原生面额</td></tr>
+<tr><td>IBC 双向 transfer 实测</td><td><span class="st plan">主网未开通</span></td><td>测试网与 Osmosis 测试网（osmo-test-5）双向 transfer 已实测通过；主网当前没有 IBC 客户端（链上实测 `wasmd q ibc client states` 返回 total=0），建好客户端/连接/通道后才算开通</td></tr>
 <tr><td>解绑期与轻客户端信任期匹配</td><td><span class="st live">已提案</span></td><td>21 天解绑期（链上参数 unbonding_time=504h，可用 wasmd q staking params 查），07-tendermint 信任期须 < 2/3</td></tr>
 <tr><td>核心合约形式化验证（§4.11）</td><td><span class="st plan">未完成</span></td><td>挂在审计计划，见<a href="/contracts.html">合约页</a>的诚实声明</td></tr>
 <tr><td>自助跨链出入金</td><td><span class="st plan">未开放</span></td><td>需 relayer 长期运维；当前由人工协助</td></tr>

@@ -8,6 +8,9 @@
   "use strict";
   var L = ["es", "pt", "id", "vi"];
   var T = {
+    "Not live on mainnet": "No activo en mainnet|Não ativo na mainnet|Belum aktif di mainnet|Chưa mở trên mainnet",
+    "Bidirectional transfers were tested on the testnet against Osmosis' testnet (osmo-test-5). The mainnet currently has no IBC client (on-chain query `wasmd q ibc client states` returns total=0); it counts as live only once a client, connection and channel exist.": "Las transferencias bidireccionales se probaron en la red de pruebas con la red de pruebas de Osmosis (osmo-test-5); la mainnet aún no tiene cliente IBC (la consulta en cadena `wasmd q ibc client states` devuelve total=0); solo estará activo con cliente, conexión y canal.|Transferências bidirecionais foram testadas na testnet com a testnet do Osmosis (osmo-test-5); a mainnet ainda não tem cliente IBC (a consulta on-chain `wasmd q ibc client states` retorna total=0); só conta como ativa com cliente, conexão e canal.|Transfer dua arah sudah diuji di testnet dengan testnet Osmosis (osmo-test-5); mainnet saat ini tidak punya klien IBC (kueri on-chain `wasmd q ibc client states` mengembalikan total=0); baru dianggap aktif setelah klien, koneksi, dan kanal dibuat.|Transfer hai chiều đã được kiểm thử trên testnet với testnet của Osmosis (osmo-test-5); mainnet hiện chưa có IBC client (truy vấn on-chain `wasmd q ibc client states` trả total=0); chỉ coi như đã mở khi có client, connection và channel.",
+    "IBC not live on mainnet": "IBC no activo en mainnet|IBC não ativo na mainnet|IBC belum aktif di mainnet|IBC chưa mở trên mainnet",
     "days · Epoch 1 · mining is running (settled daily at 00:00 UTC) · the season end date will be set by a governance proposal (none yet) · rules published on this page": "días · Época 1 · minería en curso (liquidación diaria 00:00 UTC) · la fecha de fin la fijará una propuesta de gobernanza (aún no hay) · reglas en esta página|dias · Época 1 · mineração em andamento (liquidação diária 00:00 UTC) · a data de fim será definida por proposta de governança (ainda não há) · regras nesta página|hari · Epoch 1 · mining berjalan (penyelesaian harian 00:00 UTC) · tanggal akhir akan ditetapkan lewat proposal tata kelola (belum ada) · aturan di halaman ini|ngày · Epoch 1 · đang đào (đối soát hằng ngày 00:00 UTC) · ngày kết thúc sẽ do đề xuất quản trị quyết định (chưa có) · quy tắc công bố tại trang này",
     "(empty)": "(vacío)|(vazio)|(kosong)|(trống)",
     "(self-sufficient hardware and bandwidth, online 24/7).": "(hardware y ancho de banda propios, en línea 24/7).|(hardware e banda próprios, online 24/7).|(perangkat dan bandwidth mandiri, online 24/7).|(phần cứng và băng thông tự chủ, trực tuyến 24/7).",
@@ -136,7 +139,6 @@
     "Height": "Altura|Altura|Ketinggian|Chiều cao",
     "High volatility": "Alta volatilidad|Alta volatilidade|Volatilitas tinggi|Biến động cao",
     "How it works": "Cómo funciona|Como funciona|Cara kerjanya|Cách hoạt động",
-    "IBC tested live": "IBC probado en vivo|IBC testado ao vivo|IBC teruji langsung|IBC đã kiểm tra trực tiếp",
     "Import seed phrase": "Importar frase semilla|Importar frase seed|Impor frasa seed|Nhập cụm seed",
     "In progress": "En curso|Em andamento|Sedang berjalan|Đang tiến hành",
     "Initial DEX liquidity": "Liquidez DEX inicial|Liquidez DEX inicial|Likuiditas DEX awal|Thanh khoản DEX ban đầu",
