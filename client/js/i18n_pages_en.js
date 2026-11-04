@@ -11,6 +11,7 @@
   var en = function (zh, v) { E(zh, { en: v }); };
 
   /* ---------- 共用页头/页脚 ---------- */
+  en("天 · 纪元 1 · 挖矿进行中（每日 00:00 UTC 结算）· 赛季结束时间以治理提案为准（当前未定）· 规则由项目方在本页公示", "days · Epoch 1 · mining is running (settled daily at 00:00 UTC) · the season end date will be set by a governance proposal (none yet) · rules published on this page");
   en("← 返回上一页 / Back", "← Back");
   en("← 返回上一页", "← Back");
   en("← 返回", "← Back");
@@ -188,7 +189,6 @@
 
   /* ---------- 赛季页 ---------- */
   en("⛏ LightDAO Season 1 · 贡献挖矿赛季", "⛏ LightDAO Season 1 · contribution mining season");
-  en("2026-10-01 → 2026-10-29(4 周)· 规则由项目方设定并在本页公示", "2026-10-01 → 2026-10-29 (4 weeks) · rules set by the project and published on this page");
   en("怎么玩", "How it works");
   en("打开", "Open");
   en(",Passkey 创建钱包(指纹/面容,无助记词)", ", create a Passkey wallet (fingerprint/face, no seed phrase)");

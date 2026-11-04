@@ -8,6 +8,7 @@
   "use strict";
   var L = ["es", "pt", "id", "vi"];
   var T = {
+    "days · Epoch 1 · mining is running (settled daily at 00:00 UTC) · the season end date will be set by a governance proposal (none yet) · rules published on this page": "días · Época 1 · minería en curso (liquidación diaria 00:00 UTC) · la fecha de fin la fijará una propuesta de gobernanza (aún no hay) · reglas en esta página|dias · Época 1 · mineração em andamento (liquidação diária 00:00 UTC) · a data de fim será definida por proposta de governança (ainda não há) · regras nesta página|hari · Epoch 1 · mining berjalan (penyelesaian harian 00:00 UTC) · tanggal akhir akan ditetapkan lewat proposal tata kelola (belum ada) · aturan di halaman ini|ngày · Epoch 1 · đang đào (đối soát hằng ngày 00:00 UTC) · ngày kết thúc sẽ do đề xuất quản trị quyết định (chưa có) · quy tắc công bố tại trang này",
     "(empty)": "(vacío)|(vazio)|(kosong)|(trống)",
     "(self-sufficient hardware and bandwidth, online 24/7).": "(hardware y ancho de banda propios, en línea 24/7).|(hardware e banda próprios, online 24/7).|(perangkat dan bandwidth mandiri, online 24/7).|(phần cứng và băng thông tự chủ, trực tuyến 24/7).",
     "1. How is each LightDAO transaction fee split?": "1. ¿Cómo se reparte cada comisión de LightDAO?|1. Como cada taxa do LightDAO é dividida?|1. Bagaimana setiap biaya transaksi LightDAO dibagi?|1. Mỗi phí giao dịch LightDAO được chia thế nào?",
