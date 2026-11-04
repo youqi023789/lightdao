@@ -46,9 +46,12 @@ if [ $? -ne 0 ]; then
 fi
 if [ "$DRY_RUN" = "1" ]; then echo "DRY: $T2"; echo "DRY media: ${POSTER:-none}"; echo "DRY：内容门禁已通过，未发帖"; exit 0; fi
 POSTER_BIN="${LD_X_POSTER:-/home/ubuntu/post_tweet_media.py}"   # 可注入：默认是真发帖器
-"$POSTER_BIN" /home/ubuntu/x_mkt_thread.json
-rc=$?
+POST_OUT=$("$POSTER_BIN" /home/ubuntu/x_mkt_thread.json 2>&1)
+POST_RC=$?
+printf "%s\n" "$POST_OUT" | tail -6      # 只留末 6 行进 cron 日志，够定位又刷屏
+rc=$POST_RC
+POST_LAST=$(printf "%s" "$POST_OUT" | tail -1 | cut -c1-160)
 if [ $rc -ne 0 ]; then
-  echo "$(date -u +%FT%TZ) X-POST-FAIL rc=$rc slot=$SLOT n=$N 文案已过门禁但发帖失败（凭据失效/额度/网络），待发帖内容在 /home/ubuntu/x_mkt_thread.json（可直接重试）。详见 /home/ubuntu/ld_x_mkt.log" >> /home/ubuntu/ld_alerts.log
+  echo "$(date -u +%FT%TZ) X-POST-FAIL rc=$rc slot=$SLOT n=$N 末行: ${POST_LAST:-无输出} | 文案已过门禁但发帖失败，待发帖内容在 /home/ubuntu/x_mkt_thread.json（可直接重试）。详见 /home/ubuntu/ld_x_mkt.log" >> /home/ubuntu/ld_alerts.log
   echo "X-POST-FAIL rc=$rc（已写告警）"; exit 4
 fi
