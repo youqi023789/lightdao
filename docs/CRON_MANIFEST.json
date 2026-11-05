@@ -477,6 +477,41 @@
       "cmd": "/usr/bin/python3 /usr/local/bin/ld_i18n_residual.py",
       "purpose": "真机量「非中文界面里还剩多少中文」：14 个语种各渲染一次首页，去掉标签后在可见文本里找 CJK 片段，语言切换器的母语名（中文/日本語/한국어…）在白名单里不算漏翻；有残留就非零退出并进日志。为什么加：g12/ld_lang_coverage 量的是「词典键覆盖率」，看不见没进词典或进了词典却没被翻译的页面文字——11-04 实测首页在全部 14 个非中文语种都残留 8 处（三个页脚链接、三个人设标签、<title> 的两个短语），其中「治理制度/资金与释放」明明在 b2 词典里有九语全译却仍显示中文，说明运行时 walker 也有一处真 bug，需要单独定位（不当成已完成）。",
       "added": "2026-11-04"
+    },
+    {
+      "user": "root",
+      "schedule": "40 * * * *",
+      "cmd": "/usr/bin/python3 /home/ubuntu/ld_wp_check.py",
+      "purpose": "白皮书多语言版本的完整性门禁（ld_wp_check.py）：白皮书页按语种取 /wp/whitepaper.<lang>.md，只要某个语种的文件缺失、被截断或夹着半句中文，访客看到的就是「我这门语言没写好」的页面，而站点其它一切正常——没有任何别的门禁会因此变红，所以必须单独每小时量一次。与 ld_wp_build.py（每小时 :45 生成译文）错开 5 分钟。",
+      "added": "2026-11-05"
+    },
+    {
+      "user": "root",
+      "schedule": "*/15 * * * *",
+      "cmd": "flock -n /home/ubuntu/ld_ibc_watch.lock /usr/bin/python3 /home/ubuntu/ld_ibc_relay.py",
+      "purpose": "跨链中继看门狗（ld_ibc_relay.py）：每 15 分钟查 hermes 进程是否 active、心跳、未确认包、客户端是否还在信任期内、中继账户油钱。每条判据都来自实测到的故障方式——2026-11-04 人工手动中继与守护进程共用同一个签名账户，account sequence mismatch 刷了整屏；2026-11-05 人工重启（xc16/xc17 脚本）期间本探针抓到 inactive 连发两条 IBC-RELAY ALERT，进程恢复后自愈。flock -n 防止两次 tick 重叠。告警以 IBC-RELAY 前缀写 ld_alerts.log。",
+      "added": "2026-11-05"
+    },
+    {
+      "user": "root",
+      "schedule": "*/30 * * * *",
+      "cmd": "flock -n /home/ubuntu/ld_mt2.lock /usr/bin/python3 /home/ubuntu/ld_i18n_mt_build2.py ; /usr/bin/python3 /home/ubuntu/rewrite_mt_table.py ; /usr/bin/python3 /home/ubuntu/wire_mt_shards.py",
+      "purpose": "非中文界面残留句子的机器翻译补齐流水线 v2（LD_BATCH=45 LD_MT_LIMIT=120）：ld_i18n_mt_build2.py 用 gtx 优先、经英文 pivot、MyMemory 只当兜底，每条每种语言单独记账、中断不重做已成功语种；成功后 rewrite_mt_table.py 把机器翻译缓存重写成与人工词典同构的静态表（var L + var T + __ldExpandLangs），让 g12 结构校验对它一视同仁，且加载在人工表之后、只填空槽，人工译文永远优先；wire_mt_shards.py 按「实际存在的分片」精确挂 <script>，不靠手数——上一版把分片数写死 1..3 而实际只生成两片，qa_site 立刻报「引用了不存在的资源」。三个命令是同一条流水线的前后三段，必须原子排在一起。",
+      "added": "2026-11-05"
+    },
+    {
+      "user": "root",
+      "schedule": "20 * * * *",
+      "cmd": "flock -n /home/ubuntu/ld_mt_watch.lock /usr/bin/python3 /home/ubuntu/ld_i18n_mt_watch.py",
+      "purpose": "补齐流水线的看门狗（ld_i18n_mt_watch.py）：盯「流水线自己是不是停了」。真实事故：2026-11-05 03:30~06:00 三批 cron 全部 0 成功 / 45 失败，每批都在日志里打了 FAIL，但没人看日志，页面残留数字不动，看起来像「已经补完了」。",
+      "added": "2026-11-05"
+    },
+    {
+      "user": "root",
+      "schedule": "45 * * * *",
+      "cmd": "flock -n /home/ubuntu/ld_wp.lock /usr/bin/python3 /home/ubuntu/ld_wp_build.py",
+      "purpose": "白皮书整篇按语种生成译文 v2（ld_wp_build.py）：可断点续跑、限流退避、不假装完成。v1 的实测缺陷（2026-11-05）：三个进程并行 + 页面补齐流水线一起打，google gtx 直接 429；v1 把「取不到译文」和「结构校验不过」混成一类 bad_lines，且文件只在最后一步落盘——中途失败等于整篇白跑。产出由 :40 的 ld_wp_check.py 做完整性门禁。",
+      "added": "2026-11-05"
     }
   ]
 }
