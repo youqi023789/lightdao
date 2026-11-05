@@ -1,0 +1,57 @@
+/* LD-I18N-B7-20261105  跨链面板与短标签：先把键建出来（词条式，中→英）。
+   没有这一片，后面的 9 语/4 语表会被判成"死行"——源串集合来自词条式文件（g12 的判定口径）。 */
+(function () {
+  "use strict";
+  window.LDI18N = window.LDI18N || {};
+  function E(zh, m) { var k = window.LDI18N[zh] || (window.LDI18N[zh] = {});
+    for (var p in m) { if (Object.prototype.hasOwnProperty.call(m, p)) { k[p] = m[p]; } } }
+  function en(zh, v) { E(zh, { en: v }); }
+  en("检测中", "checking");
+  en("读不到", "unavailable");
+  en("区块高度", "block height");
+  en("通道", "channel");
+  en("未确认包", "unconfirmed packets");
+  en("锁仓", "escrow");
+  en("中继账户", "relayer account");
+  en("主网跨链", "mainnet cross-chain");
+  en("已开通", "enabled");
+  en("未开通", "not enabled");
+  en("更新时间", "updated");
+  en("已连通", "connected");
+  en("异常", "abnormal");
+  en("资产", "asset");
+  en("价格（美元）", "price (USD)");
+  en("24 小时涨跌", "24h change");
+  en("外部跨链交易入口", "external cross-chain trading");
+  en("行情", "market data");
+  en("链间状态", "cross-chain status");
+  en("语言", "language");
+  en("出块时间", "block time");
+  en("取不到", "n/a");
+  en("测试网 A", "testnet A");
+  en("测试网 B", "testnet B");
+  en("主网", "mainnet");
+  en("同步中", "syncing");
+  en("{n} 秒前", "{n}s ago");
+  en("这些资产行情取不到", "no market data for these assets");
+  en("EVM 跨链兑换（Li.Fi）", "EVM cross-chain swap (Li.Fi)");
+  en("Solana 兑换（Jupiter）", "Solana swap (Jupiter)");
+  en("LIGHT 行情页", "LIGHT market page");
+  en("跨链", "cross-chain");
+  en("这些是第三方聚合器：交易在你的钱包与他们的路由里完成，LightDAO 不托管资产、不参与撮合，也不保证成交结果。", "These are third-party aggregators: trades settle in your own wallet and their routes. LightDAO does not custody assets, does not match orders, and does not guarantee outcomes.");
+  en("行情来源 CoinGecko，经本站缓存 60 秒", "prices from CoinGecko, cached 60s by this site");
+  en("数据由本站只读探针每 {n} 秒取样", "data sampled every {n}s by this site's read-only probe");
+  en("链", "chain");
+  en("主网 IBC 轻客户端数", "mainnet IBC light clients");
+  en("探针读数有缺口", "the probe reported gaps");
+  en("主网跨链未开通：LIGHT 是合约代币（CW20），IBC 只搬原生币；封装路由与治理授权尚未完成", "Mainnet cross-chain is not enabled yet: LIGHT is a contract token (CW20), IBC only moves native coins; the wrapped route and governance approval are not finished.");
+  en("加载中…", "loading…");
+  en("发起一笔测试网跨链（A→B）", "send a testnet cross-chain transfer (A→B)");
+  en("发送中…", "sending…");
+  en("失败：{e}", "failed: {e}");
+  en("已上链，等中继搬运：tx {h}", "on-chain, waiting for the relayer: tx {h}");
+  en("本小时演示额度剩余 {n}", "{n} demo transfers left this hour");
+  en("跨链报价（1 ETH → USDC，Ethereum → Optimism）", "cross-chain quote (1 ETH → USDC, Ethereum → Optimism)");
+  en("经 {t} 路由，预计到账 {a}，油钱 ${g}，耗时约 {d}", "via {t}, expected {a}, gas ${g}, about {d}");
+  en("在聚合器打开该笔", "open this route in the aggregator");
+})();

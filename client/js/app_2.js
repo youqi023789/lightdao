@@ -473,7 +473,8 @@ setInterval(refreshClaimable,60000);
    var lt=d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}); var ld=d.toLocaleDateString([],{month:"2-digit",day:"2-digit"});
    el.textContent=(window.__ldT?window.__ldT("每日结算刷新:你当地 {t} · 倒计时 {cd}",{t:ld+" "+lt,cd:cd(left)}):"每日结算刷新:你当地 "+ld+" "+lt+" · 倒计时 "+cd(left)); }
  function pull(){ fetch(CFG.gw+"/v1/health").then(function(r){return r.json();}).then(function(hh){ if(hh&&hh.next_boundary_ts&&hh.now_ts){ nb=hh.next_boundary_ts; srv=hh.now_ts; loc=Date.now()/1000; tick(); } }).catch(function(){}); }
- pull(); setInterval(tick,1000); setInterval(pull,60000); })();
+ /* LD-COUNTDOWN-WAIT-DICT-20261105：词典没加载完就先不画，避免首屏闪中文并少记一次假硬缺口；最多等 6 秒，之后照常跑（宁可退回兜底文案，也不留空白）。 */
+ function start(){ if(!window.__ldT && (start._n=(start._n||0)+1) < 40){ setTimeout(start,150); return; } pull(); setInterval(tick,1000); setInterval(pull,60000); } start(); })();
 (function(){ /* LD-TRUTH-AUDIT-20261014: compare the semantic state the renderer wrote
    (data-st), not the visible words — the old version compared user-visible text against a
    hardcoded Chinese literal, so every localized visitor (and any stray whitespace in the

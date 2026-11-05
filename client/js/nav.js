@@ -148,6 +148,24 @@
     "挖矿面板（客户端内 sec-main）": "Mining panel (sec-main inside the client)",
     "主客户端": "Main client"
   };
+  /* LD-NAV-USE-SHARED-DICT-20261105 导航文字优先走全站 14 语种词典。
+     旧写法只有一张中英对照小表：德语页 = 德语正文 + 英语导航（漏翻普查看不见，
+     因为里面没有汉字）。现在先问全站词典，问不到才退回小表，并计数供巡检发现。 */
+  window.__ldNavFallback = 0;
+  function navT(zh) {
+    try {
+      var l = navLang();
+      if (!l || l.indexOf("zh") === 0) return zh;
+      /* 不含汉字就说明这句已经是译文（或本来就是英文/数字），再拿去问词典只会记成假缺口 */
+      if (typeof zh !== "string" || !/[\u4e00-\u9fff]/.test(zh)) return zh;
+      if (typeof window.__ldT === "function") {
+        var v = window.__ldT(zh);
+        if (v && v !== zh) return v;
+      }
+      if (typeof zh === "string" && NAVEN[zh]) { window.__ldNavFallback++; return NAVEN[zh]; }
+    } catch (e) { }
+    return zh;
+  }
   function navLang() {
     var l = "";
     try { l = (new URLSearchParams(location.search).get("lang") || "").toLowerCase(); } catch (e) { }
@@ -161,11 +179,17 @@
     var nodes = document.querySelectorAll(".ldnav a, .ldnav button, .ldnav-b, .ldnav span, .ldnav b");
     for (var i = 0; i < nodes.length; i++) {
       var n = nodes[i], t = (n.textContent || "").trim();
-      if (NAVEN[t] !== undefined) n.textContent = NAVEN[t];
+      var v = navT(t);
+      if (v !== t) n.textContent = v;
       if (n.title && NAVTIP[n.title] !== undefined) n.title = NAVTIP[n.title];
     }
   }
-  function boot() { try { build(); navI18n(); } catch (e) { } btime(); setInterval(btime, 60000); }
+  /* boot 阶段不要急着换导航文字：那时 i18n 还没 __ldExpandAll，本语种列是空的，
+     查表只能退到英文小表 → 用户看到"德语正文 + 英语导航"（实测 __ldTgapFb 11 条）。
+     现在只在词典已就绪时做一次，其余交给 i18n 应用完成后派发的 ldlang 事件。 */
+  function boot() { try { build(); if (window.__ldLang) navI18n(); } catch (e) { } btime(); setInterval(btime, 60000); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
+  /* 切语种后重贴导航：i18n.js 应用完会派发 ldlang */
+  try { document.addEventListener("ldlang", function () { try { navI18n(); } catch (e) { } }); } catch (e) { }
 })();

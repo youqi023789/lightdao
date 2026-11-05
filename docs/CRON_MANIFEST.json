@@ -1,517 +1,524 @@
 {
-  "_comment": "Canonical cron manifest for the gateway. Reconciled daily by ld_cron_reconcile2.py (G24). Regenerate: ld_cron_reconcile2.py --gen, review, commit. 2026-10-16 rebuilt from live crontabs because the old file's commands carried '--gen' truncation artifacts (trailing 2) and the reconciler itself was never scheduled.",
-  "generated": "2026-10-16",
-  "jobs": [
-    {
-      "user": "root",
-      "schedule": "0 6 * * *",
-      "cmd": "/home/ubuntu/ld_backup.sh",
-      "purpose": "每日备份",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "root",
-      "schedule": "*/5 * * * *",
-      "cmd": "/usr/bin/python3 /home/ubuntu/ld_monitor.py",
-      "purpose": "主监控（链高/出块/错误率/客户端报错等）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "root",
-      "schedule": "17 * * * *",
-      "cmd": "/usr/bin/python3 /home/ubuntu/ld_render_watch.py",
-      "purpose": "钱相关三页的深度渲染断言（导航/返回按钮/出块实测/链上取数跑通/提案分组禁用）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "root",
-      "schedule": "20 5 * * *",
-      "cmd": "/usr/bin/python3 /home/ubuntu/rebuild_search.py",
-      "purpose": "重建站内搜索索引（新页面/新文档要能被搜到）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "root",
-      "schedule": "35 7 * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/ld_cron_reconcile2.py",
-      "purpose": "本门禁自己：线上 cron 与清单双向对账（未登记=漂移，清单有而线上无=静默死亡）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "root",
-      "schedule": "15 */6 * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/ld_gate_watch.py",
-      "purpose": "门禁自身完整性：线上部署的门禁脚本哈希必须等于仓库清单记录（防被改/被删/仓库与线上不一致）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "root",
-      "schedule": "*/15 * * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/ld_gov_fail_watch.py",
-      "purpose": "治理提案执行失败看门狗（提案通过但执行失败=资金规则没改成功）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "root",
-      "schedule": "*/30 * * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/ld_grant_watch.py LD-GRANT-WATCH",
-      "purpose": "免 Gas 代付看门狗：签发失败会让用户领取静默失败",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "root",
-      "schedule": "*/30 * * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/ld_gw_expose_watch.py",
-      "purpose": "网关暴露面哨兵：8080 只绑本机、单元里无明文口令、口令文件权限正确、/gw 入口 200",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "root",
-      "schedule": "37 * * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/ld_migrate_gate.py watch",
-      "purpose": "迁移门禁：敏感合约要迁到无源/不可复现的 code 时非零退出并告警（提案 #14/#15 真出过事）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "root",
-      "schedule": "45 7 * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/ld_miner_watch.py",
-      "purpose": "矿工留存看门狗：已完成整天掉人>=2 或连续>=3 天零新增即告警；查不到网关数据判 QUERY-FAIL",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "root",
-      "schedule": "25 7 * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/ld_ops_reconcile.py --gate",
-      "purpose": "运维脚本对账：cron 在用的脚本只要与仓库不一致或未入库就非零退出（机器重建不会静默丢防护）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "root",
-      "schedule": "21 */6 * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/ld_render_all.py check",
-      "purpose": "全站 18 页真机渲染巡检（L1 每小时查资源/链接/兜底冒充，L2 每 6 小时查脚本真跑起来 + 语种棘轮）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "root",
-      "schedule": "27 * * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/ld_render_all.py check --no-render",
-      "purpose": "全站 18 页真机渲染巡检（L1 每小时查资源/链接/兜底冒充，L2 每 6 小时查脚本真跑起来 + 语种棘轮）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "root",
-      "schedule": "50 7 * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/ld_src_coverage.py",
-      "purpose": "敏感合约源码覆盖率棘轮：无源码数量只准降不准升，升了立即告警",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "root",
-      "schedule": "23 * * * *",
-      "cmd": "/usr/local/bin/ld_treasury_keywatch.sh",
-      "purpose": "金库密钥不变量：磁盘不得出现签名私钥明文、钥匙环签名人数必须为 0、密文备份必须在位",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "root",
-      "schedule": "5 6 * * *",
-      "cmd": "/usr/local/bin/ld_voters_backup.sh",
-      "purpose": "投票人数据备份",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "root",
-      "schedule": "0 * * * *",
-      "cmd": "/usr/local/bin/lightdao_oracle_feeder.sh",
-      "purpose": "TWAP 预言机喂价",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "root",
-      "schedule": "15 7 * * *",
-      "cmd": "runuser -u ubuntu -- git -C /home/ubuntu/repo pull --ff-only origin main ; /usr/bin/python3 /usr/local/bin/repo_leak_check.py /home/ubuntu/repo LD-REPO-LEAK-GATE",
-      "purpose": "公开仓库泄露扫描门禁（基础设施 IP/密钥/助记词/webhook/桌面路径）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "*/10 * * * *",
-      "cmd": "/usr/bin/python3 /home/ubuntu/lightdao_gateway/gas_grant.py $(/usr/local/bin/ld_day.sh cur)",
-      "purpose": "每日为矿工签发免 Gas 代付额度（缺它新用户领取会因没有 gas 静默失败）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "*/30 * * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/canary_claim.py beat",
-      "purpose": "金丝雀账户心跳场景自检：验证【节点在线】这条链路真能被观测到",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "40 5 * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/canary_claim.py claim",
-      "purpose": "金丝雀账户真实领取自检：每天真的领一次，确保领取链路没坏",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "45 5 * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/canary_claim.py degraded",
-      "purpose": "金丝雀账户降级场景自检：故意走异常路径，确认降级会被报出来",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "30 0 * * 1",
-      "cmd": "/usr/bin/python3 /usr/local/bin/discord_bot.py weekly",
-      "purpose": "告警投递到 Discord",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "*/15 * * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/ld_gov_guard.py",
-      "purpose": "治理守卫：盯异常提案/参数变更（提案通过但内容危险时先喊）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "0 7 * * *",
-      "cmd": "/usr/local/bin/ld_cfg.sh check",
-      "purpose": "配置漂移门禁：crontab/关键配置与基线不一致即告警（缺基线时响亮失败）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "10 7 * * *",
-      "cmd": "/usr/local/bin/ld_chain_params.sh check",
-      "purpose": "链上参数漂移门禁：gov/wasm/staking/mint/slashing/共识参数/min-gas 逐项对基线",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "25 7 * * *",
-      "cmd": "/usr/local/bin/ld_claim_gas_watch.py",
-      "purpose": "领取免 Gas 通道看门狗",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "0 6 * * *",
-      "cmd": "/usr/local/bin/ld_cve_watch.py",
-      "purpose": "依赖与安全公告巡检（CometBFT/SDK/cosmwasm 相关 CVE）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "0 4 * * *",
-      "cmd": "/usr/local/bin/ld_daily_discord.sh",
-      "purpose": "每日 Discord 播报",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "0 4 * * *",
-      "cmd": "/usr/local/bin/ld_daily_telegram.sh",
-      "purpose": "每日 Telegram 播报（对外发布，脚本化自动发）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "30 4 * * *",
-      "cmd": "/usr/local/bin/ld_daily_x_marketing.sh",
-      "purpose": "X 日更（晚班 16:30 UTC）。2026-10-31 创始人明确授权「每天自动发」，恢复直发；授权范围仅限内容源轮换的两条/天，改口径、回应他人、涉及金库或价格的表述仍需逐次确认。发帖前必过内容合规门禁 ld_x_compliance.py（禁收益承诺/价格暗示/风险淡化，必须带区块高度与官网锚点），不通过则不发帖并报警（退出码 3）。",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "20 7 * * *",
-      "cmd": "/usr/local/bin/ld_epoch_audit.py",
-      "purpose": "挖矿纪元/日界审计：日界与提案 #11 对齐后要复核领取窗口",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "0 5 * * *",
-      "cmd": "/usr/local/bin/ld_finalize.sh",
-      "purpose": "每日奖励根 finalize（站点结算与发分的源头）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "10 0 * * *",
-      "cmd": "/usr/local/bin/ld_finalize.sh",
-      "purpose": "每日奖励根 finalize（站点结算与发分的源头）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "20 5 * * *",
-      "cmd": "/usr/local/bin/ld_finalize.sh",
-      "purpose": "每日奖励根 finalize（站点结算与发分的源头）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "30 0 * * *",
-      "cmd": "/usr/local/bin/ld_finalize.sh",
-      "purpose": "每日奖励根 finalize（站点结算与发分的源头）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "*/5 * * * *",
-      "cmd": "/usr/local/bin/ld_gateway_trace_watch.py",
-      "purpose": "网关请求追踪看门狗：异常比例/慢请求/5xx 抬头即告警",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "*/10 * * * *",
-      "cmd": "/usr/local/bin/ld_observer_watch.sh",
-      "purpose": "观察者节点（对外 RPC）健康：落后或拒绝服务时页面数据会假死",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "0 5 * * 1",
-      "cmd": "/usr/local/bin/ld_secret_scan.py",
-      "purpose": "密钥/助记词二次扫描（与 repo_leak_check 不同层，扫主机文件与产物）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "10 5 * * *",
-      "cmd": "/usr/local/bin/ld_sign_root.sh",
-      "purpose": "每日奖励根多签签发：站点结算与链上发分的源头，缺它当天没有奖励根",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "20 0 * * *",
-      "cmd": "/usr/local/bin/ld_sign_root.sh",
-      "purpose": "每日奖励根多签签发：站点结算与链上发分的源头，缺它当天没有奖励根",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "30 5 * * *",
-      "cmd": "/usr/local/bin/ld_sign_root.sh",
-      "purpose": "每日奖励根多签签发：站点结算与链上发分的源头，缺它当天没有奖励根",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "40 0 * * *",
-      "cmd": "/usr/local/bin/ld_sign_root.sh",
-      "purpose": "每日奖励根多签签发：站点结算与链上发分的源头，缺它当天没有奖励根",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "30 3 * * *",
-      "cmd": "/usr/local/bin/ld_sri.sh",
-      "purpose": "重算并校验脚本 SRI（子资源完整性哈希），防线上 js 被改动而页面仍照常加载",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "*/15 * * * *",
-      "cmd": "/usr/local/bin/ld_validator_watch.py",
-      "purpose": "验证者在线/落后巡检（脱敏后的 ld-node-01..10），掉线或落后即告警",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "0 * * * *",
-      "cmd": "/usr/local/bin/ld_vesting_watch.sh",
-      "purpose": "vesting 计划看门狗：解锁/领取窗口与链上实际是否一致",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "*/15 * * * *",
-      "cmd": "/usr/local/bin/ld_watchdog.sh",
-      "purpose": "监控自身的看门狗：status.json 必须 <15 分钟新鲜，否则说明 monitor 死了或被致盲",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "*/15 * * * *",
-      "cmd": "/usr/local/bin/mig_autopilot.sh",
-      "purpose": "迁移/节点健康自动驾驶（HTTP RPC 高度与落后检测）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "17 * * * *",
-      "cmd": "/usr/local/bin/qa_cross_cron.sh",
-      "purpose": "跨层契约巡检 C1-C7（页面显示值 ↔ 网关 ↔ 链上三方是否互相自洽）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "30 6 * * *",
-      "cmd": "python3 /usr/local/bin/wp_reconcile.py",
-      "purpose": "白皮书口径与链上真实数值对账（发行量/释放/质押参数变了要说出来）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "30 6 * * 1",
-      "cmd": "wasmd tx distribution withdraw-all-rewards --from operator --home /home/ubuntu/.wasmd --keyring-backend test --chain-id lightdao-mainnet-1 --node tcp://127.0.0.1:26657 --gas 300000 --fees 90000ulight -y",
-      "purpose": "每周提取验证者佣金到运营账户（不提取=收益躺在分配池里不动）",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "root",
-      "schedule": "55 7 * * *",
-      "cmd": "/usr/bin/node /usr/local/bin/ld_lang_coverage.js",
-      "purpose": "语种覆盖率棘轮：下拉承诺语种的实际内容必须达标，恶化即告警",
-      "added": "2026-10-16"
-    },
-    {
-      "user": "root",
-      "schedule": "5 8 * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/ld_cron_target_audit.py",
-      "purpose": "体检 crontab 里每个脚本【及其内部调用的绝对路径】是否真的存在——检测点自己坏了必须比被测系统先被发现（SRI 门空转三天的直接教训）",
-      "added": "2026-10-17"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "0 16 * * *",
-      "cmd": "/usr/local/bin/ld_daily_telegram.sh pm",
-      "purpose": "每日 Telegram 播报(晚班,与早班不同文案,统一内容源 daily_unified.json;对外发布,脚本化自动发)",
-      "added": "2026-10-17"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "0 16 * * *",
-      "cmd": "/usr/local/bin/ld_daily_discord.sh pm",
-      "purpose": "每日 Discord 播报(晚班,与早班不同文案,统一内容源)",
-      "added": "2026-10-17"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "30 16 * * *",
-      "cmd": "/usr/local/bin/ld_daily_x_marketing.sh pm",
-      "purpose": "X 日更（晚班 16:30 UTC）。2026-10-31 创始人明确授权「每天自动发」，恢复直发；授权范围仅限内容源轮换的两条/天，改口径、回应他人、涉及金库或价格的表述仍需逐次确认。发帖前必过内容合规门禁 ld_x_compliance.py（禁收益承诺/价格暗示/风险淡化，必须带区块高度与官网锚点），不通过则不发帖并报警（退出码 3）。",
-      "added": "2026-10-17"
-    },
-    {
-      "user": "root",
-      "schedule": "20 */6 * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/gas_renew.py --apply --active-only --back 7",
-      "purpose": "每 6 小时自动续期矿工代付授权（x/feegrant）：只给近 7 天仍活跃的矿工续 30 天；判据同时看过期与剩余额度（<20% 就补），因为额度用完一样会撞 code 38。节奏从每天一次改为每 6 小时，回归矿工最坏等 6 小时而不是隔天。",
-      "added": "2026-10-30"
-    },
-    {
-      "user": "ubuntu",
-      "schedule": "33 */6 * * *",
-      "cmd": "/usr/local/bin/ld_sri.sh",
-      "purpose": "网页脚本指纹（SRI）每 6 小时再核一次：HTML 里的 integrity 与实际文件字节不符时浏览器会拒绝加载脚本=白屏，所以除了每日 03:30 那次，白天也要核。同一条 cron 之前只存在于 crontab、没登记，被对账工具抓出来补录。",
-      "added": "2026-10-30"
-    },
-    {
-      "user": "root",
-      "schedule": "10 */6 * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/webrt_check.py",
-      "purpose": "盯 WebRTC 信令签名错误（setRemoteDescription wrong state）是否真的停下来：v1.10.2 补了重复 answer 防护，判据用被改对象自己的证据（客户端错误日志近 24h 条数），不是看代码改没改，防止\"改了就当修好了\"。",
-      "added": "2026-10-31"
-    },
-    {
-      "user": "root",
-      "schedule": "25 9 * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/probe_share.py",
-      "purpose": "盯测试探针在真实矿工奖励里的占比（阈值 6%）：探针已降载到平日极小足迹、每周一次满强度以覆盖 ≥4h 会话发空投那条路径；占比爬回去就等于真实矿工少拿钱，必须机器先发现。判据照抄网关自己的 norm/WEIGHTS，不另写公式。",
-      "added": "2026-10-31"
-    },
-    {
-      "user": "root",
-      "schedule": "35 */6 * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/ld_render_truth.py static",
-      "purpose": "站内事实文案看门狗（便宜档）：①禁用串（多签分母 7、机房国家缩写 七个国家/地区缩写并列的清单、5/7 之类）一旦回流线上就告警；②站内写的验证者数量必须等于链上 `wasmd q staking validators` 实测 BONDED（2026-10-31 实测 10，而页面当时还留 7 —— 这类漂移以前没人拦）。读不到链上或读不到文件一律 FAIL，绝不当成通过。",
-      "added": "2026-10-31"
-    },
-    {
-      "user": "root",
-      "schedule": "40 6 * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/ld_render_truth.py render",
-      "purpose": "同一看门狗的渲染档：无头 chrome 跑完 JS 之后按**可见文本**核对 7 条多语言说法（en/zh/de/ja/ru/fr），用来证明词典的“译值”也跟着事实改了——2026-10-31 上一轮我只改了词典的键与中英文，13 个语种的译值还写着 5/7，页面中文说“5 个签名人”而德/俄/日等仍在说“5/7 signatures”，缺的就是这一层。反向验证已实测两次：LD_FAKE_BONDED=3 必须 FAIL；把临时站根里的文案改回“7 验证者”必须 FAIL。",
-      "added": "2026-10-31"
-    },
-    {
-      "user": "root",
-      "schedule": "50 3,15 * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/ld_x_cred_probe.py",
-      "purpose": "X 每日发帖的凭据预检（事前响）：不发帖、只把生产发帖用的同一把 OAuth1.0a user-context 打一次 GET /2/users/me，非 200 就写 X-CRED-FAIL 告警并非零退出。背景：10-24 起每日帖一直在 DRY 分支空转、没人发现；发帖失败告警（X-POST-FAIL）今天也已补上并反向验证。反向验证实测：LD_X_CRED_FAKE=1 用坏 token → rc=1 且告警落盘。",
-      "added": "2026-10-31"
-    },
-    {
-      "user": "root",
-      "schedule": "45 5 * * *",
-      "cmd": "/usr/local/bin/ld_asset_sync.sh",
-      "purpose": "把 promote 不负责的静态资产（当前只有 whitepaper.md）按内容比对从仓库同步到线上。起因：11-04 给白皮书加勘误后才发现线上仍是旧版——promote 只复制 *.html 与 js/*.js，白皮书一直靠手工 cp，属于典型\"两份表达\"漂移且无人报警。口径：白名单不用通配（线上 html/js 带 SRI 注入，必须走门禁，不能被这个脚本绕过覆盖）；只在 md5 不同才复制；复制后回读比对；源文件读不到=失败并报警，绝不把看不见当没问题。反向验证实测：源目录不存在 → rc=5 且 ASSET-SYNC-FAIL 落盘；临时空目标 → 真复制并校验一致；已一致 → 不动作。",
-      "added": "2026-11-04"
-    },
-    {
-      "user": "root",
-      "schedule": "55 6 * * *",
-      "cmd": "/usr/local/bin/ld_g10_daily.sh",
-      "purpose": "每天独立重算每日贡献分总分与 Merkle 根并与链上已提交的根对拍（复用发布门禁 g10 的量具，不再新写公式）。起因：站内首页写着「持续自审 + 每日独立对账」，而这件事原来挂在QwenWork 定时任务「每日经济对账」里——那是消耗额度的智能体，10-30 起连续失败（运行日志原因：The usage limit has been reached），等于声明断了 5 天而服务器一声不响。零预算下正确做法是把量具挪进 cron：确定性、不花钱。非零退出→G10-PARITY-FAIL 落 ld_alerts.log（同签名只在变化时刷屏），恢复写 OK；反向验证实测：桩脚本报 mismatches=1 → rc=1 + 告警 +446→447；再跑真门 → OK 且写恢复行。",
-      "added": "2026-11-04"
-    },
-    {
-      "user": "root",
-      "schedule": "39 * * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/ld_gov_a3_followup.py",
-      "purpose": "执行所有者 2026-11-04 的指令「#12 通过后立即执行，并继续提交挖矿合约 code20 补 7 席」的状态机：每小时看一次——到点就 ExecuteProposal(#12) 并回读验证 governance code_id 变 19、门槛变 5,000 LIGHT；随后自动创建并投票 #13（mining_reward→code 20，装上可治理更新签名名单的能力）；其投票期满后再执行。每步都先核对链上前置状态、动手、再回读，成功失败都写 GOV-A3 到 ld_alerts.log。为什么必须做成机器：#11/#17 就是“投票过了/执行失败”后一直挂着无人收尾，而这个治理合约**不会自动执行**。补第 6/7 席需要两把新钥匙的交付方式，脚本到那一步只报警不自作主张生成保管物。反向验证实测：LD_A3_NOW 桩（假装到点）→ 明确进入“将执行 #12”分支并打印当前计票；状态文件写成 step=bogus → rc=1 且拒绝动作。",
-      "added": "2026-11-04"
-    },
-    {
-      "user": "root",
-      "schedule": "10 7 * * *",
-      "cmd": "/usr/bin/python3 /usr/local/bin/ld_i18n_residual.py",
-      "purpose": "真机量「非中文界面里还剩多少中文」：14 个语种各渲染一次首页，去掉标签后在可见文本里找 CJK 片段，语言切换器的母语名（中文/日本語/한국어…）在白名单里不算漏翻；有残留就非零退出并进日志。为什么加：g12/ld_lang_coverage 量的是「词典键覆盖率」，看不见没进词典或进了词典却没被翻译的页面文字——11-04 实测首页在全部 14 个非中文语种都残留 8 处（三个页脚链接、三个人设标签、<title> 的两个短语），其中「治理制度/资金与释放」明明在 b2 词典里有九语全译却仍显示中文，说明运行时 walker 也有一处真 bug，需要单独定位（不当成已完成）。",
-      "added": "2026-11-04"
-    },
-    {
-      "user": "root",
-      "schedule": "40 * * * *",
-      "cmd": "/usr/bin/python3 /home/ubuntu/ld_wp_check.py",
-      "purpose": "白皮书多语言版本的完整性门禁（ld_wp_check.py）：白皮书页按语种取 /wp/whitepaper.<lang>.md，只要某个语种的文件缺失、被截断或夹着半句中文，访客看到的就是「我这门语言没写好」的页面，而站点其它一切正常——没有任何别的门禁会因此变红，所以必须单独每小时量一次。与 ld_wp_build.py（每小时 :45 生成译文）错开 5 分钟。",
-      "added": "2026-11-05"
-    },
-    {
-      "user": "root",
-      "schedule": "*/15 * * * *",
-      "cmd": "flock -n /home/ubuntu/ld_ibc_watch.lock /usr/bin/python3 /home/ubuntu/ld_ibc_relay.py",
-      "purpose": "跨链中继看门狗（ld_ibc_relay.py）：每 15 分钟查 hermes 进程是否 active、心跳、未确认包、客户端是否还在信任期内、中继账户油钱。每条判据都来自实测到的故障方式——2026-11-04 人工手动中继与守护进程共用同一个签名账户，account sequence mismatch 刷了整屏；2026-11-05 人工重启（xc16/xc17 脚本）期间本探针抓到 inactive 连发两条 IBC-RELAY ALERT，进程恢复后自愈。flock -n 防止两次 tick 重叠。告警以 IBC-RELAY 前缀写 ld_alerts.log。",
-      "added": "2026-11-05"
-    },
-    {
-      "user": "root",
-      "schedule": "*/30 * * * *",
-      "cmd": "flock -n /home/ubuntu/ld_mt2.lock /usr/bin/python3 /home/ubuntu/ld_i18n_mt_build2.py ; /usr/bin/python3 /home/ubuntu/rewrite_mt_table.py ; /usr/bin/python3 /home/ubuntu/wire_mt_shards.py",
-      "purpose": "非中文界面残留句子的机器翻译补齐流水线 v2（LD_BATCH=45 LD_MT_LIMIT=120）：ld_i18n_mt_build2.py 用 gtx 优先、经英文 pivot、MyMemory 只当兜底，每条每种语言单独记账、中断不重做已成功语种；成功后 rewrite_mt_table.py 把机器翻译缓存重写成与人工词典同构的静态表（var L + var T + __ldExpandLangs），让 g12 结构校验对它一视同仁，且加载在人工表之后、只填空槽，人工译文永远优先；wire_mt_shards.py 按「实际存在的分片」精确挂 <script>，不靠手数——上一版把分片数写死 1..3 而实际只生成两片，qa_site 立刻报「引用了不存在的资源」。三个命令是同一条流水线的前后三段，必须原子排在一起。",
-      "added": "2026-11-05"
-    },
-    {
-      "user": "root",
-      "schedule": "20 * * * *",
-      "cmd": "flock -n /home/ubuntu/ld_mt_watch.lock /usr/bin/python3 /home/ubuntu/ld_i18n_mt_watch.py",
-      "purpose": "补齐流水线的看门狗（ld_i18n_mt_watch.py）：盯「流水线自己是不是停了」。真实事故：2026-11-05 03:30~06:00 三批 cron 全部 0 成功 / 45 失败，每批都在日志里打了 FAIL，但没人看日志，页面残留数字不动，看起来像「已经补完了」。",
-      "added": "2026-11-05"
-    },
-    {
-      "user": "root",
-      "schedule": "45 * * * *",
-      "cmd": "flock -n /home/ubuntu/ld_wp.lock /usr/bin/python3 /home/ubuntu/ld_wp_build.py",
-      "purpose": "白皮书整篇按语种生成译文 v2（ld_wp_build.py）：可断点续跑、限流退避、不假装完成。v1 的实测缺陷（2026-11-05）：三个进程并行 + 页面补齐流水线一起打，google gtx 直接 429；v1 把「取不到译文」和「结构校验不过」混成一类 bad_lines，且文件只在最后一步落盘——中途失败等于整篇白跑。产出由 :40 的 ld_wp_check.py 做完整性门禁。",
-      "added": "2026-11-05"
-    }
-  ]
+ "_comment": "Canonical cron manifest for the gateway. Reconciled daily by ld_cron_reconcile2.py (G24). Regenerate: ld_cron_reconcile2.py --gen, review, commit. 2026-10-16 rebuilt from live crontabs because the old file's commands carried '--gen' truncation artifacts (trailing 2) and the reconciler itself was never scheduled.",
+ "generated": "2026-11-05T09:38:09Z",
+ "jobs": [
+  {
+   "user": "root",
+   "schedule": "0 6 * * *",
+   "cmd": "/home/ubuntu/ld_backup.sh",
+   "purpose": "每日备份",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "*/5 * * * *",
+   "cmd": "/usr/bin/python3 /home/ubuntu/ld_monitor.py",
+   "purpose": "主监控（链高/出块/错误率/客户端报错等）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "17 * * * *",
+   "cmd": "/usr/bin/python3 /home/ubuntu/ld_render_watch.py",
+   "purpose": "钱相关三页的深度渲染断言（导航/返回按钮/出块实测/链上取数跑通/提案分组禁用）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "20 5 * * *",
+   "cmd": "/usr/bin/python3 /home/ubuntu/rebuild_search.py",
+   "purpose": "重建站内搜索索引（新页面/新文档要能被搜到）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "35 7 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/ld_cron_reconcile2.py",
+   "purpose": "本门禁自己：线上 cron 与清单双向对账（未登记=漂移，清单有而线上无=静默死亡）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "15 */6 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/ld_gate_watch.py",
+   "purpose": "门禁自身完整性：线上部署的门禁脚本哈希必须等于仓库清单记录（防被改/被删/仓库与线上不一致）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "*/15 * * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/ld_gov_fail_watch.py",
+   "purpose": "治理提案执行失败看门狗（提案通过但执行失败=资金规则没改成功）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "*/30 * * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/ld_grant_watch.py LD-GRANT-WATCH",
+   "purpose": "免 Gas 代付看门狗：签发失败会让用户领取静默失败",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "*/30 * * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/ld_gw_expose_watch.py",
+   "purpose": "网关暴露面哨兵：8080 只绑本机、单元里无明文口令、口令文件权限正确、/gw 入口 200",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "37 * * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/ld_migrate_gate.py watch",
+   "purpose": "迁移门禁：敏感合约要迁到无源/不可复现的 code 时非零退出并告警（提案 #14/#15 真出过事）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "45 7 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/ld_miner_watch.py",
+   "purpose": "矿工留存看门狗：已完成整天掉人>=2 或连续>=3 天零新增即告警；查不到网关数据判 QUERY-FAIL",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "25 7 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/ld_ops_reconcile.py --gate",
+   "purpose": "运维脚本对账：cron 在用的脚本只要与仓库不一致或未入库就非零退出（机器重建不会静默丢防护）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "21 */6 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/ld_render_all.py check",
+   "purpose": "全站 18 页真机渲染巡检（L1 每小时查资源/链接/兜底冒充，L2 每 6 小时查脚本真跑起来 + 语种棘轮）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "27 * * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/ld_render_all.py check --no-render",
+   "purpose": "全站 18 页真机渲染巡检（L1 每小时查资源/链接/兜底冒充，L2 每 6 小时查脚本真跑起来 + 语种棘轮）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "50 7 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/ld_src_coverage.py",
+   "purpose": "敏感合约源码覆盖率棘轮：无源码数量只准降不准升，升了立即告警",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "23 * * * *",
+   "cmd": "/usr/local/bin/ld_treasury_keywatch.sh",
+   "purpose": "金库密钥不变量：磁盘不得出现签名私钥明文、钥匙环签名人数必须为 0、密文备份必须在位",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "5 6 * * *",
+   "cmd": "/usr/local/bin/ld_voters_backup.sh",
+   "purpose": "投票人数据备份",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "0 * * * *",
+   "cmd": "/usr/local/bin/lightdao_oracle_feeder.sh",
+   "purpose": "TWAP 预言机喂价",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "15 7 * * *",
+   "cmd": "runuser -u ubuntu -- git -C /home/ubuntu/repo pull --ff-only origin main ; /usr/bin/python3 /usr/local/bin/repo_leak_check.py /home/ubuntu/repo LD-REPO-LEAK-GATE",
+   "purpose": "公开仓库泄露扫描门禁（基础设施 IP/密钥/助记词/webhook/桌面路径）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "*/10 * * * *",
+   "cmd": "/usr/bin/python3 /home/ubuntu/lightdao_gateway/gas_grant.py $(/usr/local/bin/ld_day.sh cur)",
+   "purpose": "每日为矿工签发免 Gas 代付额度（缺它新用户领取会因没有 gas 静默失败）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "*/30 * * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/canary_claim.py beat",
+   "purpose": "金丝雀账户心跳场景自检：验证【节点在线】这条链路真能被观测到",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "40 5 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/canary_claim.py claim",
+   "purpose": "金丝雀账户真实领取自检：每天真的领一次，确保领取链路没坏",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "45 5 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/canary_claim.py degraded",
+   "purpose": "金丝雀账户降级场景自检：故意走异常路径，确认降级会被报出来",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "30 0 * * 1",
+   "cmd": "/usr/bin/python3 /usr/local/bin/discord_bot.py weekly",
+   "purpose": "告警投递到 Discord",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "*/15 * * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/ld_gov_guard.py",
+   "purpose": "治理守卫：盯异常提案/参数变更（提案通过但内容危险时先喊）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "0 7 * * *",
+   "cmd": "/usr/local/bin/ld_cfg.sh check",
+   "purpose": "配置漂移门禁：crontab/关键配置与基线不一致即告警（缺基线时响亮失败）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "10 7 * * *",
+   "cmd": "/usr/local/bin/ld_chain_params.sh check",
+   "purpose": "链上参数漂移门禁：gov/wasm/staking/mint/slashing/共识参数/min-gas 逐项对基线",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "25 7 * * *",
+   "cmd": "/usr/local/bin/ld_claim_gas_watch.py",
+   "purpose": "领取免 Gas 通道看门狗",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "0 6 * * *",
+   "cmd": "/usr/local/bin/ld_cve_watch.py",
+   "purpose": "依赖与安全公告巡检（CometBFT/SDK/cosmwasm 相关 CVE）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "0 4 * * *",
+   "cmd": "/usr/local/bin/ld_daily_discord.sh",
+   "purpose": "每日 Discord 播报",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "0 4 * * *",
+   "cmd": "/usr/local/bin/ld_daily_telegram.sh",
+   "purpose": "每日 Telegram 播报（对外发布，脚本化自动发）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "30 4 * * *",
+   "cmd": "/usr/local/bin/ld_daily_x_marketing.sh",
+   "purpose": "X 日更（晚班 16:30 UTC）。2026-10-31 创始人明确授权「每天自动发」，恢复直发；授权范围仅限内容源轮换的两条/天，改口径、回应他人、涉及金库或价格的表述仍需逐次确认。发帖前必过内容合规门禁 ld_x_compliance.py（禁收益承诺/价格暗示/风险淡化，必须带区块高度与官网锚点），不通过则不发帖并报警（退出码 3）。",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "20 7 * * *",
+   "cmd": "/usr/local/bin/ld_epoch_audit.py",
+   "purpose": "挖矿纪元/日界审计：日界与提案 #11 对齐后要复核领取窗口",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "0 5 * * *",
+   "cmd": "/usr/local/bin/ld_finalize.sh",
+   "purpose": "每日奖励根 finalize（站点结算与发分的源头）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "10 0 * * *",
+   "cmd": "/usr/local/bin/ld_finalize.sh",
+   "purpose": "每日奖励根 finalize（站点结算与发分的源头）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "20 5 * * *",
+   "cmd": "/usr/local/bin/ld_finalize.sh",
+   "purpose": "每日奖励根 finalize（站点结算与发分的源头）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "30 0 * * *",
+   "cmd": "/usr/local/bin/ld_finalize.sh",
+   "purpose": "每日奖励根 finalize（站点结算与发分的源头）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "*/5 * * * *",
+   "cmd": "/usr/local/bin/ld_gateway_trace_watch.py",
+   "purpose": "网关请求追踪看门狗：异常比例/慢请求/5xx 抬头即告警",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "*/10 * * * *",
+   "cmd": "/usr/local/bin/ld_observer_watch.sh",
+   "purpose": "观察者节点（对外 RPC）健康：落后或拒绝服务时页面数据会假死",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "0 5 * * 1",
+   "cmd": "/usr/local/bin/ld_secret_scan.py",
+   "purpose": "密钥/助记词二次扫描（与 repo_leak_check 不同层，扫主机文件与产物）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "10 5 * * *",
+   "cmd": "/usr/local/bin/ld_sign_root.sh",
+   "purpose": "每日奖励根多签签发：站点结算与链上发分的源头，缺它当天没有奖励根",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "20 0 * * *",
+   "cmd": "/usr/local/bin/ld_sign_root.sh",
+   "purpose": "每日奖励根多签签发：站点结算与链上发分的源头，缺它当天没有奖励根",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "30 5 * * *",
+   "cmd": "/usr/local/bin/ld_sign_root.sh",
+   "purpose": "每日奖励根多签签发：站点结算与链上发分的源头，缺它当天没有奖励根",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "40 0 * * *",
+   "cmd": "/usr/local/bin/ld_sign_root.sh",
+   "purpose": "每日奖励根多签签发：站点结算与链上发分的源头，缺它当天没有奖励根",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "30 3 * * *",
+   "cmd": "/usr/local/bin/ld_sri.sh",
+   "purpose": "重算并校验脚本 SRI（子资源完整性哈希），防线上 js 被改动而页面仍照常加载",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "*/15 * * * *",
+   "cmd": "/usr/local/bin/ld_validator_watch.py",
+   "purpose": "验证者在线/落后巡检（脱敏后的 ld-node-01..10），掉线或落后即告警",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "0 * * * *",
+   "cmd": "/usr/local/bin/ld_vesting_watch.sh",
+   "purpose": "vesting 计划看门狗：解锁/领取窗口与链上实际是否一致",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "*/15 * * * *",
+   "cmd": "/usr/local/bin/ld_watchdog.sh",
+   "purpose": "监控自身的看门狗：status.json 必须 <15 分钟新鲜，否则说明 monitor 死了或被致盲",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "*/15 * * * *",
+   "cmd": "/usr/local/bin/mig_autopilot.sh",
+   "purpose": "迁移/节点健康自动驾驶（HTTP RPC 高度与落后检测）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "17 * * * *",
+   "cmd": "/usr/local/bin/qa_cross_cron.sh",
+   "purpose": "跨层契约巡检 C1-C7（页面显示值 ↔ 网关 ↔ 链上三方是否互相自洽）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "30 6 * * *",
+   "cmd": "python3 /usr/local/bin/wp_reconcile.py",
+   "purpose": "白皮书口径与链上真实数值对账（发行量/释放/质押参数变了要说出来）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "30 6 * * 1",
+   "cmd": "wasmd tx distribution withdraw-all-rewards --from operator --home /home/ubuntu/.wasmd --keyring-backend test --chain-id lightdao-mainnet-1 --node tcp://127.0.0.1:26657 --gas 300000 --fees 90000ulight -y",
+   "purpose": "每周提取验证者佣金到运营账户（不提取=收益躺在分配池里不动）",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "55 7 * * *",
+   "cmd": "/usr/bin/node /usr/local/bin/ld_lang_coverage.js",
+   "purpose": "语种覆盖率棘轮：下拉承诺语种的实际内容必须达标，恶化即告警",
+   "added": "2026-10-16"
+  },
+  {
+   "user": "root",
+   "schedule": "5 8 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/ld_cron_target_audit.py",
+   "purpose": "体检 crontab 里每个脚本【及其内部调用的绝对路径】是否真的存在——检测点自己坏了必须比被测系统先被发现（SRI 门空转三天的直接教训）",
+   "added": "2026-10-17"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "0 16 * * *",
+   "cmd": "/usr/local/bin/ld_daily_telegram.sh pm",
+   "purpose": "每日 Telegram 播报(晚班,与早班不同文案,统一内容源 daily_unified.json;对外发布,脚本化自动发)",
+   "added": "2026-10-17"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "0 16 * * *",
+   "cmd": "/usr/local/bin/ld_daily_discord.sh pm",
+   "purpose": "每日 Discord 播报(晚班,与早班不同文案,统一内容源)",
+   "added": "2026-10-17"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "30 16 * * *",
+   "cmd": "/usr/local/bin/ld_daily_x_marketing.sh pm",
+   "purpose": "X 日更（晚班 16:30 UTC）。2026-10-31 创始人明确授权「每天自动发」，恢复直发；授权范围仅限内容源轮换的两条/天，改口径、回应他人、涉及金库或价格的表述仍需逐次确认。发帖前必过内容合规门禁 ld_x_compliance.py（禁收益承诺/价格暗示/风险淡化，必须带区块高度与官网锚点），不通过则不发帖并报警（退出码 3）。",
+   "added": "2026-10-17"
+  },
+  {
+   "user": "root",
+   "schedule": "20 */6 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/gas_renew.py --apply --active-only --back 7",
+   "purpose": "每 6 小时自动续期矿工代付授权（x/feegrant）：只给近 7 天仍活跃的矿工续 30 天；判据同时看过期与剩余额度（<20% 就补），因为额度用完一样会撞 code 38。节奏从每天一次改为每 6 小时，回归矿工最坏等 6 小时而不是隔天。",
+   "added": "2026-10-30"
+  },
+  {
+   "user": "ubuntu",
+   "schedule": "33 */6 * * *",
+   "cmd": "/usr/local/bin/ld_sri.sh",
+   "purpose": "网页脚本指纹（SRI）每 6 小时再核一次：HTML 里的 integrity 与实际文件字节不符时浏览器会拒绝加载脚本=白屏，所以除了每日 03:30 那次，白天也要核。同一条 cron 之前只存在于 crontab、没登记，被对账工具抓出来补录。",
+   "added": "2026-10-30"
+  },
+  {
+   "user": "root",
+   "schedule": "10 */6 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/webrt_check.py",
+   "purpose": "盯 WebRTC 信令签名错误（setRemoteDescription wrong state）是否真的停下来：v1.10.2 补了重复 answer 防护，判据用被改对象自己的证据（客户端错误日志近 24h 条数），不是看代码改没改，防止\"改了就当修好了\"。",
+   "added": "2026-10-31"
+  },
+  {
+   "user": "root",
+   "schedule": "25 9 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/probe_share.py",
+   "purpose": "盯测试探针在真实矿工奖励里的占比（阈值 6%）：探针已降载到平日极小足迹、每周一次满强度以覆盖 ≥4h 会话发空投那条路径；占比爬回去就等于真实矿工少拿钱，必须机器先发现。判据照抄网关自己的 norm/WEIGHTS，不另写公式。",
+   "added": "2026-10-31"
+  },
+  {
+   "user": "root",
+   "schedule": "35 */6 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/ld_render_truth.py static",
+   "purpose": "站内事实文案看门狗（便宜档）：①禁用串（多签分母 7、机房国家缩写 七个国家/地区缩写并列的清单、5/7 之类）一旦回流线上就告警；②站内写的验证者数量必须等于链上 `wasmd q staking validators` 实测 BONDED（2026-10-31 实测 10，而页面当时还留 7 —— 这类漂移以前没人拦）。读不到链上或读不到文件一律 FAIL，绝不当成通过。",
+   "added": "2026-10-31"
+  },
+  {
+   "user": "root",
+   "schedule": "40 6 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/ld_render_truth.py render",
+   "purpose": "同一看门狗的渲染档：无头 chrome 跑完 JS 之后按**可见文本**核对 7 条多语言说法（en/zh/de/ja/ru/fr），用来证明词典的“译值”也跟着事实改了——2026-10-31 上一轮我只改了词典的键与中英文，13 个语种的译值还写着 5/7，页面中文说“5 个签名人”而德/俄/日等仍在说“5/7 signatures”，缺的就是这一层。反向验证已实测两次：LD_FAKE_BONDED=3 必须 FAIL；把临时站根里的文案改回“7 验证者”必须 FAIL。",
+   "added": "2026-10-31"
+  },
+  {
+   "user": "root",
+   "schedule": "50 3,15 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/ld_x_cred_probe.py",
+   "purpose": "X 每日发帖的凭据预检（事前响）：不发帖、只把生产发帖用的同一把 OAuth1.0a user-context 打一次 GET /2/users/me，非 200 就写 X-CRED-FAIL 告警并非零退出。背景：10-24 起每日帖一直在 DRY 分支空转、没人发现；发帖失败告警（X-POST-FAIL）今天也已补上并反向验证。反向验证实测：LD_X_CRED_FAKE=1 用坏 token → rc=1 且告警落盘。",
+   "added": "2026-10-31"
+  },
+  {
+   "user": "root",
+   "schedule": "45 5 * * *",
+   "cmd": "/usr/local/bin/ld_asset_sync.sh",
+   "purpose": "把 promote 不负责的静态资产（当前只有 whitepaper.md）按内容比对从仓库同步到线上。起因：11-04 给白皮书加勘误后才发现线上仍是旧版——promote 只复制 *.html 与 js/*.js，白皮书一直靠手工 cp，属于典型\"两份表达\"漂移且无人报警。口径：白名单不用通配（线上 html/js 带 SRI 注入，必须走门禁，不能被这个脚本绕过覆盖）；只在 md5 不同才复制；复制后回读比对；源文件读不到=失败并报警，绝不把看不见当没问题。反向验证实测：源目录不存在 → rc=5 且 ASSET-SYNC-FAIL 落盘；临时空目标 → 真复制并校验一致；已一致 → 不动作。",
+   "added": "2026-11-04"
+  },
+  {
+   "user": "root",
+   "schedule": "55 6 * * *",
+   "cmd": "/usr/local/bin/ld_g10_daily.sh",
+   "purpose": "每天独立重算每日贡献分总分与 Merkle 根并与链上已提交的根对拍（复用发布门禁 g10 的量具，不再新写公式）。起因：站内首页写着「持续自审 + 每日独立对账」，而这件事原来挂在QwenWork 定时任务「每日经济对账」里——那是消耗额度的智能体，10-30 起连续失败（运行日志原因：The usage limit has been reached），等于声明断了 5 天而服务器一声不响。零预算下正确做法是把量具挪进 cron：确定性、不花钱。非零退出→G10-PARITY-FAIL 落 ld_alerts.log（同签名只在变化时刷屏），恢复写 OK；反向验证实测：桩脚本报 mismatches=1 → rc=1 + 告警 +446→447；再跑真门 → OK 且写恢复行。",
+   "added": "2026-11-04"
+  },
+  {
+   "user": "root",
+   "schedule": "39 * * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/ld_gov_a3_followup.py",
+   "purpose": "执行所有者 2026-11-04 的指令「#12 通过后立即执行，并继续提交挖矿合约 code20 补 7 席」的状态机：每小时看一次——到点就 ExecuteProposal(#12) 并回读验证 governance code_id 变 19、门槛变 5,000 LIGHT；随后自动创建并投票 #13（mining_reward→code 20，装上可治理更新签名名单的能力）；其投票期满后再执行。每步都先核对链上前置状态、动手、再回读，成功失败都写 GOV-A3 到 ld_alerts.log。为什么必须做成机器：#11/#17 就是“投票过了/执行失败”后一直挂着无人收尾，而这个治理合约**不会自动执行**。补第 6/7 席需要两把新钥匙的交付方式，脚本到那一步只报警不自作主张生成保管物。反向验证实测：LD_A3_NOW 桩（假装到点）→ 明确进入“将执行 #12”分支并打印当前计票；状态文件写成 step=bogus → rc=1 且拒绝动作。",
+   "added": "2026-11-04"
+  },
+  {
+   "user": "root",
+   "schedule": "10 7 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/ld_i18n_residual.py",
+   "purpose": "真机量「非中文界面里还剩多少中文」：14 个语种各渲染一次首页，去掉标签后在可见文本里找 CJK 片段，语言切换器的母语名（中文/日本語/한국어…）在白名单里不算漏翻；有残留就非零退出并进日志。为什么加：g12/ld_lang_coverage 量的是「词典键覆盖率」，看不见没进词典或进了词典却没被翻译的页面文字——11-04 实测首页在全部 14 个非中文语种都残留 8 处（三个页脚链接、三个人设标签、<title> 的两个短语），其中「治理制度/资金与释放」明明在 b2 词典里有九语全译却仍显示中文，说明运行时 walker 也有一处真 bug，需要单独定位（不当成已完成）。",
+   "added": "2026-11-04"
+  },
+  {
+   "user": "root",
+   "schedule": "40 * * * *",
+   "cmd": "/usr/bin/python3 /home/ubuntu/ld_wp_check.py",
+   "purpose": "白皮书语种文件完整性：在不在/体积/中文行占比/诚实声明/前端是否仍按 /wp/ 取（selftest 5/5）",
+   "added": "2026-11-05"
+  },
+  {
+   "user": "root",
+   "schedule": "*/15 * * * *",
+   "cmd": "flock -n /home/ubuntu/ld_ibc_watch.lock /usr/bin/python3 /home/ubuntu/ld_ibc_relay.py",
+   "purpose": "跨链中继看门狗：进程/两条链心跳/未确认包积压/客户端寿命/中继油钱（selftest 5/5）",
+   "added": "2026-11-05"
+  },
+  {
+   "user": "root",
+   "schedule": "*/30 * * * *",
+   "cmd": "flock -n /home/ubuntu/ld_mt2.lock /usr/bin/python3 /home/ubuntu/ld_i18n_mt_build2.py （后接 rewrite_mt_table.py 与 wire_mt_shards.py）",
+   "purpose": "多语言机器译文补齐（gtx 优先、MyMemory 兜底；同语种打包请求；可断点续跑）",
+   "added": "2026-11-05"
+  },
+  {
+   "user": "root",
+   "schedule": "20 * * * *",
+   "cmd": "flock -n /home/ubuntu/ld_mt_watch.lock /usr/bin/python3 /home/ubuntu/ld_i18n_mt_watch.py",
+   "purpose": "盯补齐流水线自己有没有停（v1 曾空转三批 0 成没人知道）",
+   "added": "2026-11-05"
+  },
+  {
+   "user": "root",
+   "schedule": "45 * * * *",
+   "cmd": "flock -n /home/ubuntu/ld_wp.lock /usr/bin/python3 /home/ubuntu/ld_wp_build.py",
+   "purpose": "白皮书整篇译文续跑（限流退避、原子落盘、结构校验失败保留原文并记 kept_zh）",
+   "added": "2026-11-05"
+  },
+  {
+   "user": "root",
+   "schedule": "*/30 * * * *",
+   "cmd": "flock -n /home/ubuntu/ld_xcwatch.lock /usr/bin/python3 /home/ubuntu/ld_xchain_watch.py",
+   "purpose": "跨链面板探针：进程/数据新鲜度/高度不回退/自报 errors/公网反代/行情条数（selftest 4/4）",
+   "added": "2026-11-05"
+  }
+ ]
 }

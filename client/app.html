@@ -144,6 +144,12 @@
 <div class="card" id="sybilNote" style="display:none;border-color:var(--warn,#ffb454)"><div class="seclabel">反女巫提示 / Anti-sybil notice</div><div id="sybilTxt" class="mini" style="line-height:1.8"></div></div>
 <div class="card"><div class="seclabel">我的安全与邀请 / My security & referrals</div><div id="mySec" class="mini u7b4ece">加载中…</div></div>
 <div class="card"><div class="seclabel">委托在线 / Delegate uptime (70/30)</div><p class="mini ud51702">移动端可把"在线"委托给中继节点:你拿 70% 在线分,中继拿 30%(白皮书移动端适配)。留空=不委托。</p><div class="row"><input id="dlgAddr" placeholder="中继节点地址 wasm1…(留空=不委托)" placeholder="中继节点 wasm1… 地址(可留空)"><button class="btn ghost u44c58d" id="btnDlg">保存委托</button></div><div class="mini u9e3c4c" id="dlgStatus"></div></div>
+<div class="card" id="xcCard">
+<div class="seclabel">跨链 / Cross-chain <span class="st" id="xcLive">检测中</span></div>
+<div class="mini" id="xcIbc">加载中…</div>
+<div class="row" style="gap:8px;flex-wrap:wrap;align-items:center"><button type="button" class="btn ghost" id="xcDemo">发起一笔测试网跨链（A→B）</button><span class="mini" id="xcDemoOut">额度加载中…</span></div><div class="mini" id="xcQuote">跨链报价加载中…</div><div class="mini" id="xcPrice">加载中…</div>
+<div id="xcRoutes"></div>
+</div>
 <div class="card"><div class="seclabel">子代币兑换 / Sub-token exchange</div><div id="subList" class="mini">查询中…</div><p class="mini ud43169">合约 Exchange 已就绪(LIGHT 兑换子代币并销毁);当前尚无子代币发行,首笔治理投资提案通过后此处开放兑换。</p></div>
 <div class="mini" style="text-align:center;margin-bottom:6px"><span data-i="stSys">系统状态</span>: <span id="sysStatusApp">…</span></div>
 <div class="mini" style="text-align:center;margin-bottom:4px;color:var(--mut,#7c88ad)">build <span id="ld-build">1.0.0</span></div>
@@ -159,12 +165,12 @@
 <!-- ============ 钱包解锁 / 敏感操作 step-up 模块(必须在 app_2.js 之前) ============ -->
 <script src="/js/lock.js?v=1.8.7" integrity="sha384-HZ5fXX1/4aa51yg9EifFyTxlKUwOBZ1SZTonA5rE33vpig24C71CBUJhCy9AVNOP" crossorigin="anonymous"></script>
 <!-- ============ 普通脚本: UI/多语言/挖矿循环, 不依赖任何 CDN, 断网可用 ============ -->
-<script src="/js/app_2.js?v=1.8.7" integrity="sha384-C1RrK2cIoz44wzqxWYlMT7HIEDgru11OrOgU7srN1KQ7g07p41bOjTDszP4GiRCY" crossorigin="anonymous"></script>
+<script src="/js/app_4.js"></script><script src="/js/app_2.js?v=1.8.7" integrity="sha384-C1RrK2cIoz44wzqxWYlMT7HIEDgru11OrOgU7srN1KQ7g07p41bOjTDszP4GiRCY" crossorigin="anonymous"></script>
 
 <!-- ============ 模块: cosmjs 懒加载(仅钱包/领取需要), 失败优雅降级 ============ -->
 <script src="/js/app_3.js?v=1.8.7" integrity="sha384-eNnugQU7bHr94vv2pgxcB332Qw4shFTOsXeZQBiwbPdsYHcKu8On2koNS/GrOG8H" crossorigin="anonymous"></script>
 
 <div class="card" id="vestCard" style="display:none"><div class="seclabel">锁仓解锁 / Vesting</div><p class="mini" id="vestHint">连接钱包后自动读取你在两个锁仓合约里的排期。</p><div id="vestRows"></div><button class="btn" id="btnVestClaim" style="margin-top:10px" disabled>领取已归属 / Claim vested</button><p class="mini" id="vestNote"></p></div>
-<script src="/js/i18n.js"></script><script src="/js/i18n_core.js"></script><script src="/js/i18n_pages_en.js"></script><script src="/js/i18n_pages_en2.js"></script><script src="/js/i18n_pages_en3.js"></script><script src="/js/i18n_lat.js"></script><script src="/js/i18n_more.js"></script><script src="/js/i18n_b4.js"></script><script src="/js/i18n_b3.js"></script><script src="/js/i18n_b2.js"></script><script src="/js/i18n_b5.js"></script><script src="/js/i18n_pages_en4.js"></script><script src="/js/i18n_lat4.js"></script><script src="/js/i18n_b6.js"></script><script src="/js/i18n_pages_en5.js"></script><script src="/js/i18n_lat5.js"></script><script src="/js/i18n_mt_1.js"></script><script src="/js/i18n_mt_2.js"></script><script src="/js/nav.js" defer integrity="sha384-FHmNZ5VY95aiiY740DjIiq7jVkslwwUcrcG85QFfqrU2qJHlEqaEsl4anaxub8cu" crossorigin="anonymous"></script>
+<script src="/js/i18n.js"></script><script src="/js/i18n_core.js"></script><script src="/js/i18n_pages_en.js"></script><script src="/js/i18n_pages_en2.js"></script><script src="/js/i18n_pages_en3.js"></script><script src="/js/i18n_pages_en4.js"></script><script src="/js/i18n_pages_en5.js"></script><script src="/js/i18n_pages_en6.js"></script><script src="/js/i18n_lat.js"></script><script src="/js/i18n_b2.js"></script><script src="/js/i18n_b3.js"></script><script src="/js/i18n_b4.js"></script><script src="/js/i18n_b5.js"></script><script src="/js/i18n_b6.js"></script><script src="/js/i18n_b7.js"></script><script src="/js/i18n_gov_labels.js"></script><script src="/js/i18n_lat4.js"></script><script src="/js/i18n_lat5.js"></script><script src="/js/i18n_lat6.js"></script><script src="/js/i18n_more.js"></script><script src="/js/i18n_mt_1.js"></script><script src="/js/i18n_mt_2.js"></script><script src="/js/i18n_mt_3.js"></script><script src="/js/i18n_mt_4.js"></script><script src="/js/i18n_mt_5.js"></script><script src="/js/i18n_mt_6.js"></script><script src="/js/i18n_mt_7.js"></script><script src="/js/i18n_mt_8.js"></script><script src="/js/nav.js" defer integrity="sha384-FHmNZ5VY95aiiY740DjIiq7jVkslwwUcrcG85QFfqrU2qJHlEqaEsl4anaxub8cu" crossorigin="anonymous"></script>
 </body>
 </html>

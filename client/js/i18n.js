@@ -140,7 +140,29 @@
     n.__ldv = raw;
     var key = raw.trim();
     if (key.length < 2 || !/[\u4e00-\u9fff]/.test(key)) return;
+    /* LD-I18N-SPACEFOLD-LOOKUP-20261105 采集端把空白压成单空格，运行端只 trim，
+       中间有换行/缩进的整句就永远查不到（实测 nodes/institutions 各剩 8/86 句）。
+       先按原样查（老键照旧命中），查不到再按折叠键查一次。 */
     var hit = lookup(key, lang);
+    if (!hit) {
+      var fold = key.replace(/[\s\u00a0\u200b\ufeff]+/g, " ");
+      if (fold !== key) hit = lookup(fold, lang);
+    }
+    if (!hit) {
+      /* 「中文 / English」并列标签：整串查不到时，把英文那半换成本语种。
+         中文半边是刻意的对照，保留不动。
+         判据必须严格：词典里存在一条 **中文键 == 左半边** 且 **它的 en == 右半边** 的行，
+         才敢替换 —— 只看 "Back" 这种歧义英文词会把不同句子并成同一个错译（本项目踩过）。 */
+      var sl = key.lastIndexOf("/");
+      if (sl > 0 && sl < key.length - 1) {
+        var lft = key.slice(0, sl).replace(/[\s\u00a0]+$/, "");
+        var rgt = key.slice(sl + 1).replace(/^\s+/, "");
+        if (/[\u4e00-\u9fff]/.test(lft) && /^[A-Za-z][A-Za-z\s&.,'\u00c0-\u024f-]*$/.test(rgt)) {
+          var pair = pairValue(lft, rgt, lang);
+          if (pair) hit = lft + " / " + pair;
+        }
+      }
+    }
     if (!hit) return;
     var lead = raw.slice(0, raw.length - raw.replace(/^\s+/, "").length);
     var tail = raw.slice(raw.replace(/\s+$/, "").length);
@@ -173,6 +195,10 @@
     var k = el.tagName + "#" + a + "|" + v;
     if (seenAttr[k]) return;
     var hit = lookup(v.trim(), lang);
+    if (!hit) {
+      var fa = v.trim().replace(/[\s\u00a0\u200b\ufeff]+/g, " ");
+      hit = fa === v.trim() ? null : lookup(fa, lang);
+    }
     if (!hit) return;
     seenAttr[k] = 1;
     el.setAttribute(a, hit);
