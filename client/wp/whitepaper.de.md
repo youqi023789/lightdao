@@ -1,4 +1,4 @@
-> Maschinell übersetzt, nicht menschlich geprüft. Bei Abweichungen gilt die chinesische Originalversion.
+> Maschinell übersetzt, nicht menschlich geprueft. Bei Abweichungen gilt die chinesische Originalversion.
 [中文原文 / Chinese original](/whitepaper.md)
 
 # LightDAO White Paper V2.4 (2026-09-26 Mainnet Live-Version)
@@ -79,7 +79,7 @@ Rechtliche Positionierung: LIGHT und Sub-Token werden als ökologische Beitragsp
 | Anlagetresor | 850 Millionen (Basiseinsatz ≈ 100 Millionen US-Dollar) |
 | Bergbauproduktion | 1 Milliarde, alle 2 Jahre halbiert |
 | Veröffentlicht am First Era Day | ≈684.900 Stück (durchschnittlich 6,51/Tag, wenn 100.000 Bergleute arbeiten) |
-| Fazit zur Deflation | Das Brennen dauerhaft stoppen, wenn die Auflage ≤ 1 Milliarde beträgt (Jahre 11-12 des Basisszenarios) |
+| Deflationsergebnis | Stoppen Sie das Brennen dauerhaft, wenn die Auflage ≤ 1 Milliarde beträgt (Jahr 11-12 des Basisszenarios) |
 | Governance-Schwellenwert | Vorschlag ≥ 5.000 LICHT; Ausschuss ≥ 50.000 LICHT |
 | Technologie-Stack | Cosmos SDK + Tendermint PoS + CosmWasm + PWA |
 | Prüfer | Anfänglich 21 (mindestens 10), Obergrenze 100 |
@@ -202,7 +202,7 @@ Ich habe ein Urteil, aber keine Eintrittskarte; Ich habe eine Vision, aber kein 
 
 ### 2.1 Kernpositionierung
 
-LightDAO ist eine nationale autonome Investmentorganisation mit On-Chain-Governance als Kern und Compliance-SPV als Träger der Investitionsausführung. Über eine öffentliche Kette, die speziell für leichtgewichtige Webknoten entwickelt wurde, können globale Benutzer mit nur einem Browser an der Netzwerkwartung und Governance-Abstimmung teilnehmen und ökologische Vorteile gemäß Regeln teilen.
+LightDAO ist eine nationale autonome Organisation für Investitionen mit On-Chain-Governance als Kern und Compliance-SPV als Träger der Investitionsausführung. Über eine öffentliche Kette, die speziell für leichtgewichtige Webknoten entwickelt wurde, können globale Benutzer mit nur einem Browser an der Netzwerkwartung und Governance-Abstimmung teilnehmen und ökologische Vorteile gemäß Regeln teilen.
 
 ### 2.2 Zweimotoriges Modell
 
@@ -270,7 +270,7 @@ DAO ist nicht direkt an einem physischen Unternehmen beteiligt. Alle externen In
 
 **Für die Teilnahme am Protokoll selbst ist keine Identifizierung erforderlich. ** Besuchen Sie Webseiten, erstellen Sie Wallets, tragen Sie Ressourcen bei, erhalten Sie LIGHT, initiieren Sie Governance-Abstimmungen und nehmen Sie daran teil – während des gesamten Prozesses müssen keine Dokumente hochgeladen werden, und es werden keine personenbezogenen Daten (PII) in der Kette gespeichert.
 
-Nur wenn ein Nutzer aktiv einen regulierten Drittanbieterdienst nutzt, ist die Überprüfung erforderlich, dass der Dienst selbst gesetzeskonform funktionieren muss. Diese Überprüfung wird vom Servicepartner erfasst, durchgeführt und aufbewahrt. LightDAO erhebt, überträgt oder speichert keine Daten:
+Nur wenn ein Nutzer einen regulierten Drittanbieterdienst aktiv nutzt, ist die Überprüfung erforderlich, dass der Dienst selbst gesetzeskonform funktionieren muss. Diese Überprüfung wird vom Servicepartner erfasst, durchgeführt und aufbewahrt. LightDAO erhebt, überträgt oder speichert keine Daten:
 
 | Szenario | Wer führt die Verifizierung durch | Was der Benutzer tun muss |
 |---|---|---|
@@ -302,13 +302,13 @@ Mit einem Wort: *** Einschränkungen können nur Dienstleistungen betreffen, nic
 
 ### 3.5 Ein- und Auszahlungen in legaler Währung und kettenübergreifende Kanäle
 
-**Fiat-Währungskanal (Drittanbieter-Service-Aggregation):** Das Protokoll selbst betreibt keine legalen Ein- und Auszahlungsdienste in Währungen, aber die Webplattform integriert konforme Drittanbieterkanäle (MoonPay, Ramp Network, Transak usw.) und deckt wichtige Märkte in Nordamerika, Europa, Südostasien und Lateinamerika ab; die lokale P2P-Marktaggregation deckt Afrika und Südasien ab; Abhebungen unterstützen lokale Zahlungsmethoden wie GCash, M-Pesa, Pix und GrabPay.
+**Fiat-Währungskanal (Drittanbieter-Service-Aggregation):** Das Protokoll selbst betreibt keine legalen Ein- und Auszahlungsdienste in Währungen, aber die Webplattform integriert konforme Drittanbieterkanäle (MoonPay, Ramp Network, Transak usw.), die wichtige Märkte in Nordamerika, Europa, Südostasien und Lateinamerika abdecken; die lokale P2P-Marktaggregation deckt Afrika und Südasien ab; Abhebungen unterstützen lokale Zahlungsmethoden wie GCash, M-Pesa, Pix und GrabPay.
 
-**Cross-Chain-Bridge und LIGHT-Akquisitionskanäle:** Integrierte AMM-Transaktionen in der LightDAO-Kette nach TGE; Interoperabilität mit dem Cosmos-Ökosystem durch IBC; Planung für wLIGHT (Ethereum/Solana) ab dem 6. Monat; Antrag auf CEX-Notierung ab dem 6. Monat je nach Compliance. Die Cross-Chain-Brücke wird von einem unabhängigen Dritten betrieben und es ist ein unabhängiger Prüfbericht erforderlich, bevor die Brücke online geht.
+**Cross-Chain-Bridge und LIGHT-Erwerbskanäle:** Integrierte AMM-Transaktionen in der LightDAO-Kette nach TGE; Interoperabilität mit dem Cosmos-Ökosystem durch IBC; Planung für wLIGHT (Ethereum/Solana) ab dem 6. Monat; Antrag auf CEX-Notierung ab dem 6. Monat je nach Compliance. Die Cross-Chain-Brücke wird von einem unabhängigen Dritten betrieben und es ist ein unabhängiger Prüfbericht erforderlich, bevor die Brücke online geht.
 
 ### 3.6 Compliance-Erklärung zum Einladungsmechanismus (Anti-MLM-Analyse)
 
-Der Einladungsanreiz von LightDAO ist **Single-Layer-Sharing** (nur direkte Einlader erhalten einen festen Anteil der Mining-Belohnungen des Eingeladenen) und verfügt nicht über die Kernfunktionen des Multi-Level-Marketings (MLM): keine mehrstufige rekursive Provision; Die Einnahmen stammen aus der Freigabe voreingestellter Token im Protokoll und nicht aus dem Kapital des Neulings. Für die Teilnahme am Bergbau fallen keine Kosten und keine Teilnahmegebühr an. Diese Struktur ähnelt eher den „Empfehlungsbelohnungen für Open-Source-Projektmitwirkende“. Vor der formellen Inbetriebnahme wird ein zugelassener Anwalt im Zielmarkt beauftragt, spezielle Compliance-Gutachten abzugeben.
+Der Einladungsanreiz von LightDAO ist **Single-Layer-Sharing** (nur direkte Einladende erhalten einen festen Anteil der Mining-Belohnungen des Eingeladenen) und verfügt nicht über die Kernfunktionen von Multi-Level-Marketing (MLM): keine mehrstufige rekursive Provision; Die Einnahmen stammen aus der Freigabe voreingestellter Token im Protokoll und nicht aus dem Kapital des Neuankömmlings. Für die Teilnahme am Bergbau fallen keine Kosten und keine Teilnahmegebühr an. Diese Struktur ähnelt eher den „Belohnungen für Empfehlungen von Open-Source-Projektmitwirkenden“. Vor der formellen Inbetriebnahme wird ein zugelassener Anwalt im Zielmarkt beauftragt, spezielle Compliance-Gutachten abzugeben.
 
 > **[Terminologie in diesem Kapitel]**
 > **KYC** (Know Your Customer, Know Your Customer): Ein Compliance-Prozess für Finanzinstitute zur Überprüfung der Benutzeridentität, der in der Regel die Vorlage von Ausweisdokumenten, Adressnachweisen usw. erfordert.
@@ -442,7 +442,7 @@ Netzwerktreibstoff (Gasgebühr), Governance-Rechte (Abstimmung/Vorschlag/Kampagn
 
 ### 4.7 Netzwerkinfrastrukturschicht
 
-Die Validatorknoten übertragen WebSocket-Zugriffsgateways auf verteilte Weise (jeder Validator hat eine Obergrenze von 50.000 Verbindungen); Die P2P-Signalisierung wird vom Validator + Community-Relay-Knoten bereitgestellt; Heartbeat Merkle-Aggregation übermittelt nur den Root-Hash pro Block (O(1) On-Chain-Overhead); Das Frontend wird über IPFS+CDN verteilt.
+Die Validator-Knoten übertragen WebSocket-Zugriffs-Gateways auf verteilte Weise (jeder Validator hat eine Obergrenze von 50.000 Verbindungen); Die P2P-Signalisierung wird vom Validator + Community-Relay-Knoten bereitgestellt; Heartbeat Merkle-Aggregation übermittelt nur den Root-Hash pro Block (O(1) On-Chain-Overhead); Das Frontend wird über IPFS+CDN verteilt.
 
 P2P-Netzwerk: WebRTC ICE-Framework (STUN-Priorität/TURN-Fallback); etwa 70–80 % der Benutzer können eine direkte Verbindung herstellen, 20–30 % der symmetrischen NAT-Benutzer passieren TURN Relay; Wenn P2P fehlschlägt, wird es auf den „reinen Authentifizierungsmodus“ herabgestuft.
 
@@ -621,9 +621,9 @@ Die niederländische Auktion ist eine Preismethode, bei der die Preise von hoch 
 
 | Preise | Vorteile | Nachteile | Anwendbarkeit |
 |---------|------|------|--------|
-| Vorverkauf zum Festpreis | Einfach | Die Preisgestaltung ist subjektiv, wenn sie zu hoch ist, wird sie nicht verkauft, ist sie zu niedrig, wird sie von Robotern aufgekauft | Nicht geeignet (keine Preisfindungsfunktion) |
+| Vorverkauf zum Festpreis | Einfach | Der Preis ist subjektiv. Wenn er zu hoch ist, wird er nicht verkauft, ist er zu niedrig, wird er von Robotern aufgekauft | Nicht geeignet (keine Preisfindungsfunktion) |
 | Britische Auktion (Gebot) | Vollständige Preisfindung | Große Käufer können strategisch abwarten und die Preise erhöhen; Gaskrieg | Nicht geeignet (Gaskrieg in der Kette schließt kleine Nutzer aus) |
-| **Niederländische Auktion** | **Automatische Preisermittlung; keine Ausschreibung erforderlich (kein Gaskrieg); gleichberechtigte Beteiligung großer und kleiner Käufer; Anti-Bot (Preissenkungsmechanismus verhindert natürlich das Front-Running)** | Der Startpreis und die Verzögerungsrate müssen angemessen festgelegt werden | **Am besten geeignet (fair + effizient + Anti-Manipulation)** |
+| **Niederländische Auktion** | **Automatische Preisermittlung; keine Ausschreibung erforderlich (kein Gaskrieg); gleichberechtigte Beteiligung großer und kleiner Käufer; Anti-Bot (Preissenkungsmechanismus verhindert natürlich das Front-Running)** | Der Startpreis und die Verzögerungsrate müssen angemessen eingestellt werden | **Am besten geeignet (fair + effizient + Anti-Manipulation)** |
 
 **Spezifische Parameter für die niederländische LightDAO-Auktion:**
 
@@ -634,7 +634,7 @@ Die niederländische Auktion ist eine Preismethode, bei der die Preise von hoch 
 | Startpreis | 0,20 $/LICHT | Höher als der erwartete Gleichgewichtspreis, um sicherzustellen, dass er nicht innerhalb von Sekunden verloren geht |
 | Verzögerungsrate | Jede Stunde um 5 % verringern | Beginnend bei 0,20 $, Abfall auf 0,017 $ nach etwa 48 Stunden (wenn sich niemand anmeldet) |
 | Mindestreservepreis | 0,01 $/LICHT | Sollte der Mindestpreis gesenkt werden und das Ziel immer noch nicht erreicht werden, wird die Auktion um 24 Stunden verschoben oder die Anzahl der Objekte angepasst |
-| Abonnementmethode | Der Benutzer sendet „Ich bin bereit, X USDC-Äquivalent LIGHT zum aktuellen Preis zu kaufen“ | Es ist kein Bieten erforderlich, das System rechnet nach dem endgültigen Einheitspreis ab (jeder Mehrbetrag wird entschädigungslos zurückerstattet) |
+| Abonnementmethode | Der Benutzer sendet „Ich bin bereit, X USDC-Äquivalent LIGHT zum aktuellen Preis zu kaufen“ | Es ist kein Bieten erforderlich, das System rechnet nach dem endgültigen Einheitspreis ab (jeder Mehrpreis wird entschädigungslos zurückerstattet) |
 | Obergrenze für Einzelbenutzer | Nicht mehr als 5 % des angestrebten Spendenbetrags (d. h. 750.000 $) | Verhindern Sie, dass ein einzelner Käufer die anfänglichen Chips monopolisiert |
 | KYC-Anforderungen | Erweiterte Überprüfung (Steueransässigkeit) | Compliance-Anforderungen |
 
@@ -665,7 +665,7 @@ Die niederländische Auktion ist eine Preismethode, bei der die Preise von hoch 
 
 ### 5.12 Preisstabilisierungsmechanismus (Anti-Todesspirale)
 
-**Grundprinzip:** LightDAO beeinträchtigt nicht die tägliche Marktpreisermittlung. Das Protokoll passt seine Parameter nur in extremen Abwärtsszenarien an, um das Risiko zu verringern, in eine „Todesspirale“ zu geraten.
+**Grundprinzipien:** LightDAO beeinträchtigt nicht die tägliche Marktpreisermittlung. Das Protokoll passt seine Parameter nur in extremen Abwärtsszenarien an, um das Risiko zu verringern, in eine „Todesspirale“ zu geraten.
 
 **Bewertungslogik:** In verschiedenen volatilen Umgebungen stellt derselbe Rückgang unterschiedliche Grade der Anomalie dar. Ein starker Rückgang in einem Markt mit geringer Volatilität ist ein stärkeres abnormales Signal und erfordert eine Intervention mit höherer Intensität; Ein starker Rückgang in einem Markt mit hoher Volatilität ist relativ häufig und es können geringere Eingriffe vorgenommen werden. Daher hängt die Intensität des Eingriffs positiv mit der Abnormalität des Signals zusammen und hängt nicht nur vom absoluten Wert des Rückgangs ab.
 
@@ -717,7 +717,7 @@ Dynamische Anpassung des Governance-Schwellenwerts: Für jede 1 Million neue kum
 
 ### 6.1 Zweidimensionales Abstimmungsmodell
 
-Gewicht des Währungsbesitzes (einschließlich Reputation + Levelbonus, Gesamtobergrenze +40 %) + Anzahl der Adressen (1 Adresse = 1 Stimme, zugehörige Adressen werden zusammengeführt). Die Stimmrechte sind 90 Tage gültig und können durch die Übertragung von 5 LIGHTs aktiviert werden. Reputationsbonus: Halten der Währung für 1 Jahr + 15 gültige Stimmen → bis zu +30 %.
+Währungsgewichtung (einschließlich Reputation + Levelbonus, Gesamtobergrenze +40 %) + Anzahl der Adressen (1 Adresse = 1 Stimme, zugehörige Adressen werden zusammengeführt). Die Stimmrechte sind 90 Tage gültig und können durch die Übertragung von 5 LIGHTs aktiviert werden. Reputationsbonus: Halten der Währung für 1 Jahr + 15 gültige Stimmen → bis zu +30 %.
 
 ### 6.2 Dynamische Erfolgsquote
 
@@ -770,7 +770,7 @@ Die Berechtigungen sind auf Dokument-/Format-/offizielle Website-Informationen b
 
 ### 7.3 Governance-Ausschuss
 
-Die Macht wird auf fünf Personen aufgeteilt (rotierender Vorsitzender/Finanzen/Technologie/Community/Schlüssel), vierteljährlich rotierend, und die Amtszeit beträgt sechs Monate und kann einmal wiedergewählt werden. Die Kampagne sieht 50.000 gemeinsame Unterschriften von LIGHT + 100 Adressen vor. An der Entscheidungsfindung sind ≥3 Personen beteiligt und es werden ≥3 Positionen abgedeckt.
+Die Macht wird auf fünf Personen aufgeteilt (rotierender Vorsitzender/Finanzen/Technologie/Community/Schlüssel), vierteljährlich wechselnd, die Amtszeit beträgt sechs Monate und kann einmal wiedergewählt werden. Die Kampagne sieht 50.000 gemeinsame Unterschriften von LIGHT + 100 Adressen vor. An der Entscheidungsfindung sind ≥3 Personen beteiligt und es werden ≥3 Positionen abgedeckt.
 
 **Schwellenwertbeschreibung:** 50.000 Münzen in der Seed-Phase ≈ 67 Tage (2,2 Monate) für Partner; in der Wachstumsphase ≈ 672 Tage (22 Monate). Für Frühpartner steht die erste Wahl des Gremiums im 13. Monat zur Verfügung.
 
@@ -862,7 +862,7 @@ Exit-Ertrag: **70 %** Stable Vault / **30 %** Rückkauf und Verbrennung.
 
 - **Prüfung vor TGE:** Token werden niemals ohne Abschluss einer unabhängigen Sicherheitsprüfung ausgegeben. Dies ist die grundlegende Garantie für die Sicherheit der Benutzergelder.
 - **Verifizierer kommen vor Benutzern:** Wenn das Hauptnetz online geht, gibt es ≥10 Verifizierer (BFT-Fehlertoleranz f≥3), um sicherzustellen, dass das Netzwerk nicht aufgrund eines Single Point of Failure heruntergefahren wird.
-- **Investition geht der Expansion voraus:** Erst wenn die erste Investition erfolgreich ist und eine nachweisbare Gewinnrendite generiert, können wir mit der groß angelegten Expansion beginnen. Vermeiden Sie es, das Pferd von hinten aufzuzäumen, indem Sie „erst die Menschen in Umlauf bringen und erst später Projekte finden“.
+- **Investition geht der Expansion voraus:** Erst wenn die erste Investition erfolgreich ist und eine nachweisbare Gewinnrendite generiert, können wir mit der groß angelegten Expansion beginnen. Vermeiden Sie es, das Pferd von hinten aufzuzäumen, indem Sie „zuerst die Leute in Umlauf bringen und erst später Projekte finden“.
 - **Zeitpuffer:** Reservieren Sie 20–30 % Zeitpuffer für jede Stufe. Technologieentwicklung, Audit-Reparaturen und rechtliche Prozesse können alle die Erwartungen übertreffen, und die Roadmap sollte kein „optimistischstes Szenario“ sein.
 
 **Beziehung zum Veröffentlichungsdatum des Weißbuchs (4. August 2026):** Das Weißbuch wurde im August 2026 als öffentliche Erklärung der Vision und des technischen Designs des Projekts veröffentlicht. Die tatsächliche Umsetzung beginnt im vierten Quartal 2026 (Vorbereitungszeitraum) und das TGE-Ziel ist das vierte Quartal 2027. Die etwa 14 Monate dauernde Lücke zwischen der Veröffentlichung des Whitepapers und der TGE wurde für die Teambildung, Entwicklung, Prüfung und Compliance-Vorbereitung genutzt.
@@ -902,13 +902,13 @@ Exit-Ertrag: **70 %** Stable Vault / **30 %** Rückkauf und Verbrennung.
 
 ### 11.4 Mehrsprachigkeit und Lokalisierungsstrategie
 
-| Abmessungen | Planung |
+| 维度 | 规划 |
 |------|------|
-| Plattformsprache | Unterstützt zunächst Englisch, Chinesisch, Spanisch, Portugiesisch und Philippinisch; Ab dem 6. Monat kommen Französisch, Arabisch, Suaheli und Indonesisch hinzu |
-| Governance-Sprache | Vorschläge und Kampagnenplattformen werden in jeder Sprache akzeptiert und das System bietet maschinelle Übersetzung + Korrekturlesen von Community-Handbüchern |
-| Community-Operationen | Richten Sie unabhängige Community-Kanäle (Discord/Telegram) nach Sprache ein, und jeder Kanal wird mit lokalen Community-Verbindungsfreiwilligen ausgestattet |
-| Dokumentübersetzung | Whitepapers und Kerndokumente werden von ehrenamtlichen Übersetzern aus der Community erstellt und Übersetzungsbeiträge sind im Verhaltensbonus „Content Contribution“ (5 %) | enthalten
-| Lokalisierungsfinanzierung | 10 % (40 Millionen Münzen) des Fonds für ökologische Entwicklung sind speziell für den Aufbau von Lokalisierungsgemeinschaften und Übersetzungsanreize reserviert |
+| 平台语言 | 首发支持英语、中文、西班牙语、葡萄牙语、菲律宾语；第6个月起增加法语、阿拉伯语、斯瓦希里语、印尼语 |
+| 治理语言 | 提案和竞选纲领接受任何语言提交，系统提供机器翻译+社区人工校对 |
+| 社区运营 | 按语言设立独立社区频道（Discord/Telegram），各频道配备本地化社区联络志愿者 |
+| 文档翻译 | 白皮书及核心文档由社区翻译志愿者完成，翻译贡献计入"内容贡献"行为加成（5%） |
+| 本地化资助 | 生态发展基金中预留10%（4,000万枚）专项用于本地化社区建设和翻译激励 |
 
 ---
 
@@ -957,8 +957,8 @@ Exit-Ertrag: **70 %** Stable Vault / **30 %** Rückkauf und Verbrennung.
 | Risikoart | Beschreibung | Schadensbegrenzungsmaßnahmen |
 |---------|------|---------|
 | Marktrisiko | LIGHT-Preise können erheblich schwanken und historische Preise stellen keine zukünftige Wertentwicklung dar. TGE verfügt über eine begrenzte Anfangsliquidität und die Preise können stark schwanken | Faire Preise bei niederländischen Auktionen; ±50 % Leistungsschalter 72 Stunden nach TGE; Anti-Todesspirale, vierstufiger Interventionsmechanismus |
-| Projektrisiko | Das Investitionsziel könnte Verluste erleiden, das Risikokapitalprojekt könnte scheitern und das gesamte Kapital könnte verloren gehen. Die historische durchschnittliche Ausfallrate der PE/VC-Branche liegt bei etwa 50-70 % (Einzelgeschäft) | Zweimotorige Dezentralisierung (70 % Cashflow + 30 % Wachstum); Einzelziel ≤ 25 %; Industrie ≤ 40 %; Region ≤ 30 %; 10 % Rückstellung für Krankenkassen |
-| Technische Risiken | Intelligente Verträge können unentdeckte Schwachstellen aufweisen; Die Browserkompatibilität kann sich auf das Mining-Erlebnis auswirken. Cross-Chain-Brücken können angegriffen werden | Unabhängiges Audit + formelle Verifizierung vor TGE; Fehlerprämie 1.000–50.000 US-Dollar; 72-Stunden-Zeitsperre; Multi-Signatur-Aufhängungsmechanismus |
+| Projektrisiken | Das Investitionsziel kann Verluste erleiden, das Risikokapitalprojekt kann scheitern und das Kapital kann vollständig verloren gehen. Die historische durchschnittliche Ausfallrate der PE/VC-Branche liegt bei etwa 50-70 % (Einzelgeschäft) | Zweimotorige Dezentralisierung (70 % Cashflow + 30 % Wachstum); Einzelziel ≤ 25 %; Industrie ≤ 40 %; Region ≤ 30 %; 10 % Rückstellung für Krankenkassen |
+| Technische Risiken | Intelligente Verträge können unentdeckte Schwachstellen aufweisen. Die Browserkompatibilität kann sich auf das Mining-Erlebnis auswirken. Cross-Chain-Brücken können angegriffen werden | Unabhängiges Audit + formelle Verifizierung vor TGE; Fehlerprämie 1.000–50.000 US-Dollar; 72-Stunden-Zeitsperre; Multi-Signatur-Aufhängungsmechanismus |
 | Regulatorische Risiken | Die Regulierungsrichtlinien in verschiedenen Ländern und Regionen können sich ändern, was dazu führen kann, dass die Funktionen eingeschränkt sind oder Benutzer in bestimmten Regionen nicht teilnehmen können | Cayman SPV-Struktur; Standardmäßige Nullverifizierung (die Verifizierung wird von einem lizenzierten Dritten auf seiner Serviceseite durchgeführt); Der Front-End-IPFS-Spiegel ist zensurresistent. nicht in bestimmten Ländern vermarktet |
 | Liquiditätsrisiko | Möglicherweise mangelt es dem Sub-Token in der Anfangsphase an ausreichender Handelstiefe; LIGHT könnte in der frühen Phase von TGE | unter Verkaufsdruck geraten Die anfängliche Liquidität des Sub-Tokens AMM (6 % der Emission); 30-tägige Übertragungssperrfrist; Team/Investor 12-Monats-Cliff + 36-Monats-Linear |
 | Verwässerungsrisiko | Wenn die Zahl der aktiven Miner steigt, werden die Pro-Kopf-Mining-Einnahmen natürlich verwässert (BaseReward-Nenner erhöht sich) | Designabsicht: Frühe Teilnehmer gehen höhere Risiken ein, um höhere Renditen zu erzielen; spätere Benutzer können die Akkumulation durch das Teilen von Einladungen beschleunigen; die Governance-Schwelle wird dynamisch gesenkt |
@@ -998,7 +998,7 @@ Exit-Ertrag: **70 %** Stable Vault / **30 %** Rückkauf und Verbrennung.
 | Gasgebühr | Normale Überweisung | Äquivalent von 0,001 $ (@0,05 $=0,02 LICHT) |
 | Gasgebühr | Governance-Abstimmung | Äquivalent von 0,005 $ (@0,05 $=0,10 LICHT) |
 | Gasgebühr | Verteilungsregeln | 50 % Zerstörung / 30 % Validatoren / 20 % ökologische Schatzkammer |
-| Deflation | Verlangsamung/Frühwarnung/Fazit | ≤1,5 Milliarden/≤1,2 Milliarden/≤1 Milliarde (Umlaufvolumen) |
+| Deflation | Verlangsamung/Frühwarnung/Fazit | ≤1,5 Milliarden/≤1,2 Milliarden/≤1 Milliarde (Umlaufmenge) |
 | Deflation | Theoretische Obergrenze | 1,65 Milliarden (10+4+2,5, 850 Millionen in der Staatskasse werden niemals in Umlauf gebracht) |
 | Governance | Vorschlagsschwelle | ≥5.000 LICHT + 30 Tage Einsatz |
 | Governance | Komitee-Einsatz | 50.000 LICHT + 100 Adressen |
@@ -1064,7 +1064,7 @@ Enthält 22 Originalgegenstände (L1-5, A1-4, D1-4, M1-8, G1-3) + 7 technische A
 | E-2 | Zuteilung 50/30/20→40/34/16/10 (10 % der neuen strategischen Betriebsmittel) |
 | E-3 | Niederländische Auktion 10 Mio. $→15 Mio. $ (Anfangsinvestitionskapital 5 Mio. $→10 Mio. $) |
 | E-4 | Neuer 5,7-teiliger Airdrop-Wachstumsplan (55 Millionen Stück, CAC $ 55/Person) |
-| E-5 | Verifizierer werden stufenweise eingeführt (Testnet 7→TGE Minimum 10/Target 21→Open 100) |
+| E-5 | Verifizierer werden schrittweise eingeführt (Testnet 7→TGE mindestens 10/Target 21→Open 100) |
 | E-6 | Anpassung der Deflationsauslöselinie (14.12.10 → 15.12.10, angepasst an die Umlaufgrenze von 1,65 Milliarden) |
 | E-7 | Ersetzen Sie alle externen Zitate durch überprüfbare Quellen (entfernen Sie nicht überprüfbare SSRN-Papiere) |
 

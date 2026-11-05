@@ -902,13 +902,13 @@ Ingresos de salida: **70%** Bóveda estable / **30%** Recompra y quema.
 
 ### 11.4 Estrategia multilingüe y de localización
 
-| 维度 | 规划 |
+| Dimensiones | Planificación |
 |------|------|
-| 平台语言 | 首发支持英语、中文、西班牙语、葡萄牙语、菲律宾语；第6个月起增加法语、阿拉伯语、斯瓦希里语、印尼语 |
-| 治理语言 | 提案和竞选纲领接受任何语言提交，系统提供机器翻译+社区人工校对 |
-| 社区运营 | 按语言设立独立社区频道（Discord/Telegram），各频道配备本地化社区联络志愿者 |
-| 文档翻译 | 白皮书及核心文档由社区翻译志愿者完成，翻译贡献计入"内容贡献"行为加成（5%） |
-| 本地化资助 | 生态发展基金中预留10%（4,000万枚）专项用于本地化社区建设和翻译激励 |
+| Idioma de la plataforma | Inicialmente admite inglés, chino, español, portugués y filipino; Se agregarán francés, árabe, swahili e indonesio a partir del sexto mes |
+| Lenguaje de gobernanza | Se aceptan propuestas y plataformas de campaña en cualquier idioma y el sistema proporciona traducción automática + revisión de manuales comunitarios |
+| Operaciones Comunitarias | Establecer canales comunitarios independientes (Discord/Telegram) por idioma, y ​​cada canal está equipado con voluntarios de enlace comunitario localizados |
+| Traducción de documentos | Los libros blancos y los documentos básicos son completados por voluntarios de traducción de la comunidad, y las contribuciones de traducción se incluyen en el bono de comportamiento "Contribución de contenido" (5%) |
+| Financiamiento de localización | El 10% (40 millones de monedas) del fondo de desarrollo ecológico se reserva específicamente para la localización, construcción de comunidades e incentivos de traducción |
 
 ---
 

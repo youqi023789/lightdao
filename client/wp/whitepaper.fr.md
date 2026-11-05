@@ -171,7 +171,7 @@ Dans le même temps, le taux d’échec des marchés boursiers traditionnels est
 
 **Défaut n°2 : le minage est hautement centralisé**
 
-Le minage de Bitcoin a fait preuve d’un haut degré de concentration :
+Le minage de Bitcoin a montré un haut degré de concentration :
 
 | Piscine minière | Taux de hachage |
 |------|--------------|
@@ -302,7 +302,7 @@ En un mot : les restrictions *** ne peuvent concerner que les services, pas les 
 
 ### 3.5 Dépôts et retraits en devises légales et canaux inter-chaînes
 
-**Canal de devises Fiat (agrégation de services tiers) :** Le protocole lui-même n'exploite pas de services légaux de dépôt et de retrait de devises, mais la plateforme Web intègre des canaux tiers conformes (MoonPay, Ramp Network, Transak, etc.), couvrant les principaux marchés d'Amérique du Nord, d'Europe, d'Asie du Sud-Est et d'Amérique latine ; l'agrégation locale du marché P2P couvre l'Afrique et l'Asie du Sud ; les retraits prennent en charge les méthodes de paiement locales telles que GCash, M-Pesa, Pix et GrabPay.
+**Canal de devises Fiat (agrégation de services tiers) :** Le protocole lui-même n'exploite pas de services légaux de dépôt et de retrait de devises, mais la plateforme Web intègre des canaux tiers conformes (MoonPay, Ramp Network, Transak, etc.), couvrant les principaux marchés d'Amérique du Nord, d'Europe, d'Asie du Sud-Est et d'Amérique latine ; l'agrégation locale du marché P2P couvre l'Afrique et l'Asie du Sud ; les retraits prennent en charge les méthodes de paiement locales telles que GCash, M-Pesa, Pix et GrabPay.
 
 **Pont inter-chaînes et canaux d'acquisition LIGHT :** Transactions AMM intégrées dans la chaîne LightDAO après TGE ; l'interopérabilité avec l'écosystème Cosmos via IBC ; planification de wLIGHT (Ethereum/Solana) à partir du 6ème mois ; demande de cotation CEX à partir du 6ème mois selon conformité. Le pont inter-chaînes est exploité par un tiers indépendant et un rapport d'audit indépendant est requis avant la mise en ligne du pont.
 
@@ -450,7 +450,7 @@ Spécifications de performance : TPS théorique 1 000-3 000 ; taille de blo
 
 ### 4.8 Mécanisme de vérification des preuves de contribution
 
-Architecture de vérification à trois niveaux : (1) défi d'échantillonnage croisé aléatoire du vérificateur (5 % de nœuds toutes les 10 minutes, temps de réponse de 30 secondes) ; (2) Vérification mutuelle par les pairs P2P (8 à 16 pairs enregistrent indépendamment le volume d'échange de données, prennent la médiane) ; (3) Agrégation Merkle en chaîne (chaque bloc soumet le score de contribution Root, les utilisateurs peuvent s'auto-vérifier via Merkle Proof). Défaut de contester 3 fois de suite → le score de la journée sera remis à zéro ; un total de 5 fois en 7 jours → un contrôle anti-triche sera déclenché.
+Architecture de vérification à trois niveaux : (1) défi d'échantillonnage croisé aléatoire du vérificateur (5 % de nœuds toutes les 10 minutes, temps de réponse de 30 secondes) ; (2) Vérification mutuelle par les pairs P2P (8 à 16 pairs enregistrent indépendamment le volume d'échange de données, prennent la médiane) ; (3) Agrégation Merkle en chaîne (chaque bloc soumet le score de contribution Root, les utilisateurs peuvent s'auto-vérifier via Merkle Proof). Défaut de contester 3 fois de suite → le score de la journée sera remis à zéro ; un total de 5 fois en 7 jours → un contrôle anti-triche sera déclenché.
 
 ### 4.9 Gestion du portefeuille et des clés
 
@@ -469,8 +469,8 @@ Le TWAP en chaîne (prix moyen pondéré dans le temps sur 30 jours du pool LIGH
 Mise à niveau de niveau 4 : ajustement des paramètres L1 (vote de gouvernance 24-72h) → migration du contrat L2 (proposition majeure + audit + délai de 72h) → changement de consensus L3 (66% réussi + 2/3 signaux du validateur + période de protection de la fourche de 7 jours) → réparation d'urgence L4 (suspension du comité fantôme + correctif multi-signatures + ratification de 72h).
 
 > **[Terminologie dans ce chapitre]**
-> **Cosmos SDK** : un cadre de développement modulaire de blockchain qui permet aux développeurs d'assembler des chaînes publiques personnalisées comme des blocs de construction. Plusieurs chaînes de production (comme Cosmos Hub et Osmosis) ont vérifié sa maturité.
-> **Tendermint PoS** (Proof of Stake, Proof of Stake) : Un mécanisme de consensus dans lequel les validateurs obtiennent le droit de produire des blocs en promettant des tokens (plutôt que de rivaliser pour la puissance de calcul). Fournit une « finalité instantanée » : une fois qu’un bloc est validé, il ne peut pas être annulé.
+> **Cosmos SDK** : un cadre de développement de blockchain modulaire qui permet aux développeurs d'assembler des chaînes publiques personnalisées comme des blocs de construction. Plusieurs chaînes de production (comme Cosmos Hub et Osmosis) ont vérifié sa maturité.
+> **Tendermint PoS** (Proof of Stake, Proof of Stake) : Un mécanisme de consensus dans lequel les validateurs obtiennent le droit de produire des blocs en promettant des tokens (plutôt que de rivaliser pour la puissance de calcul). Fournit une « finalité instantanée » : une fois qu’un bloc est soumis, il ne peut pas être annulé.
 > **BFT** (Byzantine Fault Tolerance, Byzantine Fault Tolerance) : mécanisme dans un système distribué qui peut tolérer que certains nœuds fassent du mal ou fonctionnent mal tout en parvenant correctement à un consensus. Tendermint BFT ne peut tolérer pas plus d'un tiers des validateurs agissant mal ou se déconnectant en même temps.
 > **CosmWasm** : le moteur de contrats intelligents de l'écosystème Cosmos, basé sur la technologie WebAssembly, prend en charge l'utilisation du langage Rust pour rédiger des contrats et dispose de fonctionnalités de sécurité de la mémoire au moment de la compilation (empêchant les vulnérabilités courantes telles que les débordements de tampon).
 > **PWA** (Progressive Web App, Progressive Web App) : une technologie Web qui s'exécute sur un navigateur mais offre une expérience d'application de type natif. Il prend en charge la mise en cache hors ligne, les notifications push et l'ajout à l'écran d'accueil sans téléchargement ni installation via l'App Store.
@@ -528,117 +528,117 @@ Mise à niveau de niveau 4 : ajustement des paramètres L1 (vote de gouvernance
 | Période de diffusion linéaire 1 | 1er au 12ème mois | 40% | 160 millions de pièces | 13,33 millions de pièces par mois : incitations communautaires, marketing, plan de largage |
 | Période de diffusion linéaire 2 | du 13 au 24 | 30% | 120 millions de pièces | 10 millions de pièces par mois : financement des développeurs, construction écologique, réserves |
 
-### 5.4 战略运营基金（2.5亿枚）
+### 5.4 Fonds d'opérations stratégiques (250 millions de pièces)
 
-| 子类别 | 占比 | 数量 | 对象 | 释放规则 |
+| Sous-catégorie | Proportion | Quantité | Objet | Règle de libération |
 |--------|------|------|------|---------|
-| 服务换代币 | 50% | 1.25亿枚 | 开发公司、审计机构、律所、验证者运营商 | 12月cliff + 36月线性；以LIGHT支付服务费的30-50% |
-| 战略融资 | 30% | 7,500万枚 | 2-3家DePIN/Cosmos生态基金或消费行业战略方 | Pre-TGE以$0.03-$0.05出售（募集$225-375万）；12月cliff + 24月线性；单投资者≤总量2% |
-| 核心贡献者 | 20% | 5,000万枚 | 3-5名发起人/核心建设者 | 12月cliff + 36月线性；按季度里程碑考核释放；任期内不得出售 |
+| Échange de services contre des jetons | 50% | 125 millions de pièces | Sociétés de développement, institutions d'audit, cabinets d'avocats, opérateurs vérificateurs | 12 mois falaise + 36 mois linéaires ; 30 à 50 % des frais de service payés en LIGHT |
+| Financement stratégique | 30% | 75 millions de pièces | 2-3 Fonds écologiques DePIN/Cosmos ou acteurs stratégiques de l'industrie de la consommation | Pré-TGE vendu entre 0,03 et 0,05 $ (levant de 2,25 à 3,75 millions de dollars) ; 12 mois falaise + 24 mois linéaires ; investisseur unique ≤ 2% du total |
+| Contributeurs principaux | 20% | 50 millions de pièces | 3-5 sponsors/constructeurs de base | 12 mois falaise + 36 mois linéaires ; publié sur la base d'une évaluation trimestrielle des étapes ; pas de vente pendant le terme |
 
-**战略投资者要求：** 必须提供非资金贡献（deal flow、验证者服务、合规资源之一），纯财务投资者不接受。
+**Exigences des investisseurs stratégiques :** Les contributions non financières (flux de transactions, services de vérification, ressources de conformité) doivent être fournies, et les investisseurs purement financiers ne sont pas acceptés.
 
-**监管合规：** Pre-TGE sale采用Reg S（非美国投资者）+ Reg D Rule 506(c)（美国合格投资者）双轨豁免。
+**Conformité réglementaire :** La vente pré-TGE adopte l'exemption à double voie Reg S (investisseurs non américains) + Reg D Rule 506(c) (investisseurs qualifiés américains).
 
-**核心贡献者披露规则：** 仅披露总额（5,000万枚=总量2%）和释放规则，不公开个人姓名和单人额度。角色类别公开：技术/投资/合规/社区。
+**Règles de divulgation des principaux contributeurs :** Seuls le montant total (50 millions = 2 % du montant total) et les règles de libération sont divulgués, et les noms personnels et les quotas individuels ne sont pas divulgués. Catégories de rôles divulguées : Technologie/Investissement/Conformité/Communauté.
 
-### 5.5 挖矿产出与减半计划
+### 5.5 Production minière et plan de réduction de moitié
 
-**推导：** 2A = 10亿 → A = 5亿（第一纪元）。日释放 = 5亿÷730 = 684,932枚 ≈ 68.49万/天。每区块 = 684,932÷49,371 ≈ 13.87 LIGHT。
+**Dérivation :** 2A = 1 milliard → A = 500 millions (Première Ère). Sortie quotidienne = 500 millions ÷ 730 = 684 932 pièces ≈ 684 900/jour. Chaque bloc = 684 932÷49 371 ≈ 13,87 LUMIÈRE.
 
-**注意：** 每区块奖励池为全网共享，其中5%划拨验证者（3.42万/天），95%分配轻节点矿工（65.07万/天）。
+**Remarque :** Le pool de récompenses pour chaque bloc est partagé par l'ensemble du réseau, dont 5 % sont alloués aux validateurs (34 200/jour) et 95 % sont alloués aux mineurs de nœuds légers (650 700/jour).
 
-| 纪元 | 时间 | 产出总量 | 日释放量 | 每区块奖励池 |
+| Époque | Temps | Production totale | Sortie quotidienne | Pool de récompenses par bloc |
 |------|------|---------|---------|------------|
-| 第1纪元 | 0—24月 | 5亿枚 | ≈68.49万 | ≈13.87 LIGHT |
-| 第2纪元 | 25—48月 | 2.5亿枚 | ≈34.25万 | ≈6.93 LIGHT |
-| 第3纪元 | 49—72月 | 1.25亿枚 | ≈17.12万 | ≈3.47 LIGHT |
-| 第4纪元 | 73—96月 | 6,250万枚 | ≈8.56万 | ≈1.73 LIGHT |
-| 第5纪元 | 97—120月 | 3,125万枚 | ≈4.28万 | ≈0.87 LIGHT |
+| 1ère Ère | 0-24 mois | 500 millions | ≈684 900 | ≈13,87 LUMIÈRE |
+| 2e ère | 25-48 mois | 250 millions de pièces | ≈342 500 | ≈6,93 LUMIÈRE |
+| La 3ème Ère | 49-72 mois | 125 millions de pièces | ≈171 200 | ≈3,47 LUMIÈRE |
+| La 4ème Ère | 73-96 mois | 62,5 millions de pièces | ≈85 600 | ≈1,73 LUMIÈRE |
+| La 5ème Ère | 97-120 mois | 31,25 millions de pièces | ≈42 800 | ≈0,87 LUMIÈRE |
 
-**校验：** 5+2.5+1.25+0.625+0.3125+… = 5×2 = 10亿 ✓。97%在前10年完成。
+**Vérifiez :** 5+2,5+1,25+0,625+0,3125+… = 5×2 = 1 milliard ✓. 97 % terminés au cours des 10 premières années.
 
-### 5.6 用户收益参考模型
+### 5.6 Modèle de référence des revenus des utilisateurs
 
-| 网络规模 | 人均日收益 | 月收益 | 年收益 | 满加成(1.44x)月收益 |
-|---------|-----------|--------|--------|-------------------|
-| 1万矿工（种子期） | ≈65.07 | ≈1,952 | ≈23,751 | ≈2,811 |
-| 10万矿工（成长期） | ≈6.51 | ≈195.2 | ≈2,375 | ≈281.1 |
-| 100万矿工（规模期） | ≈0.65 | ≈19.5 | ≈237.5 | ≈28.1 |
+| Taille du réseau | Revenu quotidien par habitant | Revenu mensuel | Revenu annuel | Revenu mensuel à majoration complète (1,44x) |
+|---------|-----------|--------|-------------|-------------------|
+| 10 000 mineurs (stade graine) | ≈65,07 | ≈1 952 | ≈23 751 | ≈2 811 |
+| 100 000 mineurs (stade de croissance) | ≈6,51 | ≈195,2 | ≈2 375 | ≈281,1 |
+| 1 million de mineurs (période d'échelle) | ≈0,65 | ≈19,5 | ≈237,5 | ≈28,1 |
 
-**合伙人级（50邀请，20%分成，满加成）：**
+**Niveau partenaire (50 invitations, 20 % de partage, bonus complet) :**
 
-| 网络规模 | 自身(含加成) | 邀请分成 | 日综合 | 月综合 |
-|---------|------------|---------|--------|--------|
-| 1万矿工 | ≈93.7 | ≈650.7 | ≈744.4 | ≈22,332 |
-| 10万矿工 | ≈9.37 | ≈65.07 | ≈74.44 | ≈2,233 |
-| 100万矿工 | ≈0.94 | ≈6.51 | ≈7.45 | ≈223.4 |
+| Échelle du réseau | Soi (y compris bonus) | Partage d'invitations | Quotidien complet | Mensuel complet |
+|---------|------------|---------|--------|-------------|
+| 10 000 mineurs | ≈93,7 | ≈650,7 | ≈744,4 | ≈22 332 |
+| 100 000 mineurs | ≈9,37 | ≈65,07 | ≈74,44 | ≈2 233 |
+| 1 million de mineurs | ≈0,94 | ≈6,51 | ≈7,45 | ≈223,4 |
 
-### 5.7 空投增长计划
+### 5.7 Plan de croissance des parachutages
 
-**经济模型：** 空投总预算 = 目标触达用户 × 人均空投 × (1+浪费率) = 100,000 × 150 LIGHT × 1.3 ≈ 1,950万枚（获取类）+ 3,550万枚（生态类）= **5,500万枚**（占生态基金4亿的13.75%）。
+**Modèle économique :** Budget total du largage = utilisateurs cibles atteints × largage par habitant × (1+taux de gaspillage) = 100 000 × 150 LIGHT × 1,3 ≈ 19,5 millions (type d'acquisition) + 35,5 millions (type écologique) = **55 millions** (représentant 13,75 % du fonds écologique de 400 millions).
 
-| 空投类型 | 触发条件 | 单次额度 | 预算 |
+| Type de largage | Conditions de déclenchement | Quota unique | Budget |
 |---------|---------|---------|------|
-| 首挖空投 | 首次完成4小时有效挖矿 | 50 LIGHT | 1,500万枚 |
-| 地理扩张 | 目标市场用户完成ZK-KYC | 100 LIGHT | 1,000万枚 |
-| Learn-to-Earn | 完成教育模块+测验 | 30 LIGHT | 600万枚 |
-| 治理首投 | 首次参与投票 | 20 LIGHT | 300万枚 |
-| 流动性提供 | LP注入≥$50锁仓30天 | 200 LIGHT | 1,000万枚 |
-| 内容创作 | 经社区验证的教程/翻译 | 50-200 LIGHT | 600万枚 |
-| 合作渠道 | 通过合作方注册+首挖 | 80 LIGHT | 500万枚 |
+| Premier largage minier | Vous avez terminé 4 heures d'exploitation minière efficace pour la première fois | 50 LUMIÈRE | 15 millions de pièces |
+| Expansion géographique | Les utilisateurs du marché cible complètent ZK-KYC | 100 LUMIÈRE | 10 millions de pièces |
+| Apprendre à gagner | Module éducatif complet + Quiz | 30 LUMIÈRE | 6 millions de pièces |
+| Premier vote sur la gouvernance | Première participation au vote | 20 LUMIÈRE | 3 millions de pièces |
+| Provision de liquidité | Injection LP ≥50$ lock-up pendant 30 jours | 200 LUMIÈRE | 10 millions de pièces |
+| Création de contenu | Tutoriels/traductions vérifiés par la communauté | 50-200 LUMIÈRE | 6 millions de pièces |
+| Canaux de coopération | Inscription + premier minage via des partenaires | 80 LUMIÈRE | 5 millions de pièces |
 
-**CAC验证：** 5,500万枚×$0.03 = $165万 ÷ 30,000留存活跃矿工 = **$55/人**（行业区间$50-200，处于低端）。学术依据：Zheng (2023) "Operation Dumbo Drop: To Airdrop or Not to Airdrop for Initial Coin Offering Success?" 证明活动绑定型空投留存率为纯空投的3-5倍。
+**Vérification CAC :** 55 millions de pièces × 0,03 $ = 1,65 million de dollars ÷ 30 000 mineurs actifs retenus = **55 $/personne** (fourchette sectorielle de 50 à 200 $, dans le bas de l'échelle). Base académique : Zheng (2023) « Opération Dumbo Drop : parachuter ou ne pas parachuter pour le succès de l'offre initiale de pièces ? prouve que le taux de rétention des largages liés à un événement est 3 à 5 fois supérieur à celui des largages purs.
 
-**防滥用：** 唯一浏览器指纹+ZK-KYC；每类每地址限领1次；30天锁定期；领取后30天无链上活动自动回收。
+**Anti-abus :** Empreinte digitale unique du navigateur + ZK-KYC ; limité à 1 réclamation par catégorie et par adresse ; Période de blocage de 30 jours ; recyclage automatique sans activité en chaîne dans les 30 jours suivant la réclamation.
 
-### 5.8 双引擎飞轮与资金池
+### 5.8 Volant moteur double et pool de capitaux
 
-飞轮：投票→金库LIGHT销毁→USDC支付→利润回流→回购销毁→价格支撑→更多用户。
+Volant d'inertie : Vote → Destruction de Vault LIGHT → Paiement USDC → Redistribution des bénéfices → Rachat et destruction → Support des prix → Plus d'utilisateurs.
 
-双轨制：稳定金库（USDC，利润截留）+ 弹性金库（LIGHT层，投资时销毁不流入市场）。回购采用TWAP拆单，单笔≤日均交易量5%。
+Système à double voie : trésorerie stable (USDC, rétention des bénéfices) + trésorerie flexible (couche LÉGÈRE, détruite lors de l'investissement et non affluée sur le marché). Les rachats sont répartis via TWAP, avec un seul ordre ≤ 5 % du volume quotidien moyen des transactions.
 
-### 5.9 子代币发行与交易
+### 5.9 Émission et négociation de sous-tokens
 
-发行总量=投资金额÷$1；兑换价以30天VWAP为基准；兑换所得LIGHT全部销毁；分配50%赞成者/30%空投/20%运营储备（锁仓6月）。单地址分红上限15%。子代币在链内AMM交易，发行后30天锁定期，退出后标记"已清算"下架。
+Le montant total de l'émission = montant de l'investissement ÷ 1 $ ; le prix d'échange est basé sur le VWAP à 30 jours ; toute la LUMIÈRE obtenue lors de l'échange sera détruite ; 50% des supporters/30% airdrop/20% réserve de fonctionnement seront distribués (bloqué 6 mois). La limite de dividende pour une seule adresse est de 15 %. Les sous-jetons sont négociés sur l'AMM en chaîne, avec une période de blocage de 30 jours après leur émission, et seront marqués « liquidés » après le retrait.
 
-### 5.10 初始流动性与价格发现
+### 5.10 Liquidité initiale et découverte des prix
 
-**TGE（Token Generation Event，代币生成事件）安排：**
+**Arrangement TGE (Token Generation Event, événement de génération de jetons) : **
 
-| 项目 | 方案 |
+| Projet | Planifier |
 |------|------|
-| 初始流动性池 | 从生态发展基金TGE释放的1.2亿枚中，划拨7,200万枚（60%）注入DEX流动性池 |
-| 配对资产 | USDC（主池）、USDT（辅池） |
-| 空投 | 剩余4,800万枚（40%）用于种子用户空投（见5.7节空投计划） |
-| 上线交易所 | TGE后首先上线去中心化交易所（如Osmosis、JunoSwap）；第6个月起视合规情况申请中心化交易所上市 |
+| Pool de liquidité initial | Sur les 120 millions de pièces débloquées par le fonds de développement écologique TGE, 72 millions de pièces (60%) ont été allouées et injectées dans le pool de liquidité DEX |
+| Actifs jumelés | USDC (pool principal), USDT (pool auxiliaire) |
+| Largage aérien | Les 48 millions restants (40 %) seront utilisés pour les largages aériens vers les utilisateurs de semences (voir la section 5.7 Plan de largage aérien) |
+| Coté en bourse | Coté pour la première fois sur des bourses décentralisées (telles que Osmosis, JunoSwap) après TGE ; demander une cotation sur les bourses centralisées à partir du 6ème mois selon conditions de respect |
 
-**荷兰式拍卖（Dutch Auction）详细机制：**
+**Mécanisme détaillé des enchères néerlandaises :**
 
-荷兰式拍卖是一种"价格由高至低递减"的定价方式。与英式拍卖（价格由低至高竞价）相反，荷兰式拍卖中卖方设定一个起始高价，价格随时间自动下降，直到买方在某个价格点提交认购。第一个使总认购额达到目标的价格即为最终开盘价。
+Les enchères néerlandaises sont une méthode de tarification dans laquelle les prix diminuent de haut en bas. Contrairement aux enchères anglaises (où les prix sont offerts du plus bas au plus élevé), dans les enchères néerlandaises, le vendeur fixe un prix de départ élevé et le prix diminue automatiquement au fil du temps jusqu'à ce que l'acheteur soumette une souscription à un certain niveau de prix. Le premier cours auquel le montant total de la souscription atteint l'objectif est le cours final d'ouverture.
 
-**为什么选择荷兰式拍卖而非固定价格或英式拍卖：**
+**Pourquoi choisir une vente aux enchères néerlandaise plutôt qu'une vente aux enchères à prix fixe ou une vente aux enchères anglaise :**
 
-| 定价方式 | 优点 | 缺点 | 适用性 |
+| Tarifs | Avantages | Inconvénients | Applicabilité |
 |---------|------|------|--------|
-| 固定价格预售 | 简单 | 定价主观，过高则卖不出，过低则被机器人抢购 | 不适合（无价格发现功能） |
-| 英式拍卖（竞价） | 价格发现充分 | 大额买家可策略性等待、抬价；gas war | 不适合（链上gas war排斥小额用户） |
-| **荷兰式拍卖** | **自动价格发现；无需竞价（无gas war）；大小买家平等参与；防机器人（价格递减机制天然抑制抢跑）** | 需要合理设定起始价和递减速率 | **最适合（公平+高效+防操纵）** |
+| Prévente à prix fixe | Simple | Le prix est subjectif, s'il est trop élevé, il ne se vendra pas, s'il est trop bas, il sera happé par les robots | Ne convient pas (pas de fonction de découverte des prix) |
+| Vente aux enchères britannique (enchères) | Découverte plein tarif | Les gros acheteurs peuvent stratégiquement attendre et augmenter les prix ; guerre du gaz | Ne convient pas (la guerre du gaz en chaîne exclut les petits utilisateurs) |
+| **Enchères néerlandaises** | ** Découverte automatique des prix ; aucune offre requise (pas de guerre du gaz) ; participation égale des grands et petits acheteurs ; anti-bot (le mécanisme de réduction des prix inhibe naturellement le front-running)** | Le prix de départ et le taux de décélération doivent être fixés de manière raisonnable | **Le plus adapté (équitable + efficace + anti-manipulation)** |
 
-**LightDAO荷兰式拍卖具体参数：**
+**Paramètres spécifiques aux enchères néerlandaises LightDAO :**
 
-| 参数 | 设定 | 说明 |
+| Paramètres | Paramètres | Descriptif |
 |------|------|------|
-| 拍卖标的 | LIGHT代币（从生态基金TGE释放的7,200万枚中划拨） | 拍卖所得USDC注入稳定金库 |
-| 目标募集额 | **$1,500万 USDC** | $500万→稳定金库最低储备；$1,000万→初始投资资本 |
-| 起始价 | $0.20/LIGHT | 高于预期均衡价，确保不会"秒光" |
-| 递减速率 | 每小时下降5% | 从$0.20起，约48小时后降至$0.017（若无人认购） |
-| 最低保留价 | $0.01/LIGHT | 若降至保留价仍未达目标，拍卖延期24小时或调整标的数量 |
-| 认购方式 | 用户提交"我愿意以当前价格购买X USDC等值的LIGHT" | 无需竞价，系统按最终统一价格结算（多退少不补） |
-| 单用户上限 | 不超过目标募集额的5%（即$75万） | 防止单一买家垄断初始筹码 |
-| KYC要求 | 增强验证（税务居民身份） | 合规要求 |
+| Cible des enchères | Tokens LIGHT (attribués sur les 72 millions débloqués par le fonds écologique TGE) | L'USDC de l'enchère sera injecté dans le coffre-fort stable |
+| Montant cible de la collecte de fonds | **15 millions de dollars américains** | 5 millions de dollars → réserve minimale de trésorerie stable ; 10 millions de dollars → capital d'investissement initial |
+| Prix ​​de départ | 0,20 $/LUMIÈRE | Supérieur au prix d'équilibre attendu, garantissant qu'il ne sera pas perdu en quelques secondes |
+| Taux de décélération | Diminution de 5% toutes les heures | À partir de 0,20 $, tombant à 0,017 $ après environ 48 heures (si personne ne s'abonne) |
+| Prix ​​de réserve minimum | 0,01 $/LUMIÈRE | Si le prix de réserve est abaissé et que l'objectif n'est toujours pas atteint, la vente aux enchères sera reportée de 24 heures ou le nombre d'objets sera ajusté |
+| Mode d'abonnement | L'utilisateur soumet "Je suis prêt à acheter X LIGHT équivalent à l'USDC au prix actuel" | Aucune enchère n'est nécessaire, le système réglera selon le prix final unifié (tout excédent sera remboursé sans indemnité) |
+| Limite supérieure pour un seul utilisateur | Pas plus de 5 % du montant cible de la collecte de fonds (soit 750 000 $) | Empêcher un seul acheteur de monopoliser les jetons initiaux |
+| Exigences KYC | Vérification améliorée (résidence fiscale) | Exigences de conformité |
 
-**拍卖结果的资金去向：**
+**Destination des fonds issus des résultats des enchères :**
 
 ```
 用户认购总额 $1,500万 USDC
@@ -649,502 +649,502 @@ Mise à niveau de niveau 4 : ajustement des paramètres L1 (vote de gouvernance
 未售出的LIGHT（若有）→ 注入DEX流动性池
 ```
 
-**价格发现保护期：** TGE后前72小时设价格波动熔断——若DEX交易价格较拍卖开盘价偏离超过±50%，暂停子代币兑换功能（不影响挖矿和转账），防止极端投机行为干扰生态启动。72小时后熔断自动解除。
+**Période de protection contre la découverte des prix :** Un coupe-circuit contre les fluctuations de prix est mis en place dans les 72 heures suivant le TGE - si le prix de la transaction DEX s'écarte de plus de ± 50 % du prix d'ouverture des enchères, la fonction d'échange de sous-tokens sera suspendue (l'exploitation minière et les transferts ne seront pas affectés) pour empêcher une spéculation extrême d'interférer avec le démarrage écologique. Le fusible sera automatiquement libéré après 72 heures.
 
-**为什么$1,500万而非更低：** 初始投资资本$1,000万需支撑首年3-5笔投资（单笔$200-500万，见9.1节启动期规模）。若仅募集$500万（全部作为储备），则首年无任何可部署投资资本，飞轮无法启动。$1,500万 = 储备$500万 + 投资$1,000万，是"安全底线"与"飞轮启动"的最小可行平衡。
+**Pourquoi 15 millions de dollars au lieu de moins :** Le capital d'investissement initial de 10 millions de dollars doit soutenir 3 à 5 investissements au cours de la première année (un seul investissement équivaut à 2 à 5 millions de dollars, voir l'échelle de la période de démarrage dans la section 9.1). Si seulement 5 millions de dollars sont collectés (le tout sous forme de réserves), il n’y aura aucun capital d’investissement déployable la première année et le volant d’inertie ne démarrera pas. 15 millions de dollars = réserve 5 millions de dollars + investissement 10 millions de dollars, ce qui est l'équilibre minimum réalisable entre « résultat net en matière de sécurité » et « démarrage par volant d'inertie ».
 
-### 5.11 通缩机制与底线
+### 5.11 Mécanisme de déflation et résultat net
 
-**流通量 = 挖矿释放 + 生态释放 + 战略基金已释放 − 兑换销毁 − Gas销毁 − 回购销毁。** 投资金库8.5亿枚从未进入流通。流通量理论上限 = 10+4+2.5 = **16.5亿枚**。
+**Volume de circulation = libération minière + libération écologique + fonds stratégique débloqué − échange et destruction − destruction de gaz − rachat et destruction. ** 850 millions de pièces du coffre-fort d'investissement ne sont jamais entrées en circulation. Limite supérieure théorique de circulation = 10+4+2,5 = **1,65 milliard**.
 
-| 触发条件 | 系统行为 |
+| Conditions de déclenchement | Comportement du système |
 |---------|---------|
-| 流通量≤15亿枚 | 减速信号（极端低销毁情景） |
-| 流通量≤12亿枚 | 预警公示，暂停主动销毁（基准情景约第8年） |
-| 流通量≤10亿枚 | 硬停止，所有销毁永久关闭（基准情景约第11-12年） |
+| Tirage ≤ 1,5 milliard d'exemplaires | Signal de ralentissement (scénario de destruction extrêmement faible) |
+| Volume de circulation ≤ 1,2 milliard de pièces | Annonce d'alerte précoce, suspension de la destruction active (vers la 8ème année du scénario de base) |
+| Volume de diffusion ≤ 1 milliard | Arrêt brutal, toutes les destructions sont définitivement fermées (le scénario de base se situe vers les années 11-12) |
 
-### 5.12 价格稳定机制（防死亡螺旋）
+### 5.12 Mécanisme de stabilisation des prix (spirale anti-mortalité)
 
-**核心原则：** LightDAO 不干预日常市场价格发现。协议仅在极端下跌情形下调整自身参数，以降低陷入"死亡螺旋"的风险。
+**Principes fondamentaux :** LightDAO n'interfère pas avec la découverte quotidienne des prix du marché. Le protocole n'ajuste ses paramètres que dans des scénarios extrêmement baissiers pour réduire le risque de tomber dans une « spirale de la mort ».
 
-**分级逻辑：** 在不同波动环境中，同等跌幅所代表的异常程度不同。低波动市场中的大幅下跌属于更强的异常信号，需要更高强度的干预；高波动市场中的大幅下跌相对常见，可采用较轻干预。因此，干预强度与信号的异常程度正相关，而非仅取决于跌幅的绝对值。
+**Logique de notation :** Dans différents environnements volatils, la même baisse représente différents degrés d'anomalie. Une forte baisse sur un marché à faible volatilité constitue un signal anormal plus fort et nécessite une intervention de plus grande intensité ; une forte baisse sur un marché très volatil est relativement courante et une intervention plus légère peut être utilisée. Par conséquent, l’intensité de l’intervention est positivement liée à l’anomalie du signal, plutôt que de dépendre uniquement de la valeur absolue de la baisse.
 
-**机制全流程表：**
+**Organigramme complet du mécanisme :**
 
-| 市场状态 | 30日历史波动率 | 触发条件 | 信号等级 | 触发后执行 | 恢复条件 |
-|---------|--------------|---------|---------|-----------|---------|
-| 低波动 | ≤30% | 连续5日累计跌幅≥40% | I级 | 挖矿产出降至50%；销毁比例由20%提升至35%；风险参数调整公示期由72h缩短至12h；影子委员会进入激活状态（仅可依法行使临时暂停权） | 价格站上30日均线，且较触发价反弹≥80%，并连续保持10日 |
-| 中波动 | 30%—60% | 连续7日累计跌幅≥50% | II级 | 挖矿产出降至50%；销毁比例由20%提升至30%；公示期缩短至24h；影子委员会进入激活状态 | 价格站上30日均线，且较触发价反弹≥60%，并连续保持7日 |
-| 高波动 | 60%—100% | 连续10日累计跌幅≥55% | III级 | 挖矿产出降至75%；销毁比例由20%提升至25%；公示期缩短至48h；影子委员会进入待命状态 | 价格站上30日均线，且较触发价反弹≥40%，并连续保持5日 |
-| 极端波动 | >100% | 连续10日累计跌幅≥65% | III级 | 按高波动状态的III级措施执行 | 按高波动状态的III级恢复条件执行 |
+| Statut du marché | Volatilité historique sur 30 jours | Conditions de déclenchement | Niveau de signal | Exécution après déclenchement | Conditions de récupération |
+|---------|--------------|---------|---------|----------|---------|
+| Faible volatilité | ≤30% | Baisse cumulée de ≥40 % pendant 5 jours consécutifs | Niveau I | La production minière a chuté à 50 % ; le taux de destruction est passé de 20 % à 35 % ; la période de publicité sur l'ajustement des paramètres de risque a été raccourcie de 72h à 12h ; le comité fantôme est entré dans l'état actif (seul le droit de suspension temporaire peut être exercé conformément à la loi) | Le prix s'est maintenu au-dessus de la moyenne mobile sur 30 jours et a rebondi de ≥80 % par rapport au prix de déclenchement, et est resté ainsi pendant 10 jours consécutifs |
+| Fluctuation moyenne | 30%-60% | Baisse cumulée pendant 7 jours consécutifs ≥ 50% | Niveau II | La production minière a chuté à 50 % ; le taux de destruction est passé de 20 % à 30 % ; la période de publicité a été réduite à 24 heures ; le comité fantôme est entré dans l'état actif | Le prix s'est maintenu au-dessus de la moyenne mobile sur 30 jours et a rebondi de ≥ 60 % par rapport au prix de déclenchement, et est resté ainsi pendant 7 jours consécutifs |
+| Forte volatilité | 60%-100% | 10 jours consécutifs de déclin cumulé ≥55% | Niveau III | La production minière a chuté à 75 % ; le taux de destruction est passé de 20 % à 25 % ; la période de publicité a été réduite à 48 heures ; le comité fantôme est entré en veille | Le prix s'est maintenu au-dessus de la moyenne mobile sur 30 jours et a rebondi de ≥40 % par rapport au prix de déclenchement, et est resté ainsi pendant 5 jours consécutifs |
+| Volatilité extrême | >100% | Baisse cumulée pendant 10 jours consécutifs ≥ 65% | Niveau III | Mis en œuvre conformément aux mesures de niveau III pour une volatilité élevée | Mis en œuvre selon les conditions de recouvrement de niveau III en cas de forte volatilité |
 
-**排除条件：** 仅当同期比特币跌幅低于 LIGHT 跌幅的50%时，上述机制方可触发，以排除系统性市场崩盘情形（即：若BTC同期也暴跌，则属于市场整体事件，不单独对LIGHT启动干预）。
+**Conditions d'exclusion :** Ce n'est que lorsque la baisse du Bitcoin au cours de la même période est inférieure à 50 % de la baisse du LIGHT que le mécanisme ci-dessus peut être déclenché pour exclure un effondrement systémique du marché (c'est-à-dire que si le BTC s'effondre également au cours de la même période, il s'agit d'un événement global du marché et aucune intervention distincte n'est initiée pour LIGHT).
 
-**恢复逻辑说明：** 反弹要求与持续时间随异常等级递减：I级要求最高反弹幅度（80%）和最长确认时间（10日），III级要求相对较低（40%/5日）。该安排符合"异常信号越强、干预越强、恢复确认越严格"的递进逻辑。
+**Description de la logique de récupération :** Les exigences et la durée du rebond diminuent avec le niveau d'anomalie : le niveau I nécessite l'amplitude de rebond la plus élevée (80 %) et le temps de confirmation le plus long (10 jours), tandis que le niveau III nécessite des exigences relativement inférieures (40 %/5 jours). Cette disposition s'inscrit dans la logique progressive selon laquelle « plus le signal anormal est fort, plus l'intervention est forte et plus la confirmation de la récupération est stricte ».
 
-**波动率与价格数据来源：** 30日历史波动率和累计跌幅均由链上价格预言机（见4.10节）提供，以每日UTC 00:00区块的TWAP快照为计算基准，不依赖任何外部数据源。
+**Source de données sur la volatilité et les prix :** La volatilité historique sur 30 jours et la baisse cumulée sont fournies par l'oracle des prix en chaîne (voir Section 4.10), sur la base de l'instantané TWAP du bloc quotidien UTC 00:00, et ne reposent sur aucune source de données externe.
 
-### 5.13 收益可持续性压力测试
+### 5.13 Test de résistance sur la viabilité des bénéfices
 
-| 压力情景 | 假设条件 | 协议应对 | 最坏结果 |
-|---------|---------|---------|---------|
-| 全部投资失败 | 所有被投企业亏损或退出失败 | 保险基金（利润10%计提）覆盖部分损失；稳定金库储备（≥$800万）维持运营；暂停新投资直至社区重新评估 | 子代币持有者无法获得分红；LIGHT价格承压但不归零（挖矿和治理功能持续运行） |
-| 市场暴跌80% | LIGHT价格较峰值下跌80% | 触发防死亡螺旋机制（II级或III级）；挖矿产出削减50-75%；销毁比例提升；影子委员会可暂停高危操作 | 用户收益缩水但网络持续运行；恢复条件达成后机制自动解除 |
-| 主要市场监管禁令 | 某大国全面禁止加密资产 | 前端切换 IPFS 镜像保持可访问；链上资产与已有用户权益不受影响；仅在法律强制范围内调整第三方服务可用性；SPV在开曼群岛运营不受单一国家管辖 | 该区域用户增长停滞；全球其他区域不受影响 |
-| 用户大规模流失 | 活跃矿工下降超70% | BaseReward自动重新分配（分母缩小→留存用户人均收益上升）；邀请激励加权吸引回流；治理门槛临时下调（5.14节动态机制） | 网络安全性下降但不会停链（Tendermint BFT容忍<1/3验证者离线） |
-| 智能合约重大漏洞 | 核心合约被发现可利用漏洞 | 多签紧急暂停资金流出（72小时时间锁提供响应窗口）；发起备用合约迁移投票（L4级紧急修复，见4.12节）；保险基金覆盖用户损失 | 部分资金可能受损；迁移完成后恢复正常运营 |
+| Scénarios de stress | Et si | Réponses du protocole | Dans le pire des cas |
+|---------|---------|---------|-------------|
+| Tous les investissements ont échoué | Toutes les sociétés investies ont subi des pertes ou n'ont pas réussi à sortir | Le fonds d'assurance (10 % des bénéfices accumulés) couvre une partie des pertes ; des réserves de trésorerie stables (≥8 millions de dollars) pour maintenir les opérations ; les nouveaux investissements sont suspendus jusqu'à ce que la communauté réévalue | Les détenteurs de sous-jetons ne peuvent pas recevoir de dividendes ; Le prix du LIGHT est sous pression mais ne revient pas à zéro (les fonctions minières et de gouvernance continuent de fonctionner) |
+| Le marché a plongé de 80% | Le prix de LIGHT a chuté de 80 % par rapport au sommet | Déclencher le mécanisme spirale anti-mort (niveau II ou niveau III) ; la production minière est réduite de 50 à 75 % ; le taux de destruction est augmenté ; le comité fantôme peut suspendre les opérations à haut risque | Les revenus des utilisateurs diminuent mais le réseau continue de fonctionner ; le mécanisme est automatiquement levé lorsque les conditions de récupération sont remplies |
+| Principales interdictions réglementaires du marché | Un grand pays a complètement interdit les actifs cryptographiques | Le miroir IPFS de commutation frontale reste accessible ; les actifs en chaîne et les droits et intérêts des utilisateurs existants ne sont pas affectés ; la disponibilité des services tiers n'est adaptée que dans le cadre de l'application de la loi ; Les opérations du SPV aux îles Caïmans ne sont pas soumises à la juridiction d'un seul pays | La croissance des utilisateurs dans la région a stagné ; les autres régions du monde ne sont pas concernées |
+| Perte d'utilisateurs à grande échelle | Les mineurs actifs ont chuté de plus de 70 % | BaseReward est automatiquement redistribué (le dénominateur diminue → le revenu par habitant des utilisateurs retenus augmente) ; les incitations aux invitations sont pondérées pour attirer des flux de retour ; les seuils de gouvernance sont temporairement abaissés (mécanisme dynamique dans la section 5.14) | La sécurité du réseau est réduite mais la chaîne ne sera pas arrêtée (Tendermint BFT tolère que <1/3 des validateurs soient hors ligne) |
+| Vulnérabilités majeures des contrats intelligents | Vulnérabilités exploitables trouvées dans les contrats principaux | Suspension d'urgence multi-signatures des sorties de fonds (un délai de 72 heures offre une fenêtre de réponse) ; Lancer un vote de migration du contrat de sauvegarde (réparation d'urgence de niveau L4, voir section 4.12) ; Le fonds d'assurance couvre les pertes des utilisateurs | Certains fonds peuvent être endommagés ; Les opérations normales reprennent une fois la migration terminée |
 
-### 5.14 代际平衡机制
+### 5.14 Mécanisme d’équilibrage intergénérationnel
 
-治理门槛动态调整：每新增100万累计活跃矿工，提案门槛自动下调5%（下限2,500 LIGHT）。
+Ajustement dynamique du seuil de gouvernance : pour chaque million de nouveaux mineurs actifs cumulés, le seuil de proposition est automatiquement abaissé de 5 % (limite inférieure 2 500 LIGHT).
 
-> **【本章术语】**
-> **TGE**（Token Generation Event，代币生成事件）：代币首次通过智能合约创建并分发的时点，通常伴随初始流动性池建立、荷兰式拍卖定价和首次公开交易。类似于传统金融中的IPO，但不涉及证券交易所上市。
-> **减半**（Halving）：挖矿产出每隔固定周期（LightDAO为2年/730天）自动减少50%的机制。目的是制造渐进稀缺性——随着时间推移，新增供应越来越少，若需求不减则价格获得支撑。比特币采用每4年减半。
-> **金库**（Treasury）：由多签合约锁定的代币储备，仅可通过治理决议释放。LightDAO设有两类金库：投资金库（持有LIGHT，投资执行时销毁）和稳定金库（持有USDC，用于支付投资对价和运营开支）。
-> **通缩**（Deflation）：代币总供应量或流通量持续减少的过程。LightDAO通过四种机制实现通缩：投资执行销毁、子代币兑换销毁、Gas费销毁（50%）、利润回购销毁。
-> **死亡螺旋**（Death Spiral）：代币价格下跌→矿工收益缩水→矿工退出→网络安全性/贡献度下降→信心进一步丧失→价格继续下跌的恶性循环。第5.12节的分级干预机制专为阻断此循环而设计。
-> **子代币**（Sub-token）：每完成一次企业投资后按规则发行的SPV收益分配请求权凭证（如收购咖啡品牌→CAFE代币）。持有子代币=持有对未来利润的分配资格，不代表股东权利或公司治理权。
-> **LP**（Liquidity Provider，流动性提供者）：向DEX流动性池注入等值两种资产（如LIGHT+USDC）的参与者，赚取交易手续费作为回报。LP是DEX正常运行的基础。
-> **VWAP**（Volume-Weighted Average Price，成交量加权平均价格）：将一段时间内的价格按每笔交易的成交量加权平均，反映真实市场成交成本。LightDAO用30天VWAP作为子代币兑换的定价基准。
-> **CAC**（Customer Acquisition Cost，用户获取成本）：获取一个有效活跃用户的平均成本。LightDAO空投计划的目标CAC为$55/留存活跃矿工（行业区间$50-200）。
-> **wLIGHT**（Wrapped LIGHT，封装LIGHT）：通过跨链桥在Ethereum或Solana上发行的LIGHT等价代币，由桥合约锁定等量原生LIGHT作为1:1储备。目的是让非Cosmos生态用户也能获取和持有LIGHT。
-> **荷兰式拍卖**（Dutch Auction）：一种"价格由高至低递减"的定价方式。卖方设定起始高价，价格随时间自动下降，直到买方在某个价格点提交认购。第一个使总认购额达到目标的价格即为最终成交价。优点是无需竞价（无gas war）、大小买家平等、天然防机器人抢跑。
-
----
-
-## 第六章：治理机制
-
-### 6.1 双维度投票模型
-
-持币权重（含声誉+层级加成，总上限+40%）+ 地址数量（1地址=1票，关联地址合并）。投票权90天有效，5枚LIGHT转账可激活。声誉加成：持币满1年+15次有效投票→最高+30%。
-
-### 6.2 动态通过率
-
-最低通过率＝50%＋（50%－实际投票率）。投票率≥50%时简单多数。
-
-### 6.3 提案参数
-
-| 类型 | 保证金 | 持币投票率 | 地址投票率 | 通过率 | 执行延迟 |
-|------|--------|-----------|-----------|--------|---------|
-| 微型 | $100 | ≥15% | ≥20% | 动态≥55% | 24h |
-| 收购型 | $500 | ≥25% | ≥30% | 动态≥60% | 72h |
-| 风投型 | $500 | ≥35% | ≥40% | 动态≥60% | 72h |
-| 重大 | $1,000 | ≥45% | ≥50% | 动态≥66% | 72h |
-| 紧急 | $2,000 | ≥50% | ≥60% | ≥75% | 非资金6h/高危1h；资金操作仍受72h时间锁 |
-
-### 6.4 提案生命周期
-
-提交资格：≥5,000枚LIGHT + 连续质押30天 + 保证金。公示72h（修订≤2次）。投票7日（快速通道48h，≤50万USDC）。否决冷却90天。生效延迟24h。
-
-**门槛说明：** 5,000枚在种子期（1万矿工）≈77天基础产出；合伙人级≈7天。治理第7月激活，早期用户有充足积累时间。
-
-### 6.5 投票激励
-
-参与有基础激励（均分），判断正确有额外加成（押注池50%）。押注区间5—500 LIGHT。抑制羊群效应：反对者即使"站错队"仍获基础激励。
-
-### 6.6 成败奖惩
-
-善意失败：退50%保证金+30天冷却。恶意失败（造假/重复）：全额没收+永久禁止。造假举证：封顶5,000 LIGHT，成立奖40%罚没金+500 LIGHT。
-
-### 6.7 财务透明
-
-链上实时仪表盘+季度财务报告+年度独立审计（TGE前须完成首次审计）+投资标的即时披露。
+> **[Terminologie dans ce chapitre]**
+> **TGE** (Token Generation Event) : moment où un token est créé et distribué pour la première fois via un contrat intelligent, généralement accompagné de la création d'un pool de liquidité initial, du prix des enchères néerlandaises et de la première transaction publique. Semblable à une introduction en bourse dans la finance traditionnelle, mais n’implique pas de cotation en bourse.
+> **Halving** (Halving) : Un mécanisme par lequel la production minière est automatiquement réduite de 50 % à chaque période fixe (2 ans/730 jours pour LightDAO). L’objectif est de créer une pénurie progressive : au fil du temps, de moins en moins de nouvelle offre s’ajoute, et si la demande ne diminue pas, les prix seront soutenus. Bitcoin adopte la réduction de moitié tous les 4 ans.
+> **Treasury** (Treasury) : réserves de jetons verrouillées par des contrats multi-signatures, qui ne peuvent être libérées que par le biais de résolutions de gouvernance. LightDAO dispose de deux types de coffres-forts : les coffres-forts d'investissement (qui contiennent LIGHT et sont détruits lorsque les investissements sont exécutés) et les coffres-forts stables (qui contiennent de l'USDC et sont utilisés pour payer la contrepartie de l'investissement et les dépenses d'exploitation).
+> **Déflation** (Déflation) : Le processus dans lequel l'offre totale ou la circulation des jetons continue de diminuer. LightDAO parvient à la déflation grâce à quatre mécanismes : exécution et destruction des investissements, échange et destruction de sous-jetons, destruction des frais de gaz (50 %), et rachat et destruction des bénéfices.
+> **Death Spiral** (Death Spiral) : les prix des jetons chutent → les revenus des mineurs diminuent → les mineurs démissionnent → la sécurité/contribution du réseau diminue → une nouvelle perte de confiance → un cercle vicieux dans lequel les prix continuent de baisser. Le mécanisme d’intervention progressive décrit à la section 5.12 est conçu pour interrompre ce cycle.
+> **Sous-token** (Sous-token) : certificat de réclamation de distribution de revenus SPV délivré conformément aux règles après la réalisation de chaque investissement d'entreprise (comme l'acquisition d'une marque de café → token CAFE). Détenir des sous-jetons = détenir des qualifications pour la distribution des bénéfices futurs et ne représente pas les droits des actionnaires ni les droits de gouvernance d'entreprise.
+> **LP** (Fournisseur de liquidités) : les participants qui injectent deux actifs de valeur égale (tels que LIGHT+USDC) dans le pool de liquidité DEX perçoivent en retour des frais de transaction. LP est la base du fonctionnement normal de DEX.
+> **VWAP** (Prix moyen pondéré par le volume) : le prix sur une période donnée est pondéré par le volume de chaque transaction, reflétant le véritable coût de transaction du marché. LightDAO utilise le VWAP de 30 jours comme référence de tarification pour l'échange de sous-jetons.
+> **CAC** (Customer Acquisition Cost, coût d'acquisition utilisateur) : Le coût moyen pour acquérir un utilisateur actif efficace. Le CAC cible du programme de largage LightDAO est de 55 $/mineurs actifs retenus (fourchette industrielle de 50 à 200 $).
+> **wLIGHT** (Wrapped LIGHT, encapsulated LIGHT) : jetons équivalents LIGHT émis sur Ethereum ou Solana via des ponts inter-chaînes, et une quantité égale de LIGHT native est verrouillée par le contrat de pont sous forme de réserve 1:1. Le but est de permettre aux utilisateurs de l’écosystème non-Cosmos d’obtenir et de conserver la LUMIÈRE.
+> **Dutch Auction** (Dutch Auction) : Une méthode de tarification dans laquelle le prix diminue de haut en bas. Le vendeur fixe un prix de départ élevé et le prix diminue automatiquement au fil du temps jusqu'à ce que l'acheteur soumette un abonnement à un certain niveau de prix. Le premier prix auquel le montant total de la souscription atteint l'objectif est le prix final de la transaction. L’avantage est qu’aucun appel d’offres n’est requis (pas de guerre du gaz), que les acheteurs de toutes tailles sont égaux et qu’il est naturellement résistant à la préemption des robots.
 
 ---
 
-## 第七章：权力制衡与角色定义
+## Chapitre 6 : Mécanisme de gouvernance
 
-### 7.1 初始监护人
+### 6.1 Modèle de vote bidimensionnel
 
-权限仅限文档/格式/官网信息。任期≤24月。须指定备选监护人（连续30天无法签名→自动接管）。同时失能→48h紧急投票指定临时管理人。
+Poids de détention de la devise (y compris réputation + bonus de niveau, limite supérieure totale +40%) + nombre d'adresses (1 adresse = 1 vote, les adresses associées sont fusionnées). Les droits de vote sont valables 90 jours et peuvent être activés en transférant 5 LIGHT. Bonus de réputation : Détention de la monnaie pendant 1 an + 15 votes valides → jusqu'à +30%.
 
-### 7.2 权力转移路线图
+### 6.2 Taux de réussite dynamique
 
-| 阶段 | 时间 | 权限 | 投资审批 |
+Taux de réussite minimum = 50 % + (50 % - taux de vote réel). Majorité simple lorsque taux de vote ≥50%.
+
+### 6.3 Paramètres de la proposition
+
+| Tapez | Marge | Taux de vote des jetons | Taux de vote sur les adresses | Taux de réussite | Retard d'exécution |
+|------|--------|-----------|---------------|--------|-------------|
+| Micro | 100 $ | ≥15% | ≥20% | Dynamique ≥55% | 24h |
+| Type d'acquisition | 500 $ | ≥25% | ≥30% | Dynamique ≥60% | 72h |
+| Type de capital-risque | 500 $ | ≥35% | ≥40% | Dynamique ≥60% | 72h |
+| Majeur | 1 000 $ | ≥45% | ≥50% | Dynamique ≥66% | 72h |
+| Urgence | 2 000 $ | ≥50% | ≥60% | ≥75% | Non-financement 6h/à haut risque 1h ; les opérations en capital restent soumises à un blocage horaire de 72 heures |
+
+### 6.4 Cycle de vie de la proposition
+
+Qualification de soumission : ≥5 000 LIGHT + 30 jours consécutifs de gage + dépôt. Annonce publique 72h (révisée ≤ 2 fois). Le vote a lieu dans un délai de 7 jours (48h pour le fast track, ≤500 000 USDC). Veto au refroidissement pendant 90 jours. L'efficacité est retardée de 24 heures.
+
+**Description du seuil :** 5 000 pièces au stade d'amorçage (10 000 mineurs) ≈ 77 jours de production de base ; niveau partenaire ≈ 7 jours. La gouvernance sera activée au septième mois et les premiers utilisateurs disposeront d'un temps d'accumulation suffisant.
+
+### 6.5 Incitations au vote
+
+Il existe une incitation de base à la participation (voire au partage) et un bonus supplémentaire au jugement correct (50 % du pool de paris). Misez sur la gamme 5-500 LIGHT. Supprimez l'effet grégaire : les adversaires reçoivent toujours des incitations de base même s'ils font « partie de la mauvaise équipe ».
+
+### 6.6 Récompenses et pénalités en cas de succès ou d'échec
+
+Échec de bonne foi : remboursement de l'acompte de 50 % + temps de recharge de 30 jours. Défaillance malveillante (contrefaçon/répétition) : montant total confisqué + bannissement permanent. Preuve de fraude : plafonné à 5 000 LIGHT, 40% de malus de bonus d'établissement + 500 LIGHT.
+
+### 6.7 Transparence financière
+
+Tableau de bord en temps réel sur la chaîne + rapport financier trimestriel + audit indépendant annuel (le premier audit doit être réalisé avant TGE) + divulgation en temps réel des objectifs d'investissement.
+
+---
+
+## Chapitre 7 : Contrôles et contrepoids du pouvoir et définition des rôles
+
+### 7.1 Tuteur initial
+
+Les autorisations sont limitées aux informations sur le document/format/site officiel. Durée ≤ 24 mois. Un tuteur alternatif doit être désigné (impossible de signer pendant 30 jours consécutifs → prise en charge automatique). Invalidité simultanée → Vote d'urgence 48h pour désigner un gérant intérimaire.
+
+### 7.2 Feuille de route pour le transfert de puissance
+
+| Scène | Temps | Autorisations | Approbation d'investissement |
 |------|------|------|---------|
-| 创世期 | 0—6月 | 监护人（非资金类） | 监护人+社区多签3/5 |
-| 过渡期 | 7—12月 | 监护人+核心贡献者联名 | 同上+核心贡献者 |
-| 成熟期 | 13—24月 | 治理委员会3/5 | 常规双维度投票 |
-| 自治期 | 25月+ | 全体持有者 | 同成熟期 |
+| Période de création | 0-6 mois | Gardien (non financier) | Gardien + communauté multi-signature 3/5 |
+| Période de transition | Juillet-décembre | Guardian + contributeur principal signés conjointement | Comme ci-dessus + contributeur principal |
+| Période d'échéance | 13-24 mois | Comité de gouvernance 3/5 | Vote bidimensionnel régulier |
+| Période d'autonomie | 25 mois + | Tous les titulaires | Même période d'échéance |
 
-### 7.3 治理委员会
+### 7.3 Comité de gouvernance
 
-五人分权（轮值主席/财务/技术/社区/密钥），季度轮换，任期6月可连任1次。竞选质押50,000 LIGHT + 100地址联名。决策≥3人且覆盖≥3职位。
+Le pouvoir est réparti entre cinq personnes (président tournant/finances/technologie/communauté/clé), à rotation trimestrielle, et le mandat est de six mois et peut être réélu une fois. La campagne promet 50 000 signatures conjointes LIGHT + 100 adresses. La prise de décision implique ≥3 personnes et couvre ≥3 postes.
 
-**门槛说明：** 50,000枚在种子期≈合伙人67天（2.2月）；成长期≈672天（22月）。委员会第13月首选举，早期合伙人可达。
+**Description du seuil :** 50 000 pièces au stade d'amorçage ≈ 67 jours (2,2 mois) pour les partenaires ; au stade de croissance ≈ 672 jours (22 mois). La première élection du comité au 13ème mois est ouverte aux premiers partenaires.
 
-### 7.4 影子委员会
+### 7.4 Comité fantôme
 
-仅限"违法/制裁/重大欺诈"临时暂停。72h内须全体追认（反对>60%→解除）。连续2次被否决→自动弹劾解散。
+Suspension temporaire pour « violations/sanctions/fraude majeure » uniquement. Tous les votes doivent être ratifiés dans les 72 heures (opposition > 60 % → rejetée). Rejeté deux fois de suite → automatiquement mis en accusation et dissous.
 
-### 7.5—7.6 竞选验证与密钥预案
+### 7.5—7.6 Vérification de la campagne et plan clé
 
-SimHash>80%取消资格；AI内容须补充说明；缺席质询扣20%得票。密钥分片备份+季度健康检查+7天公示判定+投票更换。
-
----
-
-## 第八章：信任与安全机制
-
-### 8.1 五大安全机制
-
-时间锁72h（紧急提案不可豁免资金操作）；多签3/5；季度轮换≤2届；造假罚没100%；全交易上链。
-
-### 8.2 保险基金
-
-成功投资利润的**10%**计提。理赔须独立报告+DAO 66%赞成+单次≤池20%。补充来源：造假罚没金的30%。定位"部分缓冲"非全额保障。
-
-### 8.3 极端预案
-
-监管黑天鹅→IPFS+移除管理员权限；欺诈→影子委员会暂停（72h追认）+保险基金+SPV仲裁；死亡螺旋→5.12节机制；合约漏洞→多签暂停+迁移投票；验证者集体作恶→BFT容忍<1/3，超过则链暂停+紧急投票迁移。
+SimHash>80 % de disqualification ; Le contenu de l’IA doit être complété par des explications ; 20% des votes seront déduits pour les questions absentes. Sauvegarde des fragments de clé + bilan de santé trimestriel + annonce publique sur 7 jours + remplacement du vote.
 
 ---
 
-## 第九章：投资运营与退出策略
+## Chapitre 8 : Mécanisme de confiance et de sécurité
 
-### 9.1 投资标的筛选与规模
+### 8.1 Cinq mécanismes de sécurité majeurs
 
-**投资规模分阶段成长轨迹（公式：金库剩余×15%×LIGHT价格）：**
+Blocage horaire 72h (les propositions d'urgence ne sont pas exemptées d'opérations en capital) ; multi-signature 3/5 ; rotation trimestrielle ≤ 2 séances ; Pénalité de 100 % en cas de fraude ; toutes les transactions se font sur la chaîne.
 
-| 阶段 | LIGHT价格 | 金库初始期单笔上限 | 适配标的 | 行业对标 |
-|------|----------|-----------------|---------|---------|
-| 启动期(Y1-2) | $0.02—$0.05 | $255万—$637万 | 单店/小型连锁、天使轮 | 微型PE |
-| 成长期(Y3-5) | $0.05—$0.30 | $637万—$3,825万 | 区域连锁30-200店、Seed-A轮 | Lower Middle Market PE |
-| 成熟期(Y5-8) | $0.30—$1.00 | $3,825万—$1.275亿 | 跨国连锁/中型科技、B-C轮 | Middle Market PE |
-| 规模期(Y8+) | $1.00+ | $1.275亿+ | 大型收购、Pre-IPO | 大型PE/成长期VC |
+### 8.2 Fonds d'assurance
 
-### 9.2 投资决策流程
+**10 %** des bénéfices d'investissement réussis sont accumulés. Les réclamations doivent être déclarées de manière indépendante + DAO 66 % en faveur + simple ≤ pool 20 %. Source complémentaire : 30 % de l'amende pour contrefaçon. Le positionnement "tampon partiel" n'est pas une protection complète.
 
-项目发现（≥5,000 LIGHT）→独立尽调→72h公示→双维度投票→24/72h执行。
+### 8.3 Plan extrême
 
-### 9.3 退出与利润分配
+Supervision cygne noir → IPFS + suppression des droits administrateur ; fraude → suspension du comité fantôme (72h de ratification) + fonds d'assurance + arbitrage SPV ; spirale de la mort → mécanisme de la section 5.12 ; vulnérabilité du contrat → suspension multi-signatures + vote de migration ; validateurs faisant collectivement le mal → tolérance BFT <1/3, si dépassée, la chaîne sera suspendue + migration de vote d'urgence.
 
-年度分红：**40%**子代币持有者 / **30%**稳定金库 / **20%**回购LIGHT销毁 / **10%**保险基金。
-退出收益：**70%**稳定金库 / **30%**回购销毁。
+---
 
-### 9.4 投资纪律
+## Chapitre 9 : Opérations d'investissement et stratégies de sortie
 
-| 规则 | 内容 |
+### 9.1 Sélection et échelle des objectifs d'investissement
+
+** Trajectoire de croissance étape par étape de l'échelle d'investissement (formule : excédent de trésorerie × 15 % × prix LIGHT) : **
+
+| Scène | prix LUMIÈRE | Limite de transaction unique pendant la période initiale du coffre-fort | Objectifs d'adaptation | Analyse comparative de l'industrie |
+|------|----------|--------|----------|--------------|
+| Période de démarrage (Y1-2) | 0,02 $—0,05 $ | 2,55 millions de dollars – 6,37 millions de dollars | Magasin unique/petite chaîne, ange rond | MicroPE |
+| Stade de croissance (Y3-5) | 0,05 $ à 0,30 $ | 6,37 millions de dollars – 38,25 millions de dollars | Chaîne régionale 30-200 magasins, cycle Seed-A | PE du marché intermédiaire inférieur |
+| Stade de maturité (Y5-8) | 0,30 $ à 1,00 $ | 38,25 millions de dollars – 127,5 millions de dollars | Chaîne multinationale/technologie de taille moyenne, ronde B-C | PE du marché intermédiaire |
+| Période d'échelle (Y8+) | 1,00 $+ | 127,5 millions de dollars+ | Acquisitions à grande échelle, pré-IPO | PE/VC à grande échelle en phase de croissance |
+
+### 9.2 Processus de prise de décision en matière d'investissement
+
+Découverte du projet (≥5 000 LIGHT) → due diligence indépendante → annonce publique 72h → vote bidimensionnel → exécution 24/72h.
+
+### 9.3 Sortie et répartition des bénéfices
+
+Dividende annuel : **40 %** détenteurs de sous-jetons / **30 %** coffre-fort stable / **20 %** rachat de LIGHT pour destruction / **10 %** fonds d'assurance.
+Revenu de sortie : **70 %** Stable Vault / **30 %** Rachat et brûlage.
+
+### 9.4 Discipline en matière d'investissement
+
+| Règles | Contenu |
 |------|------|
-| 单笔销毁上限 | 金库剩余×15%（初始8.5亿×15%=1.275亿枚） |
-| 单一标的 | ≤金库总价值25% |
-| 行业集中 | ≤组合40% |
-| 地域集中 | ≤组合30% |
-| 稳定金库储备 | TGE时$500万（拍卖），第24月前达$800万 |
-| 冷静期 | 连续2次失败→180天 |
+| Limite de destruction unique | Coffre-fort restant × 15 % (850 millions × 15 % initiaux = 127,5 millions de pièces) |
+| Cible unique | ≤25% de la valeur totale du coffre-fort |
+| Concentration industrielle | ≤40% du portefeuille |
+| Concentration géographique | ≤30% du portefeuille |
+| Réserves de trésorerie stables | 5 millions de dollars au TGE (enchères), atteignant 8 millions de dollars au 24e mois |
+| Délai de réflexion | 2 échecs consécutifs → 180 jours |
 
-**金库容量：** 8.5亿枚×$0.10=$8,500万（初始总容量）；×$0.30=$2.55亿；×$1.00=$8.5亿。15%单笔上限使投资节奏与价格正相关。
+**Capacité du coffre-fort :** 850 millions de pièces × 0,10 $ = 85 millions de dollars (capacité totale initiale) ; × 0,30 $ = 255 millions de dollars ; × 1,00 $ = 850 millions de dollars. La limite de 15 % par transaction unique rend le rythme d'investissement positivement lié au prix.
 
-> **【本章术语】**
-> **EBITDA**（Earnings Before Interest, Taxes, Depreciation and Amortization，息税折旧摊销前利润）：衡量企业核心经营盈利能力的指标，排除了财务结构（利息）、税务政策（税）、会计选择（折旧/摊销）的干扰，便于跨企业、跨行业比较。EBITDA margin = EBITDA ÷ 营业收入。
-> **DCF**（Discounted Cash Flow，现金流折现法）：将企业未来预期现金流按一定折现率换算为当前价值的估值方法。适用于现金流稳定的成熟企业（如消费连锁），不适用于尚无盈利的早期科技公司。
-> **IPO**（Initial Public Offering，首次公开募股）：企业首次在证券交易所公开发行股票并上市交易。对LightDAO而言，被投企业IPO是增长引擎标的的主要退出路径之一。
-> **Pre-IPO**：企业在正式上市前的最后一轮私募融资，通常估值已接近上市后水平，风险低于早期轮次但回报倍数也较低。
-> **TWAP执行**（Time-Weighted Average Price Execution）：将大额回购订单拆分为多笔小额订单，在一段时间内均匀执行，以避免单笔大单对市场价格造成冲击。LightDAO规定单笔回购不超过日均交易量的5%。
-
----
-
-## 第十章：路线图
-
-| 阶段 | 时间 | 核心目标 | 关键里程碑 | 前置条件 |
-|------|------|---------|-----------|---------|
-| 筹备期 | 2026年Q4 | 法律实体+团队+资金到位 | 开曼/BVI实体注册完成；技术合伙人或开发团队签约；战略投资者意向确认（2-3家）；启动资金≥$15万到位 | 创始人确定身份公开方式；完成BP和Pitch Deck |
-| 开发期 | 2027年Q1—Q2 | 核心系统开发 | 10个智能合约模块开发完成；PWA前端开发完成；7个验证者测试网部署；内部Alpha测试通过 | 开发团队到位；需求文档（技术Spec）定稿 |
-| 审计与测试期 | 2027年Q3 | 安全性与合规性验证 | 独立安全审计报告发布（≥1家顶级机构）；法律合规意见书发布（MLM+证券法）；5万并发压力测试通过；反作弊系统误报率<2%；治理投票演练完成 | 合约开发冻结（Code Freeze）；审计费用到位 |
-| TGE与主网上线 | 2027年Q4 | 代币发行+网络启动 | 荷兰式拍卖完成（目标$1,500万）；主网上线（≥10验证者）；挖矿平台公开开放；DEX流动性池建立；种子空投发放 | 审计通过；验证者≥7（硬性底线）；拍卖合约部署 |
-| 信仰构建期 | 2028年Q1（TGE后第1-3月） | 3—5万种子用户 | 活跃矿工突破3万；首次治理投票演练；社区多语言频道建立（英/中/西/葡/菲）；首份月度社区报告发布 | TGE完成；社区运营团队到位 |
-| 价值锚定期 | 2028年Q2—Q3（TGE后第4-9月） | 首笔投资+过渡期治理 | 首个投资提案通过（第4-6月内适用创世期多签审批；第7月起适用过渡期联名审批）；首笔SPV交割完成；验证者开放竞选（第7月起）；首份季度财务报告发布 | 稳定金库USDC≥$500万；投资标的尽调完成 |
-| 治理成熟期 | 2028年Q4—2029年Q1（TGE后第10-15月） | 委员会选举+去中心化过渡 | 治理委员会首次选举（第13月）；进入成熟期（委员会3/5决策）；wLIGHT跨链桥上线；CEX上市申请提交；开发者资助计划启动 | 活跃矿工≥10万；≥100个地址联名候选人 |
-| 生态扩张期 | 2029年Q2起（TGE后第16月+） | 规模化复制 | 活跃矿工突破20—50万；完成2—3笔投资；首笔利润回流验证；LIGHT回购销毁启动 | 治理委员会运转正常；投资模式已验证 |
-| 成熟运营期 | 2029年Q4起（TGE后第25月+） | 飞轮自转+完全自治 | 进入自治期（全体持有者重大提案）；投资组合累计部署≥$3,000万；通缩数据公开可验证 | 治理完全去中心化 |
-
-**路线图设计原则：**
-
-- **审计先于TGE：** 绝不在未完成独立安全审计的情况下发行代币。这是用户资金安全的基本保障。
-- **验证者先于用户：** 主网上线时验证者≥10个（BFT容错f≥3），确保网络不会因单点故障停摆。
-- **投资先于扩张：** 首笔投资成功并产生可验证的利润回流后，方进入规模化扩张。避免"先圈人后找项目"的本末倒置。
-- **时间缓冲：** 每个阶段预留20-30%时间缓冲。技术开发、审计修复、法律流程均可能超预期，路线图不应是"最乐观情景"。
-
-**与白皮书发布日（2026年8月4日）的关系：** 白皮书于2026年8月发布，作为项目愿景和技术设计的公开声明。实际执行从2026年Q4开始（筹备期），TGE目标为2027年Q4。白皮书发布与TGE之间约14个月的间隔用于团队组建、开发、审计和合规准备。
+> **[Terminologie dans ce chapitre]**
+> **EBITDA** (bénéfice avant intérêts, impôts, dépréciation et amortissement) : indicateur qui mesure la rentabilité des opérations principales d'une entreprise, en éliminant l'interférence de la structure financière (intérêts), de la politique fiscale (fiscalité) et des choix comptables (dépréciation/amortissement), facilitant les comparaisons entre entreprises et entre secteurs. Marge d'EBITDA = EBITDA ÷ résultat opérationnel.
+> **DCF** (Discounted Cash Flow, méthode des flux de trésorerie actualisés) : méthode de valorisation qui convertit les flux de trésorerie futurs attendus de l'entreprise en la valeur actuelle à un certain taux d'actualisation. Il convient aux entreprises matures disposant de flux de trésorerie stables (telles que les chaînes de consommation), mais pas aux entreprises technologiques en démarrage qui ne sont pas encore rentables.
+> **IPO** (Initial Public Offer) : première fois qu'une entreprise émet publiquement des actions en bourse et est cotée à la négociation. Pour LightDAO, l’introduction en bourse des sociétés investies est l’une des principales voies de sortie pour les moteurs de croissance.
+> **Pré-IPO** : Dernier tour de table de financement en capital-investissement avant la cotation officielle de la société. Habituellement, la valorisation est proche du niveau post-IPO, le risque est inférieur à celui des tours précédents mais le multiple de rendement est également inférieur.
+> **TWAP Execution** (Time-Weighted Average Price Execution) : divisez les ordres de rachat de gros montant en plusieurs ordres de petit montant et exécutez-les uniformément sur une période de temps pour éviter l'impact d'un seul ordre important sur le prix du marché. LightDAO stipule qu'un seul rachat ne doit pas dépasser 5 % du volume quotidien moyen des transactions.
 
 ---
 
-## 第十一章：社区文化与开发者生态
+## Chapitre 10 : Feuille de route
 
-### 11.1 四条价值观
+| Phases | Temps | Objectifs fondamentaux | Étapes clés | Conditions préalables |
+|------|------|---------|---------------|-------------|
+| Période de préparation | T4 2026 | Entité juridique + équipe + fonds en place | Enregistrement de l'entité Caïman/BVI terminé ; partenaire technique ou équipe de développement signé ; intention stratégique de l'investisseur confirmée (2-3 entreprises) ; capital de démarrage ≥ 150 000 $ en place | le fondateur détermine la méthode de divulgation de l'identité ; achèvement du BP et du Pitch Deck |
+| Période de développement | T1-T2 2027 | Développement du système de base | 10 modules de contrats intelligents ont été développés ; Le développement frontal de PWA est terminé ; 7 réseaux de test de vérificateurs ont été déployés ; Les tests Alpha internes ont réussi | Équipe de développement en place ; document d'exigences (spécifications techniques) finalisé |
+| Période d'audit et de tests | T3 2027 | Vérification de sécurité et de conformité | Publication d'un rapport d'audit de sécurité indépendant (≥1 institution de premier plan) ; publication de la lettre d'avis de conformité juridique (MLM + droit des valeurs mobilières) ; 50 000 tests de résistance simultanés réussis ; taux de faux positifs du système anti-triche <2 % ; exercice de vote sur la gouvernance terminé | Gel du développement des contrats (Code Freeze); frais d'audit en place |
+| TGE et réseau principal en ligne | T4 2027 | Émission de jetons + lancement du réseau | Enchères néerlandaises terminées (objectif de 15 millions de dollars) ; réseau principal en ligne (≥10 validateurs) ; plateforme minière ouverte au public ; Pool de liquidité DEX établi ; parachutage de graines émis | Audit réussi ; validateurs ≥7 (résultat ferme); déploiement du contrat d'enchères |
+| Période de construction des croyances | T1 2028 (1er au 3ème mois après TGE) | 30 000 à 50 000 utilisateurs de semences | Les mineurs actifs dépassaient les 30 000 ; premier exercice de vote sur la gouvernance ; création d'une chaîne communautaire multilingue (anglais/chinois/espagnol/portugais/Philippines) ; premier rapport communautaire mensuel publié | TGE terminé ; équipe d'opérations communautaires en place |
+| Période d'ancrage de la valeur | T2-T3 de 2028 (4ème au 9ème mois après TGE) | Premier investissement + gouvernance de la période transitoire | Première proposition d'investissement adoptée (l'approbation multi-signature pendant la période de genèse s'applique du 4ème au 6ème mois ; l'approbation conjointe pendant la période transitoire s'applique à partir du 7ème mois) ; la première livraison SPV est terminée ; les validateurs sont ouverts à l'élection (à partir du 7ème mois) ; le premier rapport financier trimestriel est publié | trésorerie stable USDC≥5 millions de dollars ; la vérification diligente des objectifs d'investissement est terminée |
+| Période de maturité de la gouvernance | 2028 T4-2029 T1 (10ème au 15ème mois après TGE) | Élection du comité + transition décentralisation | Première élection du comité de gouvernance (13ème mois) ; Saisie de la période d'échéance (décision 3/5 du comité) ; Le pont à chaînes croisées wLIGHT est mis en ligne ; La demande d'inscription au CEX est soumise ; Le plan de financement des développeurs démarre | Mineurs actifs ≥ 100 000 ; ≥ 100 adresses cocandidats |
+| Période d'expansion écologique | A partir du T2 2029 (16ème mois + après TGE) | Réplication à grande échelle | Les mineurs actifs dépassaient 200 000 à 500 000 ; 2-3 investissements ont été réalisés ; la première vérification du rapatriement des bénéfices ; Le rachat et la destruction de LIGHT ont commencé | Le comité de gouvernance fonctionne normalement ; le modèle d'investissement a été vérifié |
+| Période d'exploitation mature | A partir du T4 2029 (25ème mois + après TGE) | Rotation du volant + autonomie complète | Entrée en période d’autonomie (propositions majeures de tous les titulaires) ; déploiement cumulatif du portefeuille d'investissement ≥ 30 millions de dollars ; les données sur la déflation sont publiquement vérifiables | La gouvernance est complètement décentralisée |
 
-- **透明优于完美** ——有瑕疵的公开，胜过完美的隐藏。所有金库流动、投资决策、治理投票永久上链可查。
-- **渐进优于激进** ——小步快跑，持续迭代。首笔投资从$200-500万起步，验证模式后再扩大规模。
-- **责任优于权利** ——权力与义务对等。治理委员会成员须质押50,000 LIGHT并公开施政纲领，失职则罚没。
-- **多元优于同质** ——不同声音是系统的免疫力。双维度投票（持币+地址）确保巨鲸和散户都有话语权。
+**Principes de conception de la feuille de route :**
 
-### 11.2 陪审团制度
+- **Audit avant TGE :** Les jetons ne seront jamais émis sans avoir effectué un audit de sécurité indépendant. C'est la garantie fondamentale de la sécurité des fonds des utilisateurs.
+- **Les vérificateurs passent avant les utilisateurs :** Lorsque le réseau principal sera en ligne, il y aura ≥10 vérificateurs (tolérance aux pannes BFT f≥3), garantissant que le réseau ne s'arrêtera pas en raison d'un seul point de défaillance.
+- **L'investissement précède l'expansion :** Ce n'est qu'une fois que le premier investissement est réussi et génère un bénéfice vérifiable que nous pouvons entrer dans une expansion à grande échelle. Évitez de mettre la charrue avant les bœufs en « faisant circuler les gens d'abord et trouvant les projets ensuite ».
+- **Tampon de temps :** Réservez un tampon de temps de 20 à 30 % pour chaque étape. Le développement technologique, les réparations d’audit et les processus juridiques peuvent tous dépasser les attentes, et la feuille de route ne devrait pas être un « scénario des plus optimistes ».
 
-| 维度 | 规则 |
+**Relation avec la date de publication du livre blanc (4 août 2026) :** Le livre blanc a été publié en août 2026 en tant que déclaration publique de la vision et de la conception technique du projet. La mise en œuvre effective débutera au quatrième trimestre 2026 (période préparatoire) et l'objectif du TGE est le quatrième trimestre 2027. L'intervalle d'environ 14 mois entre la publication du livre blanc et le TGE a été utilisé pour la formation, le développement, l'audit et la préparation de la conformité de l'équipe.
+
+---
+
+## Chapitre 11 : Culture communautaire et écologie des développeurs
+
+### 11.1 Quatre valeurs
+
+- **La transparence vaut mieux que la perfection** - Il vaut mieux révéler les imperfections que cacher la perfection. Tous les flux de trésorerie, décisions d'investissement et votes de gouvernance sont disponibles en permanence sur la chaîne.
+- **Mieux vaut progresser que radical** - Faites de petits pas et continuez à répéter. Le premier investissement débutera entre 2 et 5 millions de dollars, et l'échelle sera élargie après vérification du modèle.
+- **Les responsabilités valent mieux que les droits** - Les droits et les obligations sont égaux. Les membres du comité de gouvernance doivent promettre 50 000 LIGHT et divulguer leur programme politique. S’ils ne remplissent pas leurs fonctions, ils seront condamnés à une amende.
+- **La diversité vaut mieux que l'homogénéité** - Les différentes voix sont l'immunité du système. Le vote bidimensionnel (pièce + adresse) garantit que les baleines et les investisseurs particuliers ont leur mot à dire.
+
+### 11.2 Système de jury
+
+| Dimensions | Règles |
 |------|------|
-| 组成 | 随机抽取12名持有≥10,000枚LIGHT且无违规记录的用户 |
-| 任期 | 30天，届满后重新随机抽取 |
-| 职责 | 审理反作弊处罚申诉、提案造假指控、社区争议 |
-| 流程 | 被处罚用户可在72小时内提交证据；陪审团须在48小时内作出裁决 |
-| 裁决标准 | 12人中≥8人（2/3多数）同意方可维持或撤销处罚 |
-| 回避 | 与当事方存在邀请关系或同一IP段的陪审员自动替换 |
-| 报酬 | 任期内每日获得5 LIGHT的陪审服务补贴（从生态基金列支） |
+| Composition | Sélectionnez au hasard 12 utilisateurs détenant ≥10 000 LIGHT et n'ayant aucun casier judiciaire |
+| Terme | 30 jours, sera tiré au sort à nouveau après expiration |
+| Responsabilités | Écoutez les plaintes relatives aux sanctions anti-triche, les accusations de fraude aux propositions et les conflits communautaires |
+| Processus | Les utilisateurs sanctionnés peuvent soumettre des preuves dans les 72 heures ; le jury doit rendre son verdict dans les 48 heures |
+| Normes de jugement | ≥8 personnes sur 12 (majorité 2/3) doivent accepter de maintenir ou révoquer la sanction |
+| Évitement | Remplacement automatique des jurés ayant une relation d'invitation avec les parties ou étant dans la même plage IP |
+| Rémunération | Recevez une subvention quotidienne de service de juré de 5 LIGHT pendant le mandat (déboursée par le fonds écologique) |
 
-### 11.3 开发者生态计划
+### 11.3 Plan Ecologique Aménageur
 
-| 模块 | 内容 | 资金来源 | 申请方式 |
+| Module | Contenu | Sources de financement | Comment postuler |
 |------|------|---------|---------|
-| 开发者资助（Grants） | 面向在LightDAO链上构建dApp、工具、基础设施的团队，单个资助$5—50万等值LIGHT | 生态发展基金（线性释放期二） | 提交提案→技术审核官评估→治理投票（微型提案流程） |
-| SDK与API | 提供JavaScript/TypeScript SDK、REST API、WebSocket接口，降低第三方开发门槛 | 技术审核官主导开发 | 开源，GitHub公开 |
-| 黑客松 | 每季度举办一次线上黑客松，奖金池$10万等值LIGHT | 生态发展基金 | 公开报名，无门槛 |
-| 漏洞赏金（Bug Bounty） | 核心合约漏洞赏金计划，单个有效漏洞奖励$1,000—$50,000（按严重度分级） | 保险基金 + 生态发展基金 | 通过Immunefi或自建平台提交 |
-| CosmWasm合约市场 | 鼓励第三方部署智能合约，Gas费收入的20%回流生态金库支持开发者 | Gas费分配（见4.5节） | 自动，无需申请 |
+| Financement des développeurs (subventions) | Pour les équipes créant des dApps, des outils et des infrastructures sur la chaîne LightDAO, une subvention unique de 5 à 500 000 $ équivalente à LIGHT | Fonds de développement écologique (phase de libération linéaire 2) | Soumettre une proposition → Évaluation du réviseur technique → Vote sur la gouvernance (processus de micro-proposition) |
+| SDK et API | Fournissez des interfaces JavaScript/TypeScript SDK, REST API et WebSocket pour abaisser le seuil de développement tiers | L'agent d'examen technique dirige le développement | Open source, public sur GitHub |
+| Hackathon | Un hackathon en ligne est organisé chaque trimestre, avec une cagnotte de 100 000 $ équivalent à LIGHT | Fonds de développement écologique | Inscription ouverte, sans seuil |
+| Prime aux bogues | Programme de bug bounty du contrat principal, récompense entre 1 000 $ et 50 000 $ pour une seule vulnérabilité valide (classée en fonction de la gravité) | Fonds d'Assurance + Fonds de Développement Ecologique | Soumettre via Immunefi ou une plateforme auto-construite |
+| Marché des contrats CosmWasm | Encouragez les tiers à déployer des contrats intelligents, et 20 % des revenus des redevances gaz seront reversés au trésor écologique pour soutenir les développeurs | Répartition des frais de gaz (voir section 4.5) | Automatique, aucune application requise |
 
-### 11.4 多语言与本地化策略
+### 11.4 Stratégie multilingue et de localisation
 
-| 维度 | 规划 |
+| Dimensions | Planification |
 |------|------|
-| 平台语言 | 首发支持英语、中文、西班牙语、葡萄牙语、菲律宾语；第6个月起增加法语、阿拉伯语、斯瓦希里语、印尼语 |
-| 治理语言 | 提案和竞选纲领接受任何语言提交，系统提供机器翻译+社区人工校对 |
-| 社区运营 | 按语言设立独立社区频道（Discord/Telegram），各频道配备本地化社区联络志愿者 |
-| 文档翻译 | 白皮书及核心文档由社区翻译志愿者完成，翻译贡献计入"内容贡献"行为加成（5%） |
-| 本地化资助 | 生态发展基金中预留10%（4,000万枚）专项用于本地化社区建设和翻译激励 |
+| Langue de la plateforme | Prend initialement en charge l'anglais, le chinois, l'espagnol, le portugais et le philippin ; Le français, l'arabe, le swahili et l'indonésien seront ajoutés à partir du 6ème mois |
+| Langage de gouvernance | Les propositions et les plateformes de campagne sont acceptées dans n'importe quelle langue, et le système fournit une traduction automatique + une relecture du manuel communautaire |
+| Opérations communautaires | Établir des chaînes communautaires indépendantes (Discord/Telegram) par langue, et chaque chaîne est équipée de bénévoles de liaison communautaire localisés |
+| Traduction de documents | Les livres blancs et les documents de base sont complétés par des traducteurs bénévoles de la communauté, et les contributions à la traduction sont incluses dans le bonus de comportement « Contribution au contenu » (5 %) |
+| Financement de la localisation | 10 % (40 millions de pièces) du fonds de développement écologique sont réservés au renforcement de la communauté de localisation et aux incitations à la traduction |
 
 ---
 
-## 第十二章：团队与顾问
+## Chapitre 12 : Équipe et consultants
 
-### 12.1 核心角色定义
+### 12.1 Définition du rôle principal
 
-| 角色 | 职责 | 背景要求 | 披露方式 |
+| Rôle | Responsabilités | Exigences de fond | Méthodes de divulgation |
 |------|------|---------|---------|
-| 初始监护人/项目发起人 | 部署初始合约、维护文档、协调早期运营 | 区块链行业≥3年经验，有智能合约部署或DeFi协议运营记录 | TGE前公开真实身份或提供第三方身份验证报告（如公证人签名+链上消息验证） |
-| 技术负责人 | 合约架构设计、开发团队管理、审计对接 | Cosmos SDK/CosmWasm开发经验，有生产链部署记录 | 同上 |
-| 投资负责人 | 标的筛选、尽调协调、SPV设立、退出管理 | 私募股权/风险投资行业经验，有已完成退出案例 | 同上 |
-| 合规顾问 | 法律架构设计、监管对接、MLM合规意见 | 持有美国/欧盟/开曼执业资格的律师 | 公开律所名称（个人姓名除非本人同意否则不公开） |
+| Gardien initial/parrain du projet | Déployer les contrats initiaux, conserver les documents et coordonner les premières opérations | ≥ 3 ans d'expérience dans l'industrie de la blockchain, avec déploiement de contrats intelligents ou enregistrements d'opérations de protocole DeFi | Divulguez votre véritable identité avant TGE ou fournissez un rapport de vérification d'identité d'un tiers (tel qu'une signature de notaire + une vérification de message en chaîne) |
+| Responsable technique | Conception d'architecture contractuelle, gestion d'équipe de développement, docking d'audit | Expérience de développement Cosmos SDK/CosmWasm, historique de déploiement de la chaîne de production | Comme ci-dessus |
+| Responsable investissement | Ciblage cible, coordination des due diligences, création de SPV, gestion des sorties | Expérience dans le secteur du capital-investissement/capital-risque, avec dossiers de sortie complétés | Comme ci-dessus |
+| Consultant en conformité | Conception de structure juridique, arrimage réglementaire, conseil en conformité MLM | Avocat avec qualifications aux États-Unis/UE/Caïmans | Nom du cabinet d'avocats public (le nom personnel ne sera pas divulgué sauf si j'accepte) |
 
-### 12.2 顾问委员会
+### 12.2 Conseil consultatif
 
-- 由3—5名独立顾问组成，涵盖：DePIN技术、跨境投资合规、社区运营、消费行业；
-- 顾问以LIGHT代币形式获得咨询报酬（从战略运营基金"服务换代币"部分列支），锁仓12个月；
-- 顾问名单在TGE前公开，并接受社区质询（去中心化文字质询会，见7.5节）；
-- 顾问不得同时担任治理委员会成员（利益冲突隔离）。
+- Composé de 3 à 5 consultants indépendants, couvrant : la technologie DePIN, la conformité des investissements transfrontaliers, les opérations communautaires et les industries de consommation ;
+- Les consultants reçoivent une rémunération de conseil sous forme de tokens LIGHT (décaissés sur la partie « Service Token Exchange » du fonds de fonctionnement stratégique), et le poste est verrouillé pendant 12 mois ;
+- La liste des consultants est rendue publique avant le TGE et est ouverte aux enquêtes communautaires (réunion décentralisée d'enquête de texte, voir section 7.5) ;
+- Les conseillers ne peuvent pas être simultanément membres du comité de gouvernance (ségrégation des conflits d'intérêts).
 
-### 12.3 团队承诺与约束
+### 12.3 Engagement et contraintes de l'équipe
 
-| 约束 | 规则 |
+| Contraintes | Règles |
 |------|------|
-| 代币锁仓 | 核心团队持有的LIGHT（含战略运营基金分配）须锁仓12个月，解锁后线性释放36个月 |
-| 出售限制 | 初始监护人在任期内（≤24个月）不得出售通过任何渠道获得的LIGHT（含空投、奖励、薪酬） |
-| 利益冲突 | 团队成员的利益冲突须在任命时完整披露（是否持有其他DAO代币、是否与潜在投资标的存在关联） |
-| 未披露后果 | 未披露利益冲突一经查实，永久禁止参与治理，已解锁代币的50%罚没至保险基金 |
-| 替换机制 | 核心角色离职或失能时，由治理委员会（成立前由初始监护人+备选监护人）指定继任者，须经社区公示72小时无异议 |
+| Verrouillage des jetons | LIGHT (y compris l'allocation stratégique des fonds de fonctionnement) détenu par l'équipe de base doit être bloqué pendant 12 mois et libéré de manière linéaire pendant 36 mois après son déverrouillage |
+| Restrictions de vente | Le tuteur initial n'est pas autorisé à vendre la LUMIÈRE obtenue par quelque canal que ce soit (y compris les parachutages, les récompenses et les compensations) pendant la durée de son mandat (≤ 24 mois) |
+| Conflit d'intérêts | Les conflits d'intérêts des membres de l'équipe doivent être entièrement divulgués au moment de la nomination (qu'ils détiennent d'autres jetons DAO, qu'ils soient liés à des cibles d'investissement potentielles) |
+| Conséquences du défaut de divulgation | Une fois le défaut de divulgation d'un conflit d'intérêt vérifié, vous serez définitivement interdit de participer à la gouvernance, et 50% des tokens débloqués seront confisqués au fonds d'assurance |
+| Mécanisme de remplacement | Lorsqu'un rôle principal quitte ou devient incapable, le comité de gouvernance (tuteur initial + tuteur alternatif avant l'établissement) désignera un successeur, qui devra être annoncé publiquement par la communauté pendant 72 heures sans objection |
 
-### 12.4 核心贡献者薪酬（战略运营基金20%部分）
+### 12.4 Rémunération des contributeurs principaux (20 % du fonds de fonctionnement stratégique)
 
-- 总额：5,000万枚LIGHT（占总量2%）
-- 覆盖人数：3—5人
-- 释放规则：12月cliff + 36月线性（即第13个月起每月释放约115.7万枚）
-- 里程碑绑定：每季度由治理委员会（成立前由初始监护人+独立第三方）确认里程碑达成后方可释放当季额度
-- 披露规则：仅披露总额和释放规则，不公开个人姓名和单人额度（保护隐私，同时通过链上多签地址可验证总额不超发）
+- Montant total : 50 millions de LIGHTs (soit 2% du montant total)
+- Nombre de personnes couvertes : 3 à 5 personnes
+- Règles de sortie : décembre cliff + 36 mois linéaires (soit environ 1,157 million de pièces seront libérées chaque mois à partir du 13ème mois)
+- Obligation de jalon : Chaque trimestre, le comité de gouvernance (tuteur initial + tiers indépendant avant établissement) confirme que le jalon est atteint avant que le quota trimestriel puisse être débloqué.
+- Règles de divulgation : seuls le montant total et les règles de libération sont divulgués, et les noms personnels et les quotas d'une seule personne ne sont pas divulgués (pour protéger la vie privée, et en même temps, le montant total peut être vérifié via l'adresse multi-signature sur la chaîne que le montant total n'est pas dépassé)
 
 ---
 
-## 第十三章：风险提示与免责声明
+## Chapitre 13 : Avertissement sur les risques et clause de non-responsabilité
 
-### 13.1 风险提示
+### 13.1 Avertissement sur les risques
 
-| 风险类型 | 说明 | 缓解措施 |
+| Type de risque | Descriptif | Mesures d'atténuation |
 |---------|------|---------|
-| 市场风险 | LIGHT价格可能出现大幅波动，历史价格不代表未来表现。TGE初期流动性有限，价格可能剧烈波动 | 荷兰式拍卖公平定价；TGE后72小时±50%熔断；防死亡螺旋四级干预机制 |
-| 项目风险 | 投资标的可能亏损，风投项目可能失败，本金可能全部损失。PE/VC行业历史平均失败率约50-70%（单笔） | 双引擎分散（70%现金流+30%增长）；单一标的≤25%；行业≤40%；地域≤30%；保险基金10%计提 |
-| 技术风险 | 智能合约可能存在未被发现的漏洞；浏览器兼容性可能影响挖矿体验；跨链桥可能被攻击 | TGE前独立审计+形式化验证；Bug Bounty $1K-$50K；72小时时间锁；多签暂停机制 |
-| 监管风险 | 各国及地区监管政策可能发生变化，可能导致部分功能受限或特定区域用户无法参与 | 开曼 SPV 架构；默认零验证（核验由持牌第三方在其服务侧承担）；前端 IPFS 镜像抗审查；不面向特定国家营销 |
-| 流动性风险 | 子代币在早期可能缺乏足够交易深度；LIGHT在TGE初期可能面临抛售压力 | 子代币AMM初始流动性（发行量6%）；30天转让锁定期；团队/投资者12月cliff+36月线性 |
-| 稀释风险 | 随活跃矿工增长，人均挖矿收益将自然稀释（BaseReward分母增大） | 设计意图：早期参与者承担更高风险获得更高回报；后期用户可通过邀请分成加速积累；治理门槛动态下调 |
-| 运营风险 | 被投企业经营管理可能不达预期；SPV运营依赖第三方董事；投资团队可能流失 | SPV章程约束+独立董事；DAO可投票更换董事；SIAC/ICC仲裁条款；关键人保险（探索中） |
-| 跨链桥风险 | wLIGHT跨链桥由第三方运营，桥合约漏洞可能导致资产损失（历史上跨链桥是最大单点损失来源） | 桥上线前独立审计；桥接资产不超过总供应量5%；风险披露；用户可选择仅使用原生链 |
-| 验证者风险 | 验证者集体离线或作恶可能导致链暂停出块，所有用户操作（挖矿、投票、转账）暂时不可用 | Tendermint BFT容忍<1/3作恶；验证者≥21个（f=6）；Slashing惩罚；紧急迁移投票机制 |
+| Risque de marché | Les prix du LIGHT peuvent fluctuer considérablement et les prix historiques ne représentent pas les performances futures. TGE a une liquidité initiale limitée et les prix peuvent fluctuer violemment | Prix ​​équitables aux enchères néerlandaises ; ±50 % des disjoncteurs 72 heures après TGE ; mécanisme d'intervention à quatre niveaux en spirale anti-mort |
+| Risque du projet | La cible d'investissement peut subir des pertes, le projet de capital-risque peut échouer et tout le capital peut être perdu. Le taux d'échec moyen historique du secteur PE/VC est d'environ 50 à 70 % (accord unique) | Décentralisation bi-moteur (70% de cash-flow + 30% de croissance) ; cible unique ≤ 25 % ; industrie ≤ 40 % ; région ≤ 30 % ; Provision de 10% pour les fonds d'assurance |
+| Risques techniques | Les contrats intelligents peuvent présenter des vulnérabilités non découvertes ; la compatibilité du navigateur peut affecter l'expérience de minage ; les ponts à chaînes croisées peuvent être attaqués | Audit indépendant + vérification formelle devant TGE ; Bounty contre les bogues de 1 000 $ à 50 000 $ ; Verrouillage horaire de 72 heures ; mécanisme de suspension multi-signatures |
+| Risques réglementaires | Les politiques réglementaires dans divers pays et régions peuvent changer, ce qui peut entraîner des fonctions limitées ou l'impossibilité pour les utilisateurs de régions spécifiques de participer | Structure SPV des Caïmans ; vérification du zéro par défaut (la vérification est effectuée par un tiers agréé du côté du service) ; Le miroir IPFS frontal est résistant à la censure ; non commercialisé dans des pays spécifiques |
+| Risque de liquidité | Le sous-jeton peut ne pas avoir une profondeur de négociation suffisante au début ; LIGHT pourrait faire face à une pression de vente au début de TGE | La liquidité initiale du sous-token AMM (6% de l'émission) ; Période de blocage du transfert de 30 jours ; Équipe/investisseur Cliff 12 mois + linéaire 36 mois |
+| Risque de dilution | À mesure que le nombre de mineurs actifs augmente, les revenus miniers par habitant seront naturellement dilués (le dénominateur BaseReward augmente) | Intention de conception : les premiers participants prennent des risques plus élevés pour obtenir des rendements plus élevés ; les utilisateurs ultérieurs peuvent accélérer l'accumulation grâce au partage d'invitations ; le seuil de gouvernance est abaissé de manière dynamique |
+| Risque opérationnel | Le fonctionnement et la gestion de l'entreprise investie peuvent ne pas répondre aux attentes ; Les opérations du SPV s'appuient sur des administrateurs tiers ; l'équipe d'investissement pourrait être perdue | Restrictions de la charte SPV + administrateurs indépendants ; DAO peut voter pour remplacer les administrateurs ; Clauses d'arbitrage SIAC/ICC ; assurance personne clé (en cours d'exploration) |
+| Risques de pont inter-chaînes | Le pont inter-chaînes wLIGHT est exploité par un tiers et les lacunes du contrat de pont peuvent entraîner des pertes d'actifs (historique, les ponts inter-chaînes sont la plus grande source de pertes) | Audit indépendant avant la mise en ligne du pont ; les actifs de relais ne dépassent pas 5 % de l’offre totale ; divulgation des risques ; les utilisateurs peuvent choisir d'utiliser uniquement la chaîne native |
+| Risque du validateur | Les validateurs se déconnectant collectivement ou commettant des actes malveillants peuvent entraîner la suspension de la production de blocs par la chaîne, et toutes les opérations des utilisateurs (extraction, vote, transferts) sont temporairement indisponibles | Tendermint BFT tolère <1/3 du mal ; validateurs ≥ 21 (f=6) ; Pénalité coupante ; mécanisme de vote d'urgence sur la migration |
 
-### 13.2 免责声明
+### 13.2 Avis de non-responsabilité
 
-- LIGHT 及子代币不是证券，不具有内在价值，价格可能归零。本白皮书不构成任何形式的证券发行文件、投资要约或投资建议。
-- 协议收入分配取决于底层资产的实际经营表现，历史数据不代表未来收益。任何关于投资回报的描述均为前瞻性估计，非承诺。
-- 用户须自行承担私钥丢失、泄露导致的全部损失，协议不提供找回服务。使用第一层（Passkey）或第二层（社交恢复）钱包可降低此风险，但不消除。
-- 本协议面向全球用户（受限于适用法律法规），用户应自行确认其所在司法辖区对加密资产、DAO组织及SPV收益凭证的法律态度，并确保参与行为合法合规。
-- 本白皮书中的前瞻性陈述（包括路线图、收益模型、通缩估算、投资规模预测）均为基于当前假设的预测，实际结果可能因市场、技术、监管、团队执行等因素而重大偏离。
-- 邀请激励为单层分成机制，不构成多层次营销或金字塔计划。但用户仍应自行确认其所在司法辖区对推荐奖励的法律态度。
-- 参与LightDAO生态的最低年龄为18岁（或所在司法辖区的法定成年年龄，以较高者为准）。未成年人不得参与挖矿、治理或投资。
+- LIGHT et les sous-tokens ne sont pas des titres, n'ont aucune valeur intrinsèque et le prix peut revenir à zéro. Ce livre blanc ne constitue aucune forme de document d’émission de titres, d’offre d’investissement ou de conseil en investissement.
+- La répartition des revenus de l'accord dépend de la performance opérationnelle réelle des actifs sous-jacents et les données historiques ne représentent pas les revenus futurs. Toutes les descriptions des retours sur investissement sont des estimations prospectives et ne constituent pas des promesses.
+- L'utilisateur doit supporter toutes les pertes causées par la perte ou la fuite de la clé privée, et l'accord ne fournit pas de services de récupération. L’utilisation d’un portefeuille Tier 1 (Passkey) ou Tier 2 (Social Recovery) réduit ce risque, mais ne l’élimine pas.
+- Cet accord est ouvert aux utilisateurs du monde entier (sous réserve des lois et réglementations applicables). Les utilisateurs doivent confirmer l'attitude juridique à l'égard des actifs cryptés, des organisations DAO et des certificats de revenus SPV dans leurs juridictions, et s'assurer que leur participation est légale et conforme.
+- Les déclarations prospectives contenues dans ce livre blanc (y compris les feuilles de route, les modèles de revenus, les estimations de déflation, les prévisions d'échelle d'investissement) sont des prédictions basées sur des hypothèses actuelles, et les résultats réels peuvent différer considérablement en raison du marché, de la technologie, de la réglementation, de l'exécution de l'équipe et d'autres facteurs.
+- Les incitations sur invitation sont un mécanisme de partage à un seul niveau et ne constituent pas des systèmes de marketing à plusieurs niveaux ou pyramidaux. Cependant, les utilisateurs doivent toujours confirmer l'attitude légale à l'égard des récompenses de parrainage dans leur juridiction.
+- L'âge minimum pour participer à l'écosystème LightDAO est de 18 ans (ou l'âge légal de la majorité dans votre juridiction, selon la valeur la plus élevée). Les mineurs ne sont pas autorisés à participer à l’exploitation minière, à la gouvernance ou aux investissements.
 
 ---
 
-## 附录A：关键参数汇总表
+## Annexe A : Tableau récapitulatif des paramètres clés
 
-| 类别 | 参数 | 数值 |
+| Catégorie | Paramètre | Valeur |
 |------|------|------|
-| 发行 | 总量 | 25亿枚，永不增发 |
-| 发行 | 挖矿 | 40% = 10亿枚 |
-| 发行 | 投资金库 | 34% = 8.5亿枚 |
-| 发行 | 生态基金 | 16% = 4亿枚 |
-| 发行 | 战略运营 | 10% = 2.5亿枚（服务50%/融资30%/贡献者20%） |
-| 发行 | 减半周期 | 每2年 |
-| 发行 | 第一纪元日释放 | ≈68.49万枚（矿工95%=65.07万，验证者5%=3.42万） |
-| 发行 | 每区块奖励池 | ≈13.87 LIGHT |
-| 挖矿 | 贡献权重 | 带宽40%/会话30%/验证20%/稳定10% |
-| 挖矿 | 满加成 | 1.44倍 |
-| 邀请 | 布道者/大使/合伙人 | 3人10%+100L / 10人15%+500L+5% / 50人20%+2500L+10% |
-| 行为 | 四项×5% | 上限20% |
-| Gas费 | 定价机制 | USD等值锚定，每24h由预言机自动换算为LIGHT数量 |
-| Gas费 | 普通转账 | $0.001等值（@$0.05时=0.02 LIGHT） |
-| Gas费 | 治理投票 | $0.005等值（@$0.05时=0.10 LIGHT） |
-| Gas费 | 分配规则 | 50%销毁 / 30%验证者 / 20%生态金库 |
-| 通缩 | 减速/预警/底线 | ≤15亿/≤12亿/≤10亿（流通量） |
-| 通缩 | 理论上限 | 16.5亿（10+4+2.5，金库8.5亿永不流通） |
-| 治理 | 提案门槛 | ≥5,000 LIGHT + 30天质押 |
-| 治理 | 委员会质押 | 50,000 LIGHT + 100地址 |
-| 治理 | 陪审团 | 10,000 LIGHT |
-| 治理 | 押注 | 5—500 LIGHT |
-| 治理 | 声誉加成 | 1年+15次投票→+30%（总上限+40%） |
-| 投资 | 单笔上限 | 金库剩余×15%（初始1.275亿枚） |
-| 投资 | 基准可部署 | 8.5亿×$0.15×75% = $9,563万≈$1亿 |
-| 投资 | 利润分配(年度) | 40/30/20/10 |
-| 投资 | 利润分配(退出) | 70/30 |
-| 拍卖 | 目标 | $1,500万（$500万储备+$1,000万投资资本） |
-| 储备 | 稳定金库 | TGE $500万→第24月$800万 |
-| 保险 | 计提 | 利润10% |
-| 空投 | 总预算 | 5,500万枚（生态基金13.75%），CAC≈$55/留存用户 |
-| 验证者 | 初始/上限 | 21（最低10）/ 100 |
-| 验证者 | 最低质押 | 500,000 LIGHT |
-| 验证者 | TGE硬性底线 | ≥7个，否则不得上线 |
+| Émission | Montant total | 2,5 milliards de pièces, plus jamais émises |
+| Émission | Exploitation minière | 40% = 1 milliard de pièces |
+| Émission | Coffre-fort d'investissement | 34% = 850 millions de pièces |
+| Émission | Fonds écologique | 16% = 400 millions de pièces |
+| Émission | Opérations stratégiques | 10 % = 250 millions de pièces (service 50 %/financement 30 %/contributeurs 20 %) |
+| Émission | Cycle de réduction de moitié | Tous les 2 ans |
+| Émission | Sortie du jour de la première ère | ≈684 900 (mineurs 95 % = 650 700, validateurs 5 % = 34 200) |
+| Émission | Pool de récompenses par bloc | ≈13,87 LUMIÈRE |
+| Exploitation minière | Poids des contributions | Bande passante 40 %/session 30 %/vérification 20 %/stabilité 10 % |
+| Exploitation minière | Bonus complet | 1,44 fois |
+| Invitations | Évangéliste/Ambassadeur/Partenaire | 3 personnes 10%+100L/10 personnes 15%+500L+5%/50 personnes 20%+2500L+10% |
+| Comportement | Quatre articles × 5% | Limite supérieure 20% |
+| Frais de gaz | Mécanisme de tarification | Ancrage équivalent USD, automatiquement converti en quantité LUMIÈRE par l'oracle toutes les 24 heures |
+| Frais de gaz | Virement ordinaire | Équivalent à 0,001 $ (@0,05 $ = 0,02 LUMIÈRE) |
+| Frais de gaz | Vote de gouvernance | Équivalent à 0,005 $ (@0,05 $ = 0,10 LÉGER) |
+| Frais de gaz | Règles de répartition | 50% destruction / 30% validateurs / 20% trésor écologique |
+| Déflation | Ralentissement/alerte précoce/résultat | ≤1,5 milliard/≤1,2 milliard/≤1 milliard (volume de circulation) |
+| Déflation | Limite supérieure théorique | 1,65 milliard (10+4+2,5, 850 millions dans le trésor ne seront jamais distribués) |
+| Gouvernance | Seuil de proposition | ≥5 000 LIGHT + 30 jours de jalonnement |
+| Gouvernance | Jalonnement en comité | 50 000 LUMIÈRE + 100 adresses |
+| GOUVERNANCE | JURY | 10 000 LUMIÈRE |
+| Gouvernance | Paris | 5—500 LUMIÈRE |
+| Gouvernance | Bonus de réputation | 1 an +15 voix → +30% (plafond total +40%) |
+| Investissement | Limite unique | Coffre-fort restant × 15 % (127,5 millions de pièces initiales) |
+| Investissement | Déployable de base | 850 millions × 0,15 $ × 75 % = 95,63 millions $ ≈ 100 millions $ |
+| Investissement | Répartition des bénéfices (annuel) | 40/30/20/10 |
+| Investissement | Répartition des bénéfices (sortie) | 70/30 |
+| Vente aux enchères | Cible | 15 millions de dollars (réserve de 5 millions de dollars + capital investi de 10 millions de dollars) |
+| Réserves | Trésorerie stable | TGE 5 millions $ → Mois 24 8 millions $ |
+| Assurance | Bénéfice | Bénéfice 10% |
+| Largage aérien | Budget total | 55 millions (fonds écologique 13,75%), CAC≈55$/utilisateur retenu |
+| Validateurs | Initiale/Majuscule | 21 (minimum 10) / 100 |
+| Validateur | Mise minimale | 500 000 LUMIÈRE |
+| Vérificateur | Résultat net du TGE | ≥7, sinon il ne sera pas autorisé à se connecter |
 
 ---
 
-## 附录B：数值推导与校验
+## Annexe B : Dérivation numérique et vérification
 
-### B.1 挖矿产出
+### B.1 Production minière
 
-2A=10亿→A=5亿。日释放=5亿÷730=684,932≈68.49万。矿工池=684,932×95%=650,685≈65.07万。验证者=684,932×5%=34,247≈3.42万。每区块=684,932÷49,371≈13.87。校验：684,932×730=499,999,960≈5亿 ✓
+2A=1 milliard → A=500 millions. Libération quotidienne = 500 millions ÷ 730 = 684 932 ≈ 684 900. Pool minier = 684 932 × 95 % = 650 685≈650 700. Vérificateurs=684 932×5 %=34 247≈34 200. Chaque bloc = 684 932÷49 371≈13,87. Vérification : 684 932×730=499 999 960≈500 millions ✓
 
-### B.2 治理门槛可达性
+### B.2 Seuil de gouvernance d'accessibilité
 
-10万矿工基准（6.51/天，合伙人74.44/天）：提案5,000→768天/67天；委员会50,000→7,684天(21年)/672天(22月)；陪审团10,000→1,537天(4.2年)/134天(4.5月)；押注500→77天/6.7天。
+Benchmark de 100 000 mineurs (6,51/jour, partenaire 74,44/jour) : proposition 5 000→768 jours/67 jours ; comité 50 000 → 7 684 jours (21 ans)/672 jours (22 mois) ; jury 10 000 → 1 537 jours (4,2 ans)/134 jours (4,5 mois) ; pariez 500 → 77 jours/6,7 jours.
 
-种子期（1万矿工，65.07/天，合伙人744.4/天）：提案→77天(2.5月)/6.7天；委员会→768天(25月)/67天(2.2月)；陪审团→154天(5月)/13.4天。
+Période d'amorçage (10 000 mineurs, 65,07/jour, partenaires 744,4/jour) : proposition → 77 jours (2,5 mois) / 6,7 jours ; comité → 768 jours (25 mois) / 67 jours (2,2 mois) ; jury → 154 jours (5 mois) / 13,4 jours.
 
-### B.3 通缩时间线
+### B.3 Chronologie de la déflation
 
-流通量=挖矿+生态+战略(vested)−兑换−Gas−回购。金库8.5亿永不流通。
+Volume de circulation = exploitation minière + écologie + stratégie (acquise) − échange − Gaz − rachat. 850 millions du Trésor ne circuleront jamais.
 
-| 年 | 累计挖矿 | 生态 | 战略 | 兑换 | Gas | 回购 | 流通量 |
+| Année | Exploitation minière cumulative | Écologie | Stratégie | Échange | Gaz | Rachat | Circulation |
 |----|---------|------|------|------|-----|------|--------|
-| 1 | 2.50 | 2.80 | 0 | 0 | 0.01 | 0 | ≈5.29 |
-| 2 | 5.00 | 4.00 | 0.83 | 0.05 | 0.02 | 0 | ≈9.76 |
-| 3 | 6.25 | 4.00 | 1.67 | 0.20 | 0.03 | 0.05 | ≈11.64 |
-| 4 | 7.50 | 4.00 | 2.50 | 0.45 | 0.04 | 0.20 | ≈13.31(峰值) |
-| 5 | 8.13 | 4.00 | 2.50 | 0.80 | 0.05 | 0.50 | ≈13.28 |
-| 6 | 8.75 | 4.00 | 2.50 | 1.20 | 0.06 | 0.90 | ≈13.09 |
-| 7 | 9.06 | 4.00 | 2.50 | 1.60 | 0.07 | 1.40 | ≈12.49 |
-| 8 | 9.38 | 4.00 | 2.50 | 2.00 | 0.08 | 1.90 | ≈11.89 |
-| 9 | 9.53 | 4.00 | 2.50 | 2.40 | 0.09 | 2.30 | ≈11.24 |
-| 10 | 9.69 | 4.00 | 2.50 | 2.80 | 0.10 | 2.70 | ≈10.59 |
-| 11 | 9.77 | 4.00 | 2.50 | 3.10 | 0.11 | 3.00 | ≈10.06 |
-| 12 | 9.84 | 4.00 | 2.50 | 3.40 | 0.12 | 3.30 | ≈9.52 |
+| 1 | 2,50 | 2,80 | 0 | 0 | 0,01 | 0 | ≈5,29 |
+| 2 | 17h00 | 16h00 | 0,83 | 0,05 | 0,02 | 0 | ≈9,76 |
+| 3 | 6h25 | 16h00 | 1,67 | 0,20 | 0,03 | 0,05 | ≈11,64 |
+| 4 | 7h50 | 16h00 | 2,50 | 0,45 | 0,04 | 0,20 | ≈13,31(pic) |
+| 5 | 8.13 | 16h00 | 2,50 | 0,80 | 0,05 | 0,50 | ≈13,28 |
+| 6 | 8h75 | 16h00 | 2,50 | 1.20 | 0,06 | 0,90 | ≈13.09 |
+| 7 | 9.06 | 16h00 | 2,50 | 1,60 | 0,07 | 1h40 | ≈12,49 |
+| 8 | 9.38 | 16h00 | 2,50 | 2h00 | 0,08 | 1,90 | ≈11,89 |
+| 9 | 9.53 | 16h00 | 2,50 | 2h40 | 0,09 | 14h30 | ≈11,24 |
+| 10 | 9,69 | 16h00 | 2,50 | 2,80 | 0,10 | 2,70 | ≈10,59 |
+| 11 | 9.77 | 16h00 | 2,50 | 3.10 | 0,11 | 3h00 | ≈10.06 |
+| 12 | 9.84 | 16h00 | 2,50 | 3h40 | 0,12 | 3h30 | ≈9,52 |
 
-结论：峰值Y4≈13.31亿；预警线12亿约Y8触及；底线10亿约Y11-12触及；减速线15亿仅极端低销毁情景。
+Conclusion : Le pic Y4≈1,331 milliard ; la ligne d'avertissement de 1,2 milliard est touchée par Y8 ; le seuil inférieur de 1 milliard est touché par Y11-12 ; la ligne de décélération de 1,5 milliard n’est qu’un scénario de destruction extrêmement faible.
 
 ---
 
-## 附录C：审计修正日志（累计36项）
+## Annexe C : Journal de correction d'audit (36 éléments au total)
 
-含原22项（L1-5, A1-4, D1-4, M1-8, G1-3）+ 技术架构7项（T1-7）+ 本轮经济模型优化7项：
+Contient 22 éléments originaux (L1-5, A1-4, D1-4, M1-8, G1-3) + 7 éléments d'architecture technique (T1-7) + 7 éléments d'optimisation de modèle économique dans ce tour :
 
-| 编号 | 修正 |
+| Numéro | Correction |
 |------|------|
-| E-1 | 总量21亿→25亿（投资容量约束驱动） |
-| E-2 | 分配50/30/20→40/34/16/10（新增战略运营基金10%） |
-| E-3 | 荷兰拍卖$1,000万→$1,500万（初始投资资本$500万→$1,000万） |
-| E-4 | 新增5.7节空投增长计划（5,500万枚，CAC $55/人） |
-| E-5 | 验证者分阶段启动（测试网7→TGE最低10/目标21→开放100） |
-| E-6 | 通缩触发线调整（14/12/10→15/12/10，适配16.5亿流通上限） |
-| E-7 | 外部引用全部替换为可验证来源（移除不可验证SSRN论文） |
+| E-1 | Montant total 2,1 milliards → 2,5 milliards (en raison des contraintes de capacité d'investissement) |
+| E-2 | Allocation 50/30/20→40/34/16/10 (10% des nouveaux fonds stratégiques de fonctionnement) |
+| E-3 | Vente aux enchères néerlandaise 10 millions de dollars → 15 millions de dollars (capital d'investissement initial 5 millions de dollars → 10 millions de dollars) |
+| E-4 | Nouveau plan de croissance du largage aérien en 5,7 sections (55 millions de pièces, CAC $55/personne) |
+| E-5 | Les vérificateurs sont lancés par étapes (Testnet 7→TGE minimum 10/Target 21→Open 100) |
+| E-6 | Ajustement de la ligne de déclenchement de la déflation (14/12/10 → 15/12/10, adapté à la limite de circulation de 1,65 milliard) |
+| E-7 | Remplacez toutes les citations externes par des sources vérifiables (supprimez les articles SSRN invérifiables) |
 
 ---
 
-## 附录D：术语速查索引
+## Annexe D : Index rapide des termes
 
-各术语的完整解释已标注于其首次出现章节末尾的【本章术语】注释块中。本索引按字母顺序列出所有术语及其所在章节，便于快速定位。
+Une explication complète de chaque terme est notée dans le bloc de commentaires [Termes de ce chapitre] à la fin du chapitre où il apparaît pour la première fois. Cet index répertorie tous les termes et leurs chapitres par ordre alphabétique pour une navigation rapide.
 
-| 术语 | 定义所在章节 |
+| Terminologie | Chapitre de définition |
 |------|------------|
-| AMM（自动做市商） | 第四章 |
-| BFT（拜占庭容错） | 第四章 |
-| CAC（用户获取成本） | 第五章 |
-| CEX（中心化交易所） | 第四章 |
-| Cosmos SDK | 第四章 |
-| CosmWasm | 第四章 |
-| DAO（去中心化自治组织） | 第二章 |
-| DCF（现金流折现法） | 第九章 |
-| DePIN（去中心化物理基础设施网络） | 第二章 |
-| DEX（去中心化交易所） | 第四章 |
-| EBITDA（息税折旧摊销前利润） | 第九章 |
-| Gas费 | 第四章 |
-| IBC（跨链通信协议） | 第三章 |
-| IPFS（星际文件系统） | 第四章 |
-| KYC（了解你的客户） | 第三章 |
-| LIGHT（原生代币） | 第四章 |
-| LP（流动性提供者） | 第五章 |
-| Lower Middle Market PE（下游中端私募股权） | 第二章 |
-| Merkle Tree（默克尔树） | 第四章 |
-| MiFID II（欧盟金融工具市场指令II） | 第三章 |
-| MLM（多层次营销） | 第三章 |
-| PII（个人可识别信息） | 第三章 |
-| PoC（贡献证明） | 第四章 |
-| PoS（权益证明） | 第四章 |
-| PoW（工作量证明） | 第四章 |
-| Pre-IPO | 第九章 |
-| PWA（渐进式Web应用） | 第四章 |
-| Reg D / Reg S（美国证券法D/S条例） | 第三章 |
-| Slashing（罚没） | 第四章 |
-| SPV（特殊目的载体） | 第二章 |
-| TGE（代币生成事件） | 第五章 |
-| TWAP（时间加权平均价格） | 第四章 |
-| TWAP执行（回购拆单） | 第九章 |
-| VWAP（成交量加权平均价格） | 第五章 |
-| wLIGHT（封装LIGHT） | 第五章 |
-| ZK-KYC（零知识证明KYC） | 第三章 |
-| 子代币（Sub-token） | 第五章 |
-| 死亡螺旋（Death Spiral） | 第五章 |
-| 减半（Halving） | 第五章 |
-| 金库（Treasury） | 第五章 |
-| 荷兰式拍卖（Dutch Auction） | 第五章 |
-| 预言机（Oracle） | 第四章 |
+| AMM (teneur de marché automatisé) | Chapitre 4 |
+| BFT (tolérance aux pannes byzantine) | Chapitre 4 |
+| CAC (Coût d'Acquisition Client) | Chapitre 5 |
+| CEX (échange centralisé) | Chapitre 4 |
+| SDK Cosmos | Chapitre 4 |
+| CosmWasm | Chapitre 4 |
+| DAO (Organisation Autonome Décentralisée) | Chapitre 2 |
+| DCF (Méthode des Flux de Trésorerie Actualisés) | Chapitre 9 |
+| DePIN (réseau d'infrastructure physique décentralisé) | Chapitre 2 |
+| DEX (échange décentralisé) | Chapitre 4 |
+| EBITDA (bénéfice avant intérêts, impôts et amortissements) | Chapitre 9 |
+| Frais de gaz | Chapitre 4 |
+| IBC (Protocole de communication inter-chaînes) | Chapitre 3 |
+| IPFS (système de fichiers interplanétaire) | Chapitre 4 |
+| KYC (Connaissez votre client) | Chapitre 3 |
+| LIGHT (jeton natif) | Chapitre 4 |
+| LP (Fournisseur de Liquidités) | Chapitre 5 |
+| PE du marché intermédiaire inférieur (capital-investissement du marché intermédiaire en aval) | Chapitre 2 |
+| Arbre Merkle | Chapitre 4 |
+| MiFID II (Directive européenne sur les marchés d'instruments financiers II) | Chapitre 3 |
+| MLM (marketing multi-niveaux) | Chapitre 3 |
+| PII (informations personnellement identifiables) | Chapitre 3 |
+| PoC (Preuve de contribution) | Chapitre 4 |
+| PoS (preuve de participation) | Chapitre 4 |
+| PoW (preuve de travail) | Chapitre 4 |
+| Pré-IPO | Chapitre 9 |
+| PWA (Application Web Progressive) | Chapitre 4 |
+| Reg D / Reg S (Règlement D/S du U.S. Securities Act) | Chapitre 3 |
+| Tranchant | Chapitre 4 |
+| SPV (véhicule à usage spécial) | Chapitre 2 |
+| TGE (événement de génération de jetons) | Chapitre 5 |
+| TWAP (Prix moyen pondéré dans le temps) | Chapitre 4 |
+| Exécution TWAP (ordres de rachat et de fractionnement) | Chapitre 9 |
+| VWAP (Prix moyen pondéré par le volume) | Chapitre 5 |
+| wLIGHT (LUMIÈRE encapsulée) | Chapitre 5 |
+| ZK-KYC (KYC à preuve zéro) | Chapitre 3 |
+| Sous-jeton | Chapitre 5 |
+| Spirale de la mort | Chapitre 5 |
+| Réduire de moitié | Chapitre 5 |
+| Trésor (Trésor) | Chapitre 5 |
+| Vente aux enchères néerlandaise | Chapitre 5 |
+| Oracle | Chapitre 4 |
 
 ---
 
-**白皮书全文完**
+**Fin du livre blanc complet**
 
-**版权说明：** 本文档为开源社区文档，可自由转载，但须保留完整内容。
+**Déclaration de droits d'auteur :** Ce document est un document communautaire open source et peut être librement reproduit, mais le contenu complet doit être conservé.
 
 ---
 
-# 附录:主网已验证参数与地址(V2.4 实况)
+# Annexe : Paramètres et adresses vérifiés sur le réseau principal (V2.4 live)
 
-## A. §4.5 Gas 经济实测参数
-- min-gas-price 公式:`(TransferUsdTarget / UsdPerLight) × 10^6 / RefTransferGas`;当前 TransferUsdTarget=$0.001、UsdPerLight=$0.05、RefTransferGas=100000 → **0.2 ulight/gas**
-- 分配实测(总 fee 300000 ulight):销毁 150000(50%)/ 金库 60000(20%)/ 验证者 90000(30%),精确匹配
-- 销毁地址:`wasm1aeaty43lrlt9rmkyxujkkfuddnsfye6az4htcu`(确定性死地址)
-- 金库:`treasury_multisig` 合约(3/5 多签;链上 `signers` 查询返回 5 名签名人,阈值本身不在查询接口内)
+## A. §4.5 Paramètres mesurés économiques du gaz
+- formule de prix minimum du gaz : `(TransferUsdTarget / UsdPerLight) × 10^6 / RefTransferGas` ; TransferUsdTarget actuel = 0,001 $, UsdPerLight = 0,05 $, RefTransferGas = 100 000 → **0,2 ulight/gas**
+- Mesure de distribution (frais totaux 300 000 ulight) : destruction 150 000 (50 %)/trésor 60 000 (20 %)/vérificateur 90 000 (30 %), correspondance exacte
+- Adresse de destruction : `wasm1aeaty43lrlt9rmkyxujkkfuddnsfye6az4htcu` (adresse morte déterministe)
+- Trésorerie : contrat `treasury_multisig` (multi-signature 3/5 ; la requête `signers` sur la chaîne renvoie 5 signataires, le seuil lui-même n'est pas dans l'interface de requête)
 
-## B. 核心合约地址
-见仓库 `docs/MAINNET_STATUS.md`(light_token / mining_reward / governance / treasury_multisig / oracle_twap / vesting 等 10 合约)。
+## B. Adresse principale du contrat
+Voir le référentiel `docs/MAINNET_STATUS.md` (light_token / mining_reward / gouvernance / treasury_multisig / oracle_twap / vesting et 10 autres contrats).
 
-## C. 遗留 denom(stake)处置
-genesis 误配 mint_denom=stake 已归零停止增发;存量 stake(约 2.56e11 微单位)为无用途遗留,处置方案(兑换/销毁)待治理提案,不影响 ulight 经济模型。
+## C. Élimination de la dénomination (mise) héritée
+Genesis Mismatch mint_denom=la mise a été réinitialisée à zéro et les émissions supplémentaires ont été arrêtées ; la mise existante (environ 2,56e11 micro-unités) est laissée sans objet, et le plan de cession (échange/destruction) est en attente de propositions de gouvernance et n'affectera pas le modèle économique ulight.
 
-## D. §4.4 vesting 实况
-vault 250,000,000 LIGHT,3 个独立 schedule:75M(cliff 0)/ 100M(cliff 1 年)/ 75M(cliff 2 年),已上链。
+## D. §4.4 acquisition en direct
+Voûte 250 000 000 LUMIÈRE, 3 horaires indépendants : 75M (falaise 0)/ 100M (falaise 1 an)/ 75M (falaise 2 ans), déjà sur la chaîne.
 
-## E. 安全实践
-- 主网升级为 x/upgrade 治理 + 全节点同块高协调 + auto-swap 看门狗,测试网端到端彩排后执行
-- Passkey 种子仅密文存储;Shamir 分片本地不保存
-- 合约挖矿根提交阈值 5(链上每笔 `submit_root` 事件实测 threshold=5;当前 5 个授权账户在签,7 席为设计目标);反女巫/反作弊见 §4.8
+## E. Pratiques de sécurité
+- Le réseau principal est mis à niveau vers la gouvernance x/upgrade + coordination élevée de tous les nœuds dans le même bloc + chien de garde d'échange automatique, exécuté après la répétition de bout en bout du réseau de test
+- Les graines de clé d'accès stockent uniquement le texte chiffré ; Les fragments Shamir ne les stockent pas localement.
+- Seuil de soumission de racine d'extraction de contrat 5 (seuil de mesure réel = 5 pour chaque événement `submit_root` sur la chaîne ; actuellement 5 comptes autorisés sont en train de signer et 7 sièges sont l'objectif de conception) ; pour l'anti-sorcière/anti-triche, voir §4.8

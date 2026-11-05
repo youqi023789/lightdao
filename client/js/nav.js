@@ -158,9 +158,15 @@
       if (!l || l.indexOf("zh") === 0) return zh;
       /* 不含汉字就说明这句已经是译文（或本来就是英文/数字），再拿去问词典只会记成假缺口 */
       if (typeof zh !== "string" || !/[\u4e00-\u9fff]/.test(zh)) return zh;
-      if (typeof window.__ldT === "function") {
-        var v = window.__ldT(zh);
-        if (v && v !== zh) return v;
+      /* 直接读词典，不走 __ldT：__ldT 会把"查不到"记成硬缺口，
+         而日语译文本身就是汉字，二次运行时拿「採掘」去问中文键 → 白记 7 条假缺口。
+         导航是闭合小词表，读词典命中就用，没命中就退回 NAVEN 并计数（那个计数才是我们要盯的）。 */
+      var M = window.LDI18N;
+      if (M) {
+        var e = M[zh];
+        var short = l.split("-")[0];
+        var v = e && (e[short] || e[l]);
+        if (typeof v === "string" && v && v !== zh) return v;
       }
       if (typeof zh === "string" && NAVEN[zh]) { window.__ldNavFallback++; return NAVEN[zh]; }
     } catch (e) { }

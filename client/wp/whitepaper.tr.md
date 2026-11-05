@@ -3,7 +3,7 @@
 
 # LightDAO Teknik İncelemesi V2.4 (2026-09-26 Mainnet Canlı Sürümü)
 
-> Bu sürüm, önde "ana ağ dağıtımı canlı" ve "sürüm değişiklikleri" bulunan V2.0 tasarım taslağını temel alır ve doğrulanmış zincir içi parametrelerle eklenir. Ana metin (Bölüm 1~12) V2.0 tasarımına göre değişmeden kalır; Gerçek durumdan herhangi bir sapma durumunda, bu bölümün önceki notları ve ekleri geçerli olacaktır.
+> Bu sürüm, önde "ana ağ dağıtımı canlı" ve "sürüm değişiklikleri" bulunan V2.0 tasarım taslağını temel alır ve doğrulanmış zincir içi parametrelerle eklenir. Ana metin (Bölüm 1~12) V2.0 tasarımına göre değişmeden kalır; Fiili durumdan herhangi bir sapma durumunda, bu bölümün önceki notları ve ekleri geçerli olacaktır.
 
 ## 版本变更(V2.0 → V2.4)
 - 2026-11-04 勘误（不改版本号，仍为 V2.4）：附录《主网已验证参数与地址》原写金库 `treasury_multisig` 为 5/7 多签，与正文 §7.2/§7.3/§8.1 的 3/5 冲突，也与链上实测冲突（`{"signers":{}}` 返回 5 个地址，不存在 7 名签名人）；已按正文统一为 3/5，并标明阈值本身不在合约查询接口内、只能由部署记录佐证。同节原写挖矿根为「5/7 验证者多签」，实测可证的只有阈值 5（115 笔 `submit_root` 事件 threshold 全部为 5，实际签名账户恰好 5 个），7 席授权是设计目标、当前无链上证据，已改为相应措辞。
@@ -85,7 +85,7 @@ Yasal konumlandırma: LIGHT ve alt tokenler, ekolojik katkı noktaları ve SPV g
 | Doğrulayıcılar | Başlangıç ​​21 (minimum 10), üst sınır 100 |
 | İlk finansman | Hollanda açık artırması 15 milyon $ + TGE öncesi stratejik finansman 2,25-3,75 milyon $ |
 
-**Farklılaşma:** Şu ​​anda "sıfır eşikli web madenciliği"ni "uyumlu SPV varlık yatırımı" ile birleştiren tek proje. Pi Ağından (pratik bir yardımcı program yok), Helyumdan (200 ABD dolarının üzerinde donanım gerektirir) ve geleneksel DAO'dan (yüksek eşikli elit yönetişim) farklıdır.
+**Farklılaşma:** Şu ​​anda "sıfır eşikli web madenciliği"ni "uyumlu SPV varlık yatırımı" ile birleştiren tek proje. Pi Network'ten (pratik bir yardımcı program yok), Helium'dan (200 $'dan fazla donanım gerektirir) ve geleneksel DAO'dan (yüksek eşikli elit yönetişim) farklıdır.
 
 **Yol haritası:** 2026 4. Çeyrek hazırlığı → 2027 1. Çeyrek-2. Çeyrek geliştirme → 3. Çeyrek denetim testi → 4. Çeyrek TGE çevrimiçi → 2028 1. Çeyrek tohum kullanıcıları → 2. Çeyrek-3. Çeyrek ilk yatırım → 4. Çeyrek sonrası ölçek.
 
@@ -111,7 +111,7 @@ Elena, São Paulo'da emekli bir öğretmendir ve aylık maaşı yaklaşık 3.000
 
 Üçü dünya çapındaki sıradan insanların büyük çoğunluğunu temsil ediyor: Katılma kararları ve istekleri var ancak düşük eşikli, şeffaf ve uygun maliyetli katılım kanallarından yoksunlar.
 
-LightDAO bu insanlar için tasarlanmıştır. İnternet özellikli bir cihaz, bir tarayıcı ve az miktarda parayla ekolojik inşaata katılabilirsiniz; Uyumlu bir SPV yapısı aracılığıyla kullanıcılar aynı zamanda yüksek kaliteli şirketlerin nakit akışı dağılımına ve ileri teknoloji projelerinin erken büyümesine dolaylı olarak erişme fırsatına da sahip oluyor.
+LightDAO bu insanlar için tasarlanmıştır. İnternet özellikli bir cihaz, bir tarayıcı ve küçük bir miktar parayla ekolojik inşaata katılabilirsiniz; Uyumlu bir SPV yapısı aracılığıyla kullanıcılar aynı zamanda yüksek kaliteli şirketlerin nakit akışı dağılımına ve ileri teknoloji projelerinin erken büyümesine dolaylı olarak erişme fırsatına da sahip oluyor.
 
 ---
 
@@ -138,7 +138,7 @@ Dünya Eşitsizlik Laboratuvarı'nın 2026 Dünya Eşitsizlik Raporu'na (bundan 
 
 Büyük küresel yargı bölgelerinde özel sermaye ve risk sermayesi için katı nitelikli yatırımcı eşikleri vardır:
 
-**Amerika Birleşik Devletleri (SEC Düzenlemesi D, Kural 501, 17 CFR §230.501):** Nitelikli yatırımcılar (Akredite Yatırımcılar) aşağıdaki koşullardan birini karşılamalıdır - bir bireyin yıllık geliri 200.000 ABD Dolarından az olmamalıdır (veya eşiyle birlikte toplam 300.000 ABD Dolarından az olmamalıdır) ve art arda iki yıl boyunca standardı karşılamış olmalıdır; veya net servetin (birincil ikamet yeri hariç) 1.000.000 ABD Dolarından az olmaması.
+**Amerika Birleşik Devletleri (SEC Düzenlemesi D, Kural 501, 17 CFR §230.501):** Nitelikli yatırımcılar (Akredite Yatırımcılar) aşağıdaki koşullardan birini karşılamalıdır - bireyin yıllık geliri 200.000 ABD Dolarından az olmamalıdır (veya eşiyle birlikte toplam 300.000 ABD Dolarından az olmamalıdır) ve art arda iki yıl boyunca standardı karşılamış olmalıdır; veya net servetin (birincil ikamet yeri hariç) 1.000.000 ABD Dolarından az olmaması.
 
 **AB (MiFID II, 2014/65/AB, Ek II):** Profesyonel yatırımcılar (Profesyonel Yatırımcılar) aşağıdaki koşullardan en az ikisini karşılamalıdır: 500.000 Euro'dan az olmayan bir finansal araç yatırım portföyü; finans sektöründe en az bir yıl süreyle profesyonel bir pozisyonda bulunmak; üç ayda bir 10'dan az olmamak üzere büyük ölçekli işlemlerin gerçekleştirilmesi.
 
@@ -165,7 +165,7 @@ Aynı zamanda geleneksel borsaların başarısızlık oranı kripto para birimle
 | ABD hisse senetlerinin ömür boyu performansının yaklaşık %58'i | Aynı dönemde düşük performans gösteren Hazine bonoları | Bessembinder (2018), JFE |
 | 2025'te sıfırlanacak/ticareti durduracak token sayısı | ≈11,56 milyon | CoinGecko 2025 Yıllık Raporu |
 
-**Karşılaştırmalı Sonuç:** Kripto para birimi alanındaki kalıcı sermaye kaybı oranı, geleneksel borsaya göre çok daha yüksektir. ABD borsasındaki bireysel hisse senetlerinin yaklaşık %58'i Hazine bonolarının altında performans gösterse de yatırımcılar yine de endeks fonları aracılığıyla ortalama piyasa getirisi elde edebilirler; Kripto para piyasasında tokenlerin büyük çoğunluğu sıfıra dönüyor ve "indekslere" benzer etkili çeşitlendirme araçlarının eksikliği var.
+**Karşılaştırmalı Sonuç:** Kripto para alanındaki kalıcı sermaye kaybı oranı, geleneksel borsaya göre çok daha yüksektir. ABD borsasındaki bireysel hisse senetlerinin yaklaşık %58'i Hazine bonolarının altında performans gösterse de, yatırımcılar yine de endeks fonları aracılığıyla ortalama piyasa getirisi elde edebiliyor; Kripto para piyasasında, tokenlerin büyük çoğunluğu sıfıra dönüyor ve "indekslere" benzer etkili çeşitlendirme araçlarının eksikliği var.
 
 **Kaynak beyanı:** Bessembinder, H. (2018). "Hisse Senetleri Hazine Bonosundan Daha İyi Performans Gösteriyor mu?" *Finansal Ekonomi Dergisi*, 129(3), 440-475. Arizona Eyalet Üniversitesi. Bu makale, finans alanında oldukça fazla alıntı yapılan bir belgedir (alıntı >2.000) ve veriler, CRSP veritabanındaki 1926'dan 2016'ya kadar tüm ABD hisse senetlerini kapsamaktadır. CoinGecko'nun verileri, birçok finansal medya (Sina Finance, Phemex, RBC Crypto) tarafından rapor edilen 2025 Token Hayatta Kalma Durumu İstatistik Raporundan (Ocak 2026'da yayınlandı) gelmektedir.
 
@@ -213,7 +213,7 @@ LightDAO, zincir üstü yönetime ve yatırım yürütme taşıyıcısı olarak 
 
 **Tahsis disiplini:** Prensip olarak fonların %70'ini istikrarlı nakit akışına sahip varlıklara, %30'unu ise yüksek büyüme hedeflerine ayırmak.
 
-**Yatırım ölçeği büyüme yolu:** Tek bir yatırımın boyutu, LIGHT fiyatı ve kasa kapasitesiyle dinamik olarak büyür - başlangıç ​​dönemi (LIGHT 0,02 - 0,05 ABD Doları), topluluk düzeyinde 2,55 milyon ABD Doları - 6,37 milyon ABD Doları arasındaki küçük varlıklar için uygundur; büyüme aşaması (0,05-0,30 dolar) bölgesel zincirlere ve 6,37 milyon dolar-38,25 milyon dolarlık (Aşağı Orta Pazar kıyaslaması) PE'deki Tohum-A turlarına giriyor; olgun aşamada (0,30$-1,00$), 38,25 milyon $ ile 127,5 milyon $ arasındaki orta piyasa PE seviyesine ulaşır; ölçek aşamasında (1,00$+), büyük ölçekli satın almaları ve 127,5 milyon doları aşan halka arz öncesi yatırımları gerçekleştirebilir. Katı kısıtlamalar: tek bir işlem, yatırım hazinesinin kalan miktarının %15'ini geçmeyecektir (ayrıntılar için Bölüm 9'a bakınız).
+**Yatırım ölçeği büyüme yolu:** Tek bir yatırımın boyutu, LIGHT fiyatı ve kasa kapasitesiyle dinamik olarak büyür - başlangıç ​​dönemi (LIGHT 0,02 - 0,05 ABD Doları), topluluk düzeyinde 2,55 milyon ABD Doları - 6,37 milyon ABD Doları arasındaki küçük varlıklar için uygundur; büyüme aşaması (0,05-0,30 dolar) bölgesel zincirlere ve 6,37 milyon dolar-38,25 milyon dolarlık (Aşağı Orta Pazar kıyaslaması) PE'deki Tohum-A turlarına giriyor; olgun aşamada (0,30$-1,00$), 38,25 milyon $ ile 127,5 milyon $ arasındaki orta piyasa PE seviyesine ulaşır; ölçek aşamasında (1,00 $+), büyük ölçekli satın almalar ve 127,5 milyon $'ın üzerinde halka arz öncesi yatırımlar gerçekleştirebilir. Katı kısıtlamalar: tek bir işlem, yatırım hazinesinin kalan miktarının %15'ini geçmeyecektir (ayrıntılar için Bölüm 9'a bakınız).
 
 **İlk hedef konumlandırma ilkesi:** Belirli bir şirket adını varsaymak yerine, öncelikle bir tarama çerçevesi oluşturun - kanıtlanmış bir tek mağazalı ekonomik model, istikrarlı nakit akışı kayıtları (son üç yıldaki FAVÖK marjı %10'dan az değildir ve yıllar arası oynaklık %15'ten yüksek değildir) ve net bir bölgesel genişleme yolu gerektiren topluluk düzeyinde katı tüketici hizmetleri varlıklarına öncelik verin. Spesifik hedef topluluk önerileriyle belirlenir.
 
@@ -223,7 +223,7 @@ LightDAO, zincir üstü yönetime ve yatırım yürütme taşıyıcısı olarak 
 
 **Herkes katılabilir** - Yönetişim eşiğine ulaştıktan sonra, küçük miktarda LIGHT sahipleri de fon tahsisinin yönüne ortaklaşa karar vermek için oylamaya katılabilir.
 
-**Kurallara göre kâr paylaşımı** - Yatırım yapılan şirketlerin faaliyet kârları ve teknoloji projelerinin çıkış getirileri, zincir içi kurallara ve SPV düzenlemelerine uygun olarak dağıtılacaktır.
+**Kurallara uygun kar paylaşımı** - Yatırım yapılan şirketlerin faaliyet karları ve teknoloji projelerinin çıkış getirileri, zincir içi kurallara ve SPV düzenlemelerine uygun olarak dağıtılacaktır.
 
 ### 2.4 Slogan
 
@@ -259,7 +259,7 @@ DAO herhangi bir fiziksel kuruluşta doğrudan öz sermayeye sahip değildir. T�
 
 | Tasarım Noktaları | Açıklama |
 |-----------|------|
-| SPV Şartı | SPV'nin operasyonunun DAO |
+| SPV Şartı | SPV'nin operasyonunun DAO'nun etkin çözümüne uygun olacağı açıkça kabul edilmiştir |
 | Alt belirteçlerin yasal tanımı | Alt tokenler, yalnızca gelecekteki nakit akışına ilişkin dağıtım niteliklerini temsil eden "SPV gelir dağıtımı talep hakları sertifikalarıdır" |
 | Hissedar hakları taşımamaktadır | Kurumsal yönetim hakları, tasfiye imtiyazları veya herhangi bir hissedar hakkı taşımamaktadır |
 | SPV yöneticileri | bağımsız üçüncü şahıslar tarafından hizmet verilmektedir; DAO geçerli bir karar alarak yöneticileri değiştirebilir |
@@ -280,7 +280,7 @@ Yalnızca bir kullanıcı, düzenlemeye tabi bir üçüncü taraf hizmetini akti
 
 Temel ilkeler: **Varsayılan olarak sıfır doğrulama; doğrulama yalnızca kullanıcının düzenlenmiş hizmete aktif olarak girdiği anda gerçekleşir ve hizmet sağlayıcı tarafından karşılanır. **"Doğrulama yapılmaması" nedeniyle hiç kimse madencilik, elde tutma, devretme veya oy kullanma hakkını kaybetmeyecektir.
 
-> Teknoloji saklıdır: Belirli bir varlık türü gelecekte yeterlilik eşikleri gerektirirse, kullanıcılar kendi kimlik bilgilerini sıfır bilgi kanıtı (ZK) biçiminde tutacak ve zincir herhangi bir kimlik bilgisi olmadan yalnızca "karşılanıp karşılanmadığını" doğrulayacaktır - bu yol haritasının bir parçasıdır ve mevcut bir gereklilik değildir.
+> Teknoloji saklıdır: Gelecekte belirli bir varlık türü yeterlilik eşikleri gerektirirse, kullanıcılar kendi kimlik bilgilerini sıfır bilgi kanıtı (ZK) biçiminde tutacak ve zincir herhangi bir kimlik bilgisi olmadan yalnızca "karşılanıp karşılanmadığını" doğrulayacaktır - bu yol haritasının bir parçasıdır ve mevcut bir gereklilik değildir.
 
 ### 3.3 Vergi Sorumluluğu Beyanı
 
@@ -331,7 +331,7 @@ LightDAO'nun halka açık zinciri, "şeffaf kuralları olan ve istenildiği zama
 
 | Teknik ürünler | Seçim | Seçim esası |
 |----------|------|------------|
-| Temel çerçeve | Cosmos SDK'sı | Modüler mimari, çoklu üretim zinciri doğrulaması |
+| Temel çerçeve | Kozmos SDK'sı | Modüler mimari, çoklu üretim zinciri doğrulaması |
 | Uzlaşma mekanizması | Tendermint PoS | Anında kesinlik; blok oluşturma 1,5-2 saniye sürer; BFT hata toleransı ≤ 1/3 kötülük |
 | Akıllı Sözleşmeler | KozmWasm | WebAssembly + Rust, derleme zamanı bellek güvenliği |
 | Çapraz zincir yetenekleri | IBC protokolü | Cosmos yerel çapraz zincir standardı |
@@ -470,10 +470,10 @@ Seviye 4 yükseltmesi: L1 parametre ayarlaması (yönetim oylaması 24-72 saat) 
 
 > **[Bu bölümdeki terminoloji]**
 > **Cosmos SDK**: Geliştiricilerin yapı taşları gibi özel halka açık zincirleri birleştirmesine olanak tanıyan modüler bir blockchain geliştirme çerçevesi. Çeşitli üretim zincirleri (Cosmos Hub ve Osmosis gibi) olgunluğunu doğruladı.
-> **Tendermint PoS** (Proof of Stake, Proof of Stake): Doğrulayıcıların (bilgi işlem gücü için rekabet etmek yerine) token taahhüt ederek blok üretme hakkını elde ettiği bir fikir birliği mekanizması. "Anında kesinlik" sağlar; bir blok gönderildikten sonra geri alınamaz.
+> **Tendermint PoS** (Proof of Stake, Proof of Stake): Doğrulayıcıların (bilgi işlem gücü için rekabet etmek yerine) token taahhüt ederek blok üretme hakkını elde ettiği bir fikir birliği mekanizması. "Anında kesinlik" sağlar; bir blok işlendikten sonra geri alınamaz.
 > **BFT** (Bizans Hata Toleransı, Bizans Hata Toleransı): Dağıtılmış bir sistemde, bazı düğümlerin kötülük yapmasını veya hatalı çalışmasını tolere edebilen ve yine de doğru şekilde fikir birliğine varabilen bir mekanizma. Tendermint BFT, doğrulayıcıların 1/3'ünden fazlasının aynı anda kötü davranmasına veya çevrimdışı olmasına tolerans gösteremez.
 > **CosmWasm**: Cosmos ekosisteminin WebAssembly teknolojisine dayalı akıllı sözleşme motoru, sözleşme yazmak için Rust dilinin kullanımını destekler ve derleme zamanı belleği güvenliği özelliklerine sahiptir (arabellek taşmaları gibi yaygın güvenlik açıklarını önler).
-> **PWA** (Progressive Web App, Progressive Web App): Tarayıcı üzerinde çalışan ancak yerel benzeri bir uygulama deneyimine sahip bir web teknolojisi. Çevrimdışı önbelleğe almayı, anında bildirimleri ve uygulama mağazası aracılığıyla indirip yüklemeye gerek kalmadan ana ekrana eklemeyi destekler.
+> **PWA** (Progressive Web App, Progressive Web App): Tarayıcı üzerinde çalışan ancak yerel benzeri uygulama deneyimine sahip bir web teknolojisi. Çevrimdışı önbelleğe almayı, anında bildirimleri ve uygulama mağazası aracılığıyla indirip yüklemeye gerek kalmadan ana ekrana eklemeyi destekler.
 > **WebRTC/WebSocket**: İki tarayıcı gerçek zamanlı iletişim teknolojisi. WebRTC, P2P veri aktarımı (düğümler arasında doğrudan iletim) için kullanılır; WebSocket, istemci ile doğrulayıcı arasında uzun bir bağlantıyı (kalp atışı, ödül bildirimi) sürdürmek için kullanılır.
 > **PoC** (Katkı Kanıtı): LightDAO tarafından benimsenen teşvik mekanizması, bilgi işlem gücü rekabetine veya sermaye taahhüdüne güvenmek yerine, kullanıcılar tarafından gerçekten katkıda bulunulan ağ kaynaklarını (bant genişliği aktarımı, blok doğrulama, çevrimiçi zaman) doğrulayarak ödüller verir.
 > **Merkle Ağacı** (Merkle Ağacı): Büyük miktarda verideki belirli bir girişin bütünlüğünün etkili bir şekilde doğrulanmasına olanak tanıyan karma ağaç veri yapısı. Bu teknik inceleme, milyonlarca ışık düğümü kalp atışını tek bir Kök karmasında toplamak ve bunu zincire (O(1) depolama ek yükü) yüklemek için kullanılır.
@@ -497,14 +497,14 @@ Seviye 4 yükseltmesi: L1 parametre ayarlaması (yönetim oylaması 24-72 saat) 
 |---------|------|---------|------------------|
 | Bitcoin | 21 milyon | PoW madencilik makinesi | Anlatı referansı, eşik çok yüksek |
 | Helyum (HNT) | 223 milyon | Donanım erişim noktası 200$+ | DePIN karşılaştırması, donanımla sınırlı ölçek |
-| Filecoin (FIL) | 2 milyar | Depolama donanımı | Büyüklük bakımından birbirine en yakın olan her ikisi de "jeton karşılığında kaynaklara katkıda bulunuyor" |
+| Filecoin (FIL) | 2 milyar | Depolama donanımı | Büyüklük olarak birbirine en yakın olan her ikisi de "jeton karşılığında kaynaklara katkıda bulunuyor" |
 | Kaspa (KAS) | 28,7 milyar | PoW grafik kartı | Çok büyük, yumuşak düşüşün referans değeri var |
 | Pi Ağı | 100 milyar | Mobil tıklamalar | Olumsuz öğretim materyali: Toplam miktar çok büyük → değer algısı son derece düşük |
 
 **2,5 milyar coinin seçilmesinin temel nedeni:**
 
 1. **Yatırım kapasitesi (birincil kısıtlama):** Kasadaki 850 milyon jeton × taban fiyat 0,15 $ × %75 kullanım oranı = **95,63 milyon $ ≈ 100 milyon $** dağıtılabilir sermaye, Aşağı Orta Piyasa PE'nin minimum güvenilir eşiğine ulaşıyor. Akademik temel: Cong, Li ve Wang (2021) "Tokenomics: Dynamic Adoption and Valuation" (*Review of Financial Studies* 34(3):1105-1155, NBER w27222), platform faydasının (yatırım getirisi → geri satın alma → fiyat desteği) dağıtım genişliğinin değil, token değerinin temel itici gücü olduğunu kanıtlıyor.
-2. **Ağ rehberliği:** Çağın ilk gününde 1 milyar madeni para çıkarıldı ve 684.900 madeni para piyasaya sürüldü. 100.000 aktif madenci olduğunda kişi başına ortalama 6,51 IŞIK/gün olup, "tamsayı algısı" korunmaktadır.
+2. **Ağ rehberliği:** Çağın ilk gününde 1 milyar madeni para çıkarıldı ve 684.900 madeni para piyasaya sürüldü. 100.000 aktif madenci olduğunda kişi başına düşen ortalama 6,51 IŞIK/gün oluyor ve "tamsayı algısı" korunuyor.
 3. **Operasyonel fizibilite:** TGE öncesi geliştirme/denetim/yasal finansman açığını (1,10-2,85 milyon $) çözmek için %10 stratejik işletme fonu (250 milyon jeton). Saf topluluk modeli bu maliyeti karşılayamaz.
 4. **Deflasyon fizibilitesi:** Temel senaryoya göre 1 milyar koinin alt sınırına 11. ila 12. yıllarda ulaşılır (21 milyarlık planın 15 yıl+ süresinden %25-30 daha kısa).
 5. **Makul kıyaslama:** DePIN alanında piyasa değerine göre ilk beş proje arasında yer alan Filecoin (2 milyar) ile aynı seviye.
@@ -536,109 +536,109 @@ Seviye 4 yükseltmesi: L1 parametre ayarlaması (yönetim oylaması 24-72 saat) 
 | Stratejik finansman | %30 | 75 milyon adet | 2-3 DePIN/Cosmos ekolojik fonları veya tüketici endüstrisi stratejik partileri | Ön TGE 0,03-0,05 $'a satıldı (2,25-3,75 milyon $ artış); 12 ay uçurum + 24 ay doğrusal; tek yatırımcı ≤ toplamın %2'si |
 | Temel katkıda bulunanlar | %20 | 50 milyon jeton | 3-5 sponsor/temel oluşturucular | 12 ay uçurum + 36 ay doğrusal; üç aylık dönüm noktası değerlendirmesine dayanarak yayınlandı; dönem boyunca satış yok |
 
-**战略投资者要求：** 必须提供非资金贡献（deal flow、验证者服务、合规资源之一），纯财务投资者不接受。
+**Stratejik yatırımcı gereksinimleri:** Finansal olmayan katkılar (anlaşma akışı, doğrulama hizmetleri, uyumluluk kaynaklarından biri) sağlanmalıdır ve yalnızca finansal yatırımcılar kabul edilmez.
 
-**监管合规：** Pre-TGE sale采用Reg S（非美国投资者）+ Reg D Rule 506(c)（美国合格投资者）双轨豁免。
+**Mevzuata Uygunluk:** TGE öncesi satış, Reg S (ABD dışındaki yatırımcılar) + Reg D Kural 506(c) (ABD nitelikli yatırımcılar) ikili yol muafiyetini benimser.
 
-**核心贡献者披露规则：** 仅披露总额（5,000万枚=总量2%）和释放规则，不公开个人姓名和单人额度。角色类别公开：技术/投资/合规/社区。
+**Temel katkıda bulunanların açıklama kuralları:** Yalnızca toplam tutar (50 milyon = toplam tutarın %2'si) ve yayın kuralları açıklanır, kişisel isimler ve bireysel kotalar açıklanmaz. Açıklanan rol kategorileri: Teknoloji/Yatırım/Uyum/Topluluk.
 
-### 5.5 挖矿产出与减半计划
+### 5.5 Madencilik çıktısı ve yarıya indirme planı
 
-**推导：** 2A = 10亿 → A = 5亿（第一纪元）。日释放 = 5亿÷730 = 684,932枚 ≈ 68.49万/天。每区块 = 684,932÷49,371 ≈ 13.87 LIGHT。
+**Türetim:** 2A = 1 milyar → A = 500 milyon (İlk Çağ). Günlük sürüm = 500 milyon ÷ 730 = 684.932 parça ≈ 684.900/gün. Her blok = 684,932÷49,371 ≈ 13,87 IŞIK.
 
-**注意：** 每区块奖励池为全网共享，其中5%划拨验证者（3.42万/天），95%分配轻节点矿工（65.07万/天）。
+**Not:** Her bloğun ödül havuzu tüm ağ tarafından paylaşılır; bunun %5'i doğrulayıcılara (34.200/gün) ve %95'i hafif düğüm madencilerine (650.700/gün) tahsis edilir.
 
-| 纪元 | 时间 | 产出总量 | 日释放量 | 每区块奖励池 |
+| Çağ | Zaman | Toplam çıktı | Günlük yayın | Blok başına ödül havuzu |
 |------|------|---------|---------|------------|
-| 第1纪元 | 0—24月 | 5亿枚 | ≈68.49万 | ≈13.87 LIGHT |
-| 第2纪元 | 25—48月 | 2.5亿枚 | ≈34.25万 | ≈6.93 LIGHT |
-| 第3纪元 | 49—72月 | 1.25亿枚 | ≈17.12万 | ≈3.47 LIGHT |
-| 第4纪元 | 73—96月 | 6,250万枚 | ≈8.56万 | ≈1.73 LIGHT |
-| 第5纪元 | 97—120月 | 3,125万枚 | ≈4.28万 | ≈0.87 LIGHT |
+| 1. Çağ | 0-24 ay | 500 milyon | ≈684,900 | ≈13,87 IŞIK |
+| 2. Çağ | 25-48 ay | 250 milyon adet | ≈342,500 | ≈6,93 IŞIK |
+| 3. Çağ | 49-72 ay | 125 milyon adet | ≈171,200 | ≈3,47 IŞIK |
+| 4. Çağ | 73-96 ay | 62,5 milyon adet | ≈85,600 | ≈1,73 IŞIK |
+| 5. Çağ | 97-120 ay | 31,25 milyon adet | ≈42,800 | ≈0,87 IŞIK |
 
-**校验：** 5+2.5+1.25+0.625+0.3125+… = 5×2 = 10亿 ✓。97%在前10年完成。
+**Kontrol edin:** 5+2,5+1,25+0,625+0,3125+… = 5×2 = 1 milyar ✓. İlk 10 yılda %97'si tamamlandı.
 
-### 5.6 用户收益参考模型
+### 5.6 Kullanıcı geliri referans modeli
 
-| 网络规模 | 人均日收益 | 月收益 | 年收益 | 满加成(1.44x)月收益 |
-|---------|-----------|--------|--------|-------------------|
-| 1万矿工（种子期） | ≈65.07 | ≈1,952 | ≈23,751 | ≈2,811 |
-| 10万矿工（成长期） | ≈6.51 | ≈195.2 | ≈2,375 | ≈281.1 |
-| 100万矿工（规模期） | ≈0.65 | ≈19.5 | ≈237.5 | ≈28.1 |
+| Ağ boyutu | Kişi başına günlük gelir | Aylık gelir | Yıllık gelir | Tam kar marjı (1,44x) aylık gelir |
+|---------|-----------|--------|--------|---------|
+| 10.000 madenci (tohum aşaması) | ≈65.07 | ≈1,952 | ≈23,751 | ≈2,811 |
+| 100.000 madenci (büyüme aşaması) | ≈6,51 | ≈195,2 | ≈2,375 | ≈281.1 |
+| 1 milyon madenci (ölçek dönemi) | ≈0,65 | ≈19,5 | ≈237,5 | ≈28,1 |
 
-**合伙人级（50邀请，20%分成，满加成）：**
+**İş ortağı düzeyi (50 davetiye, %20 pay, tam bonus):**
 
-| 网络规模 | 自身(含加成) | 邀请分成 | 日综合 | 月综合 |
-|---------|------------|---------|--------|--------|
-| 1万矿工 | ≈93.7 | ≈650.7 | ≈744.4 | ≈22,332 |
-| 10万矿工 | ≈9.37 | ≈65.07 | ≈74.44 | ≈2,233 |
-| 100万矿工 | ≈0.94 | ≈6.51 | ≈7.45 | ≈223.4 |
+| Ağ ölçeği | Kendisi (bonus dahil) | Davet paylaşımı | Günlük kapsamlı | Aylık kapsamlı |
+|---------|------------|---------|--------|------------|
+| 10.000 madenci | ≈93.7 | ≈650.7 | ≈744.4 | ≈22,332 |
+| 100.000 madenci | ≈9.37 | ≈65.07 | ≈74.44 | ≈2,233 |
+| 1 milyon madenci | ≈0,94 | ≈6,51 | ≈7.45 | ≈223.4 |
 
-### 5.7 空投增长计划
+### 5.7 Airdrop Büyüme Planı
 
-**经济模型：** 空投总预算 = 目标触达用户 × 人均空投 × (1+浪费率) = 100,000 × 150 LIGHT × 1.3 ≈ 1,950万枚（获取类）+ 3,550万枚（生态类）= **5,500万枚**（占生态基金4亿的13.75%）。
+**Ekonomik model:** Toplam airdrop bütçesi = ulaşılan kullanıcı sayısı × kişi başına airdrop × (1+atık oranı) = 100.000 × 150 LIGHT × 1,3 ≈ 19,5 milyon (satın alma türü) + 35,5 milyon (ekolojik tür) = **55 milyon** (400 milyonluk ekolojik fonun %13,75'ini oluşturur).
 
-| 空投类型 | 触发条件 | 单次额度 | 预算 |
+| Airdrop türü | Tetikleme koşulları | Tek kota | Bütçe |
 |---------|---------|---------|------|
-| 首挖空投 | 首次完成4小时有效挖矿 | 50 LIGHT | 1,500万枚 |
-| 地理扩张 | 目标市场用户完成ZK-KYC | 100 LIGHT | 1,000万枚 |
-| Learn-to-Earn | 完成教育模块+测验 | 30 LIGHT | 600万枚 |
-| 治理首投 | 首次参与投票 | 20 LIGHT | 300万枚 |
-| 流动性提供 | LP注入≥$50锁仓30天 | 200 LIGHT | 1,000万枚 |
-| 内容创作 | 经社区验证的教程/翻译 | 50-200 LIGHT | 600万枚 |
-| 合作渠道 | 通过合作方注册+首挖 | 80 LIGHT | 500万枚 |
+| İlk Madencilik Airdrop'u | İlk kez 4 saatlik etkili madencilik tamamlandı | 50 IŞIK | 15 milyon adet |
+| Coğrafi genişleme | Hedef pazar kullanıcıları ZK-KYC'yi tamamlıyor | 100 IŞIK | 10 milyon adet |
+| Kazanmayı Öğrenin | Eğitim Modülünü Tamamla + Sınav | 30 IŞIK | 6 Milyon Para |
+| İlk Yönetişim Oyu | Oylamaya İlk Katılım | 20 IŞIK | 3 milyon jeton |
+| Likidite sağlanması | LP enjeksiyonu 30 gün boyunca ≥50$ kilitlenme | 200 IŞIK | 10 milyon adet |
+| İçerik oluşturma | Topluluk tarafından doğrulanmış eğitimler/çeviriler | 50-200 IŞIK | 6 milyon adet |
+| İşbirliği kanalları | Kayıt + ortaklar aracılığıyla ilk madencilik | 80 IŞIK | 5 milyon adet |
 
-**CAC验证：** 5,500万枚×$0.03 = $165万 ÷ 30,000留存活跃矿工 = **$55/人**（行业区间$50-200，处于低端）。学术依据：Zheng (2023) "Operation Dumbo Drop: To Airdrop or Not to Airdrop for Initial Coin Offering Success?" 证明活动绑定型空投留存率为纯空投的3-5倍。
+**CAC doğrulaması:** 55 milyon jeton × 0,03 ABD doları = 1,65 milyon ABD doları ÷ 30.000 tutulan aktif madenci = **55 ABD doları/kişi** (endüstri aralığı 50-200 ABD doları, alt uçta). Akademik temel: Zheng (2023) "Dumbo Drop Operasyonu: İlk Para Teklifinde Başarı için Airdrop Yapılmalı mı, Yapılmamalı mı?" olaya bağlı airdropların tutulma oranının saf airdropların 3-5 katı olduğunu kanıtlıyor.
 
-**防滥用：** 唯一浏览器指纹+ZK-KYC；每类每地址限领1次；30天锁定期；领取后30天无链上活动自动回收。
+**Kötüye kullanıma karşı koruma:** Benzersiz tarayıcı parmak izi + ZK-KYC; adres başına kategori başına 1 taleple sınırlıdır; 30 günlük kilitlenme süresi; Talepten sonraki 30 gün içinde zincir içi aktivite olmadan otomatik geri dönüşüm.
 
-### 5.8 双引擎飞轮与资金池
+### 5.8 Çift Motorlu Volan ve Sermaye Havuzu
 
-飞轮：投票→金库LIGHT销毁→USDC支付→利润回流→回购销毁→价格支撑→更多用户。
+Volan: Oylama → Vault LIGHT imhası → USDC ödemesi → Kârın yeniden akışı → Geri satın alma ve imha → Fiyat desteği → Daha fazla kullanıcı.
 
-双轨制：稳定金库（USDC，利润截留）+ 弹性金库（LIGHT层，投资时销毁不流入市场）。回购采用TWAP拆单，单笔≤日均交易量5%。
+Çift yollu sistem: istikrarlı hazine (USDC, kar tutma) + esnek hazine (HAFİF katman, yatırım yaparken yok edilir ve piyasaya akmaz). Geri alımlar, ortalama günlük işlem hacminin %5'i kadar tek bir emirle TWAP kullanılarak bölünür.
 
-### 5.9 子代币发行与交易
+### 5.9 Alt token ihracı ve ticareti
 
-发行总量=投资金额÷$1；兑换价以30天VWAP为基准；兑换所得LIGHT全部销毁；分配50%赞成者/30%空投/20%运营储备（锁仓6月）。单地址分红上限15%。子代币在链内AMM交易，发行后30天锁定期，退出后标记"已清算"下架。
+Toplam ihraç tutarı = yatırım tutarı ÷ 1 $; döviz fiyatı 30 günlük VWAP'ye dayanmaktadır; takastan elde edilen tüm IŞIK yok edilecek; Destekçilerin %50'si/%30 airdrop/%20 işletme rezervi dağıtılacaktır (6 ay boyunca kilitli). Tek adres için temettü limiti %15'tir. Alt tokenler, zincir üzerinde AMM'de, ihraç edildikten sonra 30 günlük bir kilitlenme süresiyle alınıp satılıyor ve çekildikten sonra "tasfiye edilmiş" olarak işaretlenecek.
 
-### 5.10 初始流动性与价格发现
+### 5.10 İlk Likidite ve Fiyat Keşfi
 
-**TGE（Token Generation Event，代币生成事件）安排：**
+**TGE (Token Oluşturma Etkinliği, belirteç oluşturma etkinliği) düzenlemesi: **
 
-| 项目 | 方案 |
+| Proje | Planı |
 |------|------|
-| 初始流动性池 | 从生态发展基金TGE释放的1.2亿枚中，划拨7,200万枚（60%）注入DEX流动性池 |
-| 配对资产 | USDC（主池）、USDT（辅池） |
-| 空投 | 剩余4,800万枚（40%）用于种子用户空投（见5.7节空投计划） |
-| 上线交易所 | TGE后首先上线去中心化交易所（如Osmosis、JunoSwap）；第6个月起视合规情况申请中心化交易所上市 |
+| Başlangıç ​​likidite havuzu | Ekolojik kalkınma fonu TGE tarafından piyasaya sürülen 120 milyon parçadan 72 milyon parça (%60) tahsis edilerek DEX likidite havuzuna enjekte edildi |
+| Eşleşen varlıklar | USDC (ana havuz), USDT (yardımcı havuz) |
+| Airdrop | Geriye kalan 48 milyon (%40) ise başlangıç ​​kullanıcılarına yapılacak airdroplar için kullanılacak (bkz. Bölüm 5.7 Airdrop Planı) |
+| Borsalarda listeleniyor | TGE'den sonra ilk olarak merkezi olmayan borsalarda (Osmosis, JunoSwap gibi) listelendi; uyum koşullarına bağlı olarak 6. aydan itibaren merkezi borsalarda kote olmak için başvuruda bulunun |
 
-**荷兰式拍卖（Dutch Auction）详细机制：**
+**Hollanda Açık Artırmasının ayrıntılı mekanizması:**
 
-荷兰式拍卖是一种"价格由高至低递减"的定价方式。与英式拍卖（价格由低至高竞价）相反，荷兰式拍卖中卖方设定一个起始高价，价格随时间自动下降，直到买方在某个价格点提交认购。第一个使总认购额达到目标的价格即为最终开盘价。
+Hollanda açık artırması, fiyatların yüksekten düşüğe doğru indiği bir fiyatlandırma yöntemidir. İngiltere'deki açık artırmaların (fiyatların düşükten yükseğe doğru teklif edildiği) aksine, Hollanda açık artırmasında satıcı yüksek bir başlangıç ​​fiyatı belirler ve alıcı belirli bir fiyat noktasında bir abonelik sunana kadar fiyat zaman içinde otomatik olarak düşer. Toplam abonelik tutarının hedefe ulaştığı ilk fiyat son açılış fiyatıdır.
 
-**为什么选择荷兰式拍卖而非固定价格或英式拍卖：**
+**Neden sabit fiyatlı veya İngilizce açık artırma yerine Hollanda açık artırmasını seçmelisiniz:**
 
-| 定价方式 | 优点 | 缺点 | 适用性 |
+| Fiyatlandırma | Avantajları | Dezavantajları | Uygulanabilirlik |
 |---------|------|------|--------|
-| 固定价格预售 | 简单 | 定价主观，过高则卖不出，过低则被机器人抢购 | 不适合（无价格发现功能） |
-| 英式拍卖（竞价） | 价格发现充分 | 大额买家可策略性等待、抬价；gas war | 不适合（链上gas war排斥小额用户） |
-| **荷兰式拍卖** | **自动价格发现；无需竞价（无gas war）；大小买家平等参与；防机器人（价格递减机制天然抑制抢跑）** | 需要合理设定起始价和递减速率 | **最适合（公平+高效+防操纵）** |
+| Sabit fiyatlı ön satış | Basit | Fiyatlandırma subjektiftir, çok yüksek olursa satmaz, çok düşük olursa robotlar kapar | Uygun değil (fiyat bulma işlevi yok) |
+| İngiliz açık artırması (teklif verme) | Tam fiyat keşfi | Büyük alıcılar stratejik olarak bekleyip fiyatları artırabilir; gaz savaşı | Uygun değil (zincir içi gaz savaşı küçük kullanıcıları hariç tutar) |
+| **Hollanda Açık Artırma** | **Otomatik fiyat keşfi; ihaleye gerek yok (gaz savaşı yok); büyük ve küçük alıcıların eşit katılımı; anti-bot (fiyat düşürme mekanizması doğal olarak önden çalışmayı engeller)** | Başlangıç ​​fiyatı ve yavaşlama oranının makul bir şekilde ayarlanması gerekiyor | **En uygun (adil + verimli + manipülasyona karşı)** |
 
-**LightDAO荷兰式拍卖具体参数：**
+**LightDAO Hollanda müzayedesine özel parametreler:**
 
-| 参数 | 设定 | 说明 |
+| Parametreler | Ayarlar | Açıklama |
 |------|------|------|
-| 拍卖标的 | LIGHT代币（从生态基金TGE释放的7,200万枚中划拨） | 拍卖所得USDC注入稳定金库 |
-| 目标募集额 | **$1,500万 USDC** | $500万→稳定金库最低储备；$1,000万→初始投资资本 |
-| 起始价 | $0.20/LIGHT | 高于预期均衡价，确保不会"秒光" |
-| 递减速率 | 每小时下降5% | 从$0.20起，约48小时后降至$0.017（若无人认购） |
-| 最低保留价 | $0.01/LIGHT | 若降至保留价仍未达目标，拍卖延期24小时或调整标的数量 |
-| 认购方式 | 用户提交"我愿意以当前价格购买X USDC等值的LIGHT" | 无需竞价，系统按最终统一价格结算（多退少不补） |
-| 单用户上限 | 不超过目标募集额的5%（即$75万） | 防止单一买家垄断初始筹码 |
-| KYC要求 | 增强验证（税务居民身份） | 合规要求 |
+| Açık artırma hedefi | LIGHT tokenleri (ekoloji fonu TGE tarafından serbest bırakılan 72 milyondan tahsis edilmiştir) | Açık artırmadan elde edilen USDC, istikrarlı kasaya aktarılacak |
+| Hedef bağış toplama tutarı | **15 milyon ABD Doları** | 5 milyon $ → istikrarlı hazinenin asgari rezervi; 10 milyon $ → ilk yatırım sermayesi |
+| Başlangıç ​​fiyatı | 0,20$/IŞIK | Beklenen denge fiyatının üzerinde, saniyeler içinde kaybolmamasını sağlıyor |
+| Yavaşlama oranı | Her saat %5 oranında azaltın | 0,20$'dan başlayıp yaklaşık 48 saat sonra 0,017$'a düşüyor (eğer kimse abone olmazsa) |
+| Minimum rezerv fiyatı | 0,01$/IŞIK | Rezerv fiyatının düşürülmesine rağmen hedefe hala ulaşılamaması durumunda açık artırma 24 saat ertelenecek veya nesne sayısı ayarlanacak |
+| Abonelik yöntemi | Kullanıcı "Geçerli fiyattan X USDC eşdeğeri LIGHT satın almak istiyorum" ifadesini gönderir | Teklif verilmesine gerek yoktur, sistem nihai birleştirilmiş fiyata göre çözümlenecektir (her türlü fazlalık tazminatsız olarak iade edilecektir) |
+| Tek kullanıcı üst sınırı | Hedef bağış toplama tutarının %5'inden fazlası (yani 750.000 $) | Tek bir alıcının ilk çipleri tekeline almasını önleyin |
+| KYC Gereksinimleri | Gelişmiş Doğrulama (Vergi Mukimliği) | Uyumluluk Gereksinimleri |
 
-**拍卖结果的资金去向：**
+**Açık artırma sonuçlarından elde edilen fonların hedefi:**
 
 ```
 用户认购总额 $1,500万 USDC
@@ -649,288 +649,288 @@ Seviye 4 yükseltmesi: L1 parametre ayarlaması (yönetim oylaması 24-72 saat) 
 未售出的LIGHT（若有）→ 注入DEX流动性池
 ```
 
-**价格发现保护期：** TGE后前72小时设价格波动熔断——若DEX交易价格较拍卖开盘价偏离超过±50%，暂停子代币兑换功能（不影响挖矿和转账），防止极端投机行为干扰生态启动。72小时后熔断自动解除。
+**Fiyat keşfi koruma süresi:** TGE'den sonraki ilk 72 saat içinde bir fiyat dalgalanma devre kesicisi kurulur - DEX işlem fiyatı açık artırma açılış fiyatından ±%50'den fazla saparsa, aşırı spekülasyonun ekolojik girişime müdahale etmesini önlemek için alt token değişim işlevi askıya alınacaktır (madencilik ve transferler etkilenmeyecektir). Sigorta 72 saat sonra otomatik olarak serbest kalacaktır.
 
-**为什么$1,500万而非更低：** 初始投资资本$1,000万需支撑首年3-5笔投资（单笔$200-500万，见9.1节启动期规模）。若仅募集$500万（全部作为储备），则首年无任何可部署投资资本，飞轮无法启动。$1,500万 = 储备$500万 + 投资$1,000万，是"安全底线"与"飞轮启动"的最小可行平衡。
+**Neden daha düşük yerine 15 milyon dolar:** 10 milyon dolarlık başlangıç ​​yatırım sermayesinin ilk yılda 3-5 yatırımı desteklemesi gerekiyor (tek bir yatırım 2-5 milyon dolar, Bölüm 9.1'deki başlangıç ​​döneminin ölçeğine bakın). Yalnızca 5 milyon dolar toplanırsa (tümü rezerv olarak), ilk yılda dağıtılabilir yatırım sermayesi olmayacak ve volan çalışmayacaktır. 15 milyon $ = 5 milyon $ rezerv + 10 milyon $ yatırım; bu, "güvenlik alt çizgisi" ile "volan başlangıcı" arasındaki mümkün olan minimum dengedir.
 
-### 5.11 通缩机制与底线
+### 5.11 Deflasyon mekanizması ve sonuç
 
-**流通量 = 挖矿释放 + 生态释放 + 战略基金已释放 − 兑换销毁 − Gas销毁 − 回购销毁。** 投资金库8.5亿枚从未进入流通。流通量理论上限 = 10+4+2.5 = **16.5亿枚**。
+**Dolaşım hacmi = madencilik salınımı + ekolojik salınım + serbest bırakılan stratejik fon − takas ve imha − gaz imhası – geri satın alma ve imha. **Yatırım kasasından çıkan 850 milyon coin hiç dolaşıma girmedi. Teorik dolaşım üst sınırı = 10+4+2,5 = **1,65 milyar**.
 
-| 触发条件 | 系统行为 |
+| Tetikleme koşulları | Sistem davranışı |
 |---------|---------|
-| 流通量≤15亿枚 | 减速信号（极端低销毁情景） |
-| 流通量≤12亿枚 | 预警公示，暂停主动销毁（基准情景约第8年） |
-| 流通量≤10亿枚 | 硬停止，所有销毁永久关闭（基准情景约第11-12年） |
+| Tiraj ≤ 1,5 milyar adet | Yavaşlama sinyali (son derece düşük imha senaryosu) |
+| Dolaşım hacmi ≤ 1,2 milyar adet | Erken uyarı duyurusu, aktif imhanın askıya alınması (baz senaryonun yaklaşık 8. yılı) |
+| Dolaşım hacmi ≤ 1 milyar | Kesin durdurma, tüm yıkımlar kalıcı olarak kapatıldı (temel senaryo yaklaşık 11-12 yıldır) |
 
-### 5.12 价格稳定机制（防死亡螺旋）
+### 5.12 Fiyat istikrarı mekanizması (ölüm karşıtı sarmal)
 
-**核心原则：** LightDAO 不干预日常市场价格发现。协议仅在极端下跌情形下调整自身参数，以降低陷入"死亡螺旋"的风险。
+**Temel Prensip:** LightDAO günlük piyasa fiyatı keşfine müdahale etmez. Protokol, "ölüm sarmalına" düşme riskini azaltmak için yalnızca aşırı aşağı yönlü senaryolarda parametrelerini ayarlıyor.
 
-**分级逻辑：** 在不同波动环境中，同等跌幅所代表的异常程度不同。低波动市场中的大幅下跌属于更强的异常信号，需要更高强度的干预；高波动市场中的大幅下跌相对常见，可采用较轻干预。因此，干预强度与信号的异常程度正相关，而非仅取决于跌幅的绝对值。
+**Derecelendirme mantığı:** Farklı değişken ortamlarda, aynı düşüş farklı anormallik derecelerini temsil eder. Volatilitenin düşük olduğu bir piyasada keskin bir düşüş, daha güçlü bir anormal sinyaldir ve daha yüksek yoğunlukta müdahale gerektirir; Volatilitenin yüksek olduğu bir piyasada keskin bir düşüş nispeten yaygındır ve daha hafif müdahaleler yapılabilir. Bu nedenle müdahalenin yoğunluğu, yalnızca düşüşün mutlak değerine bağlı olmaktan ziyade, sinyalin anormalliğiyle pozitif yönde ilişkilidir.
 
-**机制全流程表：**
+**Mekanizmanın tam akış şeması:**
 
-| 市场状态 | 30日历史波动率 | 触发条件 | 信号等级 | 触发后执行 | 恢复条件 |
-|---------|--------------|---------|---------|-----------|---------|
-| 低波动 | ≤30% | 连续5日累计跌幅≥40% | I级 | 挖矿产出降至50%；销毁比例由20%提升至35%；风险参数调整公示期由72h缩短至12h；影子委员会进入激活状态（仅可依法行使临时暂停权） | 价格站上30日均线，且较触发价反弹≥80%，并连续保持10日 |
-| 中波动 | 30%—60% | 连续7日累计跌幅≥50% | II级 | 挖矿产出降至50%；销毁比例由20%提升至30%；公示期缩短至24h；影子委员会进入激活状态 | 价格站上30日均线，且较触发价反弹≥60%，并连续保持7日 |
-| 高波动 | 60%—100% | 连续10日累计跌幅≥55% | III级 | 挖矿产出降至75%；销毁比例由20%提升至25%；公示期缩短至48h；影子委员会进入待命状态 | 价格站上30日均线，且较触发价反弹≥40%，并连续保持5日 |
-| 极端波动 | >100% | 连续10日累计跌幅≥65% | III级 | 按高波动状态的III级措施执行 | 按高波动状态的III级恢复条件执行 |
+| Piyasa durumu | 30 günlük tarihsel volatilite | Tetikleme koşulları | Sinyal seviyesi | Tetikleyiciden sonra yürütme | Kurtarma koşulları |
+|---------|--------------|---------|---------|----------|---------|
+| Düşük oynaklık | ≤%30 | Art arda 5 gün boyunca kümülatif düşüş ≥%40 | Seviye I | Madencilik çıktısı %50'ye düştü; imha oranı %20'den %35'e çıktı; risk parametresi ayarlaması tanıtım süresi 72 saatten 12 saate kısaltıldı; gölge komite aktif duruma geçti (kanun uyarınca yalnızca geçici uzaklaştırma hakkı kullanılabilir) | Fiyat 30 günlük hareketli ortalamanın üzerinde yer aldı ve tetik fiyatından %80'den fazla toparlandı ve art arda 10 gün boyunca bu şekilde kaldı |
+| Orta dalgalanma | %30-%60 | Art arda 7 gün boyunca kümülatif düşüş ≥ %50 | Seviye II | Madencilik çıktısı %50'ye düştü; imha oranı %20'den %30'a çıktı; tanıtım süresi 24 saate kısaltıldı; gölge komitesi aktif duruma geçti | Fiyat 30 günlük hareketli ortalamanın üzerinde yer aldı ve tetik fiyatından %60'ın üzerinde toparlanma gösterdi ve art arda 7 gün boyunca bu şekilde kaldı |
+| Yüksek oynaklık | %60-%100 | 10 gün üst üste kümülatif düşüş ≥%55 | Seviye III | Madencilik üretimi %75'e düştü; imha oranı %20'den %25'e çıktı; tanıtım süresi 48 saate kısaltıldı; gölge komitesi bekleme moduna girdi | Fiyat 30 günlük hareketli ortalamanın üzerinde yer aldı ve tetik fiyatından %40'ın üzerinde toparlanma gösterdi ve art arda 5 gün boyunca bu şekilde kaldı |
+| Aşırı oynaklık | >%100 | Art arda 10 gün boyunca kümülatif düşüş ≥ %65 | Seviye III | Yüksek volatiliteye yönelik Seviye III önlemlerine göre uygulanmıştır | Yüksek volatilite için Seviye III toparlanma koşullarına göre uygulandı |
 
-**排除条件：** 仅当同期比特币跌幅低于 LIGHT 跌幅的50%时，上述机制方可触发，以排除系统性市场崩盘情形（即：若BTC同期也暴跌，则属于市场整体事件，不单独对LIGHT启动干预）。
+**Hariç tutma koşulları:** Yalnızca Bitcoin'in aynı dönemdeki düşüşü LIGHT'ın düşüşünün %50'sinden az olduğunda, yukarıdaki mekanizma sistemik bir piyasa çöküşünü dışlamak için tetiklenebilir (yani, BTC de aynı dönemde düşerse bu genel bir piyasa olayıdır ve LIGHT için ayrı bir müdahale başlatılmaz).
 
-**恢复逻辑说明：** 反弹要求与持续时间随异常等级递减：I级要求最高反弹幅度（80%）和最长确认时间（10日），III级要求相对较低（40%/5日）。该安排符合"异常信号越强、干预越强、恢复确认越严格"的递进逻辑。
+**Kurtarma mantığı açıklaması:** Geri tepme gereksinimleri ve süresi anormallik seviyesiyle birlikte azalır: Seviye I, en yüksek geri tepme genliğini (%80) ve en uzun onay süresini (10 gün) gerektirirken Seviye III nispeten daha düşük gereksinimler gerektirir (%40/5 gün). Bu düzenleme, "anormal sinyal ne kadar güçlü olursa, müdahale o kadar güçlü ve iyileşme onayı da o kadar sıkı olur" şeklindeki ilerici mantıkla uyumludur.
 
-**波动率与价格数据来源：** 30日历史波动率和累计跌幅均由链上价格预言机（见4.10节）提供，以每日UTC 00:00区块的TWAP快照为计算基准，不依赖任何外部数据源。
+**Volatilite ve fiyat veri kaynağı:** 30 günlük tarihsel dalgalanma ve kümülatif düşüş, günlük UTC 00:00 bloğunun TWAP anlık görüntüsüne dayalı olarak zincir üstü fiyat oracle'ı (bkz. Bölüm 4.10) tarafından sağlanır ve herhangi bir harici veri kaynağına dayanmaz.
 
-### 5.13 收益可持续性压力测试
+### 5.13 Kazanç Sürdürülebilirliği Stres Testi
 
-| 压力情景 | 假设条件 | 协议应对 | 最坏结果 |
+| Stres senaryoları | Ne Olursa | Protokol yanıtları | En kötü durum sonuçları |
 |---------|---------|---------|---------|
-| 全部投资失败 | 所有被投企业亏损或退出失败 | 保险基金（利润10%计提）覆盖部分损失；稳定金库储备（≥$800万）维持运营；暂停新投资直至社区重新评估 | 子代币持有者无法获得分红；LIGHT价格承压但不归零（挖矿和治理功能持续运行） |
-| 市场暴跌80% | LIGHT价格较峰值下跌80% | 触发防死亡螺旋机制（II级或III级）；挖矿产出削减50-75%；销毁比例提升；影子委员会可暂停高危操作 | 用户收益缩水但网络持续运行；恢复条件达成后机制自动解除 |
-| 主要市场监管禁令 | 某大国全面禁止加密资产 | 前端切换 IPFS 镜像保持可访问；链上资产与已有用户权益不受影响；仅在法律强制范围内调整第三方服务可用性；SPV在开曼群岛运营不受单一国家管辖 | 该区域用户增长停滞；全球其他区域不受影响 |
-| 用户大规模流失 | 活跃矿工下降超70% | BaseReward自动重新分配（分母缩小→留存用户人均收益上升）；邀请激励加权吸引回流；治理门槛临时下调（5.14节动态机制） | 网络安全性下降但不会停链（Tendermint BFT容忍<1/3验证者离线） |
-| 智能合约重大漏洞 | 核心合约被发现可利用漏洞 | 多签紧急暂停资金流出（72小时时间锁提供响应窗口）；发起备用合约迁移投票（L4级紧急修复，见4.12节）；保险基金覆盖用户损失 | 部分资金可能受损；迁移完成后恢复正常运营 |
+| Tüm yatırımlar başarısız oldu | Yatırım yapılan tüm şirketler zarar etti veya çıkamadı | Sigorta fonu (tahakkuk eden kârın %10'u) zararların bir kısmını karşılar; operasyonları sürdürmek için istikrarlı hazine rezervleri (≥8 milyon$); toplum yeniden değerlendirinceye kadar yeni yatırımlar askıya alındı ​​| Alt token sahipleri temettü alamazlar; LIGHT fiyatı baskı altında ancak sıfıra dönmüyor (madencilik ve yönetim fonksiyonları çalışmaya devam ediyor) |
+| Piyasa %80 düştü | LIGHT fiyatı zirveden %80 düştü | Ölüm karşıtı sarmal mekanizmayı tetikleyin (seviye II veya seviye III); madencilik çıktısı %50-75 oranında azaldı; imha oranı arttırıldı; gölge komite yüksek riskli operasyonları askıya alabilir | Kullanıcı geliri azalıyor ancak ağ çalışmaya devam ediyor; kurtarma koşulları karşılandığında mekanizma otomatik olarak kaldırılır |
+| Başlıca piyasa düzenleme yasakları | Büyük bir ülke kripto varlıklarını tamamen yasakladı | Ön uç anahtarlamalı IPFS aynası erişilebilir olmaya devam eder; zincir üstü varlıklar ve mevcut kullanıcı hakları ve çıkarları etkilenmez; üçüncü taraf hizmetlerinin kullanılabilirliği yalnızca yasal yaptırım kapsamında ayarlanır; Cayman Adaları'ndaki SPV operasyonları tek bir ülkenin yargı yetkisine tabi değildir | Bölgedeki kullanıcı artışı durağanlaştı; dünyadaki diğer bölgeler etkilenmemektedir |
+| Büyük ölçekli kullanıcı kaybı | Aktif madenciler %70'ten fazla düştü | BaseReward otomatik olarak yeniden dağıtılır (payda küçülür → elde tutulan kullanıcıların kişi başına geliri artar); davet teşvikleri, geri dönüş akışlarını çekecek şekilde ağırlıklandırılıyor; yönetişim eşikleri geçici olarak düşürüldü (Bölüm 5.14'teki dinamik mekanizma) | Ağ güvenliği azaltıldı ancak zincir durdurulmayacak (Tendermint BFT, doğrulayıcıların <1/3'ünün çevrimdışı olmasını tolere ediyor) |
+| Başlıca akıllı sözleşme güvenlik açıkları | Temel sözleşmelerde bulunan istismar edilebilir güvenlik açıkları | Fon çıkışlarının çoklu imzayla acil olarak askıya alınması (72 saatlik zaman kilidi yanıt penceresi sağlar); Yedek sözleşme geçiş oylamasını başlatın (L4 düzeyinde acil durum onarımı, bkz. Bölüm 4.12); Sigorta fonu kullanıcı kayıplarını karşılıyor | Bazı fonlar zarar görebilir; Geçiş tamamlandıktan sonra normal işlemler devam ediyor |
 
-### 5.14 代际平衡机制
+### 5.14 Nesiller arası dengeleme mekanizması
 
-治理门槛动态调整：每新增100万累计活跃矿工，提案门槛自动下调5%（下限2,500 LIGHT）。
+Yönetişim eşiğinin dinamik olarak ayarlanması: her 1 milyon yeni kümülatif aktif madenci için teklif eşiği otomatik olarak %5 düşürülür (alt sınır 2.500 LIGHT).
 
-> **【本章术语】**
-> **TGE**（Token Generation Event，代币生成事件）：代币首次通过智能合约创建并分发的时点，通常伴随初始流动性池建立、荷兰式拍卖定价和首次公开交易。类似于传统金融中的IPO，但不涉及证券交易所上市。
-> **减半**（Halving）：挖矿产出每隔固定周期（LightDAO为2年/730天）自动减少50%的机制。目的是制造渐进稀缺性——随着时间推移，新增供应越来越少，若需求不减则价格获得支撑。比特币采用每4年减半。
-> **金库**（Treasury）：由多签合约锁定的代币储备，仅可通过治理决议释放。LightDAO设有两类金库：投资金库（持有LIGHT，投资执行时销毁）和稳定金库（持有USDC，用于支付投资对价和运营开支）。
-> **通缩**（Deflation）：代币总供应量或流通量持续减少的过程。LightDAO通过四种机制实现通缩：投资执行销毁、子代币兑换销毁、Gas费销毁（50%）、利润回购销毁。
-> **死亡螺旋**（Death Spiral）：代币价格下跌→矿工收益缩水→矿工退出→网络安全性/贡献度下降→信心进一步丧失→价格继续下跌的恶性循环。第5.12节的分级干预机制专为阻断此循环而设计。
-> **子代币**（Sub-token）：每完成一次企业投资后按规则发行的SPV收益分配请求权凭证（如收购咖啡品牌→CAFE代币）。持有子代币=持有对未来利润的分配资格，不代表股东权利或公司治理权。
-> **LP**（Liquidity Provider，流动性提供者）：向DEX流动性池注入等值两种资产（如LIGHT+USDC）的参与者，赚取交易手续费作为回报。LP是DEX正常运行的基础。
-> **VWAP**（Volume-Weighted Average Price，成交量加权平均价格）：将一段时间内的价格按每笔交易的成交量加权平均，反映真实市场成交成本。LightDAO用30天VWAP作为子代币兑换的定价基准。
-> **CAC**（Customer Acquisition Cost，用户获取成本）：获取一个有效活跃用户的平均成本。LightDAO空投计划的目标CAC为$55/留存活跃矿工（行业区间$50-200）。
-> **wLIGHT**（Wrapped LIGHT，封装LIGHT）：通过跨链桥在Ethereum或Solana上发行的LIGHT等价代币，由桥合约锁定等量原生LIGHT作为1:1储备。目的是让非Cosmos生态用户也能获取和持有LIGHT。
-> **荷兰式拍卖**（Dutch Auction）：一种"价格由高至低递减"的定价方式。卖方设定起始高价，价格随时间自动下降，直到买方在某个价格点提交认购。第一个使总认购额达到目标的价格即为最终成交价。优点是无需竞价（无gas war）、大小买家平等、天然防机器人抢跑。
-
----
-
-## 第六章：治理机制
-
-### 6.1 双维度投票模型
-
-持币权重（含声誉+层级加成，总上限+40%）+ 地址数量（1地址=1票，关联地址合并）。投票权90天有效，5枚LIGHT转账可激活。声誉加成：持币满1年+15次有效投票→最高+30%。
-
-### 6.2 动态通过率
-
-最低通过率＝50%＋（50%－实际投票率）。投票率≥50%时简单多数。
-
-### 6.3 提案参数
-
-| 类型 | 保证金 | 持币投票率 | 地址投票率 | 通过率 | 执行延迟 |
-|------|--------|-----------|-----------|--------|---------|
-| 微型 | $100 | ≥15% | ≥20% | 动态≥55% | 24h |
-| 收购型 | $500 | ≥25% | ≥30% | 动态≥60% | 72h |
-| 风投型 | $500 | ≥35% | ≥40% | 动态≥60% | 72h |
-| 重大 | $1,000 | ≥45% | ≥50% | 动态≥66% | 72h |
-| 紧急 | $2,000 | ≥50% | ≥60% | ≥75% | 非资金6h/高危1h；资金操作仍受72h时间锁 |
-
-### 6.4 提案生命周期
-
-提交资格：≥5,000枚LIGHT + 连续质押30天 + 保证金。公示72h（修订≤2次）。投票7日（快速通道48h，≤50万USDC）。否决冷却90天。生效延迟24h。
-
-**门槛说明：** 5,000枚在种子期（1万矿工）≈77天基础产出；合伙人级≈7天。治理第7月激活，早期用户有充足积累时间。
-
-### 6.5 投票激励
-
-参与有基础激励（均分），判断正确有额外加成（押注池50%）。押注区间5—500 LIGHT。抑制羊群效应：反对者即使"站错队"仍获基础激励。
-
-### 6.6 成败奖惩
-
-善意失败：退50%保证金+30天冷却。恶意失败（造假/重复）：全额没收+永久禁止。造假举证：封顶5,000 LIGHT，成立奖40%罚没金+500 LIGHT。
-
-### 6.7 财务透明
-
-链上实时仪表盘+季度财务报告+年度独立审计（TGE前须完成首次审计）+投资标的即时披露。
+> **[Bu bölümdeki terminoloji]**
+> **TGE** (Token Oluşturma Etkinliği): Bir tokenın akıllı bir sözleşme yoluyla ilk oluşturulduğu ve dağıtıldığı nokta; buna genellikle bir başlangıç likidite havuzunun oluşturulması, Hollanda açık artırma fiyatlandırması ve ilk halka açık işlem eşlik eder. Geleneksel finanstaki halka arza benzer, ancak borsada listelenmeyi içermez.
+> **Halving** (Halving): Madencilik çıktısının her sabit dönemde (LightDAO için 2 yıl/730 gün) otomatik olarak %50 oranında azaltıldığı bir mekanizma. Amaç kademeli kıtlık yaratmaktır; zaman geçtikçe daha az yeni arz eklenir ve talep azalmazsa fiyatlar desteklenecektir. Bitcoin her 4 yılda bir yarılanmayı benimser.
+> **Hazine** (Hazine): Çoklu imza sözleşmeleriyle kilitlenen ve yalnızca yönetim kararları yoluyla serbest bırakılabilen jeton rezervleri. LightDAO'nun iki tür kasası vardır: yatırım kasaları (LIGHT'ı tutan ve yatırımlar yürütüldüğünde yok edilen) ve istikrarlı kasalar (USDC'yi tutan ve yatırım bedelini ve işletme giderlerini ödemek için kullanılanlar).
+> **Deflasyon** (Deflasyon): Tokenların toplam arzının veya dolaşımının azalmaya devam ettiği süreç. LightDAO deflasyonu dört mekanizma aracılığıyla başarır: yatırımın gerçekleştirilmesi ve imhası, alt token değişimi ve imhası, gas ücretinin imhası (%50) ve kârın yeniden satın alınması ve imhası.
+> **Ölüm Spirali** (Ölüm Spirali): Token fiyatları düşer → madencilerin geliri azalır → madenciler ayrılır → ağ güvenliği/katkısı azalır → daha fazla güven kaybı → fiyatların düşmeye devam ettiği bir kısır döngü. Bölüm 5.12'deki kademeli müdahale mekanizması bu döngüyü kesintiye uğratmak için tasarlanmıştır.
+> **Alt token** (Alt token): Her kurumsal yatırım tamamlandıktan sonra kurallara uygun olarak verilen SPV gelir dağıtım talep belgesi (bir kahve markası → CAFE tokeninin alınması gibi). Alt tokenleri tutmak = gelecekteki karların dağıtımına ilişkin nitelikleri elinde tutmak ve hissedar haklarını veya kurumsal yönetim haklarını temsil etmez.
+> **LP** (Likidite Sağlayıcı): DEX likidite havuzuna eşit değerde iki varlık (LIGHT+USDC gibi) enjekte eden katılımcılar bunun karşılığında işlem ücreti kazanırlar. LP, DEX'in normal işleyişinin temelidir.
+> **VWAP** (Hacim Ağırlıklı Ortalama Fiyat): Belirli bir süre içindeki fiyat, her işlemin hacmine göre ağırlıklandırılır ve gerçek piyasa işlem maliyetini yansıtır. LightDAO, alt token değişimi için fiyatlandırma kriteri olarak 30 günlük VWAP'yi kullanıyor.
+> **CAC** (Müşteri Edinme Maliyeti, kullanıcı edinme maliyeti): Etkin bir aktif kullanıcı edinmenin ortalama maliyeti. LightDAO airdrop programının hedef CAC'si 55 ABD Doları/elde tutulan aktif madencilerdir (sektör aralığı 50-200 ABD Doları).
+> **wLIGHT** (Sarılı LIGHT, kapsüllenmiş LIGHT): Zincirler arası köprüler aracılığıyla Ethereum veya Solana'da yayınlanan LIGHT eşdeğeri tokenlar ve eşit miktarda yerel LIGHT, köprü sözleşmesi tarafından 1:1 rezerv olarak kilitlenir. Amaç, Cosmos dışındaki ekosistem kullanıcılarının IŞIK elde etmelerine ve tutmalarına olanak sağlamaktır.
+> **Hollanda Müzayedesi** (Hollanda Müzayedesi): Fiyatın yüksekten düşüğe doğru indiği fiyatlandırma yöntemidir. Satıcı, başlangıç ​​için yüksek bir fiyat belirler ve alıcı belirli bir fiyat noktasında abonelik gönderene kadar fiyat zaman içinde otomatik olarak düşer. Toplam abonelik tutarının hedefe ulaştığı ilk fiyat, nihai işlem fiyatıdır. Avantajı, hiçbir teklife gerek olmaması (gaz savaşı olmaması), her boyuttaki alıcının eşit olmasıdır ve doğal olarak robot ön alımlarına karşı dirençli olmasıdır.
 
 ---
 
-## 第七章：权力制衡与角色定义
+## Bölüm 6: Yönetişim Mekanizması
 
-### 7.1 初始监护人
+### 6.1 İki boyutlu oylama modeli
 
-权限仅限文档/格式/官网信息。任期≤24月。须指定备选监护人（连续30天无法签名→自动接管）。同时失能→48h紧急投票指定临时管理人。
+Para birimi ağırlığı (itibar + seviye bonusu, toplam üst limit +%40 dahil) + adres sayısı (1 adres = 1 oy, ilgili adresler birleştirilir). Oy hakları 90 gün geçerlidir ve 5 LIGHT aktarılarak aktif hale getirilebilir. İtibar bonusu: Para birimini 1 yıl boyunca tutmak + 15 geçerli oy → +%30'a kadar.
 
-### 7.2 权力转移路线图
+### 6.2 Dinamik geçiş hızı
 
-| 阶段 | 时间 | 权限 | 投资审批 |
-|------|------|------|---------|
-| 创世期 | 0—6月 | 监护人（非资金类） | 监护人+社区多签3/5 |
-| 过渡期 | 7—12月 | 监护人+核心贡献者联名 | 同上+核心贡献者 |
-| 成熟期 | 13—24月 | 治理委员会3/5 | 常规双维度投票 |
-| 自治期 | 25月+ | 全体持有者 | 同成熟期 |
+Minimum geçiş oranı = %50 + (%50 - gerçek oy oranı). Oy oranı ≥%50 olduğunda basit çoğunluk.
 
-### 7.3 治理委员会
+### 6.3 Teklif parametreleri
 
-五人分权（轮值主席/财务/技术/社区/密钥），季度轮换，任期6月可连任1次。竞选质押50,000 LIGHT + 100地址联名。决策≥3人且覆盖≥3职位。
+| Tür | Marj | Jeton oylama oranı | Adres oy oranı | Geçiş oranı | Yürütme gecikmesi |
+|------|--------|-----------|-----------|--------|------------|
+| Mikro | 100$ | ≥%15 | ≥%20 | Dinamik ≥%55 | 24 saat |
+| Edinme türü | 500 $ | ≥%25 | ≥%30 | Dinamik ≥%60 | 72 saat |
+| Risk sermayesi türü | 500 $ | ≥%35 | ≥%40 | Dinamik ≥%60 | 72 saat |
+| Binbaşı | 1.000$ | ≥%45 | ≥%50 | Dinamik ≥%66 | 72 saat |
+| Acil Durum | 2.000$ | ≥%50 | ≥%60 | ≥%75 | Finansmansız 6 saat/yüksek riskli 1 saat; sermaye işlemleri hâlâ 72 saatlik zaman kilidine tabidir |
 
-**门槛说明：** 50,000枚在种子期≈合伙人67天（2.2月）；成长期≈672天（22月）。委员会第13月首选举，早期合伙人可达。
+### 6.4 Teklif yaşam döngüsü
 
-### 7.4 影子委员会
+Başvuru yeterliliği: ≥5.000 LIGHT + 30 ardışık gün rehin + depozito. Kamu duyurusu 72 saat (≤ 2 kez revize edilmiştir). Oylama 7 gün içinde gerçekleşir (hızlı geçiş için 48 saat, ≤500.000 USDC). Veto 90 gün boyunca soğuyor. Etkinliği 24 saat gecikir.
 
-仅限"违法/制裁/重大欺诈"临时暂停。72h内须全体追认（反对>60%→解除）。连续2次被否决→自动弹劾解散。
+**Eşik açıklaması:** Başlangıç ​​aşamasında 5.000 jeton (10.000 madenci) ≈ 77 günlük temel çıktı; partner düzeyi ≈ 7 gün. Yönetişim yedinci ayda etkinleştirilecek ve ilk kullanıcılar yeterli birikim süresine sahip olacak.
 
-### 7.5—7.6 竞选验证与密钥预案
+### 6.5 Oy verme teşvikleri
 
-SimHash>80%取消资格；AI内容须补充说明；缺席质询扣20%得票。密钥分片备份+季度健康检查+7天公示判定+投票更换。
+Katılım (hatta paylaşım) için temel bir teşvik vardır ve doğru karar için ek bir bonus vardır (bahis havuzunun %50'si). 5-500 LIGHT aralığında bahis yapın. Sürü etkisini bastırın: Rakipler "yanlış takımda" olsalar bile yine de temel teşvikler alıyorlar.
 
----
+### 6.6 Başarı veya başarısızlık için ödüller ve cezalar
 
-## 第八章：信任与安全机制
+İyi niyetle başarısızlık: %50 depozito iadesi + 30 günlük bekleme süresi. Kötü niyetli başarısızlık (sahtecilik/tekrarlama): El konulan tutarın tamamı + kalıcı yasak. Dolandırıcılık kanıtı: 5.000 LIGHT ile sınırlıdır, %40 kuruluş cezası bonusu + 500 LIGHT.
 
-### 8.1 五大安全机制
+### 6.7 Mali Şeffaflık
 
-时间锁72h（紧急提案不可豁免资金操作）；多签3/5；季度轮换≤2届；造假罚没100%；全交易上链。
-
-### 8.2 保险基金
-
-成功投资利润的**10%**计提。理赔须独立报告+DAO 66%赞成+单次≤池20%。补充来源：造假罚没金的30%。定位"部分缓冲"非全额保障。
-
-### 8.3 极端预案
-
-监管黑天鹅→IPFS+移除管理员权限；欺诈→影子委员会暂停（72h追认）+保险基金+SPV仲裁；死亡螺旋→5.12节机制；合约漏洞→多签暂停+迁移投票；验证者集体作恶→BFT容忍<1/3，超过则链暂停+紧急投票迁移。
+Zincirdeki gerçek zamanlı kontrol paneli + üç aylık mali rapor + yıllık bağımsız denetim (ilk denetim TGE'den önce tamamlanmalıdır) + yatırım hedeflerinin gerçek zamanlı açıklanması.
 
 ---
 
-## 第九章：投资运营与退出策略
+## Bölüm 7: Güç kontrolleri ve dengeleri ve rol tanımı
 
-### 9.1 投资标的筛选与规模
+### 7.1 İlk Muhafız
 
-**投资规模分阶段成长轨迹（公式：金库剩余×15%×LIGHT价格）：**
+İzinler belge/format/resmi web sitesi bilgileriyle sınırlıdır. Vade ≤ 24 ay. Alternatif bir vasi belirlenmelidir (art arda 30 gün boyunca imza atılamaz → otomatik olarak devralınır). Eş zamanlı sakatlık → Geçici bir yönetici atamak için 48 saatlik acil oylama.
 
-| 阶段 | LIGHT价格 | 金库初始期单笔上限 | 适配标的 | 行业对标 |
-|------|----------|-----------------|---------|---------|
-| 启动期(Y1-2) | $0.02—$0.05 | $255万—$637万 | 单店/小型连锁、天使轮 | 微型PE |
-| 成长期(Y3-5) | $0.05—$0.30 | $637万—$3,825万 | 区域连锁30-200店、Seed-A轮 | Lower Middle Market PE |
-| 成熟期(Y5-8) | $0.30—$1.00 | $3,825万—$1.275亿 | 跨国连锁/中型科技、B-C轮 | Middle Market PE |
-| 规模期(Y8+) | $1.00+ | $1.275亿+ | 大型收购、Pre-IPO | 大型PE/成长期VC |
+### 7.2 Güç Aktarımı Yol Haritası
 
-### 9.2 投资决策流程
+| Sahne | Zaman | İzinler | Yatırım Onayı |
+|------|------|------|--------|
+| Yaratılış dönemi | 0-6 ay | Guardian (finansal olmayan) | Guardian + topluluk çoklu imzası 3/5 |
+| Geçiş dönemi | Temmuz-Aralık | Guardian + çekirdek katılımcı ortak imza attı | Yukarıdakiyle aynı + çekirdek katılımcı |
+| Vade süresi | 13-24 ay | Yönetişim Komitesi 3/5 | Düzenli iki boyutlu oylama |
+| Özerklik dönemi | 25 ay + | Tüm sahipler | Aynı vade dönemi |
 
-项目发现（≥5,000 LIGHT）→独立尽调→72h公示→双维度投票→24/72h执行。
+### 7.3 Yönetişim Komitesi
 
-### 9.3 退出与利润分配
+Güç beş kişi arasında paylaştırılır (dönüşümlü başkan/finans/teknoloji/topluluk/anahtar), üç ayda bir rotasyon yapılır ve görev süresi altı aydır ve bir kez yeniden seçilebilir. Kampanyada 50.000 LIGHT + 100 adres ortak imzası taahhüt ediliyor. Karar alma ≥3 kişiyi içerir ve ≥3 pozisyonu kapsar.
 
-年度分红：**40%**子代币持有者 / **30%**稳定金库 / **20%**回购LIGHT销毁 / **10%**保险基金。
-退出收益：**70%**稳定金库 / **30%**回购销毁。
+**Eşik açıklaması:** Başlangıç ​​aşamasında 50.000 jeton ≈ ortaklar için 67 gün (2,2 ay); büyüme aşamasında ≈ 672 gün (22 ay). Komitenin 13. aydaki ilk seçimi erken ortaklara açıktır.
 
-### 9.4 投资纪律
+### 7.4 Gölge Komitesi
 
-| 规则 | 内容 |
+Yalnızca "ihlaller/yaptırımlar/büyük dolandırıcılık" nedeniyle geçici uzaklaştırma. Tüm oyların 72 saat içinde onaylanması gerekiyor (muhalefet >%60→reddedildi). Art arda iki kez reddedildi → otomatik olarak suçlandı ve dağıtıldı.
+
+### 7.5—7.6 Kampanya doğrulaması ve temel plan
+
+SimHash>%80 diskalifiye; Yapay zeka içeriği açıklamalarla desteklenmelidir; Eksik sorular için oyların %20'si düşülecektir. Anahtar parça yedekleme + üç aylık durum kontrolü + 7 günlük genel duyuru + oylama değişimi.
+
+---
+
+## Bölüm 8: Güven ve Güvenlik Mekanizması
+
+### 8.1 Beş ana güvenlik mekanizması
+
+Zaman kilidi 72 saat (acil durum teklifleri sermaye operasyonlarından muaf değildir); çoklu imza 3/5; üç aylık rotasyon ≤ 2 oturum; Dolandırıcılık için %100 ceza; tüm işlemler zincirdedir.
+
+### 8.2 Sigorta Fonu
+
+Başarılı yatırım kârının **%10'u** tahakkuk ettirilir. Talepler bağımsız olarak bildirilmelidir + DAO lehinde %66 + tek ≤ havuz %20. Ek kaynak: Sahtecilik cezasının %30'u. "Kısmi tampon" konumlandırması tam koruma değildir.
+
+### 8.3 Ekstrem plan
+
+Denetim siyah kuğu → IPFS + yönetici haklarının kaldırılması; dolandırıcılık → gölge komitenin askıya alınması (72 saat onay) + sigorta fonu + SPV tahkimi; ölüm sarmalı → Bölüm 5.12 mekanizması; sözleşme güvenlik açığı → çoklu imzanın askıya alınması + geçiş oylaması; doğrulayıcılar kolektif olarak kötülük yapıyor → BFT toleransı <1/3, aşılması durumunda zincir askıya alınacak + acil oylama geçişi.
+
+---
+
+## Bölüm 9: Yatırım Operasyonları ve Çıkış Stratejileri
+
+### 9.1 Yatırım hedeflerinin taranması ve ölçeği
+
+**Yatırım ölçeğinin aşamalı büyüme yörüngesi (formül: hazine fazlası × %15 × LIGHT fiyatı): **
+
+| Sahne | IŞIK fiyatı | Kasanın ilk döneminde tek işlem limiti | Uyum hedefleri | Endüstri kıyaslaması |
+|------|----------|----------|----------|----------|
+| Başlangıç ​​dönemi (Y1-2) | 0,02$—0,05$ | 2,55 milyon dolar — 6,37 milyon dolar | Tek mağaza/küçük zincir, melek yuvarlak | Mikro PE |
+| Büyüme aşaması (Y3-5) | 0,05$—0,30$ | 6,37 milyon dolar — 38,25 milyon dolar | Bölgesel zincir 30-200 mağaza, Seed-A turu | Alt Orta Piyasa PE |
+| Olgunluk aşaması (Y5-8) | 0,30$—1,00$ | 38,25 milyon $—127,5 milyon $ | Çok uluslu zincir/orta ölçekli teknoloji, yuvarlak B-C | Orta Piyasa PE |
+| Ölçek dönemi (Y8+) | 1,00$+ | 127,5 milyon $+ | Büyük ölçekli satın almalar, Halka Arz Öncesi | Büyük ölçekli PE/Büyüme aşaması VC |
+
+### 9.2 Yatırım karar verme süreci
+
+Proje keşfi (≥5.000 LIGHT) → bağımsız durum tespiti → 72 saat kamu duyurusu → iki boyutlu oylama → 24/72 saat uygulama.
+
+### 9.3 Çıkış ve kar dağıtımı
+
+Yıllık temettü: **%40** alt token sahipleri / **%30** sabit kasa / **%20** imha için LIGHT geri satın alma / **%10** sigorta fonu.
+Çıkış geliri: **%70** Stabil Kasa / **%30** Yeniden Satın Alma ve Yakma.
+
+### 9.4 Yatırım Disiplini
+
+| Kurallar | İçerik |
 |------|------|
-| 单笔销毁上限 | 金库剩余×15%（初始8.5亿×15%=1.275亿枚） |
-| 单一标的 | ≤金库总价值25% |
-| 行业集中 | ≤组合40% |
-| 地域集中 | ≤组合30% |
-| 稳定金库储备 | TGE时$500万（拍卖），第24月前达$800万 |
-| 冷静期 | 连续2次失败→180天 |
+| Tek imha sınırı | Kalan kasa × %15 (başlangıçta 850 milyon × %15 = 127,5 milyon jeton) |
+| Tek hedef | Kasanın toplam değerinin ≤%25'i |
+| Sanayi yoğunlaşması | Portföyün ≤%40'ı |
+| Coğrafi konsantrasyon | Portföyün ≤%30'u |
+| İstikrarlı hazine rezervleri | TGE'de (açık artırmada) 5 milyon dolar, 24. ayda 8 milyon dolara ulaştı |
+| Bekleme süresi | 2 ardışık arıza → 180 gün |
 
-**金库容量：** 8.5亿枚×$0.10=$8,500万（初始总容量）；×$0.30=$2.55亿；×$1.00=$8.5亿。15%单笔上限使投资节奏与价格正相关。
+**Kasa kapasitesi:** 850 milyon parça × 0,10 ABD doları = 85 milyon ABD doları (başlangıçtaki toplam kapasite); × 0,30 ABD Doları = 255 milyon ABD Doları; × 1,00 ABD Doları = 850 milyon ABD Doları. %15 tek işlem limiti, yatırım temposunun fiyatla pozitif ilişkisini sağlıyor.
 
-> **【本章术语】**
-> **EBITDA**（Earnings Before Interest, Taxes, Depreciation and Amortization，息税折旧摊销前利润）：衡量企业核心经营盈利能力的指标，排除了财务结构（利息）、税务政策（税）、会计选择（折旧/摊销）的干扰，便于跨企业、跨行业比较。EBITDA margin = EBITDA ÷ 营业收入。
-> **DCF**（Discounted Cash Flow，现金流折现法）：将企业未来预期现金流按一定折现率换算为当前价值的估值方法。适用于现金流稳定的成熟企业（如消费连锁），不适用于尚无盈利的早期科技公司。
-> **IPO**（Initial Public Offering，首次公开募股）：企业首次在证券交易所公开发行股票并上市交易。对LightDAO而言，被投企业IPO是增长引擎标的的主要退出路径之一。
-> **Pre-IPO**：企业在正式上市前的最后一轮私募融资，通常估值已接近上市后水平，风险低于早期轮次但回报倍数也较低。
-> **TWAP执行**（Time-Weighted Average Price Execution）：将大额回购订单拆分为多笔小额订单，在一段时间内均匀执行，以避免单笔大单对市场价格造成冲击。LightDAO规定单笔回购不超过日均交易量的5%。
+> **[Bu bölümdeki terminoloji]**
+> **FAVÖK** (Faiz, Vergi, Amortisman ve Amortisman Öncesi Kazanç): Bir şirketin temel operasyonlarının karlılığını ölçen, mali yapının (faiz), vergi politikasının (vergi) ve muhasebe tercihlerinin (amortisman/amortisman) müdahalesini ortadan kaldıran, işletmeler arası ve sektörler arası karşılaştırmaları kolaylaştıran bir gösterge. FAVÖK marjı = FAVÖK ÷ faaliyet geliri.
+> **DCF** (İndirgenmiş Nakit Akışı, indirgenmiş nakit akışı yöntemi): Şirketin gelecekteki beklenen nakit akışlarını belirli bir iskonto oranıyla bugünkü değere dönüştüren değerleme yöntemidir. Sabit nakit akışına sahip olgun işletmeler (tüketici zincirleri gibi) için uygundur, ancak henüz kârlı olmayan erken aşamadaki teknoloji şirketleri için uygun değildir.
+> **IPO** (İlk Halka Arz): Bir şirketin ilk kez halka açık olarak borsada hisse ihraç etmesi ve işlem görmek üzere listelenmesidir. LightDAO için yatırım yapılan şirketlerin halka arzı, büyüme motorlarının ana çıkış yollarından biridir.
+> **Halka arz öncesi**: Şirket resmi olarak listelenmeden önce özel sermaye finansmanının son turu. Genellikle değerleme halka arz sonrası seviyeye yakındır, risk önceki turlara göre daha düşüktür ancak getiri katsayısı da daha düşüktür.
+> **TWAP Uygulaması** (Zaman Ağırlıklı Ortalama Fiyat Uygulaması): Büyük miktardaki geri alım emirlerini birden fazla küçük miktarlı emirlere bölün ve tek bir büyük emrin piyasa fiyatı üzerindeki etkisini önlemek için bunları belirli bir süre boyunca eşit şekilde uygulayın. LightDAO, tek bir geri alımın ortalama günlük işlem hacminin %5'ini aşmamasını şart koşuyor.
 
 ---
 
-## 第十章：路线图
+## Bölüm 10: Yol Haritası
 
-| 阶段 | 时间 | 核心目标 | 关键里程碑 | 前置条件 |
+| Aşama | Zaman | Temel Hedefler | Önemli Kilometre Taşları | Önkoşullar |
 |------|------|---------|-----------|---------|
-| 筹备期 | 2026年Q4 | 法律实体+团队+资金到位 | 开曼/BVI实体注册完成；技术合伙人或开发团队签约；战略投资者意向确认（2-3家）；启动资金≥$15万到位 | 创始人确定身份公开方式；完成BP和Pitch Deck |
-| 开发期 | 2027年Q1—Q2 | 核心系统开发 | 10个智能合约模块开发完成；PWA前端开发完成；7个验证者测试网部署；内部Alpha测试通过 | 开发团队到位；需求文档（技术Spec）定稿 |
-| 审计与测试期 | 2027年Q3 | 安全性与合规性验证 | 独立安全审计报告发布（≥1家顶级机构）；法律合规意见书发布（MLM+证券法）；5万并发压力测试通过；反作弊系统误报率<2%；治理投票演练完成 | 合约开发冻结（Code Freeze）；审计费用到位 |
-| TGE与主网上线 | 2027年Q4 | 代币发行+网络启动 | 荷兰式拍卖完成（目标$1,500万）；主网上线（≥10验证者）；挖矿平台公开开放；DEX流动性池建立；种子空投发放 | 审计通过；验证者≥7（硬性底线）；拍卖合约部署 |
-| 信仰构建期 | 2028年Q1（TGE后第1-3月） | 3—5万种子用户 | 活跃矿工突破3万；首次治理投票演练；社区多语言频道建立（英/中/西/葡/菲）；首份月度社区报告发布 | TGE完成；社区运营团队到位 |
-| 价值锚定期 | 2028年Q2—Q3（TGE后第4-9月） | 首笔投资+过渡期治理 | 首个投资提案通过（第4-6月内适用创世期多签审批；第7月起适用过渡期联名审批）；首笔SPV交割完成；验证者开放竞选（第7月起）；首份季度财务报告发布 | 稳定金库USDC≥$500万；投资标的尽调完成 |
-| 治理成熟期 | 2028年Q4—2029年Q1（TGE后第10-15月） | 委员会选举+去中心化过渡 | 治理委员会首次选举（第13月）；进入成熟期（委员会3/5决策）；wLIGHT跨链桥上线；CEX上市申请提交；开发者资助计划启动 | 活跃矿工≥10万；≥100个地址联名候选人 |
-| 生态扩张期 | 2029年Q2起（TGE后第16月+） | 规模化复制 | 活跃矿工突破20—50万；完成2—3笔投资；首笔利润回流验证；LIGHT回购销毁启动 | 治理委员会运转正常；投资模式已验证 |
-| 成熟运营期 | 2029年Q4起（TGE后第25月+） | 飞轮自转+完全自治 | 进入自治期（全体持有者重大提案）；投资组合累计部署≥$3,000万；通缩数据公开可验证 | 治理完全去中心化 |
+| Hazırlık dönemi | 4. Çeyrek 2026 | Tüzel kişilik + ekip + mevcut fonlar | Cayman/BVI varlık kaydı tamamlandı; teknik ortak veya geliştirme ekibi imzalandı; stratejik yatırımcı niyeti doğrulandı (2-3 şirket); başlangıç ​​sermayesi ≥ 150.000 $ | kurucu kimlik açıklama yöntemini belirler; BP ve Pitch Deck'in tamamlanması |
+| Geliştirme dönemi | 2027 1. Çeyrek-2. Çeyrek | Çekirdek sistem geliştirme | 10 akıllı sözleşme modülü geliştirildi; PWA ön uç geliştirmesi tamamlandı; 7 doğrulayıcı test ağı devreye alındı; dahili Alfa testi geçti | Geliştirme ekibi mevcut; gereksinimler belgesi (teknik özellikler) sonuçlandırıldı |
+| Denetim ve test dönemi | 3. Çeyrek 2027 | Güvenlik ve uyumluluk doğrulaması | Bağımsız güvenlik denetim raporunun yayınlanması (≥1 üst kurum); yasal uyumluluk görüş mektubunun yayınlanması (MLM + menkul kıymetler kanunu); 50.000 eş zamanlı stres testi geçildi; hile karşıtı sistem yanlış pozitif oranı <%2; yönetim oylaması çalışması tamamlandı | Sözleşme geliştirmenin dondurulması (Kod Dondurma); denetim ücretleri uygulanıyor |
+| TGE ve ana ağ çevrimiçi | 4. Çeyrek 2027 | Token ihracı + ağ lansmanı | Hollanda açık artırması tamamlandı (hedef 15 milyon dolar); ana ağ çevrimiçi (≥10 doğrulayıcı); halka açık madencilik platformu; DEX likidite havuzu kuruldu; tohum airdrop'u düzenlendi | Denetim geçti; doğrulayıcılar ≥7 (kesin sonuç); açık artırma sözleşmesi dağıtımı |
+| İnanç oluşturma dönemi | 2028 1. Çeyreği (TGE'den sonraki 1. ila 3. ay) | 30.000-50.000 tohum kullanıcısı | Aktif madenciler 30.000'i aştı; ilk yönetişim oylama uygulaması; çok dilli topluluk kanalı kuruldu (İngilizce/Çince/İspanyolca/Portekizce/Filipinler); ilk aylık topluluk raporu yayınlandı | TGE tamamlandı; topluluk operasyonları ekibi hazır |
+| Değer sabitleme dönemi | 2028'in 2. Çeyreği - 3. Çeyreği (TGE'den sonraki 4. ila 9. aylar) | İlk yatırım + geçiş dönemi yönetimi | İlk yatırım teklifi kabul edildi (oluşturma döneminde çoklu imza onayı 4. ila 6. ay arasında geçerlidir; geçiş döneminde ortak onay 7. aydan itibaren geçerlidir); ilk SPV teslimatı tamamlandı; doğrulayıcılar seçime açıktır (7. aydan itibaren); ilk üç aylık mali rapor yayınlandı | istikrarlı hazine USDC≥5 milyon$; yatırım hedefi durum tespiti tamamlandı |
+| Yönetişim olgunluk dönemi | 2028 4. Çeyrek-2029 1. Çeyrek (TGE'den sonraki 10. ila 15. ay) | Komite seçimi + merkezi olmayan yönetime geçiş | Yönetim komitesinin ilk seçimi (13. ay); Vade dönemine girilmesi (Komitenin 3/5 kararı); wLIGHT çapraz zincir köprüsü çevrimiçi oluyor; CEX listeleme başvurusu gönderildi; Geliştirici finansman planı başlıyor | Aktif madenciler ≥ 100.000; ≥ 100 ortak adaylara hitap ediyor |
+| Ekolojik genişleme dönemi | 2029'un 2. çeyreğinden itibaren (16. ay + TGE'den sonra) | Büyük ölçekli çoğaltma | Aktif madenciler 200.000-500.000'i aştı; 2-3 yatırım tamamlandı; ilk kârın ülkesine geri gönderilmesinin doğrulanması; LIGHT'ın geri alımı ve imhası başladı | Yönetişim komitesi normal şekilde çalışıyor; yatırım modeli doğrulandı |
+| Olgun operasyon dönemi | 2029'un 4. çeyreğinden itibaren (25. ay + TGE'den sonra) | Volanın dönüşü + tam özerklik | Özerklik dönemine girilmesi (tüm sahiplerden gelen önemli teklifler); kümülatif yatırım portföyü dağıtımı ≥ 30 milyon $; deflasyon verileri kamuya açık olarak doğrulanabilir | Yönetişim tamamen merkezi değildir |
 
-**路线图设计原则：**
+**Yol haritası tasarım ilkeleri:**
 
-- **审计先于TGE：** 绝不在未完成独立安全审计的情况下发行代币。这是用户资金安全的基本保障。
-- **验证者先于用户：** 主网上线时验证者≥10个（BFT容错f≥3），确保网络不会因单点故障停摆。
-- **投资先于扩张：** 首笔投资成功并产生可验证的利润回流后，方进入规模化扩张。避免"先圈人后找项目"的本末倒置。
-- **时间缓冲：** 每个阶段预留20-30%时间缓冲。技术开发、审计修复、法律流程均可能超预期，路线图不应是"最乐观情景"。
+- **TGE öncesi denetim:** Tokenlar asla bağımsız bir güvenlik denetimi tamamlanmadan verilmeyecektir. Bu, kullanıcı fonlarının güvenliğinin temel garantisidir.
+- **Doğrulayıcılar kullanıcılardan önce gelir:** Ana ağ çevrimiçi olduğunda, 10'dan fazla doğrulayıcı (BFT hata toleransı f≥3) bulunarak ağın tek bir arıza noktası nedeniyle kapanmamasını sağlar.
+- **Yatırım genişlemeden önce gelir:** Ancak ilk yatırım başarılı olduktan ve doğrulanabilir kâr getirisi sağladıktan sonra büyük ölçekli genişlemeye girebiliriz. "Önce insanları dolaştırıp sonra projeleri bularak" arabayı atın önüne koymaktan kaçının.
+- **Zaman Arabelleği:** Her aşama için %20-30 zaman arabelleği ayırın. Teknoloji geliştirme, denetim onarımları ve yasal süreçlerin tümü beklentileri aşabilir ve yol haritası "en iyimser senaryo" olmamalıdır.
 
-**与白皮书发布日（2026年8月4日）的关系：** 白皮书于2026年8月发布，作为项目愿景和技术设计的公开声明。实际执行从2026年Q4开始（筹备期），TGE目标为2027年Q4。白皮书发布与TGE之间约14个月的间隔用于团队组建、开发、审计和合规准备。
-
----
-
-## 第十一章：社区文化与开发者生态
-
-### 11.1 四条价值观
-
-- **透明优于完美** ——有瑕疵的公开，胜过完美的隐藏。所有金库流动、投资决策、治理投票永久上链可查。
-- **渐进优于激进** ——小步快跑，持续迭代。首笔投资从$200-500万起步，验证模式后再扩大规模。
-- **责任优于权利** ——权力与义务对等。治理委员会成员须质押50,000 LIGHT并公开施政纲领，失职则罚没。
-- **多元优于同质** ——不同声音是系统的免疫力。双维度投票（持币+地址）确保巨鲸和散户都有话语权。
-
-### 11.2 陪审团制度
-
-| 维度 | 规则 |
-|------|------|
-| 组成 | 随机抽取12名持有≥10,000枚LIGHT且无违规记录的用户 |
-| 任期 | 30天，届满后重新随机抽取 |
-| 职责 | 审理反作弊处罚申诉、提案造假指控、社区争议 |
-| 流程 | 被处罚用户可在72小时内提交证据；陪审团须在48小时内作出裁决 |
-| 裁决标准 | 12人中≥8人（2/3多数）同意方可维持或撤销处罚 |
-| 回避 | 与当事方存在邀请关系或同一IP段的陪审员自动替换 |
-| 报酬 | 任期内每日获得5 LIGHT的陪审服务补贴（从生态基金列支） |
-
-### 11.3 开发者生态计划
-
-| 模块 | 内容 | 资金来源 | 申请方式 |
-|------|------|---------|---------|
-| 开发者资助（Grants） | 面向在LightDAO链上构建dApp、工具、基础设施的团队，单个资助$5—50万等值LIGHT | 生态发展基金（线性释放期二） | 提交提案→技术审核官评估→治理投票（微型提案流程） |
-| SDK与API | 提供JavaScript/TypeScript SDK、REST API、WebSocket接口，降低第三方开发门槛 | 技术审核官主导开发 | 开源，GitHub公开 |
-| 黑客松 | 每季度举办一次线上黑客松，奖金池$10万等值LIGHT | 生态发展基金 | 公开报名，无门槛 |
-| 漏洞赏金（Bug Bounty） | 核心合约漏洞赏金计划，单个有效漏洞奖励$1,000—$50,000（按严重度分级） | 保险基金 + 生态发展基金 | 通过Immunefi或自建平台提交 |
-| CosmWasm合约市场 | 鼓励第三方部署智能合约，Gas费收入的20%回流生态金库支持开发者 | Gas费分配（见4.5节） | 自动，无需申请 |
-
-### 11.4 多语言与本地化策略
-
-| 维度 | 规划 |
-|------|------|
-| 平台语言 | 首发支持英语、中文、西班牙语、葡萄牙语、菲律宾语；第6个月起增加法语、阿拉伯语、斯瓦希里语、印尼语 |
-| 治理语言 | 提案和竞选纲领接受任何语言提交，系统提供机器翻译+社区人工校对 |
-| 社区运营 | 按语言设立独立社区频道（Discord/Telegram），各频道配备本地化社区联络志愿者 |
-| 文档翻译 | 白皮书及核心文档由社区翻译志愿者完成，翻译贡献计入"内容贡献"行为加成（5%） |
-| 本地化资助 | 生态发展基金中预留10%（4,000万枚）专项用于本地化社区建设和翻译激励 |
+**Beyaz Kitap ile İlişki Yayın Tarihi (4 Ağustos 2026):** Beyaz Kitap, projenin vizyonunu ve teknik tasarımını açıklayan bir kamu açıklaması olarak Ağustos 2026'da yayınlandı. Fiili uygulama 2026 yılının 4. çeyreğinde (hazırlık dönemi) başlayacak ve TGE hedefi 2027 yılının 4. çeyreğidir. Teknik incelemenin yayınlanması ile TGE arasındaki yaklaşık 14 aylık boşluk, ekip oluşturma, geliştirme, denetim ve uyumluluk hazırlığı için kullanıldı.
 
 ---
 
-## 第十二章：团队与顾问
+## Bölüm 11: Topluluk Kültürü ve Geliştirici Ekolojisi
 
-### 12.1 核心角色定义
+### 11.1 Dört Değer
 
-| 角色 | 职责 | 背景要求 | 披露方式 |
+- **Şeffaflık mükemmellikten iyidir** - Kusurları ortaya çıkarmak, mükemmelliği gizlemekten daha iyidir. Tüm hazine akışları, yatırım kararları ve yönetişim oyları zincirde kalıcı olarak mevcuttur.
+- **Kademeli olarak radikal olmaktan iyidir** - Küçük adımlar atın ve yinelemeye devam edin. İlk yatırım 2-5 milyon dolardan başlayacak, model doğrulandıktan sonra ölçek genişletilecek.
+- **Sorumluluklar haklardan daha iyidir** - Haklar ve yükümlülükler eşittir. Yönetim komitesi üyeleri 50.000 LIGHT sözü vermeli ve politika gündemlerini açıklamalıdır. Görevlerini yerine getirmemeleri durumunda para cezasına çarptırılacaklar.
+- **Çeşitlilik homojenlikten iyidir** - Farklı sesler sistemin bağışıklığıdır. İki boyutlu oylama (coin + adres), hem balinaların hem de perakende yatırımcıların söz sahibi olmasını sağlar.
+
+### 11.2 Jüri sistemi
+
+| Boyutlar | Kurallar |
+|------|------|
+| Kompozisyon | 10.000'den fazla LIGHT'a sahip olan ve herhangi bir ihlal kaydı olmayan 12 kullanıcıyı rastgele seçin |
+| Dönem | 30 gün, süre dolduktan sonra tekrar rastgele çekilecek |
+| Sorumluluklar | Hile karşıtı ceza şikayetlerini, teklif dolandırıcılığı suçlamalarını ve topluluk anlaşmazlıklarını dinleyin |
+| Süreç | Cezalandırılan kullanıcılar 72 saat içinde kanıt sunabilir; jüri 48 saat içinde karar vermeli |
+| Yargı standartları | 12 kişiden ≥8'i (2/3 çoğunluk) cezanın sürdürülmesini veya iptal edilmesini kabul etmelidir |
+| Kaçınma | Taraflarla davet ilişkisi bulunan veya aynı IP aralığında yer alan jüri üyelerinin otomatik olarak değiştirilmesi |
+| Ücretlendirme | Dönem boyunca günlük 5 LIGHT tutarında jüri hizmeti sübvansiyonu alın (ekolojik fondan ödenir) |
+
+### 11.3 Geliştirici Ekolojik Planı
+
+| Modül | İçerik | Finansman Kaynakları | Nasıl Başvurulur |
 |------|------|---------|---------|
-| 初始监护人/项目发起人 | 部署初始合约、维护文档、协调早期运营 | 区块链行业≥3年经验，有智能合约部署或DeFi协议运营记录 | TGE前公开真实身份或提供第三方身份验证报告（如公证人签名+链上消息验证） |
-| 技术负责人 | 合约架构设计、开发团队管理、审计对接 | Cosmos SDK/CosmWasm开发经验，有生产链部署记录 | 同上 |
-| 投资负责人 | 标的筛选、尽调协调、SPV设立、退出管理 | 私募股权/风险投资行业经验，有已完成退出案例 | 同上 |
-| 合规顾问 | 法律架构设计、监管对接、MLM合规意见 | 持有美国/欧盟/开曼执业资格的律师 | 公开律所名称（个人姓名除非本人同意否则不公开） |
+| Geliştirici Finansmanı (Hibeler) | LightDAO zincirinde dApp'ler, araçlar ve altyapı oluşturan ekipler için, LIGHT | Ekolojik Kalkınma Fonu (Doğrusal Sürüm Aşama 2) | Teklif gönderin → Teknik inceleme görevlisi değerlendirmesi → Yönetişim oylaması (mikro teklif süreci) |
+| SDK ve API | Üçüncü taraf geliştirme eşiğini düşürmek için JavaScript/TypeScript SDK'sı, REST API'si ve WebSocket arayüzleri sağlayın | Teknik inceleme görevlisi gelişime öncülük ediyor | Açık kaynak, GitHub'ta herkese açık |
+| Hackathon | Her üç ayda bir, LIGHT |'a eşdeğer 100.000 $ ödül havuzuyla çevrimiçi bir hackathon düzenleniyor. Ekolojik Kalkınma Fonu | Kaydı açın, eşik yok |
+| Hata Ödülü | Temel sözleşme hatası ödül programı, geçerli tek bir güvenlik açığı için 1.000 ila 50.000 ABD Doları arası ödül (önem derecesine göre derecelendirilmiştir) | Sigorta Fonu + Ekolojik Kalkınma Fonu | Immunefi veya kendi oluşturduğunuz platform aracılığıyla gönderin |
+| CosmWasm Sözleşme Piyasası | Üçüncü tarafları akıllı sözleşmeleri uygulamaya teşvik edin ve gaz ücreti gelirinin %20'si geliştiricileri desteklemek için ekolojik hazineye iade edilecek | Gaz ücreti dağıtımı (bkz. Bölüm 4.5) | Otomatik, başvuru gerektirmez |
 
-### 12.2 顾问委员会
+### 11.4 Çoklu dil ve yerelleştirme stratejisi
 
-- 由3—5名独立顾问组成，涵盖：DePIN技术、跨境投资合规、社区运营、消费行业；
-- 顾问以LIGHT代币形式获得咨询报酬（从战略运营基金"服务换代币"部分列支），锁仓12个月；
-- 顾问名单在TGE前公开，并接受社区质询（去中心化文字质询会，见7.5节）；
-- 顾问不得同时担任治理委员会成员（利益冲突隔离）。
+| Boyutlar | Planlama |
+|------|------|
+| Platform dili | Başlangıçta İngilizce, Çince, İspanyolca, Portekizce ve Filipinceyi destekler; Fransızca, Arapça, Svahili ve Endonezce 6. aydan itibaren eklenecek |
+| Yönetişim dili | Teklifler ve kampanya platformları her dilde kabul edilir ve sistem, makine çevirisi + topluluk kılavuzunun redaksiyonunu sağlar |
+| Topluluk Operasyonları | Dile göre bağımsız topluluk kanalları (Discord/Telegram) oluşturun ve her kanal yerelleştirilmiş topluluk irtibat gönüllüleriyle donatılmıştır |
+| Belge Çevirisi | Teknik incelemeler ve temel belgeler topluluk çeviri gönüllüleri tarafından doldurulur ve çeviri katkıları "İçerik Katkısı" davranış bonusuna (%5) dahil edilir |
+| Yerelleştirme Finansmanı | Ekolojik kalkınma fonunun %10'u (40 milyon jeton) yerelleştirme topluluğu oluşturma ve çeviri teşviklerine ayrıldı |
 
-### 12.3 团队承诺与约束
+---
+
+## Bölüm 12: Ekip ve Danışmanlar
+
+### 12.1 Temel rol tanımı
+
+| Rol | Sorumluluklar | Arka Plan Gereksinimleri | Açıklama Yöntemleri |
+|------|------|---------|---------|
+| İlk Koruyucu/Proje Sponsoru | İlk sözleşmeleri dağıtın, belgeleri koruyun ve erken operasyonları koordine edin | Akıllı sözleşme dağıtımı veya DeFi protokol operasyon kayıtları ile blockchain sektöründe ≥ 3 yıllık deneyim | TGE'den önce gerçek kimliğinizi açıklayın veya üçüncü taraf kimlik doğrulama raporu sağlayın (noter imzası + zincir üstü mesaj doğrulaması gibi) |
+| Teknik lider | Sözleşme mimarisi tasarımı, geliştirme ekibi yönetimi, denetim yerleştirme | Cosmos SDK/CosmWasm geliştirme deneyimi, üretim zinciri dağıtım kaydı | Yukarıdakinin aynısı |
+| Sorumlu yatırım sorumlusu | Hedef taraması, durum tespiti koordinasyonu, SPV kurulumu, çıkış yönetimi | Özel sermaye/risk sermayesi sektöründe tamamlanmış çıkış senaryolarıyla deneyim | Yukarıdakinin aynısı |
+| Uyumluluk danışmanı | Yasal yapı tasarımı, düzenleyici yerleştirme, MLM uyumluluk danışmanlığı | ABD/AB/Cayman niteliklerine sahip avukat | Kamu hukuku firmasının adı (kabul etmediğim sürece kişisel adım açıklanmayacaktır) |
+
+### 12.2 Danışma Kurulu
+
+- 3-5 bağımsız danışmandan oluşur ve şunları kapsar: DePIN teknolojisi, sınır ötesi yatırım uyumluluğu, topluluk operasyonları ve tüketici endüstrileri;
+- Danışmanlar, LIGHT tokenleri (stratejik işletme fonunun "tokenlar için hizmet alışverişi" kısmından ödenir) şeklinde danışmanlık ücreti alırlar ve 12 ay boyunca kilit altında tutulurlar;
+- Danışmanların listesi TGE'den önce kamuya duyurulur ve topluluk araştırmalarına açıktır (merkezi olmayan metin sorgulama toplantısı, bkz. Bölüm 7.5);
+- Danışmanlar aynı anda Yönetim Komitesi üyesi olarak görev yapamazlar (çıkar çatışması ayrımı).
+
+### 12.3 Ekip Taahhüdü ve Kısıtlamalar
 
 | 约束 | 规则 |
 |------|------|
@@ -940,194 +940,194 @@ SimHash>80%取消资格；AI内容须补充说明；缺席质询扣20%得票。�
 | 未披露后果 | 未披露利益冲突一经查实，永久禁止参与治理，已解锁代币的50%罚没至保险基金 |
 | 替换机制 | 核心角色离职或失能时，由治理委员会（成立前由初始监护人+备选监护人）指定继任者，须经社区公示72小时无异议 |
 
-### 12.4 核心贡献者薪酬（战略运营基金20%部分）
+### 12.4 Temel katılımcı tazminatı (stratejik işletme fonunun %20'si)
 
-- 总额：5,000万枚LIGHT（占总量2%）
-- 覆盖人数：3—5人
-- 释放规则：12月cliff + 36月线性（即第13个月起每月释放约115.7万枚）
-- 里程碑绑定：每季度由治理委员会（成立前由初始监护人+独立第三方）确认里程碑达成后方可释放当季额度
-- 披露规则：仅披露总额和释放规则，不公开个人姓名和单人额度（保护隐私，同时通过链上多签地址可验证总额不超发）
+- Toplam tutar: 50 milyon LIGHT (toplam tutarın %2'sine karşılık gelir)
+- Kapsanan kişi sayısı: 3-5 kişi
+- Sürüm kuralları: Aralık uçurumu + 36 ay doğrusal (yani 13. aydan itibaren her ay yaklaşık 1.157 milyon coin piyasaya sürülecek)
+- Dönüm noktası bağlayıcılığı: Her üç ayda bir, yönetim komitesi (ilk vasi + kuruluştan önceki bağımsız üçüncü taraf), üç aylık kota kaldırılmadan önce dönüm noktasına ulaşıldığını doğrular.
+- Açıklama kuralları: Sadece toplam miktar ve yayın kuralları açıklanır, kişi isimleri ve tek kişilik kotalar açıklanmaz (Gizliliğin korunması amacıyla ve aynı zamanda toplam tutarın aşılmadığı zincirdeki çoklu imza adresi üzerinden doğrulanabilir)
 
 ---
 
-## 第十三章：风险提示与免责声明
+## Bölüm 13: Risk Uyarısı ve Sorumluluk Reddi
 
-### 13.1 风险提示
+### 13.1 Risk uyarısı
 
-| 风险类型 | 说明 | 缓解措施 |
+| Risk türü | Açıklama | Etki azaltıcı önlemler |
 |---------|------|---------|
-| 市场风险 | LIGHT价格可能出现大幅波动，历史价格不代表未来表现。TGE初期流动性有限，价格可能剧烈波动 | 荷兰式拍卖公平定价；TGE后72小时±50%熔断；防死亡螺旋四级干预机制 |
-| 项目风险 | 投资标的可能亏损，风投项目可能失败，本金可能全部损失。PE/VC行业历史平均失败率约50-70%（单笔） | 双引擎分散（70%现金流+30%增长）；单一标的≤25%；行业≤40%；地域≤30%；保险基金10%计提 |
-| 技术风险 | 智能合约可能存在未被发现的漏洞；浏览器兼容性可能影响挖矿体验；跨链桥可能被攻击 | TGE前独立审计+形式化验证；Bug Bounty $1K-$50K；72小时时间锁；多签暂停机制 |
-| 监管风险 | 各国及地区监管政策可能发生变化，可能导致部分功能受限或特定区域用户无法参与 | 开曼 SPV 架构；默认零验证（核验由持牌第三方在其服务侧承担）；前端 IPFS 镜像抗审查；不面向特定国家营销 |
-| 流动性风险 | 子代币在早期可能缺乏足够交易深度；LIGHT在TGE初期可能面临抛售压力 | 子代币AMM初始流动性（发行量6%）；30天转让锁定期；团队/投资者12月cliff+36月线性 |
-| 稀释风险 | 随活跃矿工增长，人均挖矿收益将自然稀释（BaseReward分母增大） | 设计意图：早期参与者承担更高风险获得更高回报；后期用户可通过邀请分成加速积累；治理门槛动态下调 |
-| 运营风险 | 被投企业经营管理可能不达预期；SPV运营依赖第三方董事；投资团队可能流失 | SPV章程约束+独立董事；DAO可投票更换董事；SIAC/ICC仲裁条款；关键人保险（探索中） |
-| 跨链桥风险 | wLIGHT跨链桥由第三方运营，桥合约漏洞可能导致资产损失（历史上跨链桥是最大单点损失来源） | 桥上线前独立审计；桥接资产不超过总供应量5%；风险披露；用户可选择仅使用原生链 |
-| 验证者风险 | 验证者集体离线或作恶可能导致链暂停出块，所有用户操作（挖矿、投票、转账）暂时不可用 | Tendermint BFT容忍<1/3作恶；验证者≥21个（f=6）；Slashing惩罚；紧急迁移投票机制 |
+| Piyasa Riski | LIGHT fiyatları önemli ölçüde dalgalanabilir ve geçmiş fiyatlar gelecekteki performansı temsil etmez. TGE'nin başlangıç ​​likiditesi sınırlıdır ve fiyatlar şiddetli dalgalanabilir | Hollanda müzayede fuarı fiyatlandırması; ±%50 devre kesiciler TGE'den 72 saat sonra; ölüm karşıtı sarmal dört seviyeli müdahale mekanizması |
+| Proje Riski | Yatırım hedefi zarara uğrayabilir, risk sermayesi projesi başarısız olabilir ve ana paranın tamamı kaybolabilir. PE/VC endüstrisinin tarihsel ortalama başarısızlık oranı yaklaşık %50-70'tir (tek işlem) | Çift motorlu merkezi olmayan yönetim (%70 nakit akışı + %30 büyüme); tek hedef ≤ %25; endüstri ≤ %40; bölge ≤ %30; Sigorta fonları için %10 provizyon |
+| Teknik riskler | Akıllı sözleşmelerin keşfedilmemiş güvenlik açıkları olabilir; tarayıcı uyumluluğu madencilik deneyimini etkileyebilir; zincirler arası köprülere saldırı yapılabilir | Bağımsız denetim + TGE nezdinde resmi doğrulama; Hata Ödülü 1.000 - 50.000 $; 72 saatlik zaman kilidi; çoklu imzalı süspansiyon mekanizması |
+| Mevzuat riskleri | Çeşitli ülke ve bölgelerdeki düzenleyici politikalar değişebilir ve bu durum sınırlı işlevlere veya belirli bölgelerdeki kullanıcıların katılamamasına neden olabilir | Cayman SPV yapısı; varsayılan sıfır doğrulaması (doğrulama, hizmet tarafında lisanslı bir üçüncü taraf tarafından gerçekleştirilir); ön uç IPFS aynası sansüre dayanıklıdır; belirli ülkelere pazarlanmıyor |
+| Likidite riski | Alt token erken aşamada yeterli işlem derinliğine sahip olmayabilir; LIGHT, TGE'nin erken aşamasında satış baskısıyla karşı karşıya kalabilir | Alt token AMM'nin başlangıç ​​likiditesi (ihracın %6'sı); 30 günlük transfer kilitleme süresi; Ekip/yatırımcı 12 aylık uçurum + 36 aylık doğrusal |
+| Seyrelme riski | Aktif madencilerin sayısı arttıkça kişi başına düşen madencilik geliri doğal olarak azalacaktır (BaseReward paydası artar) | Tasarım amacı: İlk katılımcılar daha yüksek getiri elde etmek için daha yüksek risk alırlar; daha sonraki kullanıcılar davetiye paylaşımı yoluyla birikimi hızlandırabilir; yönetişim eşiği dinamik olarak düşürülüyor |
+| Operasyonel risk | Yatırım yapılan şirketin işleyişi ve yönetimi beklentileri karşılayamayabilir; SPV operasyonları üçüncü taraf direktörlere dayanır; yatırım ekibi kaybolabilir | SPV tüzüğü kısıtlamaları + bağımsız direktörler; DAO, yöneticileri değiştirmek için oy kullanabilir; SIAC/ICC tahkim hükümleri; kilit kişi sigortası (araştırma aşamasında) |
+| Zincirler arası köprü riskleri | wLIGHT çapraz zincirli köprü üçüncü bir tarafça işletilmektedir ve köprü sözleşmesindeki boşluklar varlık kayıplarına yol açabilir (geçmişte çapraz zincirli köprüler en büyük tek kayıp kaynağıdır) | Köprü çevrimiçi hale gelmeden önce bağımsız denetim; köprü varlıkları toplam arzın %5'ini geçmez; risk açıklaması; kullanıcılar yalnızca yerel zinciri kullanmayı seçebilir |
+| Doğrulayıcı riski | Doğrulayıcıların toplu olarak çevrimdışı olması veya kötülük yapması, zincirin blok üretimini askıya almasına ve tüm kullanıcı işlemlerinin (madencilik, oylama, transferler) geçici olarak kullanılamamasına neden olabilir | Tendermint BFT <1/3 kötülüğü tolere eder; doğrulayıcılar ≥ 21 (f=6); Kesici ceza; acil göç oylama mekanizması |
 
-### 13.2 免责声明
+### 13.2 Sorumluluk reddi beyanı
 
-- LIGHT 及子代币不是证券，不具有内在价值，价格可能归零。本白皮书不构成任何形式的证券发行文件、投资要约或投资建议。
-- 协议收入分配取决于底层资产的实际经营表现，历史数据不代表未来收益。任何关于投资回报的描述均为前瞻性估计，非承诺。
-- 用户须自行承担私钥丢失、泄露导致的全部损失，协议不提供找回服务。使用第一层（Passkey）或第二层（社交恢复）钱包可降低此风险，但不消除。
-- 本协议面向全球用户（受限于适用法律法规），用户应自行确认其所在司法辖区对加密资产、DAO组织及SPV收益凭证的法律态度，并确保参与行为合法合规。
-- 本白皮书中的前瞻性陈述（包括路线图、收益模型、通缩估算、投资规模预测）均为基于当前假设的预测，实际结果可能因市场、技术、监管、团队执行等因素而重大偏离。
-- 邀请激励为单层分成机制，不构成多层次营销或金字塔计划。但用户仍应自行确认其所在司法辖区对推荐奖励的法律态度。
-- 参与LightDAO生态的最低年龄为18岁（或所在司法辖区的法定成年年龄，以较高者为准）。未成年人不得参与挖矿、治理或投资。
+- LIGHT ve alt tokenler menkul kıymet değildir, gerçek değeri yoktur ve fiyatı sıfıra dönebilir. Bu tanıtım yazısı herhangi bir menkul kıymet ihraç belgesi, yatırım teklifi veya yatırım tavsiyesi niteliğinde değildir.
+- Anlaşmanın gelir dağılımı, dayanak varlıkların fiili işletme performansına bağlıdır ve geçmiş veriler gelecekteki geliri temsil etmez. Yatırım getirilerine ilişkin her türlü açıklama ileriye dönük tahminlerdir ve vaat değildir.
+- Kullanıcı, özel anahtarın kaybolması veya sızmasından kaynaklanan tüm zararları karşılamalıdır ve sözleşme, geri alma hizmetleri sağlamamaktadır. Tier 1 (Passkey) veya Tier 2 (Sosyal Kurtarma) cüzdanı kullanmak bu riski azaltır ancak ortadan kaldırmaz.
+- Bu sözleşme dünyanın her yerindeki kullanıcılara açıktır (geçerli yasa ve düzenlemelere tabidir). Kullanıcılar, kendi yetki alanlarında şifrelenmiş varlıklara, DAO kuruluşlarına ve SPV gelir sertifikalarına yönelik yasal tutumu doğrulamalı ve katılımlarının yasal ve uyumlu olmasını sağlamalıdır.
+- Bu tanıtım belgesindeki ileriye dönük beyanlar (yol haritaları, gelir modelleri, deflasyon tahminleri, yatırım ölçeği tahminleri dahil) mevcut varsayımlara dayanan tahminlerdir ve gerçek sonuçlar pazar, teknoloji, mevzuat, ekip uygulaması ve diğer faktörler nedeniyle önemli ölçüde farklılık gösterebilir.
+- Davet teşvikleri tek düzeyli bir paylaşım mekanizmasıdır ve çok düzeyli pazarlama veya saadet zinciri oluşturmaz. Ancak kullanıcıların yine de kendi yetki alanlarında yönlendirme ödüllerine yönelik yasal tutumu onaylamaları gerekir.
+- LightDAO ekosistemine katılmak için minimum yaş 18'dir (veya yargı alanınızdaki yasal reşit olma yaşı (hangisi daha yüksekse). Küçüklerin madencilik, yönetim veya yatırım faaliyetlerine katılmasına izin verilmez.
 
 ---
 
-## 附录A：关键参数汇总表
+## Ek A: Temel parametrelerin özet tablosu
 
-| 类别 | 参数 | 数值 |
+| Kategori | Parametre | Değer |
 |------|------|------|
-| 发行 | 总量 | 25亿枚，永不增发 |
-| 发行 | 挖矿 | 40% = 10亿枚 |
-| 发行 | 投资金库 | 34% = 8.5亿枚 |
-| 发行 | 生态基金 | 16% = 4亿枚 |
-| 发行 | 战略运营 | 10% = 2.5亿枚（服务50%/融资30%/贡献者20%） |
-| 发行 | 减半周期 | 每2年 |
-| 发行 | 第一纪元日释放 | ≈68.49万枚（矿工95%=65.07万，验证者5%=3.42万） |
-| 发行 | 每区块奖励池 | ≈13.87 LIGHT |
-| 挖矿 | 贡献权重 | 带宽40%/会话30%/验证20%/稳定10% |
-| 挖矿 | 满加成 | 1.44倍 |
-| 邀请 | 布道者/大使/合伙人 | 3人10%+100L / 10人15%+500L+5% / 50人20%+2500L+10% |
-| 行为 | 四项×5% | 上限20% |
-| Gas费 | 定价机制 | USD等值锚定，每24h由预言机自动换算为LIGHT数量 |
-| Gas费 | 普通转账 | $0.001等值（@$0.05时=0.02 LIGHT） |
-| Gas费 | 治理投票 | $0.005等值（@$0.05时=0.10 LIGHT） |
-| Gas费 | 分配规则 | 50%销毁 / 30%验证者 / 20%生态金库 |
-| 通缩 | 减速/预警/底线 | ≤15亿/≤12亿/≤10亿（流通量） |
-| 通缩 | 理论上限 | 16.5亿（10+4+2.5，金库8.5亿永不流通） |
-| 治理 | 提案门槛 | ≥5,000 LIGHT + 30天质押 |
-| 治理 | 委员会质押 | 50,000 LIGHT + 100地址 |
-| 治理 | 陪审团 | 10,000 LIGHT |
-| 治理 | 押注 | 5—500 LIGHT |
-| 治理 | 声誉加成 | 1年+15次投票→+30%（总上限+40%） |
-| 投资 | 单笔上限 | 金库剩余×15%（初始1.275亿枚） |
-| 投资 | 基准可部署 | 8.5亿×$0.15×75% = $9,563万≈$1亿 |
-| 投资 | 利润分配(年度) | 40/30/20/10 |
-| 投资 | 利润分配(退出) | 70/30 |
-| 拍卖 | 目标 | $1,500万（$500万储备+$1,000万投资资本） |
-| 储备 | 稳定金库 | TGE $500万→第24月$800万 |
-| 保险 | 计提 | 利润10% |
-| 空投 | 总预算 | 5,500万枚（生态基金13.75%），CAC≈$55/留存用户 |
-| 验证者 | 初始/上限 | 21（最低10）/ 100 |
-| 验证者 | 最低质押 | 500,000 LIGHT |
-| 验证者 | TGE硬性底线 | ≥7个，否则不得上线 |
+| Düzenleme | Toplam tutar | 2,5 milyar adet, bir daha asla ihraç edilmedi |
+| Düzenleme | madencilik | %40 = 1 milyar jeton |
+| Düzenleme | Yatırım Kasası | %34 = 850 milyon jeton |
+| Düzenleme | Ekolojik Fon | %16 = 400 milyon adet |
+| Düzenleme | Stratejik Operasyonlar | %10 = 250 milyon jeton (hizmet %50/finansman %30/katkıda bulunanlar %20) |
+| Düzenleme | Yarılanma döngüsü | 2 yılda bir |
+| Düzenleme | İlk Çağ Günü Yayını | ≈684.900 (madenciler %95 = 650.700, doğrulayıcılar %5 = 34.200) |
+| Düzenleme | Blok başına ödül havuzu | ≈13,87 IŞIK |
+| madencilik | Katkı ağırlığı | Bant genişliği %40/oturum %30/doğrulama %20/kararlılık %10 |
+| madencilik | Tam bonus | 1,44 kez |
+| Davetiye | Evangelist/Büyükelçi/Ortak | 3 kişi %10+100L/10 kişi %15+500L+%5/50 kişi %20+2500L+%10 |
+| Davranış | Dört ürün × %5 | Üst sınır %20 |
+| Gaz ücreti | Fiyatlandırma mekanizması | USD eşdeğeri demirleme, her 24 saatte bir kahin tarafından otomatik olarak LIGHT miktarına dönüştürülür |
+| Gaz ücreti | Olağan transfer | 0,001 ABD Doları eşdeğeri (@0,05 ABD Doları=0,02 IŞIK) |
+| Gaz ücreti | Yönetişim oylaması | 0,005 ABD Doları eşdeğeri (@0,05 ABD Doları=0,10 IŞIK) |
+| Gaz ücreti | Dağıtım kuralları | %50 imha / %30 doğrulayıcılar / %20 ekolojik hazine |
+| Deflasyon | Yavaşlama/erken uyarı/sonuç | ≤1,5 milyar/≤1,2 milyar/≤1 milyar (dolaşım hacmi) |
+| Deflasyon | Teorik üst sınır | 1,65 milyar (10+4+2,5, hazinedeki 850 milyon hiçbir zaman dolaşıma girmeyecek) |
+| Yönetişim | Teklif Eşiği | ≥5.000 LIGHT + 30 günlük stake |
+| Yönetişim | Komite Staking | 50.000 IŞIK + 100 Adres |
+| YÖNETİM | JÜRİ | 10.000 IŞIK |
+| Yönetişim | Bahis | 5—500 IŞIK |
+| Yönetişim | İtibar bonusu | 1 yıl +15 oy → +%30 (toplam sınır +%40) |
+| Yatırım | Tek limit | Kasada kalan × %15 (başlangıçta 127,5 milyon jeton) |
+| Yatırım | Temel konuşlandırılabilir | 850 milyon × 0,15 $ × %75 = 95,63 milyon $ ≈ 100 milyon $ |
+| Yatırım | Kâr dağıtımı (yıllık) | 40/30/20/10 |
+| Yatırım | Kâr dağıtımı (çıkış) | 70/30 |
+| Açık artırma | Hedef | 15 milyon $ (5 milyon $ rezerv + 10 milyon $ yatırılan sermaye) |
+| Rezervler | İstikrarlı Hazine | TGE 5 milyon $ → 24. Ay 8 milyon $ |
+| Sigorta | Kâr | Kâr %10 |
+| Airdrop | Toplam bütçe | 55 milyon (ekolojik fon %13,75), CAC≈55$/tutulan kullanıcı |
+| Doğrulayıcılar | Harf/Başlık | 21 (minimum 10) / 100 |
+| Doğrulayıcı | Minimum bahis | 500.000 IŞIK |
+| Doğrulayıcı | TGE zor sonuç | ≥7, aksi takdirde çevrimiçi olmasına izin verilmeyecektir |
 
 ---
 
-## 附录B：数值推导与校验
+## Ek B: Sayısal türetme ve doğrulama
 
-### B.1 挖矿产出
+### B.1 Madencilik çıktısı
 
-2A=10亿→A=5亿。日释放=5亿÷730=684,932≈68.49万。矿工池=684,932×95%=650,685≈65.07万。验证者=684,932×5%=34,247≈3.42万。每区块=684,932÷49,371≈13.87。校验：684,932×730=499,999,960≈5亿 ✓
+2A=1 milyar →A=500 milyon. Günlük sürüm = 500 milyon ÷ 730 = 684.932 ≈ 684.900. Madencilik havuzu=684,932×95%=650,685≈650,700. Doğrulayıcılar=684,932×%5=34,247≈34,200. Her blok=684,932÷49,371≈13,87. Doğrulama: 684,932×730=499,999,960≈500 milyon ✓
 
-### B.2 治理门槛可达性
+### B.2 Yönetişim eşiği erişilebilirliği
 
-10万矿工基准（6.51/天，合伙人74.44/天）：提案5,000→768天/67天；委员会50,000→7,684天(21年)/672天(22月)；陪审团10,000→1,537天(4.2年)/134天(4.5月)；押注500→77天/6.7天。
+100.000 madenci karşılaştırması (6,51/gün, ortak 74,44/gün): teklif 5.000→768 gün/67 gün; komite 50.000→7.684 gün (21 yıl)/672 gün (22 ay); jüri 10.000→1.537 gün (4,2 yıl)/134 gün (4,5 ay); bahis 500→77 gün/6,7 gün.
 
-种子期（1万矿工，65.07/天，合伙人744.4/天）：提案→77天(2.5月)/6.7天；委员会→768天(25月)/67天(2.2月)；陪审团→154天(5月)/13.4天。
+Başlangıç ​​dönemi (10.000 madenci, 65,07/gün, ortaklar 744,4/gün): teklif → 77 gün (2,5 ay) / 6,7 gün; komite → 768 gün (25 ay) / 67 gün (2,2 ay); jüri → 154 gün (5 ay) / 13,4 gün.
 
-### B.3 通缩时间线
+### B.3 Deflasyon Zaman Çizelgesi
 
-流通量=挖矿+生态+战略(vested)−兑换−Gas−回购。金库8.5亿永不流通。
+Dolaşım hacmi = madencilik + ekoloji + strateji (haklı) - takas - Gaz - geri satın alma. Hazinedeki 850 milyon asla dolaşıma girmeyecek.
 
-| 年 | 累计挖矿 | 生态 | 战略 | 兑换 | Gas | 回购 | 流通量 |
+| Yıl | Kümülatif Madencilik | Ekoloji | Strateji | Değişim | Gaz | Geri alım | Dolaşım |
 |----|---------|------|------|------|-----|------|--------|
-| 1 | 2.50 | 2.80 | 0 | 0 | 0.01 | 0 | ≈5.29 |
-| 2 | 5.00 | 4.00 | 0.83 | 0.05 | 0.02 | 0 | ≈9.76 |
-| 3 | 6.25 | 4.00 | 1.67 | 0.20 | 0.03 | 0.05 | ≈11.64 |
-| 4 | 7.50 | 4.00 | 2.50 | 0.45 | 0.04 | 0.20 | ≈13.31(峰值) |
-| 5 | 8.13 | 4.00 | 2.50 | 0.80 | 0.05 | 0.50 | ≈13.28 |
-| 6 | 8.75 | 4.00 | 2.50 | 1.20 | 0.06 | 0.90 | ≈13.09 |
-| 7 | 9.06 | 4.00 | 2.50 | 1.60 | 0.07 | 1.40 | ≈12.49 |
+| 1 | 2.50 | 2.80 | 0 | 0 | 0.01 | 0 | ≈5,29 |
+| 2 | 5.00 | 4.00 | 0.83 | 0,05 | 0.02 | 0 | ≈9,76 |
+| 3 | 6.25 | 4.00 | 1.67 | 0.20 | 0.03 | 0,05 | ≈11.64 |
+| 4 | 7.50 | 4.00 | 2.50 | 0,45 | 0.04 | 0.20 | ≈13,31(tepe) |
+| 5 | 8.13 | 4.00 | 2.50 | 0,80 | 0,05 | 0,50 | ≈13.28 |
+| 6 | 8.75 | 4.00 | 2.50 | 1.20 | 0.06 | 0,90 | ≈13.09 |
+| 7 | 9.06 | 4.00 | 2.50 | 1.60 | 0.07 | 1.40 | ≈12,49 |
 | 8 | 9.38 | 4.00 | 2.50 | 2.00 | 0.08 | 1.90 | ≈11.89 |
 | 9 | 9.53 | 4.00 | 2.50 | 2.40 | 0.09 | 2.30 | ≈11.24 |
 | 10 | 9.69 | 4.00 | 2.50 | 2.80 | 0.10 | 2.70 | ≈10.59 |
 | 11 | 9.77 | 4.00 | 2.50 | 3.10 | 0.11 | 3.00 | ≈10.06 |
 | 12 | 9.84 | 4.00 | 2.50 | 3.40 | 0.12 | 3.30 | ≈9.52 |
 
-结论：峰值Y4≈13.31亿；预警线12亿约Y8触及；底线10亿约Y11-12触及；减速线15亿仅极端低销毁情景。
+Sonuç: Zirve Y4≈1,331 milyar; Y8 1,2 milyarlık uyarı çizgisine dokundu; 1 milyarlık alt sınıra Y11-12 ulaşıyor; 1,5 milyarlık yavaşlama çizgisi yalnızca son derece düşük bir yıkım senaryosudur.
 
 ---
 
-## 附录C：审计修正日志（累计36项）
+## Ek C: Denetim düzeltme günlüğü (toplam 36 öğe)
 
-含原22项（L1-5, A1-4, D1-4, M1-8, G1-3）+ 技术架构7项（T1-7）+ 本轮经济模型优化7项：
+Bu turda 22 orijinal öğe (L1-5, A1-4, D1-4, M1-8, G1-3) + 7 teknik mimari öğesi (T1-7) + 7 ekonomik model optimizasyon öğesi içerir:
 
-| 编号 | 修正 |
+| Sayı | Düzeltme |
 |------|------|
-| E-1 | 总量21亿→25亿（投资容量约束驱动） |
-| E-2 | 分配50/30/20→40/34/16/10（新增战略运营基金10%） |
-| E-3 | 荷兰拍卖$1,000万→$1,500万（初始投资资本$500万→$1,000万） |
-| E-4 | 新增5.7节空投增长计划（5,500万枚，CAC $55/人） |
-| E-5 | 验证者分阶段启动（测试网7→TGE最低10/目标21→开放100） |
-| E-6 | 通缩触发线调整（14/12/10→15/12/10，适配16.5亿流通上限） |
-| E-7 | 外部引用全部替换为可验证来源（移除不可验证SSRN论文） |
+| E-1 | Toplam tutar 2,1 milyar → 2,5 milyar (yatırım kapasitesi kısıtlamalarından kaynaklanmaktadır) |
+| E-2 | Tahsis 50/30/20→40/34/16/10 (yeni stratejik işletme fonlarının %10'u) |
+| E-3 | Hollanda açık artırması 10 milyon $→15 milyon $ (başlangıç ​​yatırım sermayesi 5 milyon $→10 milyon $) |
+| E-4 | Yeni 5,7 bölümlü airdrop büyüme planı (55 milyon parça, CAC 55 $/kişi) |
+| E-5 | Doğrulayıcılar aşamalı olarak başlatılır (Testnet 7→TGE minimum 10/Target 21→Open 100) |
+| E-6 | Deflasyon tetikleme hattı ayarı (14/12/10 → 15/12/10, 1,65 milyar dolaşım sınırına uyarlandı) |
+| E-7 | Tüm harici alıntıları doğrulanabilir kaynaklarla değiştirin (doğrulanamayan SSRN belgelerini kaldırın) |
 
 ---
 
-## 附录D：术语速查索引
+## Ek D: Hızlı Terimler Dizini
 
-各术语的完整解释已标注于其首次出现章节末尾的【本章术语】注释块中。本索引按字母顺序列出所有术语及其所在章节，便于快速定位。
+Her terimin tam açıklaması, ilk göründüğü bölümün sonundaki [Bu Bölümdeki Terimler] yorum bloğunda belirtilmiştir. Bu dizin, hızlı gezinme için tüm terimleri ve bölümlerini alfabetik sırayla listeler.
 
-| 术语 | 定义所在章节 |
-|------|------------|
-| AMM（自动做市商） | 第四章 |
-| BFT（拜占庭容错） | 第四章 |
-| CAC（用户获取成本） | 第五章 |
-| CEX（中心化交易所） | 第四章 |
-| Cosmos SDK | 第四章 |
-| CosmWasm | 第四章 |
-| DAO（去中心化自治组织） | 第二章 |
-| DCF（现金流折现法） | 第九章 |
-| DePIN（去中心化物理基础设施网络） | 第二章 |
-| DEX（去中心化交易所） | 第四章 |
-| EBITDA（息税折旧摊销前利润） | 第九章 |
-| Gas费 | 第四章 |
-| IBC（跨链通信协议） | 第三章 |
-| IPFS（星际文件系统） | 第四章 |
-| KYC（了解你的客户） | 第三章 |
-| LIGHT（原生代币） | 第四章 |
-| LP（流动性提供者） | 第五章 |
-| Lower Middle Market PE（下游中端私募股权） | 第二章 |
-| Merkle Tree（默克尔树） | 第四章 |
-| MiFID II（欧盟金融工具市场指令II） | 第三章 |
-| MLM（多层次营销） | 第三章 |
-| PII（个人可识别信息） | 第三章 |
-| PoC（贡献证明） | 第四章 |
-| PoS（权益证明） | 第四章 |
-| PoW（工作量证明） | 第四章 |
-| Pre-IPO | 第九章 |
-| PWA（渐进式Web应用） | 第四章 |
-| Reg D / Reg S（美国证券法D/S条例） | 第三章 |
-| Slashing（罚没） | 第四章 |
-| SPV（特殊目的载体） | 第二章 |
-| TGE（代币生成事件） | 第五章 |
-| TWAP（时间加权平均价格） | 第四章 |
-| TWAP执行（回购拆单） | 第九章 |
-| VWAP（成交量加权平均价格） | 第五章 |
-| wLIGHT（封装LIGHT） | 第五章 |
-| ZK-KYC（零知识证明KYC） | 第三章 |
-| 子代币（Sub-token） | 第五章 |
-| 死亡螺旋（Death Spiral） | 第五章 |
-| 减半（Halving） | 第五章 |
-| 金库（Treasury） | 第五章 |
-| 荷兰式拍卖（Dutch Auction） | 第五章 |
-| 预言机（Oracle） | 第四章 |
-
----
-
-**白皮书全文完**
-
-**版权说明：** 本文档为开源社区文档，可自由转载，但须保留完整内容。
+| Terminoloji | Tanım Bölüm |
+|------|---------------|
+| AMM (Otomatik Piyasa Yapıcı) | Bölüm 4 |
+| BFT (Bizans Hata Toleransı) | Bölüm 4 |
+| CAC (Müşteri Kazanma Maliyeti) | Bölüm 5 |
+| CEX (Merkezi Borsa) | Bölüm 4 |
+| Cosmos SDK'sı | Bölüm 4 |
+| KozmWasm | Bölüm 4 |
+| DAO (Merkezi Olmayan Özerk Organizasyon) | Bölüm 2 |
+| DCF (İndirgenmiş Nakit Akışı Yöntemi) | Bölüm 9 |
+| DePIN (Merkezi Olmayan Fiziksel Altyapı Ağı) | Bölüm 2 |
+| DEX (Merkezi Olmayan Borsa) | Bölüm 4 |
+| FAVÖK (faiz, vergi, amortisman ve amortisman öncesi kazanç) | Bölüm 9 |
+| Gaz Ücreti | Bölüm 4 |
+| IBC (Zincirler Arası İletişim Protokolü) | Bölüm 3 |
+| IPFS (Gezegenlerarası Dosya Sistemi) | Bölüm 4 |
+| KYC (Müşterinizi Tanıyın) | Bölüm 3 |
+| LIGHT (yerel belirteç) | Bölüm 4 |
+| LP (Likidite Sağlayıcı) | Bölüm 5 |
+| Alt Orta Piyasa PE (Alt Orta Piyasa Özel Sermayesi) | Bölüm 2 |
+| Merkle Ağacı | Bölüm 4 |
+| MiFID II (Finansal Araçlar Yönergesi II'de AB Piyasaları) | Bölüm 3 |
+| MLM (Çok Düzeyli Pazarlama) | Bölüm 3 |
+| PII (Kişisel Tanımlayıcı Bilgiler) | Bölüm 3 |
+| PoC (Katkı Kanıtı) | Bölüm 4 |
+| PoS (Stake Kanıtı) | Bölüm 4 |
+| PoW (İş Kanıtı) | Bölüm 4 |
+| Halka Arz Öncesi | Bölüm 9 |
+| PWA (Aşamalı Web Uygulaması) | Bölüm 4 |
+| Reg D / Reg S (ABD Menkul Kıymetler Kanunu D/S Yönetmeliği) | Bölüm 3 |
+| Kesme | Bölüm 4 |
+| SPV (Özel Amaçlı Araç) | Bölüm 2 |
+| TGE (Token Oluşturma Etkinliği) | Bölüm 5 |
+| TWAP (Zaman Ağırlıklı Ortalama Fiyat) | Bölüm 4 |
+| TWAP Gerçekleştirme (Geri Alım ve Bölünmüş Emirler) | Bölüm 9 |
+| VWAP (Hacim Ağırlıklı Ortalama Fiyat) | Bölüm 5 |
+| wLIGHT (kapsüllü IŞIK) | Bölüm 5 |
+| ZK-KYC (Sıfır Bilgi Kanıtı KYC) | Bölüm 3 |
+| Alt belirteç | Bölüm 5 |
+| Ölüm Sarmalı | Bölüm 5 |
+| Yarıya indirme | Bölüm 5 |
+| Hazine (Hazine) | Bölüm 5 |
+| Hollanda Müzayedesi | Bölüm 5 |
+| Kahin | Bölüm 4 |
 
 ---
 
-# 附录:主网已验证参数与地址(V2.4 实况)
+**Tam beyaz kağıt biter**
+
+**Telif Hakkı Bildirimi:** Bu belge açık kaynaklı bir topluluk belgesidir ve serbestçe çoğaltılabilir ancak içeriğin tamamının korunması gerekir.
+
+---
+
+# Ek: Ana ağ tarafından doğrulanan parametreler ve adresler (V2.4 canlı)
 
 ## A. §4.5 Gas 经济实测参数
 - min-gas-price 公式:`(TransferUsdTarget / UsdPerLight) × 10^6 / RefTransferGas`;当前 TransferUsdTarget=$0.001、UsdPerLight=$0.05、RefTransferGas=100000 → **0.2 ulight/gas**
@@ -1138,11 +1138,11 @@ SimHash>80%取消资格；AI内容须补充说明；缺席质询扣20%得票。�
 ## B. 核心合约地址
 见仓库 `docs/MAINNET_STATUS.md`(light_token / mining_reward / governance / treasury_multisig / oracle_twap / vesting 等 10 合约)。
 
-## C. 遗留 denom(stake)处置
-genesis 误配 mint_denom=stake 已归零停止增发;存量 stake(约 2.56e11 微单位)为无用途遗留,处置方案(兑换/销毁)待治理提案,不影响 ulight 经济模型。
+## C. Eski değerin (hissenin) elden çıkarılması
+oluşum uyumsuzluğu mint_denom=stake sıfıra sıfırlandı ve ek ihraç durduruldu; mevcut hisse (yaklaşık 2,56e11 mikro birim) amaçsız bırakılmıştır ve elden çıkarma planı (takas/yok etme) yönetim önerilerini beklemektedir ve ulight ekonomik modeli etkilemeyecektir.
 
-## D. §4.4 vesting 实况
-vault 250,000,000 LIGHT,3 个独立 schedule:75M(cliff 0)/ 100M(cliff 1 年)/ 75M(cliff 2 年),已上链。
+## D. §4.4 canlı hak kazanma
+Vault 250.000.000 IŞIK, 3 bağımsız program: 75M (uçurum 0)/ 100M (uçurum 1 yıl)/ 75M (uçurum 2 yıl), zaten zincirde.
 
 ## E. 安全实践
 - 主网升级为 x/upgrade 治理 + 全节点同块高协调 + auto-swap 看门狗,测试网端到端彩排后执行
