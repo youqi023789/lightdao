@@ -113,7 +113,9 @@ def main():
              # 实测漏过：磁盘 7 片、线上页面只挂 5 片 —— 6、7 两片里的长句永远不翻，
              # 而当时所有门禁全绿（因为没人比对"片数 vs 引用"）。
              ("g13_mt_wiring", ["python3", "/usr/local/bin/ld_i18n_wiring.py",
-                                os.path.join(STG, "js"), STG])]
+                                os.path.join(STG, "js"), STG]),
+             # g15：资产形态口径必须与白皮书一致（11-05 我把 LIGHT 写成 CW20 合约币的洞）
+             ("g15_asset_form", ["python3", "/usr/local/bin/ld_asset_form_check.py", STG])]
     for name, cmd in gates:
         rc, out = run(cmd, env)
         last = [l for l in out.strip().splitlines() if l.strip()][-3:]
