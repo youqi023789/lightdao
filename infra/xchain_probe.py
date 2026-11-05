@@ -197,24 +197,38 @@ def transfer(direction, amount, receiver, ip):
     if direction not in ("ab", "ba"):
         raise ValueError("方向只能是 ab/ba")
     if direction == "ba" and os.environ.get("XC_ALLOW_BA") != "1":
-        # 回顶（B→A）要动用 B 侧账户里的 ibc 面额，面板只开 A→B 这一侧；
-        # 反向通道已经用命令行双向实测过（见 docs/IBC_TESTNET_EVIDENCE.md）。
-        raise ValueError("本面板只提供测试网 A→B；反向已由实测记录证明，暂不对外开按钮")
+        raise ValueError("回顶方向（B→A）未开放（需运维显式开 XC_ALLOW_BA）")
+    # 两个方向各自的"身份四件套"全部来自 EnvironmentFile：代码里不写死账户与通道，
+    # 免得将来换对端/换演示账户时改一处漏一处。
+    D = {
+        "ab": {"node": RPC_A, "home": HOME_A, "chain": "lightdao-testnet-gas", "ch": CH_A,
+               "key": DEMO_KEY, "recv": os.environ.get("XC_DEMO_RECV", ""),
+               "denom": "stake", "pend": lambda: pend(RPC_A, CH_A),
+               "gas": lambda: stake_of(RPC_B, RELAYER_B), "signer": DEMO_ACCT,
+               "avail": lambda: stake_of(RPC_A, DEMO_ACCT),
+               "sendable": lambda: stake_of(RPC_A, DEMO_ACCT),
+               "label": "测试网 A→B"},
+        "ba": {"node": RPC_B, "home": HOME_B, "chain": "lightdao-testnet-b", "ch": CH_B,
+               "key": os.environ.get("XC_BA_KEY", "demob"),
+               "recv": os.environ.get("XC_BA_RECV", ""),
+               "denom": IBC_DENOM, "pend": lambda: pend(RPC_B, CH_B),
+               "gas": lambda: stake_of(RPC_A, RELAYER_A), "signer": os.environ.get("XC_BA_ACCT", ""),
+               "sendable": lambda: ibc_amt_of(RPC_B, os.environ.get("XC_BA_ACCT", ""), "ibc/"),
+               "label": "测试网 B→A"},
+    }[direction]
     try:
         amt = int(amount) if str(amount or "").strip() else int(os.environ.get("XC_DEMO_AMOUNT", "20000"))
     except Exception:
         raise ValueError("金额必须是整数（6 位小数的 stake 最小单位）")
     if not (0 < amt <= lim):
         raise ValueError("单笔金额必须在 1 ~ %d 之间" % lim)
-    recv = (receiver or os.environ.get("XC_DEMO_RECV", "wasm1vgjc0y4ut6j9xjrhxvqqlguzgaqkxer2anjkmg")).strip()
+    recv = (receiver or D["recv"]).strip()
     if not re.match(r"^wasm1[02-9ac-hj-np-z]{38,58}$", recv):
         raise ValueError("收款地址格式不对")
-    # 收款人白名单：不然这个按钮就成了任意地址的测试网提款口（虽然是测试币，
+    # 收款人白名单：不然这个按钮就成了任意地址的提款口（虽然是测试币，
     # 但也别让访客能把我们的演示账户搬到陌生地址上去计数）。
-    allow = os.environ.get("XC_ALLOW_ANY_RECV") == "1"
-    demo_recv = os.environ.get("XC_DEMO_RECV", "wasm1vgjc0y4ut6j9xjrhxvqqlguzgaqkxer2anjkmg")
-    if not allow and recv != demo_recv:
-        raise ValueError("演示转账只发往固定的演示地址（防止被当成提款口）")
+    if os.environ.get("XC_ALLOW_ANY_RECV") != "1" and recv != D["recv"].strip():
+        raise ValueError("演示转账只发往该方向固定的演示地址（防止被当成提款口）")
     # 配额与限流
     now = time.time()
     with LOCK:
@@ -224,16 +238,36 @@ def transfer(direction, amount, receiver, ip):
         TXHIST["ip"] = [x for x in ips if now - x[0] < 300]
         if len(TXHIST["h"]) >= quota:
             raise RuntimeError("本小时测试网跨链额度已用完（%d 笔）" % quota)
-        if any(x[1] == ip for x in TXHIST["ip"]):
-            raise RuntimeError("同一来源 5 分钟内只能发一笔")
-    src_node, src_home, src_chain, ch, key = ((RPC_A, HOME_A, "lightdao-testnet-gas", "channel-2", DEMO_KEY)
-                                              if direction == "ab" else
-                                              (RPC_B, HOME_B, "lightdao-testnet-b", "channel-0", "Bval"))
-    j = http_json(src_node + "/status", timeout=10)
-    got = j["result"]["node_info"].get("network")
-    if got != src_chain:
-        raise RuntimeError("源链 chain-id 对不上（读到 %s，要求 %s）——拒绝广播" % (got, src_chain))
-    denom = "stake" if direction == "ab" else IBC_DENOM
+        # 按"来源 + 方向"限流：同一访客演示完去程还能演示回程，
+        # 但同一方向仍然 5 分钟一笔（不放开成想发就发）。
+        if any(x[1] == ip + "|" + direction for x in TXHIST["ip"]):
+            raise RuntimeError("同一来源同一方向 5 分钟内只能发一笔")
+    got = http_json(D["node"] + "/status", timeout=10)
+    cid = got["result"]["node_info"].get("network")
+    if cid != D["chain"]:
+        raise RuntimeError("源链 chain-id 对不上（读到 %s，要求 %s）——拒绝广播" % (cid, D["chain"]))
+    # 发之前先看"路上有没有人"和"账户还够不够"：宁可按钮报错，
+    # 也不要发一笔注定卡在半路的包，让访客以为跨链坏了。
+    try:
+        stuck = D["pend"]()
+        chst = channel_end(D["node"], D["ch"])
+    except Exception as e:
+        raise RuntimeError("读不到通道/在途包，拒绝广播：%s" % str(e)[:60])
+    if str(chst.get("state")) not in ("STATE_OPEN", "OPEN"):
+        raise RuntimeError("通道不是 OPEN（实测 %s）" % chst.get("state"))
+    if stuck:
+        raise RuntimeError("%s 已有 %d 个包在途，等中继消化完再发" % (D["label"], len(stuck)))
+    if D["gas"]() < 200000:
+        raise RuntimeError("对面中继账户油钱不足 200,000 stake：发出去也没人搬包")
+    if not D["signer"]:
+        raise RuntimeError("该方向没配签名账户地址（EnvironmentFile 缺项），拒绝广播")
+    # 签名账户既要有 gas，也要有"要发出去的那种币"：
+    #   ab 发的是原生 stake；ba 发的是 ibc 面额 —— 只查 stake 会让 ba 在"有钱但发不出"时假通过。
+    if stake_of(D["node"], D["signer"]) < int(os.environ.get("XC_DEMO_FLOOR", "200000")):
+        raise RuntimeError("签名账户 gas 不足，已停止对外演示（需管理员补测试币）")
+    if D["sendable"]() < amt + int(os.environ.get("XC_SEND_FLOOR", "10000")):
+        raise RuntimeError("%s 侧签名账户可发的 %s 不够这一笔（还差 %d）"
+                           % (D["label"], D["denom"][:12], amt + 10000 - D["sendable"]()))
     if direction == "ab":
         # 发之前先看"路上有没有人"和"演示账户还够不够"：宁可按钮报错，
         # 也不要发一笔注定卡在半路的包让访客以为跨链坏了。
@@ -252,9 +286,9 @@ def transfer(direction, amount, receiver, ip):
             raise RuntimeError("没配 XC_DEMO_ACCT（演示账户地址），拒绝广播")
         if stake_of(RPC_A, DEMO_ACCT) < int(os.environ.get("XC_DEMO_FLOOR", "200000")):
             raise RuntimeError("演示账户余额过低，已停止对外演示（需管理员补测试币）")
-    cmd = [BIN, "tx", "ibc-transfer", "transfer", "transfer", ch, recv, "%d%s" % (amt, denom),
-           "--from", key, "--home", src_home, "--keyring-backend", "test",
-           "--chain-id", src_chain, "--node", src_node, "--broadcast-mode", "sync",
+    cmd = [BIN, "tx", "ibc-transfer", "transfer", "transfer", D["ch"], recv, "%d%s" % (amt, D["denom"]),
+           "--from", D["key"], "--home", D["home"], "--keyring-backend", "test",
+           "--chain-id", D["chain"], "--node", D["node"], "--broadcast-mode", "sync",
            "-y", "--gas", "auto", "--gas-adjustment", "1.6", "--fees", "60000stake", "-o", "json"]
     txh = None
     try:
@@ -268,11 +302,11 @@ def transfer(direction, amount, receiver, ip):
     finally:
         with LOCK:
             TXHIST["h"].append((time.time(), txh))
-            TXHIST["ip"].append((time.time(), ip))
+            TXHIST["ip"].append((time.time(), ip + "|" + direction))
             save_hist()
         tx_log("dir=%s amount=%d recv=%s tx=%s ip=%s" % (direction, amt, recv, txh, ip))
     return {"ok": True, "txhash": txh, "direction": direction, "amount": amt,
-            "denom": denom, "channel": ch, "chain_id": src_chain,
+            "denom": D["denom"], "channel": D["ch"], "chain_id": D["chain"],
             "note": "已广播；到账要靠中继搬包，面板每 20 秒刷新一次未确认包与对面余额。",
             "utc": stamp()}
 
@@ -328,6 +362,9 @@ def state():
         with LOCK:
             used = len([x for x in TXHIST["h"] if time.time() - x[0] < 3600])
         s["demo"] = {"account": DEMO_ACCT or None,
+                     "ba_allowed": os.environ.get("XC_ALLOW_BA") == "1",
+                     "ba_signer": os.environ.get("XC_BA_ACCT") or None,
+                     "ba_stake": stake_of(RPC_B, os.environ["XC_BA_ACCT"]) if os.environ.get("XC_BA_ACCT") else None,
                      "stake": stake_of(RPC_A, DEMO_ACCT) if DEMO_ACCT else None,
                      "quota_left": max(0, int(os.environ.get("XC_QUOTA", "12")) - used),
                      "max": int(os.environ.get("XC_MAX", "50000")),

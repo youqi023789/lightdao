@@ -46,7 +46,10 @@
   en("探针读数有缺口", "the probe reported gaps");
   en("主网跨链未开通：链上实测 0 个 IBC 轻客户端、0 条通道", "Mainnet cross-chain is not live: the on-chain probe measures 0 IBC light clients and 0 channels");
   en("加载中…", "loading…");
-  en("发起一笔测试网跨链（A→B）", "send a testnet cross-chain transfer (A→B)");
+  en("额度加载中…", "loading quota…");
+  en("去程 A→B", "A→B (outbound)");
+  en("回程 B→A", "B→A (return)");
+  en("回程未开放", "return direction not enabled");
   en("发送中…", "sending…");
   en("失败：{e}", "failed: {e}");
   en("已上链，等中继搬运：tx {h}", "on-chain, waiting for the relayer: tx {h}");

@@ -114,31 +114,49 @@
     var b = el("xcDemo"), out = el("xcDemoOut");
     if (!b || !out || b.dataset.wired) return;
     b.dataset.wired = "1";
-    b.onclick = function () {
-      b.disabled = true;
-      out.textContent = T("发送中…", {});
-      fetch(API + "/v1/transfer", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ direction: "ab", amount: 20000 }), cache: "no-store"
-      }).then(function (r) {
-        return r.json().then(function (j) { return { st: r.status, j: j }; }).catch(function () { return { st: r.status, j: {} }; });
-      }).then(function (x) {
-        b.disabled = false;
-        var j = x.j || {};
-        if (j.ok !== true) {
-          out.textContent = T("失败：{e}", { e: j.error || ("HTTP " + x.st) });
-          tick();
-          return;
-        }
-        out.innerHTML = esc(T("已上链，等中继搬运：tx {h}", { h: "" }))
-          + " <code style='font-size:12px'>" + esc(String(j.txhash).slice(0, 16)) + "…</code>"
-          + " · " + esc(j.channel) + " · " + n0(j.amount) + " stake";
+    b.onclick = function () { sendDemo("ab", b, out); };
+    var b2 = el("xcDemoBa");
+    if (b2) b2.onclick = function () { sendDemo("ba", b2, out); };
+  }
+  /* 按钮能不能点、还剩几笔，只看探针返回的实测状态；被拒时把原因原文显示出来，
+     别让用户对着一颗不动的按钮猜。 */
+  function paintDemo(d) {
+    var b2 = el("xcDemoBa"), out = el("xcDemoOut");
+    if (!b2 || !out) return;
+    var dm = (d && d.demo) || {};
+    b2.disabled = dm.ba_allowed === false;
+    if (b2.disabled) b2.title = T("回程未开放", {}); else b2.title = "";
+    if (!out.dataset.busy) {
+      out.textContent = T("本小时演示额度剩余 {n}", { n: dm.quota_left == null ? "?" : dm.quota_left });
+    }
+  }
+  function sendDemo(dir, btn, out) {
+    out.dataset.busy = "1";
+    btn.disabled = true;
+    out.textContent = T("发送中…", {});
+    fetch(API + "/v1/transfer", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ direction: dir, amount: dir === "ba" ? 10000 : 20000 }), cache: "no-store"
+    }).then(function (r) {
+      return r.json().then(function (j) { return { st: r.status, j: j }; }).catch(function () { return { st: r.status, j: {} }; });
+    }).then(function (x) {
+      btn.disabled = false;
+      delete out.dataset.busy;
+      var j = x.j || {};
+      if (j.ok !== true) {
+        out.textContent = T("失败：{e}", { e: j.error || ("HTTP " + x.st) });
         tick();
-      }).catch(function (e) {
-        b.disabled = false;
-        out.textContent = T("失败：{e}", { e: String((e && e.message) || e).slice(0, 70) });
-      });
-    };
+        return;
+      }
+      out.innerHTML = esc(T("已上链，等中继搬运：tx {h}", { h: "" }))
+        + " <code style='font-size:12px'>" + esc(String(j.txhash).slice(0, 16)) + "…</code>"
+        + " · " + esc(j.channel) + " · " + n0(j.amount) + " " + esc(String(j.denom || "").slice(0, 10));
+      tick();
+    }).catch(function (e) {
+      btn.disabled = false;
+      delete out.dataset.busy;
+      out.textContent = T("失败：{e}", { e: String((e && e.message) || e).slice(0, 70) });
+    });
   }
   function quote() {
     gj(API + "/v1/quote?fromChain=1&toChain=10&fromToken=ETH&toToken=USDC&fromAmount=1000000000000000000", 16000)
@@ -158,7 +176,7 @@
       });
   }
   function tick() {
-    gj(API + "/v1/ibc").then(function (d) { renderIbc(d); wireDemo(); }).catch(function (e) { fail(T("链间状态", {}), e); });
+    gj(API + "/v1/ibc").then(function (d) { renderIbc(d); wireDemo(); paintDemo(d); }).catch(function (e) { fail(T("链间状态", {}), e); });
     gj(API + "/v1/prices").then(renderPrices).catch(function (e) {
       set("xcPrice", '<span style="color:#ff9a9a">' + esc(T("行情", {})) + ' ' + esc(T("读不到", {})) + '：' + esc(String(e).slice(0, 70)) + '</span>');
     });
