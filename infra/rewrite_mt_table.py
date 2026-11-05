@@ -122,6 +122,12 @@ for k, v in sorted(cache.items()):
         if i > 0 and val == en_val:
             drop = True
             break
+        # 11-05 实测补的一条：ja/ko 列原样抄中文（「验证者」「不得执行」）既不是纯 ASCII
+        # 也不等于英文列，于是顺利通过旧闸进了表 —— 运行时"翻译"成同样的汉字，
+        # 页面没变化、普查却一直报漏翻，而流水线自认"补完了"。等于键本身一律判没翻。
+        if val == k.strip():
+            drop = True
+            break
     if drop:
         dropped += 1
         continue

@@ -902,13 +902,13 @@ Exit-Ertrag: **70 %** Stable Vault / **30 %** Rückkauf und Verbrennung.
 
 ### 11.4 Mehrsprachigkeit und Lokalisierungsstrategie
 
-| 维度 | 规划 |
+| Abmessungen | Planung |
 |------|------|
-| 平台语言 | 首发支持英语、中文、西班牙语、葡萄牙语、菲律宾语；第6个月起增加法语、阿拉伯语、斯瓦希里语、印尼语 |
-| 治理语言 | 提案和竞选纲领接受任何语言提交，系统提供机器翻译+社区人工校对 |
-| 社区运营 | 按语言设立独立社区频道（Discord/Telegram），各频道配备本地化社区联络志愿者 |
-| 文档翻译 | 白皮书及核心文档由社区翻译志愿者完成，翻译贡献计入"内容贡献"行为加成（5%） |
-| 本地化资助 | 生态发展基金中预留10%（4,000万枚）专项用于本地化社区建设和翻译激励 |
+| Plattformsprache | Unterstützt zunächst Englisch, Chinesisch, Spanisch, Portugiesisch und Philippinisch; Ab dem 6. Monat kommen Französisch, Arabisch, Suaheli und Indonesisch hinzu |
+| Governance-Sprache | Vorschläge und Kampagnenplattformen werden in jeder Sprache akzeptiert und das System bietet maschinelle Übersetzung + Korrekturlesen von Community-Handbüchern |
+| Community-Operationen | Richten Sie unabhängige Community-Kanäle (Discord/Telegram) nach Sprache ein, und jeder Kanal wird mit lokalen Community-Verbindungsfreiwilligen ausgestattet |
+| Dokumentübersetzung | Whitepapers und Kerndokumente werden von ehrenamtlichen Übersetzern aus der Community erstellt und Übersetzungsbeiträge sind im Verhaltensbonus „Content Contribution“ (5 %) | enthalten
+| Lokalisierungsfinanzierung | 10 % (40 Millionen Münzen) des Fonds für ökologische Entwicklung sind speziell für den Aufbau von Lokalisierungsgemeinschaften und Übersetzungsanreize reserviert |
 
 ---
 
