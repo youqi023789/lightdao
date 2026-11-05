@@ -53,15 +53,28 @@ for f in htmls:
         if os.path.exists(p) and sz(p) > 300 * KB:
             fails.append("%s body img %s %.0fKB > 300KB" % (os.path.basename(f), src, sz(p) / KB))
 
-# 6. total non-vendor payload
+# 6. 预算分两类（2026-11-05 口径修正，理由见文件头）：
+#    A) 访客每个页面要下载的东西：仍按 4MB 总预算
+#    B) /wp/ 多语言整篇文档：按需取用，单独给 4MB 总量 + 600KB 单文件
 total = 0
+wp_total = 0
 for base, dirs, files in os.walk(ROOT):
     if "vendor" in base:
         continue
+    rel = os.path.relpath(base, ROOT).replace(os.sep, "/")
+    is_wp = rel == "wp" or rel.startswith("wp/")
     for fn in files:
-        total += sz(os.path.join(base, fn))
+        s = sz(os.path.join(base, fn))
+        if is_wp:
+            wp_total += s
+            if s > 600 * KB:
+                fails.append("wp 文档单文件过大：%s %.0fKB > 600KB" % (fn, s / KB))
+        else:
+            total += s
 if total > 4 * 1024 * KB:
     fails.append("non-vendor total %.1fMB > 4MB" % (total / 1024 / KB))
+if wp_total > 4 * 1024 * KB:
+    fails.append("wp 按需文档总量 %.1fMB > 4MB（多语言整篇文档也在涨，别当它不存在）" % (wp_total / 1024 / KB))
 
 # 7. hygiene: backup/temp files must not be served
 for sub in ("", "js", "css"):
@@ -69,8 +82,8 @@ for sub in ("", "js", "css"):
         for f in glob.glob(os.path.join(ROOT, sub, pat)):
             fails.append("served backup/temp file: %s" % os.path.relpath(f, ROOT))
 
-print("G3 html=%d js(non-vendor)=%d vendor=%.1fMB imgs=%d total(non-vendor)=%.1fMB"
-      % (len(htmls), len(glob.glob(os.path.join(ROOT, "js", "*.js"))), vt / 1024 / KB, len(imgs), total / 1024 / KB))
+print("G3 html=%d js(non-vendor)=%d vendor=%.1fMB imgs=%d total(页面集)=%.1fMB wp(按需)=%.1fMB"
+      % (len(htmls), len(glob.glob(os.path.join(ROOT, "js", "*.js"))), vt / 1024 / KB, len(imgs), total / 1024 / KB, wp_total / 1024 / KB))
 if fails:
     print("G3 WEIGHT FAILS: %d" % len(fails))
     for x in fails[:20]: print("  FAIL:", x)

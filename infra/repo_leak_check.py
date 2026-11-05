@@ -30,6 +30,12 @@ import json
 import os
 import re
 import sys
+
+try:
+    from leak_bip39_hit import hit as _bip39_hit
+except Exception:    # 独立跑/词表模块没装时不放宽：沿用形状判据
+    def _bip39_hit(_frag):
+        return True
 import time
 
 
@@ -151,6 +157,10 @@ def scan(repo, ip_rx, allow):
                 for m in list(rx.finditer(txt))[:5]:
                     line = txt[:m.start()].count("\n") + 1
                     frag = txt[max(0, m.start() - 40):m.start() + 80].replace("\n", " ")
+                    # 形状命中≠助记词：多语种长文档天然会连读 12 个短词（11-05 印尼语白皮书误报 5 条）。
+                    # 第二道判据逐词核对 BIP-39 词表；词表读不到时 hit() 自己退回形状判据（不放宽）。
+                    if name == "mnemonic-phrase" and not _bip39_hit(m.group(0)):
+                        continue
                     if name == "infra-ip" and frag.strip().startswith("#"):
                         continue
                     rule = waived(allow, rel, name, frag) if allow else None

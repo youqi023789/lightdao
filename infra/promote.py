@@ -108,7 +108,12 @@ def main():
              # g12：i18n 词条结构校验（列数/语种码白名单/占位符一致性）。
              # 之前这个校验器只存在于仓库里、从没接进流水线=等于没有这道门。
              ("g12_i18n_validate", ["node", "/usr/local/bin/ld_i18n_validate.js",
-                                    os.path.join(STG, "js")])]
+                                    os.path.join(STG, "js")]),
+             # g13：机器表分片"存在"必须等于"被每个页面按序引用"。
+             # 实测漏过：磁盘 7 片、线上页面只挂 5 片 —— 6、7 两片里的长句永远不翻，
+             # 而当时所有门禁全绿（因为没人比对"片数 vs 引用"）。
+             ("g13_mt_wiring", ["python3", "/usr/local/bin/ld_i18n_wiring.py",
+                                os.path.join(STG, "js"), STG])]
     for name, cmd in gates:
         rc, out = run(cmd, env)
         last = [l for l in out.strip().splitlines() if l.strip()][-3:]
