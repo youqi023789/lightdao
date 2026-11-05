@@ -31,7 +31,7 @@
 
 | 合约 | code_id | 地址 | 用途 |
 |---|---|---|---|
-| light_token | 1 | `wasm13c9t6xmar22xclseua6xevw4t4cnrampy6y5ajdydhyv5k0znrcsth555z` | CW20 代币 LIGHT |
+| light_token | 1 | `wasm13c9t6xmar22xclseua6xevw4t4cnrampy6y5ajdydhyv5k0znrcsth555z` | 原生 LIGHT(ulight) 的 CW20 门面：只有 token_info/burned/config，无按地址余额；历史用途=旧治理 CW20 质押路径 |
 | treasury_multisig | 4 | `wasm192u2pm80ndmh608mmvhrzhje0sjaq0txr5md77lr70ucy0j3lfys8l633u` | 投资金库 5/7 多签 |
 | subtoken_factory | 5 | `wasm1uykr2f24sdj9f4la0wv78gvjuyqqnqk9r8jggcqd9ha9vxjrrkksum5x0g` | 子代币发行 |
 | oracle_twap | 6 | `wasm1f622csg2af6utlxvxgch2l9qf64ce3s4h5vseaph5ku8vzcgp6qqmsyace` | 时间加权价格预言机 |

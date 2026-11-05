@@ -44,7 +44,7 @@
   en("链", "chain");
   en("主网 IBC 轻客户端数", "mainnet IBC light clients");
   en("探针读数有缺口", "the probe reported gaps");
-  en("主网跨链未开通：LIGHT 是合约代币（CW20），IBC 只搬原生币；封装路由与治理授权尚未完成", "Mainnet cross-chain is not enabled yet: LIGHT is a contract token (CW20), IBC only moves native coins; the wrapped route and governance approval are not finished.");
+  en("主网跨链未开通：链上实测 0 个 IBC 轻客户端、0 条通道", "Mainnet cross-chain is not live: the on-chain probe measures 0 IBC light clients and 0 channels");
   en("加载中…", "loading…");
   en("发起一笔测试网跨链（A→B）", "send a testnet cross-chain transfer (A→B)");
   en("发送中…", "sending…");

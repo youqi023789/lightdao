@@ -298,7 +298,7 @@
   en("合约 / 标签", "Contract / label");
   en("地址（点击复制）", "Address (tap to copy)");
   en("用途", "Purpose");
-  en("CW20 代币 LIGHT，总量 25 亿枚、永不增发", "CW20 LIGHT token, fixed supply of 2.5 billion, no inflation");
+  en("LIGHT 总量与销毁的登记合约（余额实际在原生 ulight 层）", "Ledger contract for LIGHT supply and burns (actual balances live in the native ulight layer)");
   en("投资金库：3/5 多签 · 链上 5 个签名人；须治理决议才能动", "Investment treasury: 3/3/5 multisig, 5 on-chain signers; only a governance decision can move it");
   en("每完成一笔投资发行的子代币（份额凭证）", "Issues a sub-token (share certificate) for each completed investment");
   en("时间加权价格预言机，Gas 费按美元锚定的依据", "Time-weighted price oracle — the basis for USD-anchored gas fees");

@@ -56,8 +56,8 @@
     var m = d.mainnet_ibc || {};
     /* 原因文案走本站词典（服务端只给 reason_code），否则非中文语种会看到一长串中文 ——
        这是"同一事实两份表达"的第三种写法，服务端出中文 prose 是最难治的那种。 */
-    var REASON = { cw20_needs_warp_and_governance:
-      "主网跨链未开通：LIGHT 是合约代币（CW20），IBC 只搬原生币；封装路由与治理授权尚未完成" };
+    var REASON = { no_channel_yet:
+      "主网跨链未开通：链上实测 0 个 IBC 轻客户端、0 条通道" };
     var why = REASON[m.reason_code] || (m.enabled ? "" : T("未开通", {}));
     rows.push("<p class='mini' style='color:#ffcf8a'>" + esc(T("主网跨链", {})) + "："
       + esc(m.enabled ? T("已开通", {}) : T("未开通", {}))

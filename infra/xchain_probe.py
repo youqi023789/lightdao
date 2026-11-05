@@ -337,9 +337,10 @@ def state():
         err.append("演示账户信息读不到：%s" % str(e)[:60])
     # 主网跨链：照实说明，不假装；并且把"未开通"这件事用主网自己的读数兜住
     s["mainnet_ibc"] = {"enabled": False,
-                        "reason_code": "cw20_needs_warp_and_governance",
-                        "reason_zh": "主网 LIGHT 是 CW20 合约代币，IBC 的 20 号标准只搬原生币；"
-                                     "封装路由（warp）与治理授权尚未走完，所以主网跨链未开通。",
+                        "reason_code": "no_channel_yet",
+                        "reason_zh": "主网还没有建立任何跨链通道：链上实测 IBC 轻客户端 0 个、通道 0 条。"
+                                     "LIGHT 本身就是原生币 ulight，ICS-20 可直接搬运；缺的是对端链选定、"
+                                     "通道与中继的部署，以及治理授权（接收哪些对面额、中继权限与额度）。",
                         "testnet_zh": "测试网 A(lightdao-testnet-gas) ↔ B(lightdao-testnet-b) 已双向实测自动中继"}
     try:
         n = ibc_client_count(RPC_MAIN)
