@@ -130,6 +130,22 @@
     } catch (e) { }
   }
 
+  /* LD-PAIRVALUE-20261106 「中文 / English」并列标签：只把英文那半换成本语种。
+     判据必须严格 —— 词典里得有一行「中文键 == 左半边」且「该行的 en == 右半边」；
+     只看英文词（如 Back）会把不同句子并成同一个错译（本项目踩过）。
+     本语种没译文时返回 null 保留原样，绝不拿英文冒充本语种译文。 */
+  function pairValue(zhSide, enSide, lang) {
+    try {
+      var tbl = W.LDI18N || {};
+      var row = tbl[zhSide];
+      if (!row) return null;
+      var norm = function (x) { return String(x || "").replace(/\s+/g, " ").trim(); };
+      if (norm(row.en) !== norm(enSide)) return null;
+      var v = row[lang];
+      return (typeof v === "string" && v) ? v : null;
+    } catch (e) { return null; }
+  }
+
   function trNode(n, lang) {
     var raw = n.nodeValue;
     if (raw == null) return;
@@ -262,6 +278,9 @@
        之前中文用户也在付「全页 walk + 4 次重扫 + MutationObserver」的代价，收益为零 ——
        这就是「页面没以前流畅」的直接原因（而默认语言恰恰是中文）。 */
     if (lang === "zh") {
+      /* 源语言不遍历，但要把"引擎确实在这个页面跑过"记下来：
+         门禁据此区分"中文页无需翻译"和"翻译器根本没启动"。 */
+      try { publish(); } catch (e) { }
       if (obs) { try { obs.disconnect(); } catch (e) { } obs = null; }
       publish();
       document.dispatchEvent(new CustomEvent("ldlang", { detail: { lang: lang } }));
@@ -300,6 +319,33 @@
     host.appendChild(box);
   }
 
+  /* LD-BOOT-SELFPROVE 语言层必须"要么生效、要么响"：静默不生效是本类问题最难治的形态
+     （用户看到中文，我们在门禁里看到的是"页面正常、词典齐全"）。 */
+  function bootSelfProve(lang, tries) {
+    var left = tries || 0;
+    function stampMiss() {
+      try {
+        document.documentElement.dataset.ldI18n = "boot-miss:" + left;
+      } catch (e) { }
+    }
+    function once() {
+      var got = null;
+      try { got = document.documentElement.getAttribute("data-ld-i18n"); } catch (e) { }
+      if (got) return;
+      try { apply(lang); } catch (e) {
+        try {
+          document.documentElement.dataset.ldI18nErr =
+            String((e && e.message) || e).slice(0, 120);
+        } catch (e2) { }
+      }
+      try { got = document.documentElement.getAttribute("data-ld-i18n"); } catch (e) { }
+      if (got) return;
+      if (left > 0) { left--; setTimeout(once, [0, 300, 1200, 3000][tries - left] || 600); }
+      else stampMiss();
+    }
+    once();
+  }
+
   function boot() {
     try {
       /* LD-EXPAND-ALL-20261017 此刻所有同步脚本都执行完了，中文键集合已完整。
@@ -307,8 +353,11 @@
          <script> 的先后顺序（治理页曾比资金页少 145 条译文，且门禁看不见）。 */
       try { if (W.__ldExpandAll) { W.__ldExpandAll(); } } catch (e) { }
       // 与首页/挖矿页共用同一个键，切语言不会"进内页就退回中文"
-      mountSwitcher();
-      apply(cur());
+      try { mountSwitcher(); } catch (e) {
+        /* 切换器只是入口控件；它挂了也必须继续翻译，并把原因留下 */
+        try { document.documentElement.dataset.ldI18nErr = "switcher:" + String((e && e.message) || e).slice(0, 80); } catch (e2) { }
+      }
+      bootSelfProve(cur(), 4);
       /* 补扫：页面自己的脚本会异步重写表格/标题（innerHTML 一覆盖，翻译就丢了），
          观察器能抓到大部分但实测仍有漏网，所以延迟重扫几次。
          中文下完全跳过（源语言没有可翻内容），避免无谓的主线程占用。 */

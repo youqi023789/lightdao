@@ -23,6 +23,45 @@
     id: "Terjemahan buku putih dalam bahasa ini belum tersedia — berikut teks asli Mandarin.",
     vi: "Chưa có bản dịch sách trắng ngôn ngữ này — phía dưới là nguyên bản tiếng Trung."
   };
+  /* 混排必须自报数量：门禁读 data-ld-wp-pending，页面读顶部那条提示。
+     口径 = 正文里连续中文片段（≥2 字）的数量，与 measure_residual/g16 同一算法。 */
+  var PNOTICE = {
+    en: "This language version is still being translated: {n} passages below are still in the Chinese original.",
+    fr: "Cette version n'est pas encore entièrement traduite : {n} passages ci-dessous restent en chinois.",
+    de: "Diese Sprachfassung wird noch übersetzt: {n} Abschnitte unten stehen noch im chinesischen Original.",
+    ru: "Перевод на этот язык ещё идёт: {n} абзацев ниже остались в китайском оригинале.",
+    ja: "この言語版は翻訳中です：以下に {n} 段落が中国語原文のまま残っています。",
+    ko: "이 언어판은 아직 번역 중입니다: 아래 {n}개 문단은 중국어 원문 그대로입니다.",
+    ar: "ترجمة هذه النسخة لم تكتمل: {n} فقرة أدناه ما زالت بالأصل الصيني.",
+    hi: "इस भाषा का अनुवाद जारी है: नीचे {n} अनुच्छेड चीनी मूल में हैं।",
+    tr: "Bu dil çevirisi sürüyor: aşağıdaki {n} paragraf hâlâ Çince orijinalinde.",
+    fil: "isinasalin pa ang bersyon na ito: ang {n} talata sa ibaba ay nang orihinal na Tsino pa.",
+    es: "La traducción de esta versión no está completa: {n} pasajes siguientes siguen en el original chino.",
+    pt: "A tradução desta versão ainda não terminou: {n} trechos abaixo permanecem no original chinês.",
+    id: "Terjemahan versi ini masih berjalan: {n} bagian di bawah masih dalam Mandarin asli.",
+    vi: "Bản dịch ngôn ngữ này chưa xong: {n} đoạn bên dưới vẫn là nguyên bản tiếng Trung."
+  };
+  function declarePending() {
+    try {
+      var el = document.getElementById("md");
+      if (!el) return;
+      var txt = (el.textContent || "").replace(/\s+/g, " ");
+      var n = ((txt.match(/[\u4e00-\u9fff]{2,}/g) || [])).length;
+      document.documentElement.setAttribute("data-ld-wp-pending", String(n));
+      var old = document.getElementById("wpPendingNote");
+      if (old && old.parentNode) old.parentNode.removeChild(old);
+      if (n > 0) {
+        var l = langNow();
+        var tpl = PNOTICE[l] || PNOTICE.en;
+        var box = document.createElement("p");
+        box.id = "wpPendingNote";
+        box.className = "mini";
+        box.style.cssText = "color:#ffcf8a;border-left:3px solid #ffb454;padding-left:8px";
+        box.textContent = tpl.replace("{n}", String(n));
+        el.parentNode.insertBefore(box, el);
+      }
+    } catch (e) { }
+  }
   function langNow() {
     var l = "zh";
     try { l = (document.documentElement.getAttribute("lang") || "zh").toLowerCase().split("-")[0]; } catch (e) { }
@@ -57,10 +96,12 @@
       if (/^\s*<(!DOCTYPE|html|HTML)/i.test(t) || /<script\s/i.test(t.slice(0, 4000)))
         throw new Error("拿回的是 HTML 而不是 markdown（多半是本语种文件不存在）");
       render(t);
+      declarePending();
     }).catch(function (err) {
       fetch(SRC).then(function (r) { return r.text(); }).then(function (t) {
         var note = FB[l] || FB.en;
         render("> " + note + " / 暂无本语种译文，以下为中文原文。\n\n" + t);
+        declarePending();
       }).catch(function () {
         var e = document.getElementById("md");
         if (e) e.innerHTML = "<p>" + (FB[l] || FB.en) + "</p>";
