@@ -104,7 +104,23 @@ else
   else
     # --- collect the inputs
     KEYRING=""
-    for k in "$WASMD_HOME"/keyring-*; do [ -d "$k" ] && KEYRING="$k" && break; done
+    # Pick the keyring dir that ACTUALLY holds keys. A stray empty keyring-* dir
+    # (any wasmd call without --keyring-backend creates one; "keyring-file" sorts
+    # before "keyring-test") must not win the glob, or the daily key archive
+    # silently backs up zero keys. Highest .info count wins; ties keep glob order.
+    BESTN=-1
+    for k in "$WASMD_HOME"/keyring-*; do
+      [ -d "$k" ] || continue
+      n=$(ls -1 "$k"/*.info 2>/dev/null | wc -l)
+      if [ "$n" -gt "$BESTN" ]; then BESTN=$n; KEYRING="$k"; fi
+    done
+    [ -d "$KEYRING" ] || KEYRING=""
+    if [ "$BESTN" -le 0 ]; then
+      log "WARNING: no keyring-* dir under $WASMD_HOME holds any .info key - the key archive will be empty"
+      BESTN=0
+    else
+      log "keyring selected: $KEYRING ($BESTN .info entries)"
+    fi
     PVS=""
     for p in "$WASMD_HOME/data/priv_validator_state.json" "$WASMD_HOME/config/priv_validator_state.json"; do
       [ -f "$p" ] && PVS="$p" && break
@@ -143,6 +159,9 @@ else
           if [ "$ENC_OK" = "1" ] && [ -s "$ARCH" ]; then
             chmod 600 "$ARCH" 2>/dev/null
             log "key archive      $ARCH ($(stat -c%s "$ARCH" 2>/dev/null) bytes, $NKEYS keyring .info entries)"
+            if [ "$NKEYS" = "0" ] && [ "${BESTN:-0}" = "0" ]; then
+              log "FATAL-W: 0 .info entries archived - key backup NOT restorable, fix the keyring layout before relying on it"
+            fi
             find "$DEST" -name "keys-*.tar.gz.gpg" -mtime +7 -delete 2>/dev/null
             find "$DEST" -name "keys-*.tar.gz.age" -mtime +7 -delete 2>/dev/null
           else
