@@ -3,6 +3,18 @@
   "use strict";
   var L = ["es","pt","id","vi"];
   var T = {
+    "Sign in to see all denominations on your address (including cross-chain ones)": "Inicia sesión para ver todas las denominaciones de tu dirección (incluidas las multidena)|Faça login para ver todas as denominações do seu endereço (incluindo as multi-chain)|Masuk untuk melihat semua denom di alamat Anda (termasuk lintas rantai)|Đăng nhập để xem mọi denom trên địa chỉ của bạn (gồm cả liên chuỗi)",
+    "cross-chain assets unavailable": "activos multidena no disponibles|ativos multi-chain indisponíveis|aset lintas rantai tidak terbaca|không đọc được tài sản liên chuỗi",
+    "Only native LIGHT so far — no cross-chain assets yet": "Solo LIGHT nativo por ahora; sin activos multidena|Apenas LIGHT nativo por enquanto; sem ativos multi-chain|Saat ini hanya LIGHT native; belum ada aset lintas rantai|Hiện chỉ có LIGHT native; chưa có tài sản liên chuỗi",
+    "denomination": "denominación|denominação|denom|denom",
+    "amount": "cantidad|quantidade|jumlah|số lượng",
+    "source": "fuente|fonte|sumber|nguồn",
+    "unregistered": "sin registrar|não registrado|belum terdaftar|chưa đăng ký",
+    "The above are foreign cross-chain assets (not issued by LIGHT)": "los de arriba son activos externos multidena (no emitidos por LIGHT)|os acima são ativos externos multi-chain (não emitidos pela LIGHT)|yang di atas aset lintas rantai asing (bukan terbitan LIGHT)|phía trên là tài sản liên chuỗi bên ngoài (LIGHT không phát hành)",
+    "Some denominations have no registered source: shown by raw hash, decimals unverified": "algunas denominaciones no tienen fuente registrada: se muestra el hash sin procesar, decimales sin verificar|algumas denominações não têm fonte registrada: exibimos o hash bruto, casas decimais não verificadas|beberapa denom belum terdaftar sumbernya: tampil sebagai hash mentah, desimal belum diverifikasi|một số denom chưa đăng ký nguồn: hiển thị theo hash gốc, số thập phân chưa xác minh",
+    "This chain accepts any foreign ibc/… denomination (on-chain params verified)": "esta cadena acepta cualquier denominación externa ibc/… (parámetros on-chain verificados)|esta cadeia aceita qualquer denominação externa ibc/… (parâmetros on-chain verificados)|rantai ini menerima denom asing ibc/… apa pun (parameter on-chain terverifikasi)|chuỗi này chấp nhận mọi denom ibc/… bên ngoài (đã xác tham số on-chain)",
+    "Foreign denominations are not counted in LIGHT total supply": "las denominaciones externas no cuentan en el suministro total de LIGHT|as denominações externas não entram na oferta total de LIGHT|denom asing tidak dihitung dalam total pasokan LIGHT|denom bên ngoài không tính vào tổng cung LIGHT",
+    "Deposit policy could not be read this time; no conclusion drawn": "no se pudo leer la política de depósito esta vez; sin conclusión|a política de depósito não pôde ser lida agora; sem conclusão|kebijakan deposit tidak terbaca kali ini; tanpa kesimpulan|không đọc được chính sách nhận lần này; chưa kết luận",
     "checking": "comprobando|verificando|sedang memeriksa|đang kiểm tra",
     "unavailable": "no disponible|não disponível|hindi mabasa|không đọc được",
     "block height": "altura de bloque|altura do bloco|tinggi blok|chiều cao khối",

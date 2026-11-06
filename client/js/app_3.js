@@ -47,7 +47,7 @@ window.__mrq=(m)=>client.queryContractSmart(CFG.miningReward,m);
     addr:null,
     async create(){ const w=await DirectSecp256k1HdWallet.generate(12,{prefix:CFG.prefix}); this._w=w; return w.mnemonic; },
     async connect(seed){ try{ wallet=await DirectSecp256k1HdWallet.fromMnemonic(seed,{prefix:CFG.prefix}); const [a]=await wallet.getAccounts(); this.addr=a.address; client=pf(await SigningCosmWasmClient.connectWithSigner(CFG.rpc,wallet,{gasPrice:GasPrice.fromString("0.2"+CFG.denom)}),CFG.rpc); return true; }catch(e){ return false; } },
-    async refresh(){ try{ const b=await client.getBalance(this.addr,CFG.denom); document.getElementById("bal").textContent=(Number(b.amount)/1e6).toLocaleString(undefined,{maximumFractionDigits:2}); }catch(e){} },
+    async refresh(){ if(!this.addr) return; try{ const b=await client.getBalance(this.addr,CFG.denom); document.getElementById("bal").textContent=(Number(b.amount)/1e6).toLocaleString(undefined,{maximumFractionDigits:2}); try{ window.dispatchEvent(new CustomEvent("ld:addr",{detail:this.addr})); }catch(e){} }catch(e){ const n=document.getElementById("bal"); if(n){ n.textContent="—"; n.title="余额读不到："+String((e&&e.message)||e).slice(0,70); } } },
 
     async claimStaking(){ try{
       const vals=await client.getValidators();

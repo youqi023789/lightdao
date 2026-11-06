@@ -19,6 +19,7 @@ bond_denom=ulight、bank total 2.5e15）。一个错误归因同时活在 4 份�
 """
 import json
 import os
+import shutil
 import re
 import subprocess
 import sys
@@ -99,8 +100,19 @@ def check(alarms, www=None, repo=None):
         alert("读不到白皮书 %s：%s" % (wp, str(e)[:60]), alarms)
     # B) 旧错误句式有没有复活
     import glob as g
+    self_path = os.path.realpath(__file__)
+    self_base = os.path.basename(self_path)
     for pat, tag in scan_globs(www, repo):
         for f in g.glob(pat):
+            rp = os.path.realpath(f)
+            # 排除量具自身（含它的 .bak 副本）：本文件的禁句清单里就原文写着这些句子，
+            # 把自己当违规内容会让门禁永远红 —— 那不是"抓到问题"，是门禁坏了。
+            # 注意：只排除这一个文件，docs/站点/其它 infra 文件照扫（自测里有反向验证）。
+            # 按**文件名**排除，而不是按 realpath：真实发布时跑的是 /usr/local/bin 里的部署副本，
+            # 仓库 infra 里还有一份同名同内容的源文件 —— 只排除 realpath 的话，那份副本照样自撞。
+            if tag == "infra" and (os.path.basename(rp) == self_base
+                                   or os.path.basename(rp).startswith(self_base + ".bak")):
+                continue
             try:
                 s = open(f, encoding="utf-8", errors="ignore").read()
             except Exception:
@@ -145,6 +157,11 @@ def selftest():
     os.makedirs(tmp + "/docs", exist_ok=True)
     open(tmp + "/whitepaper.md", "w", encoding="utf-8").write("质押/治理/Gas 均为 `ulight`(LIGHT,6 位小数)\n")
     open(tmp + "/bad.html", "w", encoding="utf-8").write("<td>CW20 代币 LIGHT，总量 25 亿枚</td>\n")
+    # 再往 infra 的**另一个**文件植入同一句式：排除量具自身之后，这一类必须照样抓到
+    os.makedirs(tmp + "/infra", exist_ok=True)
+    open(tmp + "/infra/sibling_tool.py", "w", encoding="utf-8").write(
+        "# 说明文档：LIGHT 是 CW20 合约币\nX = 1\n")
+    shutil.copy2(os.path.realpath(__file__), tmp + "/infra/ld_asset_form_check.py")
     open(tmp + "/docs/OK.md", "w", encoding="utf-8").write("LIGHT 是原生币 ulight\n")
     globals()["WWW"] = tmp
     globals()["REPO"] = tmp
@@ -153,14 +170,21 @@ def selftest():
     al = []
     check(al, tmp, tmp)
     hit = any("重新出现" in x for x in al)
-    print("  植入旧句式 -> %s（%d 条告警）" % ("抓到" if hit else "漏了", len(al)))
+    hit_html = any("bad.html" in x for x in al)
+    hit_infra = any("sibling_tool.py" in x for x in al)
+    selfclean = not any("ld_asset_form_check.py" in x for x in al)
+    print("  植入旧句式 -> %s（%d 条告警）｜站点 html 抓到=%s｜infra 兄弟文件抓到=%s｜"
+          "量具自身不再自撞=%s" % ("抓到" if hit else "漏了", len(al), hit_html, hit_infra, selfclean))
     os.replace(tmp + "/bad.html", tmp + "/bad.html.checked")
+    os.replace(tmp + "/infra/sibling_tool.py", tmp + "/infra/sibling_tool.py.checked")
     al2 = []
     check(al2)
     clean_ok = not any("重新出现" in x for x in al2)
     print("  去掉旧句式后该判据不再报（不误报）= %s" % clean_ok)
-    print("SELFTEST：%s" % ("通过" if (hit and clean_ok) else "不过——这条门禁不可信"))
-    return 0 if (hit and clean_ok) else 1
+    all_ok = hit and hit_html and hit_infra and selfclean and clean_ok
+    print("SELFTEST：%s（4 项：植入抓到+html+infra+不自撞，1 项：去掉不误报）"
+          % ("通过" if all_ok else "不过——这条门禁不可信"))
+    return 0 if all_ok else 1
 
 
 if __name__ == "__main__":

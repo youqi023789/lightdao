@@ -667,7 +667,7 @@ P2P-сеть: платформа WebRTC ICE (приоритет STUN/резер�
 
 **Основные принципы:** LightDAO не мешает ежедневному выявлению рыночных цен. Протокол корректирует свои параметры только в экстремальных сценариях снижения, чтобы снизить риск попадания в «спираль смерти».
 
-**分级逻辑：** 在不同波动环境中，同等跌幅所代表的异常程度不同。低波动市场中的大幅下跌属于更强的异常信号，需要更高强度的干预；高波动市场中的大幅下跌相对常见，可采用较轻干预。因此，干预强度与信号的异常程度正相关，而非仅取决于跌幅的绝对值。
+**Grading logic:** In different volatile environments, the same decline represents different degrees of abnormality. A sharp decline in a low-volatility market is a stronger abnormal signal and requires higher intensity intervention; a sharp decline in a high-volatility market is relatively common and lighter intervention can be used. Таким образом, интенсивность вмешательства положительно связана с аномалией сигнала, а не зависит исключительно от абсолютной величины снижения.
 
 **机制全流程表：**
 

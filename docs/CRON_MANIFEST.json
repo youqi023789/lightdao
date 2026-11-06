@@ -495,8 +495,8 @@
   {
    "user": "root",
    "schedule": "*/30 * * * *",
-   "cmd": "flock -n /home/ubuntu/ld_mt2.lock /usr/bin/python3 /home/ubuntu/ld_i18n_mt_build2.py （后接 rewrite_mt_table.py 与 wire_mt_shards.py）",
-   "purpose": "多语言机器译文补齐（gtx 优先、MyMemory 兜底；同语种打包请求；可断点续跑）",
+   "cmd": "flock -n /home/ubuntu/ld_mt2.lock /usr/bin/python3 /home/ubuntu/ld_i18n_mt_build2.py ; /usr/bin/python3 /home/ubuntu/rewrite_mt_table.py ; /usr/bin/python3 /home/ubuntu/wire_mt_shards.py",
+   "purpose": "多语言机器译文补齐（gtx 优先、MyMemory 兜底；同语种打包请求；可断点续跑；同批串跑 rewrite_mt_table.py 与 wire_mt_shards.py）",
    "added": "2026-11-05"
   },
   {
@@ -518,6 +518,13 @@
    "schedule": "*/30 * * * *",
    "cmd": "flock -n /home/ubuntu/ld_xcwatch.lock /usr/bin/python3 /home/ubuntu/ld_xchain_watch.py",
    "purpose": "跨链面板探针：进程/数据新鲜度/高度不回退/自报 errors/公网反代/行情条数（selftest 4/4）",
+   "added": "2026-11-05"
+  },
+  {
+   "user": "root",
+   "schedule": "5 6 * * *",
+   "cmd": "/usr/bin/python3 /usr/local/bin/g12_simp_check.py /var/www/lightdao/js",
+   "purpose": "日/韩译文夹简体字巡检（g12 同判据的独立跑法，命中只报警不改译文；发布门禁内另有同名检查）",
    "added": "2026-11-05"
   }
  ]

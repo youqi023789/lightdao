@@ -175,7 +175,57 @@
         set("xcQuote", "<p class='mini' style='color:#ff9a9a'>" + esc(T("失败：{e}", { e: String((e && e.message) || e).slice(0, 70) })) + "</p>");
       });
   }
+  /* 我的全部面额：本链 ulight 与外来 ibc/… 分开显示。
+     为什么要专门做这块 —— 链上参数实测 receive_enabled=true、allowed_clients=["*"]，
+     也就是任意外来面额都能入账；而旧代码只读 ulight，钱真跨来了用户是看不见的。
+     外来面额永远标「非 LIGHT 发行」，来源未登记的再补一句「按原始哈希显示」，不编符号、不编小数位。 */
+  function renderAssets(d) {
+    if (!d || !d.ok) {
+      set("xcAssets", "<p class='mini' style='color:#ff9a9a'>" + esc(T("跨链资产读不到", {}))
+        + "：" + esc(String((d && d.error) || "?").slice(0, 80)) + "</p>");
+      return;
+    }
+    var rows = [], fore = (d.balances || []).filter(function (b) { return !b.ours; });
+    if (!fore.length) {
+      rows.push("<p class='mini'>" + esc(T("目前只有本链 LIGHT，没有跨来的资产", {})) + "</p>");
+    } else {
+      rows.push("<table class='ub2e01b'><thead><tr><th>" + esc(T("面额", {})) + "</th><th>"
+        + esc(T("数量", {})) + "</th><th>" + esc(T("来源", {})) + "</th></tr></thead><tbody>");
+      fore.forEach(function (b) {
+        var name = b.symbol || (b.source && b.source.base_denom) || b.denom;
+        var amt = b.display_amount == null ? b.amount : b.display_amount;
+        var from = b.source && b.source.path ? b.source.path : (b.unvetted ? T("未登记", {}) : "—");
+        rows.push("<tr><td>" + esc(name) + " <span class='mini'>" + esc(String(b.denom).slice(0, 10))
+          + "…</span></td><td class='num'>" + esc(amt) + "</td><td class='mini'>" + esc(from) + "</td></tr>");
+      });
+      rows.push("</tbody></table>");
+      rows.push("<p class='mini' style='color:#ffcf8a'>" + esc(T("以上为外来跨链资产（非 LIGHT 发行）", {}))
+        + (fore.some(function (b) { return b.unvetted; })
+           ? " · " + esc(T("有面额来源未登记：只能按原始哈希显示，小数位未确认", {})) : "") + "</p>");
+    }
+    if (d.policy && d.policy.receive_enabled === true) {
+      rows.push("<p class='mini' style='color:#7c88ad'>" + esc(T("本链接收任意外来 ibc/… 面额（链上参数实测）", {}))
+        + " ｜ " + esc(T("外来面额不计入 LIGHT 总量", {})) + "</p>");
+    } else {
+      rows.push("<p class='mini' style='color:#ff9a9a'>" + esc(T("收币策略这次读不到，暂不下结论", {})) + "</p>");
+    }
+    set("xcAssets", rows.join(""));
+  }
+  function assets() {
+    var a = (window.LD && window.LD.addr) || lastAddr;
+    if (!a) {
+      set("xcAssets", "<p class='mini'>" + esc(T("登录后显示你的链上全部面额（含跨来的）", {})) + "</p>");
+      return;
+    }
+    lastAddr = a;
+    gj(API + "/v1/balances/" + a, 16000).then(renderAssets).catch(function (e) {
+      set("xcAssets", "<p class='mini' style='color:#ff9a9a'>" + esc(T("跨链资产读不到", {}))
+        + "：" + esc(String((e && e.message) || e).slice(0, 80)) + "</p>");
+    });
+  }
+  var lastAddr = null;
   function tick() {
+    assets();
     gj(API + "/v1/ibc").then(function (d) { renderIbc(d); wireDemo(); paintDemo(d); }).catch(function (e) { fail(T("链间状态", {}), e); });
     gj(API + "/v1/prices").then(renderPrices).catch(function (e) {
       set("xcPrice", '<span style="color:#ff9a9a">' + esc(T("行情", {})) + ' ' + esc(T("读不到", {})) + '：' + esc(String(e).slice(0, 70)) + '</span>');
@@ -188,6 +238,7 @@
     tick();
     setInterval(tick, REFRESH);
   }
+  try { window.addEventListener("ld:addr", function () { assets(); }); } catch (e) { }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
 })();

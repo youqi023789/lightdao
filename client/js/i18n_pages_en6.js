@@ -6,6 +6,18 @@
   function E(zh, m) { var k = window.LDI18N[zh] || (window.LDI18N[zh] = {});
     for (var p in m) { if (Object.prototype.hasOwnProperty.call(m, p)) { k[p] = m[p]; } } }
   function en(zh, v) { E(zh, { en: v }); }
+  en("登录后显示你的链上全部面额（含跨来的）", "Sign in to see all denominations on your address (including cross-chain ones)");
+  en("跨链资产读不到", "cross-chain assets unavailable");
+  en("目前只有本链 LIGHT，没有跨来的资产", "Only native LIGHT so far — no cross-chain assets yet");
+  en("面额", "denomination");
+  en("数量", "amount");
+  en("来源", "source");
+  en("未登记", "unregistered");
+  en("以上为外来跨链资产（非 LIGHT 发行）", "The above are foreign cross-chain assets (not issued by LIGHT)");
+  en("有面额来源未登记：只能按原始哈希显示，小数位未确认", "Some denominations have no registered source: shown by raw hash, decimals unverified");
+  en("本链接收任意外来 ibc/… 面额（链上参数实测）", "This chain accepts any foreign ibc/… denomination (on-chain params verified)");
+  en("外来面额不计入 LIGHT 总量", "Foreign denominations are not counted in LIGHT total supply");
+  en("收币策略这次读不到，暂不下结论", "Deposit policy could not be read this time; no conclusion drawn");
   en("检测中", "checking");
   en("读不到", "unavailable");
   en("区块高度", "block height");

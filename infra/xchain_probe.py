@@ -23,6 +23,10 @@ import urllib.parse
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
+import sys as _sys
+_sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import xc_bank   # 全量面额读取 + 外来 ibc/… 面额的来源与如实标注（只读）
+
 BIN = os.environ.get("XC_BIN", "/home/ubuntu/lightd.testnet.bin")
 RPC_A = os.environ.get("XC_RPC_A", "http://127.0.0.1:26757")
 RPC_B = os.environ.get("XC_RPC_B", "http://127.0.0.1:26957")
@@ -39,6 +43,23 @@ TTL_STATE = float(os.environ.get("XC_TTL_STATE", "20"))
 TTL_PRICE = float(os.environ.get("XC_TTL_PRICE", "60"))
 LOCK = threading.Lock()
 CACHE = {"state": (0.0, None), "price": (0.0, None)}
+BAL_CACHE = {}
+TTL_BAL = float(os.environ.get("XC_TTL_BAL", "30"))
+
+
+def balances_cached(addr):
+    key = addr
+    now = time.time()
+    with LOCK:
+        hit = BAL_CACHE.get(key)
+        if hit and now - hit[0] < TTL_BAL:
+            return hit[1], True
+    v = xc_bank.summarize(RPC_MAIN, addr)
+    with LOCK:
+        if len(BAL_CACHE) > 512:      # 只读服务不能被陌生人拿地址表撑爆内存
+            BAL_CACHE.clear()
+        BAL_CACHE[key] = (now, v)
+    return v, False
 
 
 def http_json(url, timeout=8):
@@ -475,7 +496,18 @@ class H(BaseHTTPRequestHandler):
             except Exception as e:
                 self._send(502, {"ok": False, "error": str(e)[:200]})
             return
-        self._send(404, {"ok": False, "error": "unknown path", "paths": ["/v1/ibc", "/v1/prices", "/v1/health"]})
+        m = re.match(r"^/v1/balances/(wasm1[a-z0-9]{38,59})/?$", p)
+        if m:
+            # 全量面额：本链 ulight + 任意外来 ibc/… 都列出来，外来的一律标非本链发行
+            try:
+                v, hit = balances_cached(m.group(1))
+                v = dict(v)
+                v["cached"] = hit
+                self._send(200 if v.get("ok") else 502, v)
+            except Exception as e:
+                self._send(502, {"ok": False, "error": str(e)[:200]})
+            return
+        self._send(404, {"ok": False, "error": "unknown path", "paths": ["/v1/ibc", "/v1/prices", "/v1/health", "/v1/balances/<wasm1…>"]})
 
     def log_message(self, fmt, *a):
         pass
