@@ -115,7 +115,11 @@ def main():
              ("g13_mt_wiring", ["python3", "/usr/local/bin/ld_i18n_wiring.py",
                                 os.path.join(STG, "js"), STG]),
              # g15：资产形态口径必须与白皮书一致（11-05 我把 LIGHT 写成 CW20 合约币的洞）
-             ("g15_asset_form", ["python3", "/usr/local/bin/ld_asset_form_check.py", STG])]
+             ("g15_asset_form", ["python3", "/usr/local/bin/ld_asset_form_check.py", STG]),
+             # g16：词典齐+分片齐 不等于 页面真被翻译。11-06 实测 app.html/funds.html 语言层没盖章
+             # 而所有老门禁全绿 —— 这道门专门盯「语言引擎在这一页到底跑没跑」。
+             ("g16_i18n_boot", ["python3", "/usr/local/bin/ld_i18n_boot_check.py",
+                               "--base", "https://127.0.0.1:8093", "--langs", "de"])]
     for name, cmd in gates:
         rc, out = run(cmd, env)
         last = [l for l in out.strip().splitlines() if l.strip()][-3:]
