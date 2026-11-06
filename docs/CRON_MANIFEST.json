@@ -526,6 +526,13 @@
    "cmd": "/usr/bin/python3 /usr/local/bin/g12_simp_check.py /var/www/lightdao/js",
    "purpose": "日/韩译文夹简体字巡检（g12 同判据的独立跑法，命中只报警不改译文；发布门禁内另有同名检查）",
    "added": "2026-11-05"
+  },
+  {
+   "user": "root",
+   "schedule": "*/10 * * * *",
+   "cmd": "flock -n /home/ubuntu/ld_xcmn.lock /usr/bin/python3 /home/ubuntu/ld_xc_mainnet_watch.py",
+   "purpose": "主网↔Osmosis 跨链开通器与静默失效值守：未开通时每 10 分钟做就绪体检（hermes 配置 + 两侧 key + 两侧油钱），达标即自动调 ld_xc_mainnet_open.py 一次性开通；已开通后盯 4 件事：systemd 服务 active、通道仍 STATE_OPEN、packet-commitments 不单调增长、两侧高度都在推进；任一异常非零退出并写 ld_alerts.log。--selftest 支持反向 4 项各植入一次确认必响。",
+   "added": "2026-11-06"
   }
  ]
 }
