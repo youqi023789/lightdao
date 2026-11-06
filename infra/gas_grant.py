@@ -56,7 +56,7 @@ def main():
         try:
             bal=subprocess.run(["wasmd","q","bank","balances",m,"--node",NODE,"-o","json"],capture_output=True,text=True,timeout=30)
             if not json.loads(bal.stdout).get("balances"):
-                subprocess.run(["wasmd","tx","bank","send",DEP,m,"1000ulight","--from","deployer","--home",HOME,"--keyring-backend","test","--chain-id",CHAIN,"--node",NODE,"--gas","150000","--fees","45000ulight","-y"],capture_output=True,text=True,timeout=60)
+                subprocess.run(["wasmd","tx","bank","send",DEP,m,"200000ulight","--from","deployer","--home",HOME,"--keyring-backend","test","--chain-id",CHAIN,"--node",NODE,"--gas","150000","--fees","45000ulight","-y"],capture_output=True,text=True,timeout=60)
                 time.sleep(4)
         except Exception:
             pass
