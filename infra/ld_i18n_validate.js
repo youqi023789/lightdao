@@ -184,6 +184,11 @@ for (const f of allFiles) {
     }
   }
   /* 同一个表里键重复 = JS 对象后者静默覆盖前者，少一条译文且毫无报错 */
+  /* LD-I18N-MT：机器翻译表的键来自渲染后的文本节点（被内联标签切断的句子碎片），
+     静态源码串集合认不得它们；对机器表跳过"死行"检查，其余检查（列数/空值/跨文字混入）照查，
+     并打印一行说明——静默放行等于没有这道门。 */
+  const MT_TABLE = /LD-I18N-MT/.test(src.slice(0, 900));
+  if (MT_TABLE) console.log("   [机器表] " + f + "：跳过死行检查（键取渲染文本节点），其余检查照常");
   const keyHits = new Map();
   for (const [en] of rows) keyHits.set(en, (keyHits.get(en) || 0) + 1);
   for (const [k, v] of keyHits) if (v > 1) {
@@ -196,10 +201,12 @@ for (const f of allFiles) {
     /* 死行检查：键必须是站内真实存在的源串（中文键），或某个中文键的 en 值。
        对不上号 = 这条译文永远不会被用上；批次 2 起键是手打的中文，
        打错一个字就会静默失效，必须由门禁点名。 */
+    if (!MT_TABLE) {
     if (CJK_RE.test(en)) {
       if (!ZH.has(en)) { console.log("   死行 [" + en.slice(0, 30) + "] 不是站内已有的中文源串 —— 键打错了，译文永远不会生效"); bad++; }
     } else if (!ENSET.has(en.trim())) {
       console.log("   死行 [" + en.slice(0, 30) + "] 没有任何中文键的 en 等于它 —— 译文永远不会生效"); bad++;
+    }
     }
     const parts = val.split("|");
     if (parts.length !== L.length) {
