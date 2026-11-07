@@ -23,6 +23,10 @@ import urllib.parse
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
+import sys as _sys
+_sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import xc_bank   # 全量面额读取 + 外来 ibc/… 面额的来源与如实标注（只读）
+
 BIN = os.environ.get("XC_BIN", "/home/ubuntu/lightd.testnet.bin")
 RPC_A = os.environ.get("XC_RPC_A", "http://127.0.0.1:26757")
 RPC_B = os.environ.get("XC_RPC_B", "http://127.0.0.1:26957")
@@ -32,6 +36,7 @@ CH_B = "channel-0"
 ESCROW_A = "wasm12k2pyuylm9t7ugdvz67h9pg4gmmvhn5v4658cl"
 RELAYER_A = "wasm179u6h2xus9zetqe4ejwamxz6sv7ks8djf5kpjc"
 RELAYER_B = "wasm1rct6n8snzdufxapu9qhxt3xwgg04k6cvxct60s"
+MAIN_RELAY_SVC = os.environ.get("XC_MAIN_RELAY_SVC", "lightdao-ibc-mainnet.service")
 CG = ("https://api.coingecko.com/api/v3/simple/price?ids=lightdao,bitcoin,ethereum,"
       "binancecoin,solana,uniswap,ripple,dogecoin&vs_currencies=usd&include_24hr_change=true")
 UA = {"User-Agent": "LightDAO-XChain-Probe/1.0 (read-only status surface)"}
@@ -39,6 +44,23 @@ TTL_STATE = float(os.environ.get("XC_TTL_STATE", "20"))
 TTL_PRICE = float(os.environ.get("XC_TTL_PRICE", "60"))
 LOCK = threading.Lock()
 CACHE = {"state": (0.0, None), "price": (0.0, None)}
+BAL_CACHE = {}
+TTL_BAL = float(os.environ.get("XC_TTL_BAL", "30"))
+
+
+def balances_cached(addr):
+    key = addr
+    now = time.time()
+    with LOCK:
+        hit = BAL_CACHE.get(key)
+        if hit and now - hit[0] < TTL_BAL:
+            return hit[1], True
+    v = xc_bank.summarize(RPC_MAIN, addr)
+    with LOCK:
+        if len(BAL_CACHE) > 512:      # 只读服务不能被陌生人拿地址表撑爆内存
+            BAL_CACHE.clear()
+        BAL_CACHE[key] = (now, v)
+    return v, False
 
 
 def http_json(url, timeout=8):
@@ -373,22 +395,83 @@ def state():
         s["demo"] = None
         err.append("演示账户信息读不到：%s" % str(e)[:60])
     # 主网跨链：照实说明，不假装；并且把"未开通"这件事用主网自己的读数兜住
-    s["mainnet_ibc"] = {"enabled": False,
-                        "reason_code": "no_channel_yet",
-                        "reason_zh": "主网还没有建立任何跨链通道：链上实测 IBC 轻客户端 0 个、通道 0 条。"
-                                     "LIGHT 本身就是原生币 ulight，ICS-20 可直接搬运；缺的是对端链选定、"
-                                     "通道与中继的部署，以及治理授权（接收哪些对面额、中继权限与额度）。",
-                        "testnet_zh": "测试网 A(lightdao-testnet-gas) ↔ B(lightdao-testnet-b) 已双向实测自动中继"}
-    try:
-        n = ibc_client_count(RPC_MAIN)
-        s["mainnet_ibc"]["mainnet_clients"] = n
-        if n > 0:
-            err.append("主网出现了 %d 个 IBC 轻客户端（与『主网跨链未开通』的说法冲突，须人工核对）" % n)
-    except Exception as e:
-        s["mainnet_ibc"]["mainnet_clients"] = None
-        err.append("主网 IBC 客户端数量读不到：%s" % str(e)[:60])
+    mn, mn_errs = mainnet_state()
+    s["mainnet_ibc"] = mn
+    err.extend(mn_errs)
     s["errors"] = err
     return s
+
+
+def chan_state(c):
+    """本链 CLI 的 channel state 是字符串 "STATE_OPEN"，上游部分版本是 {"status": ...}。
+       只认一种形状就会把"已开通"读成"没有通道"（11-07 实撞过一次）。"""
+    st = c.get("state")
+    if isinstance(st, str):
+        return st
+    return (st or {}).get("status") if isinstance(st, dict) else None
+
+
+def mainnet_state():
+    """主网跨链的真实状态：现查链上，不写死。返回 (给面板的 dict, 错误列表)"""
+    errs = []
+    out = {"enabled": False, "reason_code": "unknown", "reason_zh": "",
+           "mainnet_clients": None, "mainnet_channels": None, "relayer": None,
+           "testnet_zh": "测试网 A(lightdao-testnet-gas) ↔ B(lightdao-testnet-b) 已双向实测自动中继"}
+    try:
+        out["mainnet_clients"] = ibc_client_count(RPC_MAIN)
+    except Exception as e:
+        errs.append("主网 IBC 客户端数量读不到：%s" % str(e)[:60])
+    chs = []
+    try:
+        for c in (cq(["ibc", "channel", "channels"], RPC_MAIN).get("channels") or []):
+            chs.append({"id": c.get("channel_id"), "port": c.get("port_id"),
+                        "state": chan_state(c),
+                        "peer": (c.get("counterparty") or {}).get("channel_id"),
+                        "conn": (c.get("connection_hops") or [None])[0],
+                        "version": c.get("version")})
+    except Exception as e:
+        errs.append("主网 IBC 通道读不到：%s" % str(e)[:60])
+    out["mainnet_channels"] = len(chs)
+    open_ch = [c for c in chs if c["port"] == "transfer" and c["state"] == "STATE_OPEN"]
+    try:
+        p = subprocess.run(["systemctl", "is-active", MAIN_RELAY_SVC],
+                           capture_output=True, text=True, timeout=8)
+        out["relayer"] = (p.stdout or "").strip() or "unknown"
+    except Exception as e:
+        out["relayer"] = "读不到"
+        errs.append("主网中继进程状态读不到：%s" % str(e)[:50])
+    if open_ch:
+        c0 = open_ch[0]
+        out["enabled"] = True
+        out["reason_code"] = "open"
+        out["channel"] = c0["id"]
+        out["peer_channel"] = c0["peer"]
+        out["connection"] = c0["conn"]
+        out["version"] = c0["version"]
+        out["peer_chain_hint"] = "osmosis-1"
+        # 超时高度必须按**对端客户端同步到的高度**算（ibc-go 的校验口径）。
+        # 浏览器自己拿主网高度填 timeout，会得到"出生即过期"的报文（11-07 实测拒发）。
+        try:
+            cs = cq(["ibc", "client", "state", "07-tendermint-0"], RPC_MAIN)
+            lh = (((cs.get("client_state") or {}).get("latest_height")) or {})
+            out["peer_revision"] = int(lh.get("revision_number") or 0)
+            out["peer_height"] = int(lh.get("revision_height") or 0)
+        except Exception as e:
+            out["peer_height"] = None
+            errs.append("对端客户端高度读不到（浏览器会拒绝发送而不是填错）：%s" % str(e)[:50])
+        if out["relayer"] not in ("active",):
+            errs.append("主网通道已 OPEN，但中继进程 %s=%s —— 转账会卡在途，用户端表现为不到账"
+                        % (MAIN_RELAY_SVC, out["relayer"]))
+    elif out["mainnet_clients"]:
+        out["reason_code"] = "partial_state"
+        out["reason_zh"] = "主网已有 IBC 轻客户端但没有 OPEN 的 transfer 通道（半截状态），需人工核对"
+        errs.append("主网有 %d 个轻客户端却没有 OPEN 通道 = 半截状态" % out["mainnet_clients"])
+    else:
+        out["reason_code"] = "no_channel_yet"
+        out["reason_zh"] = ("主网还没有建立任何跨链通道：链上实测 IBC 轻客户端 0 个、通道 0 条。"
+                            "LIGHT 本身就是原生币 ulight，ICS-20 可直接搬运；缺的是对端链选定、"
+                            "通道与中继的部署，以及治理授权（接收哪些对面额、中继权限与额度）。")
+    return out, errs
 
 
 def price():
@@ -475,7 +558,18 @@ class H(BaseHTTPRequestHandler):
             except Exception as e:
                 self._send(502, {"ok": False, "error": str(e)[:200]})
             return
-        self._send(404, {"ok": False, "error": "unknown path", "paths": ["/v1/ibc", "/v1/prices", "/v1/health"]})
+        m = re.match(r"^/v1/balances/(wasm1[a-z0-9]{38,59})/?$", p)
+        if m:
+            # 全量面额：本链 ulight + 任意外来 ibc/… 都列出来，外来的一律标非本链发行
+            try:
+                v, hit = balances_cached(m.group(1))
+                v = dict(v)
+                v["cached"] = hit
+                self._send(200 if v.get("ok") else 502, v)
+            except Exception as e:
+                self._send(502, {"ok": False, "error": str(e)[:200]})
+            return
+        self._send(404, {"ok": False, "error": "unknown path", "paths": ["/v1/ibc", "/v1/prices", "/v1/health", "/v1/balances/<wasm1…>"]})
 
     def log_message(self, fmt, *a):
         pass
