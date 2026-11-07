@@ -183,13 +183,24 @@ def clients(node=A_RPC):
     return len((wq(["ibc", "client", "states"], node=node).get("client_states") or []))
 
 
+def ch_state(c):
+    """通道状态在本链 CLI 的 JSON 里是**字符串** "STATE_OPEN"，上游 SDK 的部分版本是对象
+       {"status": "..."}。只按一种形状写就会把"已开通"看成"没有通道"（11-07 实撞：
+       通道明明 OPEN，脚本却崩在 .get() 上，还把"成功"误报成 failed）。"""
+    st = c.get("state")
+    if isinstance(st, str):
+        return st
+    return (st or {}).get("status") if isinstance(st, dict) else None
+
+
 def channels(node=A_RPC):
     fc = fx("channels_A")
     raw = fc if fc is not None else (wq(["ibc", "channel", "channels"], node=node).get("channels") or [])
     out = []
     for c in raw:
         out.append({"id": c.get("channel_id"), "port": c.get("port_id"),
-                    "state": (c.get("state") or {}).get("status"),
+                    "state": ch_state(c),
+                    "conn": (c.get("connection_hops") or [None])[0],
                     "counter": (c.get("counterparty") or {}).get("channel_id")})
     return out
 
@@ -273,7 +284,8 @@ def install_unit():
     if fx("skip_install"):
         return True, "fixture 跳过装单元"
     rc, out = sh(["sudo", "bash", "-c",
-                  "base64 -d %s > %s && rm -f %s && systemctl daemon-reload && systemctl enable %s"
+                  "base64 -d %s > %s && mv -f %s /home/ubuntu/ld_backups/hold/xc_unit_staged.txt "
+                  "&& systemctl daemon-reload && systemctl enable %s"
                   % (UNIT, "/etc/systemd/system/" + SVC, UNIT, SVC)], timeout=90, user=None)
     return rc == 0, " ".join(out.split())[:200]
 
@@ -306,62 +318,175 @@ def do_open():
     return out4.strip() == "active", {"channel_A": openA[0]["id"], "channel_B": openA[0]["counter"]}
 
 
+def rest_channel_conn(port, channel):
+    """对面链的连接号必须现查：实测 Osmosis 侧我们这条通道挂的是 connection-11103，
+       而它的 connection-0 是别人的。写死 connection-0 = 拿别人的连接发消息。"""
+    base = pick_lcd()
+    if not base or not channel:
+        return None
+    d = get_json("%s/ibc/core/channel/v1/channels/%s/ports/%s"
+                 % (base.rstrip("/"), channel, port))
+    hops = ((d or {}).get("channel") or {}).get("connection_hops") or []
+    return hops[0] if hops else None
+
+
+def _attr(x):
+    """本链 CometBFT 的 tx_search 返回的事件键值**多数已经是可读字符串**，少数才是 base64。
+       一律按 base64 解会把 "packet_sequence" 这类可读键解成一堆乱码 → 于是"链上明明有回执，
+       我的脚本说没有"（第四轮实测就是这样误判回程失败，而对面余额确实少了 500）。
+       所以：可打印就直接用，不可打印才尝试 base64。"""
+    s = "" if x is None else str(x)
+    if s and all(32 <= ord(c) < 127 for c in s):
+        return s
+    try:
+        d = base64.b64decode(s + "=" * (-len(s) % 4)).decode("utf-8", "replace")
+        return d if d and all(32 <= ord(c) < 127 for c in d) else s
+    except Exception:
+        return s
+
+
+def conn_of(chain, channel, port="transfer"):
+    """这条通道**实际**挂在哪个连接上；查不到就返回 None（绝不猜）。"""
+    if chain == A:
+        d = wq(["ibc", "channel", "channel-end", port, channel], node=A_RPC)
+        hops = (((d.get("channel") or {}).get("connection_hops")) or [])
+        if hops:
+            return hops[0]
+        # channel-end 的形状在各版本/各 fork 之间不一致，退一步从"列全部通道"里取（那条已被验证可用）
+        for c in channels(A_RPC):
+            if c["id"] == channel and c.get("conn"):
+                return c["conn"]
+        return None
+    c = rest_channel_conn(port, channel)
+    if c:
+        return c
+    rc, out = hq(["query", "channel", "end", "--chain", B, "--port", port,
+                  "--channel", channel], timeout=120)
+    m = re.search(r"connection-\d+", out or "")
+    return m.group(0) if m else None
+
+
 def verify_transfer(facts):
     """真跑一笔 A→B 再 B→A，用链上余额对平；不通就不给 opened。"""
     if fx("skip_verify"):
         return True, {"fixture": True}
     chid = facts.get("channel_A")
+    chB = facts.get("channel_B")
     baddr = b_addr()
+    connA = facts.get("conn_A") or conn_of(A, chid)
+    connB = facts.get("conn_B") or conn_of(B, chB)
+    if not connA or not connB:
+        return False, "查不到通道挂的连接（A=%s B=%s）—— 不猜连接号，停手" % (connA, connB)
+    log("通道连接实测：主网 %s / Osmosis %s" % (connA, connB))
     amt = 1000
+    # hermes 1.13.2 的 ft-transfer 只收 --dst-chain/--src-chain/--src-port/--src-channel/--amount
+    # （连接号由通道自己推、包数叫 --number-msgs）——参数表照抄旧版会直接 "wasn't expected" 失败。
     rc, out = hq(["tx", "ft-transfer", "--dst-chain", B, "--src-chain", A,
-                  "--src-connection", "connection-0", "--src-port", "transfer",
-                  "--src-channel", chid, "--amount", str(amt), "--denom", "ulight",
-                  "--timeout-height-offset", "4000", "--number-of-packets", "1"], timeout=300)
+                  "--src-port", "transfer", "--src-channel", chid,
+                  "--amount", str(amt), "--denom", "ulight",
+                  "--timeout-height-offset", "4000"], timeout=300)
     if rc != 0:
         return False, "A→B 发送失败：" + " ".join(out.split())[:200]
     ibc_denom, got = "", 0
+    # 用"增量"认定到账，不用"绝对值 ≥ 金额"：上一轮留下的余额会让绝对值判断假通过
+    # （第二轮实测对面起点就是 1500 而不是 0）。
+    pre = {b["denom"]: int(b["amount"]) for b in (rest_balances(baddr) or [])
+           if b["denom"].startswith("ibc/")}
     for _ in range(18):
         time.sleep(10)
         lst = rest_balances(baddr) or []
         for b in lst:
-            if b["denom"].startswith("ibc/") and int(b["amount"]) >= amt:
-                ibc_denom, got = b["denom"], int(b["amount"])
+            if not b["denom"].startswith("ibc/"):
+                continue
+            if int(b["amount"]) - pre.get(b["denom"], 0) >= amt:
+                ibc_denom, got = b["denom"], int(b["amount"]) - pre.get(b["denom"], 0)
                 break
         if ibc_denom:
             break
     if not ibc_denom:
-        return False, "A→B 超时未到账（中继没搬 or 报文卡住）：Osmosis 侧查不到 ibc/… 余额"
-    log("A→B 实测到账：%s %s… = %d" % (baddr, ibc_denom[:14], got))
+        return False, "A→B 超时未到账（中继没搬 or 报文卡住）：Osmosis 侧没有任何 ibc/… 面额增加 %d" % amt
+    log("A→B 实测到账：%s %s… 增量 = %d" % (baddr, ibc_denom[:14], got))
+    # 回程的判据必须用**差额**和**链上事件**，不能用绝对余额：
+    #   · 对面那条 ibc 面额可能有上一轮留下的余额（实测第二轮起点是 1500 而不是 1000）；
+    #   · 主网 ulight 每轮还要被中继手续费扣掉十几万微单位，+500 的进账淹在噪声里。
+    ibc_before = 0
+    for b in (rest_balances(baddr) or []):
+        if b["denom"] == ibc_denom:
+            ibc_before = int(b["amount"])
     rc, out = hq(["tx", "ft-transfer", "--dst-chain", A, "--src-chain", B,
-                  "--src-connection", "connection-0", "--src-port", "transfer",
-                  "--src-channel", facts.get("channel_B"), "--amount", str(amt // 2),
-                  "--denom", ibc_denom, "--timeout-height-offset", "4000",
-                  "--number-of-packets", "1"], timeout=300)
+                  "--src-port", "transfer", "--src-channel", chB,
+                  "--amount", str(amt // 2), "--denom", ibc_denom,
+                  "--timeout-height-offset", "4000"], timeout=300)
+    seq = None
+    m = re.search(r"sequence[\"\s:=]+(\d+)", out or "")
+    if m:
+        seq = m.group(1)
     back = 0
+    left = ibc_before
     for _ in range(18):
         time.sleep(10)
-        d = wq(["bank", "balances", MAIN_ADDR], node=A_RPC)
-        back = next((int(b["amount"]) for b in (d.get("balances") or []) if b.get("denom") == ibc_denom), 0)
-        if back >= amt // 2:
+        for b in (rest_balances(baddr) or []):
+            if b["denom"] == ibc_denom:
+                left = int(b["amount"])
+        if ibc_before - left >= amt // 2:
             break
-    ok = back >= amt // 2
-    log("B→A 回程实测：主网 %s… = %d（预期 ≥ %d）%s"
-        % (ibc_denom[:14], back, amt // 2, "通过" if ok else "不通过"))
-    return ok, {"channel_A": chid, "channel_B": facts.get("channel_B"), "ibc_denom": ibc_denom,
-                "ab_sent": amt, "ba_back": back}
+    # 本链通道不该有在途报文（有 = 中继没搬完）
+    pend = len((wq(["ibc", "channel", "packet-commitments", "transfer", chid], node=A_RPC)
+                .get("packet_commitments") or []))
+    # 对面余额减少只证明"钱离开了 B"，不证明"A 收到了" —— 两件事必须分别取证。
+    # 实测口径：查询要带事件类型前缀。recv_packet.packet_dst_channel='channel-0' 查到 5 条，
+    # 而裸属性名 packet_dst_channel='channel-0' 一条也查不到 —— 第 3~5 轮就是这样
+    # 把"链上明明成功的回程"判成了失败（量具错 ≠ 链错，先怀疑量具）。
+    def recv_snapshot():
+        h, n = set(), 0
+        try:
+            body = json.dumps({"jsonrpc": "2.0", "id": 1, "method": "tx_search",
+                               "params": {"query": "recv_packet.packet_dst_channel='%s'" % chid,
+                                          "pagination": {"offset": "0", "limit": "30"}}}).encode()
+            req = urllib.request.Request(A_RPC, data=body,
+                                         headers={"Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=25) as f:
+                r = json.load(f).get("result", {})
+            n = int(r.get("total_count") or 0)
+            h = {t.get("hash") for t in (r.get("txs") or []) if t.get("hash")}
+        except Exception as e:
+            log("查 recv_packet 出错（下一轮重试）：%s" % str(e)[:60])
+        return h, n
+
+    base_set, base_n = recv_snapshot()
+    recv_seq, recv_tx = None, None
+    for _ in range(12):
+        time.sleep(9)
+        cur_set, cur_n = recv_snapshot()
+        fresh = sorted(cur_set - base_set)
+        if fresh or cur_n > base_n:
+            recv_tx = (fresh or [sorted(cur_set)[-1]])[0]
+            recv_seq = "%d→%d" % (base_n, cur_n)   # 回执条数从几变到几，配交易号即成证据
+            break
+    ok = (ibc_before - left >= amt // 2) and pend == 0 and bool(recv_tx)
+    log("B→A 回程实测：对面 ibc 余额 %d→%d（应减 %d）｜本链在途报文 %d（应 0）｜主网 recv_packet 序列=%s tx=%s… → %s"
+        % (ibc_before, left, amt // 2, pend, recv_seq, (recv_tx or "?")[:16],
+           "通过" if ok else "不通过"))
+    return ok, {"channel_A": chid, "channel_B": chB, "conn_A": connA, "conn_B": connB,
+                "ibc_denom": ibc_denom, "ab_sent": amt, "ba_back": amt // 2,
+                "osmo_ibc_before": ibc_before, "osmo_ibc_after": left,
+                "mainnet_pending_after_return": pend,
+                "recv_packet_seq": recv_seq, "recv_packet_tx": recv_tx}
 
 
 def evidence(facts):
     txt = ("\n## %s 主网 ↔ Osmosis 通道实测证据\n\n"
            "- 中继身份：主网 `%s`；Osmosis 侧同一条助记词派生 `%s`（只放油钱的热钱包，和金库/结算密钥无关）\n"
            "- 通道：主网 `%s` ↔ Osmosis `%s`，端口 `transfer`，版本 `ics20-1`\n"
-           "- 双向 ICS-20 实测：去程 %s ulight，回程到账 %s（外来面额 `%s…`）\n"
+           "- 双向 ICS-20 实测：去程 %s ulight，回程 %s（denom `%s…`）；"
+           "主网 `recv_packet` 事件序列=%s，交易 `%s…`，回查在途报文 0 条\n"
            "- 中继进程：`%s`（systemd，Restart=on-failure；配 watchdog 双向盯梢）\n"
            "- 结论：主网跨链从「链上 0 客户端 / 0 通道」变为「1 条通道 OPEN 且双向有回执」；"
            "LIGHT 以原生 `ulight` 经 ICS-20 直接搬运，无需 wLIGHT 封装。\n"
            % (time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()), MAIN_ADDR, facts.get("osmo_addr", "?"),
               facts.get("channel_A", "?"), facts.get("channel_B", "?"), facts.get("ab_sent", "?"),
-              facts.get("ba_back", "?"), (facts.get("ibc_denom") or "?")[:20], SVC))
+              facts.get("ba_back", "?"), (facts.get("ibc_denom") or "?")[:20],
+              facts.get("recv_packet_seq", "?"), (facts.get("recv_packet_tx") or "?")[:20], SVC))
     try:
         d = os.path.dirname(EVID)
         if d:
@@ -422,12 +547,40 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true", help="只体检不动链")
     ap.add_argument("--force", action="store_true", help="忽略 opened 再体检一次（仍不会重复开通道）")
+    ap.add_argument("--verify-only", action="store_true",
+                    help="通道已在链上打开时，只做装单元+起中继+双向自证（11-07 实战：握手成功但脚本自己崩了）")
     ap.add_argument("--selftest", action="store_true", help="用假数据验证护栏本身灵不灵")
     a = ap.parse_args()
     if a.selftest:
         return selftest()
     st = load_state()
     print("状态文件：%s" % json.dumps(st, ensure_ascii=False)[:300])
+    if a.verify_only:
+        openA = open_transfer()
+        if not openA:
+            log("--verify-only 但链上没有 OPEN 通道 —— 什么都不做")
+            return 3
+        c0 = openA[0]
+        facts = {"channel_A": c0["id"], "channel_B": c0["counter"], "conn_A": c0["conn"],
+                 "main_addr": MAIN_ADDR, "osmo_addr": b_addr()}
+        oki, mi = install_unit()
+        log("单元安装=%s %s" % ("OK" if oki else "失败", "" if oki else mi[:90]))
+        sh(["sudo", "systemctl", "restart", SVC], timeout=90, user=None)
+        time.sleep(20)
+        rc4, out4 = sh(["systemctl", "is-active", SVC], timeout=20, user=None)
+        log("中继进程 %s = %s" % (SVC, (out4.strip() or "unknown")))
+        okv, vf = verify_transfer(facts)
+        vf = vf if isinstance(vf, dict) else {"detail": str(vf)[:300]}
+        vf.setdefault("osmo_addr", facts.get("osmo_addr"))
+        st.update(status="opened" if okv else "opened_unverified", verify=vf,
+                  service=out4.strip())
+        save_state(st)
+        if okv:
+            evidence(vf)
+            log("自证通过：通道 OPEN + 双向到账，证据写入 %s" % EVID)
+            return 0
+        log("自证未过：%s" % str(vf)[:220])
+        return 6
     if st.get("status") == "opened" and not a.force:
         print("已 opened，一次上锁生效 —— 不重复操作（复核用 --dry-run --force）")
         return 0

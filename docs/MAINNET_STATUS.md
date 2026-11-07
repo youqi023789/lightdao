@@ -91,3 +91,10 @@
 - X: [@lightdaoproto](https://x.com/lightdaoproto);首发线程 2026-09-26(8 帖):https://x.com/lightdaoproto/status/2103791251367825588
 - Season 1 治理提案 #4(2026-10-01→10-29,5M LIGHT 池,邀请+10% 首周):7/7 通过
 - 邀请裂变:网关记录 referrals,赛季末从 S1 池结算(每日根保持纯 PoC)
+
+## 主网跨链：已开通（2026-11-07 实测）
+
+- 通道：主网 `channel-0` ↔ Osmosis `channel-111104`（`transfer`/`ics20-1`），状态 `STATE_OPEN`
+- 轻客户端 1 个；中继进程 `active`；中继热钱包 `8301284` ulight
+- 双向 ICS-20 已实测到账，逐笔证据见 `docs/IBC_MAINNET_EVIDENCE.md`
+- LIGHT 以原生 `ulight` 直接搬运，**不需要 warp 封装**（与白皮书第四章一致，由 g15 门禁锁口径）

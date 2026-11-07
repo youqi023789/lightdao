@@ -1,5 +1,20 @@
 # IBC（跨链）开通现状与落地路径（实测记录，2026-11-04）
 
+# 主网跨链现状（2026-11-07 更新，实测）
+
+| 项 | 命令 | 实测值 |
+| --- | --- | --- |
+| IBC 轻客户端 | `wasmd q ibc client states` | 1 个（`07-tendermint-0` 跟踪 `osmosis-1`） |
+| transfer 通道 | `wasmd q ibc channel channels` | 2 条：主网 `channel-0` ↔ Osmosis `channel-111104`，`STATE_OPEN`，版本 `ics20-1` |
+| 中继进程 | `systemctl is-active lightdao-ibc-mainnet.service` | active |
+| 中继热钱包余额 | `wasmd q bank balances wasm1tplhv…rw3yp` | 8301284 ulight |
+| 收/发参数 | `wasmd q ibc-transfer params` / `q ibc client params` | `send_enabled=true`、`receive_enabled=true`、`allowed_clients=['*']` |
+
+双向实测（脚本 `infra/ld_xc_mainnet_open.py --verify-only` 产出，详见 `IBC_MAINNET_EVIDENCE.md`）：
+去程主网 → Osmosis 到账、回程 Osmosis → 主网链上出现 `recv_packet` 交易、通道在途报文归零。
+下面第一节是**开通之前**的存档记录，保留不改，用来说明"站内曾虚报过一次、后来怎么纠正的"。
+
+
 本文件只做一件事：把"跨链到底能不能用、卡在哪、要什么才能做完"写成**可复核的事实**，
 不写成愿望。所有结论都带命令，任何人都能在网关自跑。
 
@@ -9,10 +24,10 @@
 |---|---|---|---|
 | 轻客户端是否受限 | `wasmd q ibc client params --node http://127.0.0.1:26657` | `allowed_clients: ['*']` | **任何人都能建客户端**，不需要治理放行 |
 | ICS-20 转账开关 | `wasmd q ibc-transfer params --node http://127.0.0.1:26657` | `send_enabled: true` / `receive_enabled: true` | 模块层允许收发 |
-| 现有客户端 | `wasmd q ibc client states --node http://127.0.0.1:26657` | `total: 0` | **一个都没有** |
-| 现有通道 | `wasmd q ibc channel channels --node http://127.0.0.1:26657` | 空 | **没有 transfer 通道** |
+| 现有客户端 | `wasmd q ibc client states --node http://127.0.0.1:26657` | `total: 0`（当时） | **一个都没有**（已于 11-07 建好，见文首） |
+| 现有通道 | `wasmd q ibc channel channels --node http://127.0.0.1:26657` | 空（当时） | **没有 transfer 通道**（11-07 已开 `channel-0`） |
 
-结论：**主网跨链未上线**，不是因为链禁止，而是因为从来没人建过客户端/连接/通道，
+结论（当时，2026-11-05）：**主网跨链未上线**，不是因为链禁止，而是因为从来没人建过客户端/连接/通道，
 也没有跑在两个主网之间的中继。站内此前写"IBC 双向 transfer 已实测"是虚报，
 已在 v1.10.11 全语种改为"主网未开通 + 测试网实测过"，并由渲染层用例锁住（`ld_render_truth.py`）。
 
@@ -53,7 +68,10 @@
    - ① 选定对端链（对方是否接受我们的轻客户端参数：解绑 504h 意味着信任期必须显著小于它）；
    - ② 建客户端/连接/通道并让中继长期在线（通道建立本身不碰金库，但一旦有真实价值进出就是资金风险）；
    - ③ 治理授权：接收哪些对端 `ibc/...` 面额、是否限制转账开关、中继账户权限与额度。
-   这三条都需要你先定方向；在你定之前，主网跨链保持"未开通"并在面板如实标注。
+   这三条的所有者决定已到位（11-06/11-07）：① 对端链定 Osmosis 主网（`osmosis-1`，其资产清单实测含
+   WETH/WBNB/UNI/SOL/ATOM，一条通道即一跳可达）；② 客户端/连接/通道已建、中继已常驻
+   （`lightdao-ibc-mainnet.service`）；③ 接收策略按"公链允许任意外来 `ibc/…` 面额入账"执行
+   （实测参数不限制面额），外来面额在面板与浏览器里一律标注"非 LIGHT 发行"，不计入 LIGHT 总量。
 
 ## 四、还有一条链上参数约束（与跨链安全性直接相关）
 
