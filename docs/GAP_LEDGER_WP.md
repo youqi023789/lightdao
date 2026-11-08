@@ -52,6 +52,13 @@ owner 权限面沿用 `CONTRACT_SPEC_1617.md` 2026-10-17 的记载（治理合�
 
 B 类其余 6 项（B2/B3/B4/B5/B6/B7）本轮未复核，状态照旧，合计数不变。
 
+### B7 链上复核（2026-11-08 自走巡检，`wasmd q` 实测，非记忆非推断）
+
+- 提案保证金（原生 gov 等价，✅ 部分）：min_deposit=10,000,000 ulight（10 LIGHT）、max_deposit_period=48h、voting_period=48h；veto_threshold=33.4% 且 burn_vote_veto=true；expedited 24h/66.7%（其 expedited_min_deposit 仍为默认 denom `stake`/50,000,000，未对齐 ulight，如实记录）。
+- 否决冷却：❌ 链上无对应参数（原生 gov 无此机制）。
+- 押注池（5-500L）：❌ 未见。全量 20 code 中 12 个有实例（light_token/treasury_multisig/subtoken_factory/oracle_twap/anti_fraud/validator_registry/vesting/insurance_fund/mining_reward/governance/vesting-v2-wp54/ecosystem-fund-wp53），实例 label 与注册表均无押注/保证金池类合约。
+- 结论：3 要素中仅「提案保证金」有原生等价物，押注池合约与否决冷却未建——**B7 维持 🔴，合计数不变**。另本轮实测确认全链共 20 个 code、12 个实例，mining_reward 实例地址与运维口径一致（wasm173y0pgdh6…）。
+
 ## C. 待条件触发的里程碑（46 项——TGE 后按月触发）
 
 | # | 里程碑 | 触发时间 | 白皮书出处 |
