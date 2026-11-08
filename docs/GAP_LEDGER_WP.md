@@ -21,7 +21,7 @@
 | B2 | 稳定/弹性金库双轨 | §5.8 | 稳定金库（USDC）+ 弹性金库（LIGHT 层，投资时销毁） | 🔴 未建 |
 | B3 | 荷兰式拍卖合约 | §5.10 | 起始$0.20、递减5%/h、保留$0.01、单用户≤5% | 🔴 未建 |
 | B4 | 价格发现保护期熔断 | §5.10 | TGE后72h ±50%熔断子代币兑换 | 🔴 未建 |
-| B5 | Gas 代付 Paymaster | §4.9 | 新用户前100笔 Gas 由生态基金代付 | 🟡 部分有（gas_grant.py），未达规格 |
+| B5 | Gas 代付 Paymaster | §4.9 | 新用户前100笔 Gas 由生态基金代付 | 🟡 已实现为原生 x/feegrant（deployer 出资、5 LIGHT 金额上限），三条硬缺口未达规格（见「B5 链上复核 2026-11-08」） |
 | B6 | 形式化验证 | §4.11 | 10 合约 TGE 前完成 | 🔴 未做 |
 | B7 | 治理保证金/押注池 | §6.3-6.5 | 提案保证金+否决冷却+押注 5-500L | 🔴 未建 |
 
@@ -58,6 +58,17 @@ B 类其余 6 项（B2/B3/B4/B5/B6/B7）本轮未复核，状态照旧，合计�
 - 否决冷却：❌ 链上无对应参数（原生 gov 无此机制）。
 - 押注池（5-500L）：❌ 未见。全量 20 code 中 12 个有实例（light_token/treasury_multisig/subtoken_factory/oracle_twap/anti_fraud/validator_registry/vesting/insurance_fund/mining_reward/governance/vesting-v2-wp54/ecosystem-fund-wp53），实例 label 与注册表均无押注/保证金池类合约。
 - 结论：3 要素中仅「提案保证金」有原生等价物，押注池合约与否决冷却未建——**B7 维持 🔴，合计数不变**。另本轮实测确认全链共 20 个 code、12 个实例，mining_reward 实例地址与运维口径一致（wasm173y0pgdh6…）。
+
+### B5 链上复核（2026-11-08 自走巡检，`wasmd q` + 网关发放器实测，非记忆非推断）
+
+- 实现载体：原生 `x/feegrant` BasicAllowance，**不是专用合约**——全链 20 code / 12 实例（见 B7 复核）中无 paymaster 类合约；发放器为网关脚本 gas_grant.py（root 无关，ubuntu cron 每 10 分钟以当日 day 调用）。
+- 资金来源不符（缺口①）：granter 实测为运维账户 wasm13c2cjh3…（BaseAccount，bank 余额 499,417,962,910 ulight ≈ 499,418 LIGHT）。白皮书 §4.9 要求「由生态基金代付」，而生态基金实例 wasm1j0rhxww…（code 17，label ecosystem-fund-wp53）余额恰 400,000,000,000,000 ulight（400M LIGHT），本轮实测未被动用，也未出现在任何 allowance 的 granter 位。
+- 口径不符（缺口②）：每笔授权 spend_limit = 5,000,000 ulight（5 LIGHT）、expiration 30 天、可续期（granted.json 最近 renew 2026-11-02T00:20:01Z，续期到期 2026-11-29）。规格写的是「前 100 笔」笔数口径，实现是金额口径。按网关自身显式手续费惯例（--gas 200000 配 --fees 60000ulight，即 0.3 ulight/gas）折算，5 LIGHT ≈ 83 笔，仍低于 100；节点 minimum-gas-prices = "0stake"（未设 ulight 最低价），本轮近 4 个区块无交易可采样，故「实际可代付笔数」标注为未实测，不作推断。
+- 使用率极低（缺口③）：`grants-by-granter` 实测 25 条 allowance，0 条过期，25 个唯一 grantee；按 5 LIGHT 初始额度合计 125 LIGHT，链上剩余合计 121,025,000 ulight，累计仅消耗 3,975,000 ulight（3.98 LIGHT，均值 0.159 LIGHT/笔）——代付额度几乎没被用起来，属矿工 claim 行为侧问题，非发放器故障。
+- 台账与链上差额核对：granted.json 27 条 vs 链上 25 条。差的 2 条：一条自测占位地址 wasm1endpointtest0…（ok=False，报 feegrant 用法错，属噪声记录）；一条 day 23 真实矿工记 ok=True 但链上已无对应 allowance（BasicAllowance 剩余归零会被删除，也可能曾被主动撤回，本轮无法区分，标注待查）。
+- 「发放停摆」疑点排除：逐日读结算文件 day_34…day_58，day 36 之后无新矿工地址出现；最后一次真实发放 2026-10-17T20:40:06Z（day 36 的 2 个新矿工均已入链）。故近期无新授权 = 需求侧为空，不是 cron 哑火；cron 缺 day 文件时打印 no day file 后直接返回。
+- 自加限流如实记录：每日每 IP 最多 3 笔（白皮书 §4.9 无此约束）。
+- 结论：**B5 维持 🟡**，「未达规格」量化为上述三条硬缺口（资金来源 / 额度口径 / 实际使用率），合计数不变。
 
 ## C. 待条件触发的里程碑（46 项——TGE 后按月触发）
 
