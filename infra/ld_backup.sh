@@ -31,6 +31,38 @@ RUNUSER=$(id -un)
 
 log() { echo "[ld_backup $(date -u +%FT%TZ)] $*"; }
 
+# page() MSG -- mirror a backup failure onto the alert surface that the hourly self-run check
+# reads. Before 2026-11-10 FATAL-W only ever reached ld_backup.log, which no sentinel greps, so
+# the key backup sat empty for two full days while the alert surface stayed clean.
+page() {
+  printf "%s ALERT [backup] %s\n" "$(date -u +%FT%TZ)" "$*" >> /home/ubuntu/ld_alerts.log 2>/dev/null || true
+}
+
+# prune_keys -- 7-day retention that can never leave the host without a SUBSTANTIVE archive.
+# Empty archives from a keyring-layout regression are 217 bytes; real ones are >10KB. Pruning by
+# mtime alone would have removed the last restorable copy (keys-*-2026-11-07) on 2026-11-15 while
+# every newer file was still empty. Pruned files move to $DEST/.pruned (recoverable, 0700)
+# instead of being erased outright, per the no-permanent-deletion rule.
+prune_keys() {
+  local younger_big=0 f sz TRASH
+  TRASH="$DEST/.pruned"
+  while IFS= read -r f; do
+    sz=$(stat -c%s "$f" 2>/dev/null || echo 0)
+    if [ "${sz:-0}" -gt 1000 ]; then younger_big=1; break; fi
+  done < <(find "$DEST" -maxdepth 1 \( -name "keys-*.tar.gz.gpg" -o -name "keys-*.tar.gz.age" \) -mtime -8 -print 2>/dev/null)
+  if [ "$younger_big" != "1" ]; then
+    log "RETAIN-W: no key archive over 1KB is younger than 8 days - refusing to prune keys-* files"
+    page "keys-* retention refused: no substantive (>=1KB) archive younger than 8 days"
+    return 0
+  fi
+  mkdir -p "$TRASH" && chmod 700 "$TRASH"
+  while IFS= read -r f; do
+    if mv -n "$f" "$TRASH/" 2>/dev/null; then
+      log "retention moved $(basename "$f") -> $TRASH"
+    fi
+  done < <(find "$DEST" -maxdepth 1 \( -name "keys-*.tar.gz.gpg" -o -name "keys-*.tar.gz.age" \) -mtime +7 -print 2>/dev/null)
+}
+
 # ---- locate the wasmd home. It must ACTUALLY hold key material: on the ubuntu nodes an
 #      empty /root/.wasmd also exists and picking it would silently back up nothing.
 has_keymat() {
@@ -40,20 +72,43 @@ has_keymat() {
   [ -f "$h/config/priv_validator_state.json" ] && return 0
   return 1
 }
+# home_keyn H -- number of REAL keyring secrets (.info files) under H.
+# has_keymat() alone is not enough: it only tests that a keyring-* DIRECTORY exists, and any
+# accidental `wasmd --home /root/.wasmd ...` run creates an empty one.
+# Found by the hourly self-run check on 2026-11-10: /root/.wasmd grew an empty keyring-test at
+# 2026-11-08 05:03Z, the loop below took the FIRST candidate, so the daily key archive has been
+# 217 bytes with 0 .info entries since the 2026-11-08 run while the real keyring (12 .info) sat
+# untouched in /home/ubuntu/.wasmd. Last good archive: keys-*-2026-11-07.tar.gz.gpg (11 keys).
+home_keyn() {
+  local h="$1" k n=0
+  for k in "$h"/keyring-*; do
+    [ -d "$k" ] || continue
+    n=$(( n + $(ls -1 "$k"/*.info 2>/dev/null | wc -l) ))
+  done
+  echo "$n"
+}
 WASMD_HOME=""
 CANDIDATES=""
 SEEN=""
+HOMEKEYN=0
 for h in /root/.wasmd /home/ubuntu/.wasmd /home/*/.wasmd; do
   [ -d "$h" ] || continue
   case " $SEEN " in *" $h "*) continue ;; esac   # /home/*/.wasmd can repeat /home/ubuntu/.wasmd
   SEEN="$SEEN $h"
   if has_keymat "$h"; then
     CANDIDATES="$CANDIDATES $h"
-    [ -z "$WASMD_HOME" ] && WASMD_HOME="$h"
+    # Archive the home that actually HOLDS the keys, not the first path that merely has a
+    # keyring-shaped directory. Ties keep the earlier candidate, so the choice stays
+    # deterministic; on single-home hosts behaviour is unchanged (first match wins).
+    N=$(home_keyn "$h")
+    if [ -z "$WASMD_HOME" ] || [ "$N" -gt "$HOMEKEYN" ]; then
+      WASMD_HOME="$h"
+      [ "$N" -gt "$HOMEKEYN" ] && HOMEKEYN=$N
+    fi
   fi
 done
 if [ "$(echo $CANDIDATES | wc -w)" -gt 1 ]; then
-  log "WARNING: more than one wasmd home holds key material:$CANDIDATES - archiving $WASMD_HOME only"
+  log "WARNING: more than one wasmd home holds key material:$CANDIDATES - archiving $WASMD_HOME ($HOMEKEYN .info entries); the other homes are NOT archived this run"
 fi
 
 # ---- backup destination: reuse the existing one, else create $HOME/backups
@@ -161,14 +216,16 @@ else
             log "key archive      $ARCH ($(stat -c%s "$ARCH" 2>/dev/null) bytes, $NKEYS keyring .info entries)"
             if [ "$NKEYS" = "0" ] && [ "${BESTN:-0}" = "0" ]; then
               log "FATAL-W: 0 .info entries archived - key backup NOT restorable, fix the keyring layout before relying on it"
+              page "0 .info entries archived to $ARCH - key backup NOT restorable"
             fi
-            find "$DEST" -name "keys-*.tar.gz.gpg" -mtime +7 -delete 2>/dev/null
-            find "$DEST" -name "keys-*.tar.gz.age" -mtime +7 -delete 2>/dev/null
+            prune_keys
           else
             log "key archive FAILED - nothing written to $DEST"
+            page "key archive FAILED, nothing written to $DEST"
           fi
         else
           log "tar of the key material FAILED - SKIPPED"
+          page "tar of the key material FAILED - key archive SKIPPED"
           rm -rf "$TMPD" 2>/dev/null
         fi
       fi
