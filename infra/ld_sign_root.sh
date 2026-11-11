@@ -18,6 +18,8 @@ export PATH=/usr/local/bin:/usr/bin:/bin:$PATH
 # consensus-panicked at height 742040 (AppHash divergence) and its frozen CheckTx wrongly
 # rejects ulight fees, while the live chain still accepts them. Revert to localhost after
 # the node rebuild. The deployed copy on the gateway carries the literal fallback.
+# hosts.env stores a full endpoint (currently http://host:26657); wasmd --node accepts both
+# http:// and tcp://, and the host:port equals the deployed copy's literal.
 H=${LD_WASMD_HOME:-$HOME/.wasmd}
 test -r /etc/lightdao/hosts.env && . /etc/lightdao/hosts.env
 RPC=${LD_RPC:-${LD_OBS_RPC:?LD_OBS_RPC missing in /etc/lightdao/hosts.env - refusing to sign against an unknown endpoint}}
