@@ -12,7 +12,15 @@
 # VOTERS format: "<keyring-dir-or-empty>|<keyname>" separated by spaces. Empty dir = this host's
 # default --home keyring.
 export PATH=/usr/local/bin:/usr/bin:/bin:$PATH
-H=${LD_WASMD_HOME:-$HOME/.wasmd}; RPC=${LD_RPC:-tcp://localhost:26657}
+# 2026-11-09: default RPC switched to the observer node. The endpoint is NOT hardcoded
+# here (public history) — it is read from /etc/lightdao/hosts.env (LD_OBS_RPC), same
+# convention as infra/ld_observer_watch.sh. Reason for the switch: the local node
+# consensus-panicked at height 742040 (AppHash divergence) and its frozen CheckTx wrongly
+# rejects ulight fees, while the live chain still accepts them. Revert to localhost after
+# the node rebuild. The deployed copy on the gateway carries the literal fallback.
+H=${LD_WASMD_HOME:-$HOME/.wasmd}
+test -r /etc/lightdao/hosts.env && . /etc/lightdao/hosts.env
+RPC=${LD_RPC:-${LD_OBS_RPC:?LD_OBS_RPC missing in /etc/lightdao/hosts.env - refusing to sign against an unknown endpoint}}
 KB="--keyring-backend test"; CID=lightdao-mainnet-1
 MR=wasm173y0pgdh6ensz4gpgglz40a260www6qse4dswshc87za9du6h4fsm5r9wx
 GW=${LD_GW:-http://127.0.0.1:8080}
