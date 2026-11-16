@@ -1,0 +1,22 @@
+[Unit]
+Description=LightDAO emergency TCP RPC forwarder (127.0.0.1:26657 -> healthy validator)
+Documentation=infra/README-rpc-fwd.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+# 上游地址来自 hosts.env（root:ubuntu 640，含公网 IP，禁止入库）。
+# 缺失时 ExecStart 的脚本自己 fail closed，不会静默转到错误节点。
+EnvironmentFile=-/etc/lightdao/hosts.env
+ExecStart=/usr/bin/python3 /usr/local/bin/ld_rpc_fwd.py
+Restart=on-failure
+RestartSec=5
+# 只绑回环，脚本内已硬校验；这里再兜一层防误配。
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
