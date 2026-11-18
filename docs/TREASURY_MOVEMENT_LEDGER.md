@@ -162,3 +162,47 @@ wasmd q wasm contract $V2 --node tcp://127.0.0.1:26657 -o json   # code_id=16, a
 附带发现：`void_ids` 在 code 13 上那次"成功的 MIGRATE"并未真正生效 ——
 提案 2/5/6/7/9 至今仍列在 `active_proposals` 中且 `executed=false`，
 最早一条 2026-09-22 就到期。这既是一个合约逻辑缺陷，也让网站"活跃提案"计数虚高。
+
+## 2026-11-18 金库迁移：旧 treasury(842M) → 新 treasury-v2
+
+链上事实（height **897182**，tx `107D2317F5788C30395016A051095A69D67659DE35A58BE6C38572DB1D399CB2`）：
+
+| 项 | 值 |
+|---|---|
+| 提案 | 旧金库 `tx id=2`（3/5 已批准，`queued_at` 1794755767） |
+| 时间锁 | 72h，到期 1795014967 = 2026-11-18 15:16:07 UTC = 23:16:07 北京 |
+| 发送方 | signer1 `wasm1wh0vkmvln8xdpk5wa8atuh7ujlf6dau65wm522`（3 个批准人之一） |
+| 接收方 | `wasm1zwv6feuzhy6a9wekh96cd57lsarmqlwxdypdsplw6zhfncqw6ftqm3x37s`（code_id 4，label `treasury-v2-no-admin`，**admin 为空**，签名人同为这 5 个地址） |
+| 金额 | 842,000,110,158,605 ulight = **842,000,110.158605 LIGHT** |
+| 执行结果 | code 0，gas_used 153,560 / 600,000，fee 120,000 ulight |
+
+执行前后余额：
+
+| | 旧金库 | 新金库 |
+|---|---|---|
+| 执行前 | 842,000,111,973,605 | 0 |
+| 执行后 | **1,839,000** | **842,000,110,158,605** |
+
+新金库余额与提案金额**逐位一致**。旧金库残留 1.839 LIGHT（执行期间仍有零星入账到账，
+扣除 120,000 ulight 手续费后的净余额）。
+
+过程记录——三个失败点，均已定位修正（保留以便后来者少踩）：
+
+1. **首次自动执行没有发出交易**：后台任务用 `powershell -File` 启动，脚本被按 ANSI 解码，
+   中文路径变成乱码 → `Illegal characters in path` → 读口令失败 → `DECRYPT_FAILED_ABORT`
+   （×3 次重试）。教训：**跨语言环境的计划任务不要用 `-File` 传含非 ASCII 路径的脚本**；
+   口令应走 stdin 的 base64 字节流，而不是文本管道（后者还会被追加 CR，导致 `bad decrypt`）。
+2. **首次发交易被链拒**（未上链、未扣费）：`code 13 insufficient fee`——链上 USD 锚定最低
+   gas 价为 **0.2 ulight/gas**，脚本用了 0.025。gas 600,000 需 fee ≥ 120,000 ulight。
+3. **第二次上链被合约拒**：`code 5 missing field 'tx_id'`——ExecuteMsg 字段是 **`tx_id`**，
+   不是 `id`。修正后成功。
+
+密钥处置：解密至 `/dev/shm/ldkeys`（tmpfs，RAM），用完 `shred -u` 并删除目录；
+网关无常驻明文私钥。解密前的闸门：逐把 `wasmd keys show` 与链上 `{"signers":{}}`
+返回的 5 个地址**逐一精确比对**，全部一致才继续。
+
+后续待办：
+
+- 新金库已接替持有全部 842M；**旧金库不应再作为收款地址**。
+- 站内与文档中引用旧金库地址之处需改为新地址（复核 `funds.html`、白皮书、README）。
+- 手册里"给 execute 事件加自动告警"仍未做，建议排期。
