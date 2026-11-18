@@ -1,70 +1,125 @@
-# LightDAO — DePIN 轻节点挖矿网络
+# LightDAO — 浏览器即矿机，贡献即挖矿
 
-**把闲置设备变成收益**:浏览器即轻节点,贡献带宽/在线/验证/稳定性,赚取原生 LIGHT 代币。基于 Cosmos SDK + CosmWasm 的应用链 `lightdao-mainnet-1`。
+**一条真实运行的 Cosmos 应用链。不用买矿机、不用装软件、不用质押：打开浏览器就在挖矿，每一笔奖励都能自己在链上验算。**
 
-> 🟢 **主网已上线并运行**。Gas 经济(§4.5)、WebRTC 中继(§4.7)、Passkey 智能钱包(§4.9)、TGE vesting(§4.4)均已部署主网并验证。见 [docs/MAINNET_STATUS.md](docs/MAINNET_STATUS.md)。
+主网 `lightdao-mainnet-1` 自 2025 年起持续出块，原生代币 **LIGHT**（总供应 2,500,000,000，固定通胀上限）。
 
-## 是什么
+> 🌐 官网：https://lightdao.net
+> ⛏ 创世矿工：https://lightdao.net/miners.html
+> ✅ 奖励自证：https://lightdao.net/verify.html
 
-LightDAO 是一个 **DePIN(去中心化物理基础设施网络)**:用户用浏览器运行轻节点,贡献真实网络资源(带宽中继、区块头验证、在线时长、稳定性),按 **PoC 贡献证明** 获得 LIGHT 奖励。无需矿机、无需高能耗算力。
+---
 
-- **网页即客户端**:PWA,打开 [lightdao.net](https://lightdao.net) 即可挖矿,无需安装
-- **Passkey 智能钱包**:无助记词,生物识别登录 + Shamir 3-5 社交恢复(§4.9)
-- **WebRTC P2P 中继**:节点间数据通道互中继,TURN 兜底,中继量计入贡献(§4.7)
-- **USD 锚定 Gas + 通缩**:每笔手续费 50% 销毁 / 30% 验证者 / 20% 金库(§4.5)
-- **公平发行**:2.5B LIGHT,挖矿合约按 epoch 释放,无预挖滥发
+## 三分钟看懂
 
-## 社区 / Community
+### 1. 它是干什么的
 
-- 📺 Telegram 每日链上动态: [t.me/lightdao_news](https://t.me/lightdao_news)
-- 💬 Discord: [discord.gg/9YY9X2Cdv](https://discord.gg/9YY9X2Cdv)
-- 🐦 X / Twitter: [@lightdaoproto](https://x.com/lightdaoproto)
-- 🌐 官网: [lightdao.net](https://lightdao.net)
+LightDAO 是一个 **DePIN（去中心化物理基础设施网络）**。用户用浏览器运行轻节点，贡献四类真实资源，按 **PoC 贡献证明** 获得 LIGHT：
+
+| 维度 | 权重 | 说明 |
+|---|---|---|
+| 带宽中继 | 40% | WebRTC P2P 中继，帮其他节点传数据 |
+| 会话在线 | 30% | 保持连接的时长 |
+| 区块验证 | 20% | 校验区块头 |
+| 稳定性 | 10% | 不掉线的连续运行 |
+
+每天，挖矿池按 `个人加权分 ÷ 全网总分` 结算一次。加权分公式、叶节点哈希、Merkle 树全部公开，任何人可用 [/verify.html](https://lightdao.net/verify.html) 输入「地址 + 日期」自行复算。
+
+### 2. 怎么开始（30 秒）
+
+1. 打开 <https://lightdao.net>
+2. 创建 Passkey 钱包（生物识别，无助记词）或连接已有钱包
+3. 点「开始挖矿」— 浏览器标签页开着就在贡献，关掉即停止
+
+不需要：矿机、显卡、质押、KYC、下载安装包。
+
+### 3. 怎么证明你没被骗
+
+这是本项目最重要的一条：**不要相信任何页面上的数字，自己验。**
+
+```
+奖励 = 每日挖矿池 × (你的加权分 ÷ 当日全网总分)
+your_leaf = sha256(地址 || 日序号 || 带宽分 || 会话分 || 验证分 || 稳定分)
+```
+
+- 打开 <https://lightdao.net/verify.html>，输入地址 + 日期
+- 页面会返回：四个维度的原始分 → 加权分 → 当日总分 → 每日池 → 应得 LIGHT → **完整 Merkle 证明路径**
+- 把证明路径逐级哈希，应该能得到当日的 Merkle 根；这个根就是结算时写进链上的那个
+
+链上直接查（无需信任本站）：
+
+```bash
+curl -s https://lightdao.net/gw/v1/proof?day=65&miner=<你的地址>
+```
+
+---
+
+## 为什么不是又一个「云挖矿」
+
+| 常见项目 | LightDAO |
+|---|---|
+| 买矿机 / 买算力 | 浏览器标签页就是节点 |
+| 团队发币、不公开账本 | 每个 epoch 的奖励根上链，可复算 |
+| 提现靠平台审核 | 链上合约结算，无需许可 |
+| 「保证收益」 | 没有保本承诺，奖励随全网总分浮动 |
+
+---
+
+## 网络与合约
+
+| 项 | 值 |
+|---|---|
+| 链 ID | `lightdao-mainnet-1` |
+| 共识 | CometBFT（Cosmos SDK v0.50 / wasmd v0.55） |
+| 原生代币 | `ulight`（1 LIGHT = 10⁶ ulight） |
+| 总供应 | 2,500,000,000 LIGHT（固定上限） |
+| 公开 RPC | `https://lightdao.net/rpc/` |
+| 区块浏览器 | <https://lightdao.net/explorer.html> |
+
+---
+
+## 治理与金库
+
+协议参数不靠团队口头承诺，靠链上多签与治理：
+
+- **金库**：3/5 多签 + 72 小时时间锁。任何转账需 3 个签名人批准，并在 72 小时后才可执行。
+- **资金流向**：每笔可查 <https://lightdao.net/funds.html>
+- **治理**：提案 → 投票 → 执行全部在链上，投票权重按质押与贡献计算
+
+白皮书（V2.4）是项目宪法：<https://lightdao.net/whitepaper.html>
+
+---
 
 ## 仓库结构
 
-| 目录 | 内容 |
+```
+client/       前端（PWA，21 个页面）
+docs/         设计与运维文档
+infra/        部署与监控脚本
+contracts/    CosmWasm 合约（Rust）
+```
+
+---
+
+## 参与
+
+| 渠道 | 链接 |
 |---|---|
-| `chain/` | wasmd v0.55 fork 的 `x/lightfee` 模块(§4.5 Gas 经济)+ app/ante 补丁 + 升级补丁脚本 |
-| `contracts/` | 10 个核心 CosmWasm 合约(经审计):light_token、mining_reward、governance、treasury_multisig、oracle_twap、vesting 等 |
-| `client/` | 网页客户端(PWA):挖矿 + Passkey 钱包 + WebRTC 中继;含 staging 测试页 |
-| `infra/` | 打分网关、WebRTC 信令服务器、TURN 凭证端点、coturn 部署、oracle 喂价器、节点升级脚本 |
-| `docs/` | 测试报告、主网升级 runbook、Passkey 钱包说明、WebRTC TURN 成本估算、主网实况 |
-| `whitepaper/` | 白皮书(§4 技术经济模型) |
-| `grants/` | ICF(Interchain Foundation)grant 申请 |
+| 官网 | <https://lightdao.net> |
+| X / Twitter | <https://x.com/lightdaoproto> |
+| Discord | <https://discord.gg/aBWEatEkUX> |
+| Telegram 链上日报 | <https://t.me/lightdao_news> |
 
-## 快速开始(用户)
+有问题直接在 Discord 的 `#founding-miners` 提问；发现 bug 请开 issue。
 
-1. 打开 https://lightdao.net
-2. 「Passkey 钱包」→ 创建(生物识别)→ 自动进入挖矿
-3. 点「开始挖矿」→ 贡献带宽/在线/验证 → 累计贡献分
-4. 每日定稿后「领取奖励」→ LIGHT 到账(Merkle proof 链上验证)
+---
 
-## 快速开始(验证者/开发者)
+## 免责声明
 
-- 链:`lightdao-mainnet-1`,7 验证者(JP/KR/SG/US/HK/FR/UK),denom `ulight`(LIGHT,6 位小数)
-- RPC:`https://lightdao.net/rpc/` · 网关:`https://lightdao.net/gw/` · 信令:`wss://lightdao.net/signal` · TURN 凭证:`https://lightdao.net/turn/`
-- 构建 lightd:见 `chain/patches/`(wasmd v0.55.0 + 三个补丁脚本),go 1.23.6
-- 合约交互:CosmWasm,地址见 `docs/MAINNET_STATUS.md`
+LIGHT 是网络的功能性代币，不是投资合约，不承诺任何收益。挖矿奖励取决于你贡献的真实资源量与全网总分，可能为零。参与前请自行评估风险。
 
-## 安全与审计
+---
 
-- 核心合约经独立审计(见 `contracts/` 内审计报告);挖矿根提交为 5/7 验证者多签
-- Passkey 钱包:种子仅以 WebAuthn-PRF 派生密钥 AES-GCM 密文存储,明文不落地;Shamir 3-of-5 社交恢复
-- 主网升级为 x/upgrade 治理提案 + 全节点协调切换,测试网端到端彩排后执行
+## English summary
 
-## 状态与路线
-
-- ✅ 主网 LIVE:挖矿闭环、Gas 经济、Passkey 钱包、WebRTC 中继、vesting
-- 🔄 动态 oracle 价(v3 升级后激活)、参数链上治理
-- ⬜ 真实用户增长、社区中继节点规模化、LIGHT/USDC 流动性池(启用链上 TWAP)
-
-## 许可与联系
-
-代码 Apache-2.0(合约)/ MIT(客户端)。社区与治理见链上 governance 合约。
-
-## 社区与动态
-
-- **X/Twitter**: [@lightdaoproto](https://x.com/lightdaoproto) · 首发线程(2026-09-26,8帖): https://x.com/lightdaoproto/status/2103791251367825588
-- **Season 1 活动页**: https://lightdao.net/season.html(2026-10-01 → 10-29,5M LIGHT 池 + 邀请裂变)
-- **周更**: 每周一自动从链上拉数据发布网络周报(X)
+LightDAO is a live Cosmos L1 (`lightdao-mainnet-1`) for browser-based DePIN mining. Open <https://lightdao.net>, and your browser becomes a light node contributing bandwidth relay, session uptime, block-header verification and stability. Rewards settle daily from an on-chain mining pool: `reward = daily_pool × your_weighted_score ÷ total_score`. Every reward is independently verifiable — the full Merkle proof is returned by <https://lightdao.net/verify.html>, and the daily root is anchored on-chain. No hardware, no staking, no KYC. Treasury is a 3-of-5 multisig with a 72-hour timelock.
