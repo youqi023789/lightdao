@@ -14,7 +14,7 @@ cat > /home/ubuntu/weekly.json <<JSON
  "Burn: $BURN LIGHT destroyed forever (50% of every fee). Treasury: $TRE LIGHT. Supply only shrinks — hard cap 2.5B, on-chain verifiable.",
  "Mining today: $MIN active light-nodes, all in plain browser tabs. No rig, no install: bandwidth + compute + uptime, triple-proven daily.",
  "Settle is daily & on-chain: 5-of-7 validator Merkle roots, public proofs, claim = verify. Contribution verifiable, rewards unfakeable.",
- "Own a seat at the table: mine at https://lightdao.net (founder ref wasm19g2hgc28u9c0xxkeyf0fu2dg9k9d8wh8m3fc9v) · read the code https://github.com/youqi023789/lightdao · Discord https://discord.gg/9YY9X2Cdv"
+ "Own a seat at the table: mine at https://lightdao.net (founder ref wasm19g2hgc28u9c0xxkeyf0fu2dg9k9d8wh8m3fc9v) · read the code https://github.com/youqi023789/lightdao · Discord https://discord.gg/aBWEatEkUX"
 ]
 JSON
 python3 - <<'PY' || exit 2

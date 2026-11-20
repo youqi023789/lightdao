@@ -19,7 +19,7 @@ import sys
 LIMIT = 280
 DOMAIN = "lightdao.net"
 FULL_URL = "https://lightdao.net"
-SOCIAL = "📡 Telegram: t.me/lightdao_news · Discord: discord.gg/9YY9X2Cdv"
+SOCIAL = "📡 Telegram: t.me/lightdao_news · Discord: discord.gg/aBWEatEkUX"
 # 只匹配"裸域名"：前面已经有 :// 的（即已经是 https://lightdao.net）不再动
 BARE = re.compile(r"(?<!://)\b" + re.escape(DOMAIN) + r"\b")
 

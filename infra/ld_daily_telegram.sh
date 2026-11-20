@@ -23,7 +23,7 @@ TEXT="$LINE
 
 $T
 
-🌐 https://lightdao.net | Chat: https://discord.gg/9YY9X2Cdv"
+🌐 https://lightdao.net | Chat: https://discord.gg/aBWEatEkUX"
 if [ -n "$POSTER" ]; then
   python3 /usr/local/bin/tg_post.py "$TEXT" "$POSTER"
 else
